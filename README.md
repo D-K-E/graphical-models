@@ -8,3 +8,13 @@ pandas and numpy, maybe some matplotlib here and there to help visualization.
 
 - `NaiveBayes.py` abstracts away some of the concepts introduced above.
 
+Some simple distributions that depend on mean and standard deviation are
+also implemented in bayesutils:
+
+- gaussian distribution
+
+- gumbel distribution
+
+- laplace distribution
+
+- logistic distribution
