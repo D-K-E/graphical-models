@@ -6,6 +6,7 @@ introduced in BasicNaiveBayes.py
 import numpy as np
 import pandas as pd
 from typing import Set, List
+import pdb
 
 
 from bayesutils import (
@@ -14,6 +15,7 @@ from bayesutils import (
     px_given_y_gumbel,
     px_given_y_laplace,
     px_given_y_logistic,
+    px_given_y_discrete_uniform,
 )
 
 
@@ -69,6 +71,11 @@ class BasicNaiveBayesMLE:
         target_group = self.priors.loc[
             self.priors[target_observable_category] == target_observable_value, :
         ]
+        if isinstance(self.priors[target_observable_category].dtype, np.object):
+            return px_given_y_discrete_uniform(
+                len(self.priors[target_observable_category])
+            )
+
         given_mean_for_target = target_group[given_observable_category].mean()
         given_std_for_target = target_group[given_observable_category].std()
         return self.distribution_fn(
@@ -264,8 +271,9 @@ class MultiNaiveBayesMLE(BasicNaiveBayesMLE):
             prior_data=self.priors.copy(),
             posterior_data=self.posteriors.copy(),
             distribution_choice=self.dist_choice,
+            target_category=target_category,
         )
-        max_info = single_mle.max_likelihood(target_category)
+        max_info = single_mle.max_likelihood()
         return max_info
 
     def is_addable(self) -> bool:

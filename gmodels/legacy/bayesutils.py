@@ -63,3 +63,7 @@ def px_given_y_laplace(x_value, y_mean: float, y_stdev: float):
     variance = y_stdev ** 2
     b = np.sqrt(variance / 2)
     return np.exp(-np.abs(x_value - y_mean) / b) / (2 * b)
+
+
+def px_given_y_discrete_uniform(total_values: float):
+    return 1 / total_values
