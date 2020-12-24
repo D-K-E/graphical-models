@@ -46,6 +46,7 @@ import pandas as pd
 data = pd.DataFrame()
 
 data["Coin"] = ["heads", "tails", "heads", "tails", "tails", "heads"]
+# def Coin(): return ["heads", "tails"]
 
 data["Weight"] = [0.01, 0.01, 0.05, 0.01, 0.1, 0.1]
 data["Length"] = [1, 1, 2, 2, 1.8, 1.7]
