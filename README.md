@@ -5,23 +5,9 @@ scratch. Only standard library is used for now.
 I might add numpy and cython later on if the performance becomes an issue 
 (it most likely will ...). Very experimental stuff use it at your own risk.
 
-This library was first intended to be 
+This library was first intended to be an introduction to bayesian statistics.
+Now, I decided to make something more flexible and more focused on graphs.
 
-Bayesian statistics related bits and pieces all with basic libraries like
-pandas and numpy, maybe some matplotlib here and there to help visualization.
-
-- `BasicNaiveBayes.py` introduces concepts related to naive bayesian
-  classification.
-
-- `NaiveBayes.py` abstracts away some of the concepts introduced above.
-
-Some simple distributions that depend on mean and standard deviation are
-also implemented in bayesutils:
-
-- gaussian distribution
-
-- gumbel distribution
-
-- laplace distribution
-
-- logistic distribution
+However some of the bits in the old code might come in handy later on,
+so I am saving them under legacy for now. The old code base uses, numpy and
+pandas as well.
