@@ -22,6 +22,26 @@ class Edge(AbstractEdge, GraphObject):
         self.etype = edge_type
         self.node_info = node_info
 
+    def __eq__(self, n):
+        if isinstance(n, Edge):
+            return self.id() == n.id()
+        return False
+
+    def __str__(self):
+        ""
+        return (
+            self.id()
+            + "--"
+            + str(self.type())
+            + "--"
+            + str(self.data())
+            + "--"
+            + str(self.info())
+        )
+
+    def __hash__(self):
+        return hash(self.__str__())
+
     def info(self) -> NodeInfo:
         return self.node_info
 
