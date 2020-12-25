@@ -24,8 +24,8 @@ def px_given_y_gaussian(x_value, y_mean: float, y_stdev: float):
 
 def px_given_y_logistic(x_value, y_mean: float, y_stdev: float):
     """!
-    \f$ \frac{e^{-(x-ymean)/s}}{s (1 + e^{-(x-ymean)/s)^2} \f$
-    where \f$ s= \sqrt(3)/ \pi * y_stdev \f$
+    \f$ \frac{e^{-(x-mean)/s}}{s (1 + e^{-(x-mean)/s)^2}} \f$
+    where \f$ s = \sqrt(3)/ \pi * stdev \f$
     taken from: https://en.wikipedia.org/wiki/Logistic_distribution
     """
     s = np.sqrt(3) / np.pi * y_stdev
