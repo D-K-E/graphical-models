@@ -23,6 +23,18 @@ class Node(AbstractNode, GraphObject):
             Dict[str, Tuple[EdgeType, NodePosition]]
         ] = edge_infos  # {edge_id: edge type}
 
+    def __eq__(self, n):
+        if isinstance(n, Node):
+            return self.id() == n.id()
+        return False
+
+    def __str__(self):
+        ""
+        return self.id() + "--" + str(self.data()) + "--" + str(self.info())
+
+    def __hash__(self):
+        return hash(self.__str__())
+
     def is_incident(self, info: EdgeInfo) -> bool:
         "node is incident with edge"
         eid = info.id()
