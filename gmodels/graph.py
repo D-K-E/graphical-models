@@ -54,7 +54,6 @@ class Graph(GraphObject):
     @classmethod
     def merge_edges(cls, e1: Edge, e2: Edge) -> Edge:
         "merge two edges if they have the same id"
-        # TODO bunu da bitir
         e1id = e1.id()
         e2id = e2.id()
         if e1id() != e2id():
@@ -79,7 +78,6 @@ class Graph(GraphObject):
     @classmethod
     def from_nodes(cls, ns: Set[Node]):
         "construct a graph from vertex set"
-        # TODO buradasin
         edges: List[Edge] = []
         for n in ns:
             info = n.info()
