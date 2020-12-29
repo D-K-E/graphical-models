@@ -1,12 +1,13 @@
 """
-graph object
+general graph object
 """
-from typing import Set, Optional, Callable, List, Tuple
+from typing import Set, Optional, Callable, List, Tuple, Union
 from graphobj import GraphObject
 from edge import Edge
 from node import Node
 from info import NodeInfo, SNodeInfo
 from uuid import uuid4
+import math
 
 
 class Graph(GraphObject):
@@ -107,6 +108,19 @@ class Graph(GraphObject):
             raise ValueError("Edges are None for this graph")
         return self._edges
 
+    def is_in(self, ne: Union[Node, Edge]) -> bool:
+        ""
+        aset = None
+        if isinstance(ne, Node):
+            aset = self.nodes()
+        else:
+            aset = self.edges()
+        check = False
+        for a in aset:
+            if a.id() == ne.id():
+                check = True
+        return check
+
     def order(self) -> int:
         return len(self.nodes())
 
@@ -116,53 +130,6 @@ class Graph(GraphObject):
     def is_trivial(self) -> bool:
         "check if graph is trivial"
         return self.order() < 2
-
-    def is_node_incident(self, n: Node, e: Edge) -> bool:
-        ""
-        einfo = e.edge_info()
-        return n.is_incident(info=einfo)
-
-    def is_neighbour_of(self, n1: Node, n2: Node) -> bool:
-        ""
-        n1_edge_ids = n1.edge_ids()
-        n2_edge_ids = n2.edge_ids()
-        return len(n1_edge_ids.intersection(n2_edge_ids)) > 0
-
-    def is_adjacent_of(self, e1: Edge, e2: Edge) -> bool:
-        ""
-        n1_ids = e1.node_ids()
-        n2_ids = e2.node_ids()
-        return len(n1_ids.intersection(n2_ids)) > 0
-
-    def is_node_independant_of(self, n1: Node, n2: Node) -> bool:
-        return not self.is_neighbour_of(n1, n2)
-
-    def is_stable(self, ns: Set[Node]) -> bool:
-        ""
-        node_list = list(ns)
-        while node_list:
-            n1 = node_list.pop()
-            for n2 in node_list:
-                if self.is_neighbour_of(n1=n1, n2=n2):
-                    return False
-        return True
-
-    def neighbours_of(self, n1: Node) -> Set[Node]:
-        ""
-        neighbours = set()
-        for n2 in self.nodes():
-            if self.is_neighbour_of(n1=n1, n2=n2):
-                neighbours.add(n2)
-        return neighbours
-
-    def edges_of(self, n: Node) -> Set[Edge]:
-        ""
-        edge_ids = n.edge_ids()
-        edges = set()
-        for edge in self.edges():
-            if edge.id() in edge_ids:
-                edges.add(edge)
-        return edges
 
     def vertex_by_id(self, node_id: str) -> Node:
         n = None
@@ -264,8 +231,136 @@ class Graph(GraphObject):
         ns_ = self.vertex_union(ns)
         return Graph(gid=str(uuid4()), nodes=ns_, edges=es_)
 
-    def is_disjoint(self, g):
+    def _subtract_node(self, n: Node) -> Tuple[Set[Node], Set[Edge]]:
+        "subtract a given node from graph"
+        nodes = self.nodes()
+        edges = self.edges()
+        nnodes: Set[Node] = set()
+        nedges: Set[Edge] = set()
+        for node in nodes:
+            if node != n:
+                nnodes.add(node)
+        for edge in edges:
+            node_ids = edge.node_ids()
+            n_id = n.id()
+            if n_id not in node_ids:
+                nedges.add(edge)
+        return (nnodes, nedges)
+
+    def subtract_node_from_self(self, n: Node):
         ""
-        ns: Set[Node] = g.nodes()
-        ns_ = self.vertex_intersection(ns)
-        return len(ns_) == 0
+        nodes, edges = self._subtract_node(n)
+        self._nodes = nodes
+        self._edges = edges
+
+    def subtract_node(self, n: Node):
+        ""
+        nodes, edges = self._subtract_node(n)
+        data = self.data()
+        return Graph(gid=str(uuid4()), data=data, nodes=nodes, edges=edges)
+
+    def subtract_nodes_from_self(self, ns: Set[Node]):
+        ""
+        for n in ns:
+            self.subtract_node_from_self(n)
+
+    def subtract_nodes(self, ns: Set[Node]):
+        ""
+        for n in ns:
+            self = self.subtract_node(n)
+
+    def _subtract_edge(self, e: Edge) -> Set[Edge]:
+        "subtract a given node from graph"
+        edges = self.edges()
+        nedges: Set[Edge] = set()
+        for edge in edges:
+            if e != edge:
+                nedges.add(edge)
+        return nedges
+
+    def subtract_edge_from_self(self, e: Edge):
+        ""
+        edges = self._subtract_edge(e)
+        self._edges = edges
+
+    def subtract_edge(self, e: Edge) -> GraphObject:
+        ""
+        edges = self._subtract_edge(e)
+        return Graph(
+            gid=str(uuid4()), data=self.data(), nodes=self.nodes(), edges=edges
+        )
+
+    def subtract_edges_from_self(self, es: Set[Edge]):
+        ""
+        for e in es:
+            self.subtract_edge_from_self(e)
+
+    def subtract_edges(self, es: Set[Edge]):
+        ""
+        for e in es:
+            self = self.subtract_edge(e)
+
+    def add_edge_to_self(self, e: Edge):
+        ""
+        edges = self.edges()
+        edges.add(e)
+        self._edges = edges
+
+    def add_edge(self, e: Edge):
+        ""
+        edges = self.edges()
+        edges.add(e)
+        return Graph(
+            gid=str(uuid4()), data=self.data(), nodes=self.nodes(), edges=edges
+        )
+
+    def add_edges_to_self(self, es: Set[Edge]):
+        ""
+        for e in es:
+            self.add_edges_to_self(e)
+
+    def add_edges(self, es: Set[Edge]):
+        ""
+        for e in es:
+            self = self.add_edge(e)
+
+    def comp_degree(self, fn: Callable[[int, int], bool], comp_val: int):
+        ""
+        compare_v = comp_val
+        for n in self.nodes():
+            nb_edges = n.nb_edges()
+            if fn(nb_edges, compare_v):
+                compare_v = nb_edges
+        return compare_v
+
+    def max_degree(self) -> int:
+        ""
+        return self.comp_degree(
+            fn=lambda nb_edges, compare: nb_edges > compare, comp_val=0
+        )
+
+    def min_degree(self) -> int:
+        ""
+        return int(
+            self.comp_degree(
+                fn=lambda nb_edges, compare: nb_edges < compare, comp_val=math.inf
+            )
+        )
+
+    def average_degree(self) -> float:
+        """!
+        \f d(G) = \frac{1}{V[G]} \sum_{v \in V[G]} d(v) \f
+        """
+        coeff = 1 / len(self.nodes())
+        deg_sum = sum([n.nb_edges() for n in self.nodes()])
+        return coeff * deg_sum
+
+    def edge_vertex_ratio(self) -> float:
+        ""
+        return len(self.edges()) / len(self.nodes())
+
+    def ev_ratio_from_average_degree(self, average_degree: float):
+        """!
+        \f |E[G]| = \frac{1}{2} \sum_{v \in V[G]} d(v) = 1/2 * d(G) * |V[G]| \f
+        """
+        return average_degree / 2

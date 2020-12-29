@@ -2,10 +2,10 @@
 Node in a graph
 """
 from typing import Dict, Set, Tuple, Optional
-from abstractobj import AbstractNode, AbstractEdge, EdgeType
-from abstractobj import NodePosition
-from info import EdgeInfo
-from graphobj import GraphObject
+from gmodels.abstractobj import AbstractNode, AbstractEdge, EdgeType
+from gmodels.abstractobj import NodePosition
+from gmodels.info import EdgeInfo
+from gmodels.graphobj import GraphObject
 
 
 class Node(AbstractNode, GraphObject):

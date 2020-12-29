@@ -7,6 +7,12 @@ from enum import Enum
 from collections import namedtuple
 
 
+class AbstractInfo(ABC):
+    @abstractmethod
+    def id(self) -> str:
+        raise NotImplementedError
+
+
 class AbstractGraphObj(AbstractInfo):
     "Abstract graph object"
 
@@ -42,10 +48,4 @@ class AbstractEdge(ABC):
 
     @abstractmethod
     def type(self) -> EdgeType:
-        raise NotImplementedError
-
-
-class AbstractInfo(ABC):
-    @abstractmethod
-    def id(self) -> str:
         raise NotImplementedError
