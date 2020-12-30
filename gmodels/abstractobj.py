@@ -21,18 +21,6 @@ class AbstractGraphObj(AbstractInfo):
         raise NotImplementedError
 
 
-class AbstractNode(ABC):
-    "a node in a graph"
-
-    @abstractmethod
-    def has_edges(self) -> bool:
-        raise NotImplementedError
-
-    @abstractmethod
-    def nb_edges(self) -> int:
-        raise NotImplementedError
-
-
 class EdgeType:
     DIRECTED = 1
     UNDIRECTED = 2
