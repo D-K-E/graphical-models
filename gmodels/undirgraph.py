@@ -1,7 +1,7 @@
 """
 Undirected graph object
 """
-from typing import Set, Optional, Callable, List, Tuple
+from typing import Set, Optional, Callable, List, Tuple, Dict
 from edge import Edge
 from node import Node
 from info import NodeInfo, SNodeInfo
@@ -31,13 +31,12 @@ class UndirectedGraph(Graph):
 
     def is_node_incident(self, n: Node, e: Edge) -> bool:
         ""
-        einfo = e.edge_info()
-        return n.is_incident(info=einfo)
+        return e.is_endvertice(n)
 
     def is_neighbour_of(self, n1: Node, n2: Node) -> bool:
         ""
-        n1_edge_ids = n1.edge_ids()
-        n2_edge_ids = n2.edge_ids()
+        n1_edge_ids = set(self.gdata[n1.id()])
+        n2_edge_ids = set(self.gdata[n2.id()])
         return len(n1_edge_ids.intersection(n2_edge_ids)) > 0
 
     def is_adjacent_of(self, e1: Edge, e2: Edge) -> bool:
@@ -51,6 +50,8 @@ class UndirectedGraph(Graph):
 
     def is_stable(self, ns: Set[Node]) -> bool:
         ""
+        if not self.contains_vertices(ns):
+            raise ValueError("node set is not contained in graph")
         node_list = list(ns)
         while node_list:
             n1 = node_list.pop()
@@ -61,6 +62,8 @@ class UndirectedGraph(Graph):
 
     def neighbours_of(self, n1: Node) -> Set[Node]:
         ""
+        if not self.is_in(n1):
+            raise ValueError("node is not in graph")
         neighbours = set()
         for n2 in self.nodes():
             if self.is_neighbour_of(n1=n1, n2=n2):
@@ -69,12 +72,8 @@ class UndirectedGraph(Graph):
 
     def edges_of(self, n: Node) -> Set[Edge]:
         ""
-        edge_ids = n.edge_ids()
-        edges = set()
-        for edge in self.edges():
-            if edge.id() in edge_ids:
-                edges.add(edge)
-        return edges
+        edge_ids = self.gdata[n.id()]
+        return set([self.E[eid] for eid in edge_ids])
 
     def traverse_search_nodes(self, snode: dict, nlist: List[Node], elist: List[Node]):
         ""
@@ -159,10 +158,6 @@ class UndirectedGraph(Graph):
         "see proof Diestel p. 8"
         return self.min_degree()
 
-    def has_cycle(self):
-        "see Diestel p. 8"
-        return self.shortest_path_length() >= 2
-
     def find_shortest_path_per_node(self, n: Node) -> Path:
         "find shortest path for node n"
         nodes = self.nodes()
@@ -178,49 +173,122 @@ class UndirectedGraph(Graph):
                         result_len = plen
         return result
 
-    def find_cycle(self, n: Node) -> Cycle:
+    def find_connected_components(self):
         """!
-        Find if given node can make a cycle using depth first search
+        Find connected components as per Roughgarden 2018, 8.8.3 UCC algorithm
         """
-        # TODO finish this algorithm the main idea is search node contains
-        # visit info.
-        if not self.is_in(n):
-            raise ValueError("node not in graph")
-        search_node = {"state": n, "parent": None, "edge-id": None, "visited": -1}
-        explored = set()
-        frontier = [search_node]
-        while frontier:
-            explored_search_node = frontier.pop()
-            explored_state = explored_search_node["state"]
-            explored_id = explored_state.id()
-            if explored_id == n.id() and explored_search_node["visited"] == 1:
-                # found the cycle
-                path = self.extract_path_from_search_node(explored_search_node)
-                return Cycle(
-                    gid=path.id(),
-                    data=path.data(),
-                    nodes=path.vertices(),
-                    edges=path._edge_list,
-                )
-            #
-            explored.add((explored_id, explored_search_node["visited"]))
-            for neighbour in self.neighbours_of(explored_state):
-                parent_edge = self.edge_by_vertices(explored_state, neighbour)
-                child_search_node = {
-                    "state": neighbour,
-                    "parent": explored_search_node,
-                    "edge-id": parent_edge,
-                }
-                child_id = child_search_node["state"].id()
-                if (child_id not in explored) and (
-                    not any(
-                        [
-                            front_node["state"].id() == child_id
-                            for front_node in frontier
-                        ]
-                    )
-                ):
-                    #
-                    frontier.append(child_search_node)
+        # mark all vertices as unexplored
+        vertices = {k: False for k in self.gdata.keys()}
         #
+        numCC = 0
+        components = {}
+        for i, explored in vertices.items():
+            if not explored:
+                numCC += 1
+                components[numCC] = set()
+                frontier = [i]
+                while frontier:
+                    v = frontier.pop(0)
+                    cc_v = numCC
+                    node_v = self.V[v]
+                    for w in self.neighbours_of(node_v):
+                        wid = w.id()
+                        if not vertices[wid]:
+                            vertices[wid] = True
+                            components[cc_v].add(wid)
+        return components
+
+    def find_minimum_spanning_tree(self):
+        """!
+        Find minimum spanning tree as per Prim's algorithm
+        Christopher Griffin, Graph Theory lecture notes, 2016, p.39 - 42
+        """
+        e_prim: Set[str] = set()
+        v_prim: Set[str] = set([[v for v in self.V][0]])
+        weights: Dict[str, int] = {e: 1 for e in self.E}
+        V: Set[str] = set([v for v in self.V])
+        while v_prim != V:
+            X = V.difference(v_prim)
+            e: Edge = None
+            w_star = math.inf
+            u_prime: str = None
+            for v in v_prim:
+                for u in X:
+                    vnode = self.V[v]
+                    unode = self.V[u]
+                    edge = self.edge_by_vertices(vnode, unode)
+                    w_edge = weights[edge.id()]
+                    if w_edge < w_star:
+                        w_star = w_edge
+                        e = edge
+                        u_prime = u
+            e_prim.add(e.id())
+            v_prim.add(u_prime)
+        #
+        V_prime = set([self.V[v] for v in v_prim])
+        E_prime = set([self.E[e] for v in e_prim])
+        return UndirectedGraph(gid=str(uuid4()), nodes=V_prime, edges=E_prime)
+
+    def dfs_forest(
+        self,
+        u: str,
+        pred: Dict[str, str],
+        marked: Dict[str, int],
+        d: Dict[str, int],
+        f: Dict[str, int],
+        time: int,
+        check_cycle: bool = True,
+    ):
+        """!
+        adapted for cycle detection
+        dfs recursive forest from Erciyes 2018, Guide Graph ..., p.152 alg. 6.7
+        """
+        marked[u] = True
+        time += 1
+        d[u] = time
+        unode = self.V[u]
+        for vnode in self.neighbours_of(unode):
+            v = vnode.id()
+            if marked[v] is False:
+                pred[v] = u
+                self.dfs_forest(v, pred, marked, d, f, time)
+        #
+        time += 1
+        f[u] = time
+        if check_cycle:
+            for vnode in self.neighbours_of(unode):
+                if d[vnode.id()] < f[u]:
+                    return (vnode.id(), u)
         return
+
+    #
+    def find_cycle(self) -> Cycle:
+        "find if graph has a cycle exit at first found cycle"
+        time = 0
+        marked = {n: False for n in self.V}
+        pred = {n: None for n in self.V}
+        d: Dict[str, int] = {}
+        f: Dict[str, int] = {}
+        for u in self.V:
+            if marked[u] is False:
+                res = self.dfs_forest(
+                    u=u, pred=pred, marked=marked, d=d, f=f, time=time
+                )
+                if res is not None:
+                    start_end_cycle, before_last = res
+                    nlist: List[Node] = []
+                    elist: List[Edge] = []
+                    temp = pred[before_last]
+                    while temp != start_end_cycle:
+                        tnode = self.V[temp]
+                        nlist.append(temp)
+                        temp = pred[temp]
+                        tnode2 = self.V[temp]
+                        edge = self.edge_by_vertices(tnode, tnode2)
+                        elist.append(edge)
+                    return Cycle(gid=str(uuid4()), nodes=nlist, edges=elist)
+
+    def has_cycle(self) -> bool:
+        "check if graph has a cycle"
+        cycle = self.find_cycle()
+        return cycle is not None

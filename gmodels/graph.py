@@ -1,11 +1,10 @@
 """
 general graph object
 """
-from typing import Set, Optional, Callable, List, Tuple, Union
+from typing import Set, Optional, Callable, List, Tuple, Union, Dict
 from graphobj import GraphObject
 from edge import Edge
 from node import Node
-from info import NodeInfo, SNodeInfo
 from uuid import uuid4
 import math
 
@@ -20,8 +19,14 @@ class Graph(GraphObject):
     ):
         ""
         super().__init__(oid=gid, odata=data)
-        self._nodes: Optional[Set[Node]] = nodes
-        self._edges: Optional[Set[Edge]] = edges
+        self._nodes: Optional[Dict[str, Node]] = None
+        if nodes is not None:
+            self._nodes = {n.id(): n for n in nodes}
+        self._edges: Optional[Dict[str, Edge]] = None
+        if edges is not None:
+            self._edges = {e.id(): e for e in edges}
+        #
+        self.gdata: Dict[str, List[str]] = {}
         if self._nodes is not None:
             self.is_empty = len(self._nodes) == 0
         else:
@@ -31,6 +36,18 @@ class Graph(GraphObject):
             raise ValueError(
                 "This library is not compatible with computations with trivial graph"
             )
+        #
+        self.mk_gdata()
+
+    def mk_gdata(self):
+        "make graph data"
+        if self._nodes is not None:
+            for vertex in self.vertices():
+                self.gdata[vertex.id()] = []
+            #
+            for edge in self.edges():
+                for node_id in edge.node_ids():
+                    self.gdata[node_id].append(edge.id())
 
     def __eq__(self, n):
         if isinstance(n, Graph):
@@ -42,9 +59,9 @@ class Graph(GraphObject):
         return (
             self.id()
             + "--"
-            + str([str(n) + "::" for n in self.nodes()])
+            + str([str(n) + "::" for n in self._nodes])
             + "--"
-            + str([str(n) + "!!" for n in self.edges()])
+            + str([str(n) + "!!" for n in self._edges])
             + "--"
             + str(self.data())
         )
@@ -95,78 +112,80 @@ class Graph(GraphObject):
             edge_s.add(cls.merge_edges(e1, e2))
         return Graph(gid=str(uuid4()), nodes=ns, edges=edge_s)
 
-    def vertices(self) -> Set[Node]:
+    @property
+    def V(self) -> Dict[str, Node]:
+        "vertices of graph"
         if self._nodes is None:
             raise ValueError("Nodes are None for this graph")
         return self._nodes
+
+    @property
+    def E(self) -> Dict[str, Edge]:
+        "edges of graph"
+        if self._edges is None:
+            raise ValueError("Edges are None for this graph")
+        return self._edges
+
+    def vertices(self) -> Set[Node]:
+        return set([n for n in self.V.values()])
 
     def nodes(self) -> Set[Node]:
         return self.vertices()
 
     def edges(self) -> Set[Edge]:
-        if self._edges is None:
-            raise ValueError("Edges are None for this graph")
-        return self._edges
+        return set([n for n in self.E.values()])
 
     def is_in(self, ne: Union[Node, Edge]) -> bool:
         ""
-        aset = None
         if isinstance(ne, Node):
-            aset = self.nodes()
+            return ne.id() in self.gdata
         else:
-            aset = self.edges()
-        check = False
-        for a in aset:
-            if a.id() == ne.id():
-                check = True
-        return check
+            return ne.id() in self.gdata.values()
 
     def order(self) -> int:
-        return len(self.nodes())
+        return len(self.V)
 
     def nb_edges(self) -> int:
-        return len(self.edges())
+        return len(self.E)
 
     def is_trivial(self) -> bool:
         "check if graph is trivial"
         return self.order() < 2
 
     def vertex_by_id(self, node_id: str) -> Node:
-        n = None
-        for node in self.nodes():
-            if node.id() == node_id:
-                n = node
-        return n
+        if node_id not in self.V:
+            raise ValueError("node id not in graph")
+        return self.V[node_id]
 
     def edge_by_id(self, edge_id: str) -> Edge:
         ""
-        e = None
-        for edge in self.edges():
-            if edge.id() == edge_id:
-                e = edge
-        return e
+        if edge_id not in self.E:
+            raise ValueError("edge id not in graph")
+        return self.E[edge_id]
 
     def edge_by_vertices(self, n1: Node, n2: Node) -> Edge:
         ""
-        e = None
-        for edge in self.edges():
-            info = edge.info()
-            fid = info.first().id()
-            sid = info.second().id()
-            n1id = n1.id() == fid or n1.id() == sid
-            n2id = n2.id() == fid or n2.id() == sid
-            if n1id and n2id:
-                e = edge
-        return e
+        if not self.is_in(n1) or not self.is_in(n2):
+            raise ValueError("one of the nodes is not present in graph")
+        n1id = n1.id()
+        n2id = n2.id()
+        first_eset = set(self.gdata[n1id])
+        second_eset = set(self.gdata[n2id])
+        common_edge_ids = first_eset.intersection(second_eset)
+        if len(common_edge_ids) == 0:
+            raise ValueError("No common edges between given nodes")
+        for edge_id in common_edge_ids:
+            edge = self.E[edge_id]
+            fid = edge.start().id()
+            sid = edge.end().id()
+            n1id_ = n1id == fid or n1id == sid
+            n2id_ = n2id == fid or n2id == sid
+            if n1id_ and n2id_:
+                return edge
 
     def vertices_of(self, e: Edge) -> Tuple[Node, Node]:
         ""
-        info = e.info()
-        first_node_id = info.first().id()
-        second_node_id = info.second().id()
-        first_node = self.vertex_by_id(first_node_id)
-        second_node = self.vertex_by_id(second_node_id)
-        return (first_node, second_node)
+        return (e.start(), e.end())
 
     def is_homomorphism(self, fn: Callable[[Node], Node]) -> bool:
         "Check if a function is a homomorphism"
@@ -187,21 +206,21 @@ class Graph(GraphObject):
                 return False
         return True
 
-    def vertex_intersection(self, vs: Set[Node]) -> Set[Node]:
-        ""
-        return self.nodes().intersection(vs)
+    def intersection(
+        self, aset: Union[Set[Node], Set[Edge]]
+    ) -> Union[Set[Node], Set[Edge]]:
+        "intersection of either node or edge set"
+        if any(isinstance(a, Node) for a in aset):
+            return self.nodes().intersection(aset)
+        else:
+            return self.edges().intersection(aset)
 
-    def vertex_union(self, vs: Set[Node]) -> Set[Node]:
+    def union(self, aset: Union[Set[Node], Set[Edge]]) -> Union[Set[Node], Set[Edge]]:
         ""
-        return self.nodes().union(vs)
-
-    def edge_intersection(self, es: Set[Edge]) -> Set[Edge]:
-        ""
-        return self.edges().intersection(es)
-
-    def edge_union(self, es: Set[Edge]) -> Set[Edge]:
-        ""
-        return self.edges().union(es)
+        if any(isinstance(a, Node) for a in aset):
+            return self.nodes().union(aset)
+        else:
+            return self.edges().union(aset)
 
     def contains_edges(self, es: Set[Edge]) -> bool:
         "check if graph contains edges"
@@ -219,16 +238,16 @@ class Graph(GraphObject):
         ""
         ns: Set[Node] = gs.nodes()
         es: Set[Edge] = gs.edges()
-        es_ = self.edge_intersection(es)
-        ns_ = self.vertex_intersection(ns)
+        es_ = self.intersection(es)
+        ns_ = self.intersection(ns)
         return Graph(gid=str(uuid4()), nodes=ns_, edges=es_)
 
     def graph_union(self, gs):
         ""
         ns: Set[Node] = gs.nodes()
         es: Set[Edge] = gs.edges()
-        es_ = self.edge_union(es)
-        ns_ = self.vertex_union(ns)
+        es_ = self.union(es)
+        ns_ = self.union(ns)
         return Graph(gid=str(uuid4()), nodes=ns_, edges=es_)
 
     def _subtract_node(self, n: Node) -> Tuple[Set[Node], Set[Edge]]:
@@ -250,8 +269,8 @@ class Graph(GraphObject):
     def subtract_node_from_self(self, n: Node):
         ""
         nodes, edges = self._subtract_node(n)
-        self._nodes = nodes
-        self._edges = edges
+        self._nodes = {n.id(): n for n in nodes}
+        self._edges = {e.id(): e for e in edges}
 
     def subtract_node(self, n: Node):
         ""
@@ -281,7 +300,7 @@ class Graph(GraphObject):
     def subtract_edge_from_self(self, e: Edge):
         ""
         edges = self._subtract_edge(e)
-        self._edges = edges
+        self._edges = {e.id(): e for e in edges}
 
     def subtract_edge(self, e: Edge) -> GraphObject:
         ""
@@ -304,7 +323,7 @@ class Graph(GraphObject):
         ""
         edges = self.edges()
         edges.add(e)
-        self._edges = edges
+        self._edges = {e.id(): e for e in edges}
 
     def add_edge(self, e: Edge):
         ""

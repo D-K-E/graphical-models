@@ -3,7 +3,7 @@ Edge in a graph
 """
 from typing import Set
 from abstractobj import AbstractNode, AbstractEdge, EdgeType
-from info import NodeInfo, EdgeInfo
+from node import Node
 from graphobj import GraphObject
 
 
@@ -13,14 +13,16 @@ class Edge(AbstractEdge, GraphObject):
     def __init__(
         self,
         edge_id: str,
+        start_node: Node,
+        end_node: Node,
         edge_type: EdgeType = EdgeType.UNDIRECTED,
         data={},
-        node_info: NodeInfo = None,
     ):
         "simple edge constructor"
         super().__init__(oid=edge_id, odata=data)
         self.etype = edge_type
-        self.node_info = node_info
+        self.start_node = start_node
+        self.end_node = end_node
 
     def __eq__(self, n):
         if isinstance(n, Edge):
@@ -36,28 +38,28 @@ class Edge(AbstractEdge, GraphObject):
             + "--"
             + str(self.data())
             + "--"
-            + str(self.info())
+            + str(self.start_node)
+            + "--"
+            + str(self.end_node)
         )
 
     def __hash__(self):
         return hash(self.__str__())
 
-    def info(self) -> NodeInfo:
-        return self.node_info
+    def start(self) -> Node:
+        return self.start_node
+
+    def end(self) -> Node:
+        return self.end_node
 
     def node_ids(self) -> Set[str]:
         ""
         ids = set()
-        info = self.info()
-        ids.add(info.first().id())
-        ids.add(info.second().id())
+        ids.add(self.start().id())
+        ids.add(self.end().id())
         return ids
-
-    def edge_info(self) -> EdgeInfo:
-        "extract edge info from edge"
-        return EdgeInfo(edge_id=self.id(), etype=self.type())
 
     def is_endvertice(self, n: AbstractNode) -> bool:
         "check if node is an end vertex"
-        info = self.info()
-        return info.first().id() == n.id() or info.second().id() == n.id()
+        ids = self.node_ids()
+        return n.id() in ids
