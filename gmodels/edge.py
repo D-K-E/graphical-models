@@ -8,7 +8,9 @@ from graphobj import GraphObject
 
 
 class Edge(AbstractEdge, GraphObject):
-    "Simple edge in a graph"
+    """!
+    \brief Edge in a graph
+    """
 
     def __init__(
         self,
