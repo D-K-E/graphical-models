@@ -4,7 +4,6 @@ Undirected graph object
 from typing import Set, Optional, Callable, List, Tuple, Dict
 from edge import Edge
 from node import Node
-from info import NodeInfo, SNodeInfo
 from path import Path, Cycle
 from abstractobj import EdgeType
 from graph import Graph
@@ -238,7 +237,7 @@ class UndirectedGraph(Graph):
         f: Dict[str, int],
         time: int,
         check_cycle: bool = True,
-    ):
+    ) -> Optional[Tuple[str, str]]:
         """!
         adapted for cycle detection
         dfs recursive forest from Erciyes 2018, Guide Graph ..., p.152 alg. 6.7
@@ -259,14 +258,31 @@ class UndirectedGraph(Graph):
             for vnode in self.neighbours_of(unode):
                 if d[vnode.id()] < f[u]:
                     return (vnode.id(), u)
-        return
+        return None
 
-    #
+    def from_preds(
+        self,
+        before_last: str,
+        start_end_cycle: str,
+        pred: Dict[str, Optional[str]],
+        nlist: List[Node],
+        elist: List[Edge],
+    ):
+        "derive from predicates"
+        temp = pred[before_last]
+        while temp != start_end_cycle:
+            tnode = self.V[temp]
+            nlist.append(temp)
+            temp = pred[temp]
+            tnode2 = self.V[temp]
+            edge = self.edge_by_vertices(tnode, tnode2)
+            elist.append(edge)
+
     def find_cycle(self) -> Cycle:
         "find if graph has a cycle exit at first found cycle"
         time = 0
-        marked = {n: False for n in self.V}
-        pred = {n: None for n in self.V}
+        marked: Dict[str, bool] = {n: False for n in self.V}
+        pred: Dict[str, Optional[str]] = {n: None for n in self.V}
         d: Dict[str, int] = {}
         f: Dict[str, int] = {}
         for u in self.V:
@@ -278,17 +294,95 @@ class UndirectedGraph(Graph):
                     start_end_cycle, before_last = res
                     nlist: List[Node] = []
                     elist: List[Edge] = []
-                    temp = pred[before_last]
-                    while temp != start_end_cycle:
-                        tnode = self.V[temp]
-                        nlist.append(temp)
-                        temp = pred[temp]
-                        tnode2 = self.V[temp]
-                        edge = self.edge_by_vertices(tnode, tnode2)
-                        elist.append(edge)
+                    self.from_preds(
+                        pred=pred,
+                        before_last=before_last,
+                        start_end_cycle=start_end_cycle,
+                        nlist=nlist,
+                        elist=elist,
+                    )
                     return Cycle(gid=str(uuid4()), nodes=nlist, edges=elist)
 
     def has_cycle(self) -> bool:
         "check if graph has a cycle"
         cycle = self.find_cycle()
         return cycle is not None
+
+    def assign_num(
+        self,
+        v: str,
+        num: Dict[str, int],
+        visited: Dict[str, bool],
+        parent: Dict[str, str],
+        counter: int,
+    ):
+        ""
+        counter += 1
+        num[v] = counter
+        visited[v] = True
+        vnode = self.V[v]
+        for unode in self.neighbours_of(vnode):
+            u = unode.id()
+            if visited[u] is False:
+                parent[u] = v
+                self.assign_num(
+                    u, num=num, visited=visited, parent=parent, counter=counter
+                )
+
+    #
+    def check_ap(
+        self,
+        v: str,
+        num: Dict[str, int],
+        visited: Dict[str, bool],
+        parent: Dict[str, str],
+        low: Dict[str, int],
+        counter: int,
+        aset: Set[str],
+    ):
+        ""
+        low[v] = num[v]
+        vnode = self.V[v]
+        for unode in self.neighbours_of(vnode):
+            u = unode.id()
+            if num[u] >= num[v]:
+                self.check_ap(
+                    v=u,
+                    num=num,
+                    visited=visited,
+                    parent=parent,
+                    low=low,
+                    counter=counter,
+                    aset=aset,
+                )
+                if low[u] >= low[v]:
+                    aset.add(v)
+                #
+                low[v] = min(low[v], low[u])
+            elif parent[v] != u:
+                low[v] = min(low[v], num[u])
+
+    def find_separating_vertices(self) -> Set[Node]:
+        """!
+        find separating vertices of graph
+        as in Erciyes 2018, p. 230, algorithm 8.3
+        """
+        num: Dict[str, int] = {n: int(math.inf) for n in self.V}
+        low: Dict[str, int] = {n: int(math.inf) for n in self.V}
+        visited: Dict[str, bool] = {n: False for n in self.V}
+        parent: Dict[str, str] = {n: "" for n in self.V}
+        aset: Set[str] = set()
+
+        counter = 1
+        v = [node for node in self.V.values()][0]
+        self.assign_num(v=v, num=num, visited=visited, parent=parent, counter=counter)
+        self.check_ap(
+            v=v,
+            num=num,
+            visited=visited,
+            parent=parent,
+            low=low,
+            counter=counter,
+            aset=aset,
+        )
+        return set([self.V[a] for a in aset])
