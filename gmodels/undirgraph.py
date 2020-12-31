@@ -155,7 +155,7 @@ class UndirectedGraph(Graph):
         return self.find_shortest_path(n1, n2) is not None
 
     def shortest_path_length(self) -> int:
-        "see proof Diestel p. 8"
+        "see proof Diestel 2017, p. 8"
         return self.min_degree()
 
     def find_shortest_path_per_node(self, n: Node) -> Path:
