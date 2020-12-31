@@ -126,6 +126,10 @@ class Graph(GraphObject):
             raise ValueError("Edges are None for this graph")
         return self._edges
 
+    def is_connected(self) -> bool:
+        ""
+        return all([len(es) != 0 for es in self.gdata.values()])
+
     def vertices(self) -> Set[Node]:
         return set([n for n in self.V.values()])
 
