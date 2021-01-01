@@ -2,9 +2,9 @@
 general graph object
 """
 from typing import Set, Optional, Callable, List, Tuple, Union, Dict
-from graphobj import GraphObject
-from edge import Edge
-from node import Node
+from gmodels.graphobj import GraphObject
+from gmodels.edge import Edge
+from gmodels.node import Node
 from uuid import uuid4
 import math
 
@@ -59,11 +59,11 @@ class Graph(GraphObject):
         return (
             self.id()
             + "--"
-            + str([str(n) + "::" for n in self._nodes])
+            + "::".join([str(n) for n in self._nodes])
             + "--"
-            + str([str(n) + "!!" for n in self._edges])
+            + "!!".join([str(n) for n in self._edges])
             + "--"
-            + str(self.data())
+            + "::".join([str(k) + "-" + str(v) for k, v in self.data().items()])
         )
 
     def __hash__(self):
@@ -129,6 +129,62 @@ class Graph(GraphObject):
     def is_connected(self) -> bool:
         ""
         return all([len(es) != 0 for es in self.gdata.values()])
+
+    def is_adjacent_of(self, e1: Edge, e2: Edge) -> bool:
+        ""
+        n1_ids = e1.node_ids()
+        n2_ids = e2.node_ids()
+        return len(n1_ids.intersection(n2_ids)) > 0
+
+    def is_node_incident(self, n: Node, e: Edge) -> bool:
+        ""
+        return e.is_endvertice(n)
+
+    def is_neighbour_of(self, n1: Node, n2: Node) -> bool:
+        """!
+        """
+        n1_edge_ids = set(self.gdata[n1.id()])
+        n2_edge_ids = set(self.gdata[n2.id()])
+        edge_ids = n1_edge_ids.intersection(n2_edge_ids)
+        # filter self loops
+        edges = set([self.E[e] for e in edge_ids])
+        es = set()
+        for edge in edges:
+            first_condition = edge.start() == n1 and edge.end() == n2
+            second_condition = edge.start() == n2 and edge.end() == n1
+            if first_condition or second_condition:
+                es.add(edge.id())
+        return len(es) > 0
+
+    def is_node_independant_of(self, n1: Node, n2: Node) -> bool:
+        return not self.is_neighbour_of(n1, n2)
+
+    def is_stable(self, ns: Set[Node]) -> bool:
+        ""
+        if not self.contains_vertices(ns):
+            raise ValueError("node set is not contained in graph")
+        node_list = list(ns)
+        while node_list:
+            n1 = node_list.pop()
+            for n2 in node_list:
+                if self.is_neighbour_of(n1=n1, n2=n2):
+                    return False
+        return True
+
+    def neighbours_of(self, n1: Node) -> Set[Node]:
+        ""
+        if not self.is_in(n1):
+            raise ValueError("node is not in graph")
+        neighbours = set()
+        for n2 in self.nodes():
+            if self.is_neighbour_of(n1=n1, n2=n2) is True:
+                neighbours.add(n2)
+        return neighbours
+
+    def edges_of(self, n: Node) -> Set[Edge]:
+        ""
+        edge_ids = self.gdata[n.id()]
+        return set([self.E[eid] for eid in edge_ids])
 
     def vertices(self) -> Set[Node]:
         return set([n for n in self.V.values()])
@@ -221,7 +277,8 @@ class Graph(GraphObject):
 
     def union(self, aset: Union[Set[Node], Set[Edge]]) -> Union[Set[Node], Set[Edge]]:
         ""
-        if any(isinstance(a, Node) for a in aset):
+        lst = list(aset)
+        if isinstance(lst[0], Node):
             return self.nodes().union(aset)
         else:
             return self.edges().union(aset)
@@ -234,9 +291,15 @@ class Graph(GraphObject):
         "check if graph contains edges"
         return self.nodes().intersection(vs) == vs
 
+    def contains(self, aset: Union[Set[Edge], Set[Node]]) -> bool:
+        if any(isinstance(a, Node) for a in aset):
+            return self.nodes().intersection(aset) == aset
+        else:
+            return self.edges().intersection(aset) == aset
+
     def contains_graph(self, g) -> bool:
         "check if graph g is contained"
-        return self.contains_vertices(g.nodes()) and self.contains_edges(g.edges())
+        return self.contains(g.nodes()) and self.contains(g.edges())
 
     def graph_intersection(self, gs):
         ""
