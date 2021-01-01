@@ -2,9 +2,9 @@
 Edge in a graph
 """
 from typing import Set
-from abstractobj import AbstractNode, AbstractEdge, EdgeType
-from node import Node
-from graphobj import GraphObject
+from gmodels.abstractobj import AbstractEdge, EdgeType
+from gmodels.node import Node
+from gmodels.graphobj import GraphObject
 
 
 class Edge(AbstractEdge, GraphObject):
@@ -38,7 +38,7 @@ class Edge(AbstractEdge, GraphObject):
             + "--"
             + str(self.type())
             + "--"
-            + str(self.data())
+            + "::".join([str(k) + "-" + str(v) for k, v in self.data().items()])
             + "--"
             + str(self.start_node)
             + "--"
@@ -54,6 +54,9 @@ class Edge(AbstractEdge, GraphObject):
     def end(self) -> Node:
         return self.end_node
 
+    def type(self) -> EdgeType:
+        return self.etype
+
     def node_ids(self) -> Set[str]:
         ""
         ids = set()
@@ -61,7 +64,7 @@ class Edge(AbstractEdge, GraphObject):
         ids.add(self.end().id())
         return ids
 
-    def is_endvertice(self, n: AbstractNode) -> bool:
+    def is_endvertice(self, n: Node) -> bool:
         "check if node is an end vertex"
         ids = self.node_ids()
         return n.id() in ids

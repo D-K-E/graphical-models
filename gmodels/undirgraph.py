@@ -1,7 +1,7 @@
 """
 Undirected graph object
 """
-from typing import Set, Optional, Callable, List, Tuple, Dict
+from typing import Set, Optional, List, Tuple, Dict
 from edge import Edge
 from node import Node
 from path import Path, Cycle
@@ -28,126 +28,12 @@ class UndirectedGraph(Graph):
                     )
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
 
-    def is_node_incident(self, n: Node, e: Edge) -> bool:
+    def find_shortest_path(self, n1: Node, n2: Node) -> Optional[Path]:
         ""
-        return e.is_endvertice(n)
-
-    def is_neighbour_of(self, n1: Node, n2: Node) -> bool:
-        ""
-        n1_edge_ids = set(self.gdata[n1.id()])
-        n2_edge_ids = set(self.gdata[n2.id()])
-        return len(n1_edge_ids.intersection(n2_edge_ids)) > 0
-
-    def is_adjacent_of(self, e1: Edge, e2: Edge) -> bool:
-        ""
-        n1_ids = e1.node_ids()
-        n2_ids = e2.node_ids()
-        return len(n1_ids.intersection(n2_ids)) > 0
-
-    def is_node_independant_of(self, n1: Node, n2: Node) -> bool:
-        return not self.is_neighbour_of(n1, n2)
-
-    def is_stable(self, ns: Set[Node]) -> bool:
-        ""
-        if not self.contains_vertices(ns):
-            raise ValueError("node set is not contained in graph")
-        node_list = list(ns)
-        while node_list:
-            n1 = node_list.pop()
-            for n2 in node_list:
-                if self.is_neighbour_of(n1=n1, n2=n2):
-                    return False
-        return True
-
-    def neighbours_of(self, n1: Node) -> Set[Node]:
-        ""
-        if not self.is_in(n1):
-            raise ValueError("node is not in graph")
-        neighbours = set()
-        for n2 in self.nodes():
-            if self.is_neighbour_of(n1=n1, n2=n2):
-                neighbours.add(n2)
-        return neighbours
-
-    def edges_of(self, n: Node) -> Set[Edge]:
-        ""
-        edge_ids = self.gdata[n.id()]
-        return set([self.E[eid] for eid in edge_ids])
-
-    def traverse_search_nodes(self, snode: dict, nlist: List[Node], elist: List[Node]):
-        ""
-        if snode["parent"] is None:
-            nlist.append(snode["state"])
-            return
-        #
-        nlist.append(snode["state"])
-        elist.append(self.edge_by_id(snode["edge-id"]))
-        self.traverse_search_nodes(snode["parent"], nlist, elist)
-
-    def extract_path_from_search_node(self, search_node: dict) -> Path:
-        ""
-        nodelist: List[Node] = []
-        edgelist: List[Edge] = []
-        self.traverse_search_nodes(search_node, nlist=nodelist, elist=edgelist)
-        if not edgelist:
-            edgelist = None
-        return Path(gid=str(uuid4()), nodes=nodelist, edges=edgelist)
-
-    def find_shortest_path(self, n1: Node, n2: Node) -> Path:
-        """
-        find path between two nodes using uniform cost search
-        """
-        if not self.is_in(n1):
-            raise ValueError("first node is not inside this graph")
-        if not self.is_in(n2):
-            raise ValueError("second node is not inside this graph")
-        if n1 == n2:
-            nset = [n1]
-            return Path(gid=str(uuid4()), nodes=nset, edges=None)
-        search_node = {"state": n1, "cost": 0, "parent": None, "edge-id": None}
-        explored = set()
-        frontier = [search_node]
-        while frontier:
-            explored_search_node = frontier.pop()
-            explored_state = explored_search_node["state"]
-            explored_id = explored_state.id()
-            if explored_id == n2.id():
-                return self.extract_path_from_search_node(explored_search_node)
-            #
-            explored.add(explored_id)
-            path_cost = explored_search_node["cost"]
-            for neighbour in self.neighbours_of(explored_state):
-                parent_edge = self.edge_by_vertices(explored_state, neighbour)
-                ncost = path_cost + 1
-                child_search_node = {
-                    "state": neighbour,
-                    "cost": ncost,
-                    "parent": explored_search_node,
-                    "edge-id": parent_edge,
-                }
-                child_id = child_search_node["state"].id()
-                if (child_id not in explored) and (
-                    all(
-                        [
-                            front_node["state"].id() != child_id
-                            for front_node in frontier
-                        ]
-                    )
-                ):
-                    #
-                    frontier.append(child_search_node)
-                    frontier.sort(key=lambda x: x["cost"])
-                elif any(
-                    [child_id == front_node["state"].id() for front_node in frontier]
-                ):
-                    frontcp = frontier.copy()
-                    for i, snode in enumerate(frontcp):
-                        snode_id = snode["state"].id()
-                        if snode_id == child_id:
-                            if snode["cost"] > child_search_node["cost"]:
-                                frontier[i] = child_search_node
-        #
-        return
+        try:
+            Path.from_graph_nodes(self, n1=n1, n2=n2, generative_fn=self.neighbours_of)
+        except ValueError:
+            return None
 
     def check_for_path(self, n1: Node, n2: Node) -> bool:
         "check if there is a path between nodes"

@@ -10,9 +10,8 @@ the string representation. The equality check is performed using id and types.
 
 """
 from typing import Dict, Set, Tuple, Optional
-from gmodels.abstractobj import AbstractNode, AbstractEdge, EdgeType
+from gmodels.abstractobj import AbstractEdge, EdgeType
 from gmodels.abstractobj import NodePosition
-from gmodels.info import EdgeInfo
 from gmodels.graphobj import GraphObject
 
 
@@ -60,7 +59,11 @@ class Node(GraphObject):
 
         \return string
         """
-        return self.id() + "--" + str(self.data())
+        return (
+            self.id()
+            + "--"
+            + "::".join([str(k) + "-" + str(v) for k, v in self.data().items()])
+        )
 
     def __hash__(self):
         """!

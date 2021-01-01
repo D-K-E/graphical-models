@@ -2,7 +2,7 @@
 object contained in a graph
 """
 
-from abstractobj import AbstractGraphObj
+from gmodels.abstractobj import AbstractGraphObj
 
 
 class GraphObject(AbstractGraphObj):
