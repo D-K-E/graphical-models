@@ -1,5 +1,5 @@
 """
-general graph object
+\page graphpage Graph object documentation
 """
 from typing import Set, Optional, Callable, List, Tuple, Union, Dict
 from gmodels.graphobj import GraphObject

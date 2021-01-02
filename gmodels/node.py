@@ -1,4 +1,6 @@
 """!
+\page nodepage Node documentation
+
 \file A node in a graph
 
 Node.py
