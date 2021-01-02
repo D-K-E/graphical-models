@@ -1,5 +1,6 @@
-"""
-\page graphpage Graph object documentation
+"""!
+\defgroup graphgroup Graph and Related Objects
+
 """
 from typing import Set, Optional, Callable, List, Tuple, Union, Dict
 from gmodels.graphobj import GraphObject

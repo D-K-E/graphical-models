@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['path_42',['Path',['../dc/d45/classgmodels_1_1path_1_1Path.html',1,'gmodels::path']]],
-  ['px_5fgiven_5fy_5fgumbel_43',['px_given_y_gumbel',['../d5/d0c/namespacegmodels_1_1legacy_1_1bayesutils.html#ad657b2c412ffb40ff85cca2d9679b238',1,'gmodels::legacy::bayesutils']]],
-  ['px_5fgiven_5fy_5flaplace_44',['px_given_y_laplace',['../d5/d0c/namespacegmodels_1_1legacy_1_1bayesutils.html#a65cf4141984f45254c257bc39bf35a4d',1,'gmodels::legacy::bayesutils']]],
-  ['px_5fgiven_5fy_5flogistic_45',['px_given_y_logistic',['../d5/d0c/namespacegmodels_1_1legacy_1_1bayesutils.html#a048c83aa0252f4c6a2d6e26cce151d11',1,'gmodels::legacy::bayesutils']]]
+  ['path_43',['Path',['../dc/d45/classgmodels_1_1path_1_1Path.html',1,'gmodels::path']]],
+  ['px_5fgiven_5fy_5fgumbel_44',['px_given_y_gumbel',['../d5/d0c/namespacegmodels_1_1legacy_1_1bayesutils.html#ad657b2c412ffb40ff85cca2d9679b238',1,'gmodels::legacy::bayesutils']]],
+  ['px_5fgiven_5fy_5flaplace_45',['px_given_y_laplace',['../d5/d0c/namespacegmodels_1_1legacy_1_1bayesutils.html#a65cf4141984f45254c257bc39bf35a4d',1,'gmodels::legacy::bayesutils']]],
+  ['px_5fgiven_5fy_5flogistic_46',['px_given_y_logistic',['../d5/d0c/namespacegmodels_1_1legacy_1_1bayesutils.html#a048c83aa0252f4c6a2d6e26cce151d11',1,'gmodels::legacy::bayesutils']]]
 ];

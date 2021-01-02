@@ -1,14 +1,10 @@
 """!
-\page nodepage Node documentation
+\file node.py
 
-\file A node in a graph
+\ingroup graphgroup Node documentation
+\see \link graphgroup Graph Object \endlink
 
-Node.py
-==============
-
-A node in graph as in graph theory. It can hold any data. It inherits graph
-object. We can transform them into strings. We can obtain their hash value from
-the string representation. The equality check is performed using id and types.
+For more theoretical explanation \ref nodepage
 
 """
 from typing import Dict, Set, Tuple, Optional
@@ -79,3 +75,15 @@ class Node(GraphObject):
         \return int
         """
         return hash(self.__str__())
+
+
+"""!
+\page nodepage
+
+\section desc_sect Description
+
+A node in graph as in graph theory. It can hold any data. It inherits graph
+object. We can transform them into strings. We can obtain their hash value from
+the string representation. The equality check is performed using id and types.
+
+"""
