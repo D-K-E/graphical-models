@@ -1,4 +1,5 @@
-"""
+"""!
+\page edgepage Edge documentation
 Edge in a graph
 """
 from typing import Set
