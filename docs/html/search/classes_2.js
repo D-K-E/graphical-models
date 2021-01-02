@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['distribution_34',['Distribution',['../d8/d7c/classgmodels_1_1legacy_1_1bayesutils_1_1Distribution.html',1,'gmodels::legacy::bayesutils']]]
+  ['cycle_50',['Cycle',['../dc/d5d/classgmodels_1_1path_1_1Cycle.html',1,'gmodels::path']]]
 ];

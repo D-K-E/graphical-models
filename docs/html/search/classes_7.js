@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['singlenaivebayesmle_44',['SingleNaiveBayesMLE',['../d2/dfb/classgmodels_1_1legacy_1_1NaiveBayes_1_1SingleNaiveBayesMLE.html',1,'gmodels::legacy::NaiveBayes']]],
-  ['snodeinfo_45',['SNodeInfo',['../d0/d73/classgmodels_1_1info_1_1SNodeInfo.html',1,'gmodels::info']]]
+  ['node_59',['Node',['../d6/d0b/classgmodels_1_1node_1_1Node.html',1,'gmodels::node']]],
+  ['nodeposition_60',['NodePosition',['../d6/d1d/classgmodels_1_1abstractobj_1_1NodePosition.html',1,'gmodels::abstractobj']]]
 ];
