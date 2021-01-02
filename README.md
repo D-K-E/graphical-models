@@ -1,5 +1,7 @@
 # Graphical Models
 
+See the [documentation](https://viva-lambda.github.io/graphical-models/)
+
 The library is focused on analysis than io. Everything is implemented from 
 scratch. Only standard library is used for now. 
 I might add numpy and cython later on if the performance becomes an issue 
