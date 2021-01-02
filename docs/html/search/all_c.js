@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['singlenaivebayesmle_46',['SingleNaiveBayesMLE',['../d2/dfb/classgmodels_1_1legacy_1_1NaiveBayes_1_1SingleNaiveBayesMLE.html',1,'gmodels::legacy::NaiveBayes']]]
+  ['singlenaivebayesmle_47',['SingleNaiveBayesMLE',['../d2/dfb/classgmodels_1_1legacy_1_1NaiveBayes_1_1SingleNaiveBayesMLE.html',1,'gmodels::legacy::NaiveBayes']]]
 ];

@@ -1,4 +1,5 @@
-"""
+"""!
+\file analyzer.py 
 graph analyzer
 """
 from typing import Set, Optional, Callable, List, Tuple
