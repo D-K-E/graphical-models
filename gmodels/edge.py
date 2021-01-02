@@ -1,9 +1,9 @@
 """!
 \file edge.py
-\ingroup graphgroup Edge in a graph
+\ingroup graphgroup edgegroup
 
-\see \link graphgroup Graph Object \endlink
-For more theoretical information on edges \ref edgepage
+\see \link graphgroup Graph Object \endlink edgegroup
+
 """
 from typing import Set
 from gmodels.abstractobj import AbstractEdge, EdgeType
@@ -75,8 +75,8 @@ class Edge(AbstractEdge, GraphObject):
 
 
 """!
-
-\page edgepage Edge documentation
+\defgroup edgegroup Edge documentation
+\ingroup graphgroup
 
 \section desc_sect Description
 
