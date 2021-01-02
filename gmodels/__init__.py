@@ -17,10 +17,10 @@ pandas as well.
 
 The main objects of the library are:
 
-- Graph in \see graphpage
+- Graph in \see graphgroup
 
-- Edge in \see edgepage
+- Edge in \ref edgepage
 
-- Node in \see nodepage
+- Node in \ref nodepage
 
 """

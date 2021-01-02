@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['edge_20documentation_96',['Edge documentation',['../d9/d71/edgepage.html',1,'']]]
+  ['graphical_20models_97',['Graphical Models',['../index.html',1,'']]]
 ];

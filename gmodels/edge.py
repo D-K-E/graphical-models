@@ -1,6 +1,9 @@
 """!
-\page edgepage Edge documentation
-Edge in a graph
+\file edge.py
+\ingroup graphgroup Edge in a graph
+
+\see \link graphgroup Graph Object \endlink
+For more theoretical information on edges \ref edgepage
 """
 from typing import Set
 from gmodels.abstractobj import AbstractEdge, EdgeType
@@ -69,3 +72,14 @@ class Edge(AbstractEdge, GraphObject):
         "check if node is an end vertex"
         ids = self.node_ids()
         return n.id() in ids
+
+
+"""!
+
+\page edgepage Edge documentation
+
+\section desc_sect Description
+
+Edge is a set of nodes with two members generally designated as E.
+...
+"""
