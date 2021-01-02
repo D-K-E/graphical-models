@@ -10,8 +10,9 @@ var searchData=
   ['graphanalyzer_28',['GraphAnalyzer',['../d2/df3/classgmodels_1_1analyzer_1_1GraphAnalyzer.html',1,'gmodels::analyzer']]],
   ['graphobj_29',['graphobj',['../d0/df8/namespacegmodels_1_1graphobj.html',1,'gmodels']]],
   ['graphobject_30',['GraphObject',['../d9/d61/classgmodels_1_1graphobj_1_1GraphObject.html',1,'gmodels::graphobj']]],
-  ['info_31',['info',['../dd/daa/namespacegmodels_1_1info.html',1,'gmodels']]],
-  ['naivebayes_32',['NaiveBayes',['../dd/dfd/namespacegmodels_1_1legacy_1_1NaiveBayes.html',1,'gmodels::legacy']]],
-  ['path_33',['path',['../d0/d68/namespacegmodels_1_1path.html',1,'gmodels']]],
-  ['undirgraph_34',['undirgraph',['../d2/ddd/namespacegmodels_1_1undirgraph.html',1,'gmodels']]]
+  ['graphical_20models_31',['Graphical Models',['../index.html',1,'']]],
+  ['info_32',['info',['../dd/daa/namespacegmodels_1_1info.html',1,'gmodels']]],
+  ['naivebayes_33',['NaiveBayes',['../dd/dfd/namespacegmodels_1_1legacy_1_1NaiveBayes.html',1,'gmodels::legacy']]],
+  ['path_34',['path',['../d0/d68/namespacegmodels_1_1path.html',1,'gmodels']]],
+  ['undirgraph_35',['undirgraph',['../d2/ddd/namespacegmodels_1_1undirgraph.html',1,'gmodels']]]
 ];
