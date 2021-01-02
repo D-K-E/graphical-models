@@ -3,10 +3,10 @@ var indexSectionsWithContent =
   0: "_abcdefgimnpsu",
   1: "abcdegmnpsu",
   2: "g",
-  3: "an",
+  3: "aen",
   4: "_adefip",
   5: "g",
-  6: "eg"
+  6: "g"
 };
 
 var indexSectionNames =
