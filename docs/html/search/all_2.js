@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['distribution_5',['Distribution',['../d8/d7c/classgmodels_1_1legacy_1_1bayesutils_1_1Distribution.html',1,'gmodels::legacy::bayesutils']]]
+  ['basicnaivebayesmle_7',['BasicNaiveBayesMLE',['../d9/d4b/classgmodels_1_1legacy_1_1NaiveBayes_1_1BasicNaiveBayesMLE.html',1,'gmodels::legacy::NaiveBayes']]]
 ];

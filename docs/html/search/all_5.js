@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['multinaivebayesmle_20',['MultiNaiveBayesMLE',['../dd/dda/classgmodels_1_1legacy_1_1NaiveBayes_1_1MultiNaiveBayesMLE.html',1,'gmodels::legacy::NaiveBayes']]]
+  ['edge_12',['Edge',['../dd/dc2/classgmodels_1_1edge_1_1Edge.html',1,'gmodels::edge']]],
+  ['edgetype_13',['EdgeType',['../d4/dee/classgmodels_1_1abstractobj_1_1EdgeType.html',1,'gmodels::abstractobj']]],
+  ['ev_5fratio_5ffrom_5faverage_5fdegree_14',['ev_ratio_from_average_degree',['../dc/d71/classgmodels_1_1graph_1_1Graph.html#a3eacd18c05f8d3fc94792bb575c522a2',1,'gmodels::graph::Graph']]]
 ];

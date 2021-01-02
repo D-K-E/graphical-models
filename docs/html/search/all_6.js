@@ -1,6 +1,8 @@
 var searchData=
 [
-  ['node_21',['Node',['../d6/d0b/classgmodels_1_1node_1_1Node.html',1,'gmodels::node']]],
-  ['nodeinfo_22',['NodeInfo',['../dc/d22/classgmodels_1_1info_1_1NodeInfo.html',1,'gmodels::info']]],
-  ['nodeposition_23',['NodePosition',['../d6/d1d/classgmodels_1_1abstractobj_1_1NodePosition.html',1,'gmodels::abstractobj']]]
+  ['find_5fconnected_5fcomponents_15',['find_connected_components',['../dc/d1d/classgmodels_1_1undirgraph_1_1UndirectedGraph.html#a5cb628b246783a7953cdd1a1ee69b3c1',1,'gmodels::undirgraph::UndirectedGraph']]],
+  ['find_5fminimum_5fspanning_5ftree_16',['find_minimum_spanning_tree',['../dc/d1d/classgmodels_1_1undirgraph_1_1UndirectedGraph.html#ab0a28e49597974dab6dbd1c53dff4e56',1,'gmodels::undirgraph::UndirectedGraph']]],
+  ['find_5fseparating_5fvertices_17',['find_separating_vertices',['../dc/d1d/classgmodels_1_1undirgraph_1_1UndirectedGraph.html#a6de5ee2d2261092de359fff444cc682c',1,'gmodels::undirgraph::UndirectedGraph']]],
+  ['find_5fshortest_5fpath_18',['find_shortest_path',['../dc/d45/classgmodels_1_1path_1_1Path.html#a2dc706083cf5fd42aa9d909baeea370b',1,'gmodels::path::Path']]],
+  ['from_5fgraph_5fnodes_19',['from_graph_nodes',['../dc/d45/classgmodels_1_1path_1_1Path.html#abc492c309a7bbb4891a6aa397b1b1a26',1,'gmodels::path::Path']]]
 ];
