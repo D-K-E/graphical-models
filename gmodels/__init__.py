@@ -1,5 +1,5 @@
 """!
-\mainpage[Graphical Models]
+\mainpage Graphical Models
 
 \section
 
