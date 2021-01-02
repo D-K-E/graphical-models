@@ -1,7 +1,7 @@
 """!
 \mainpage Graphical Models
 
-\section
+\section intro_sec Introduction
 
 The library is focused on analysis than io. Everything is implemented from 
 scratch. Only standard library is used for now. 
@@ -17,9 +17,9 @@ pandas as well.
 
 The main objects of the library are:
 
-    - Graph in \ref graphpage
+    - Graph in \subpage graphpage
 
-    - Edge in \ref edgepage
+    - Edge in \subpage edgepage
 
-    - Node in \ref nodepage
+    - Node in \subpage nodepage
 """
