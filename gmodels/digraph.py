@@ -11,7 +11,7 @@ from uuid import uuid4
 import math
 
 
-class DirectedGraph(Graph):
+class DiGraph(Graph):
     """!
     Directed graph implementation
     """
