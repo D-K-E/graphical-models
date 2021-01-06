@@ -8,7 +8,7 @@ from node import Node
 
 
 class GraphAnalyzer:
-    """
+    """!
     Analyze given graphs
     """
 
