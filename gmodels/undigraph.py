@@ -2,16 +2,16 @@
 Undirected graph object
 """
 from typing import Set, Optional, List, Tuple, Dict
-from edge import Edge
-from node import Node
-from path import Path, Cycle
-from abstractobj import EdgeType
-from graph import Graph
+from gmodels.edge import Edge
+from gmodels.node import Node
+from gmodels.path import Path, Cycle
+from gmodels.abstractobj import EdgeType
+from gmodels.graph import Graph
 from uuid import uuid4
 import math
 
 
-class UndirectedGraph(Graph):
+class UndiGraph(Graph):
     """!
     Unidrected graph whose edges are of type Undirected
     """
@@ -112,7 +112,7 @@ class UndirectedGraph(Graph):
         #
         V_prime = set([self.V[v] for v in v_prim])
         E_prime = set([self.E[e] for v in e_prim])
-        return UndirectedGraph(gid=str(uuid4()), nodes=V_prime, edges=E_prime)
+        return UndiGraph(gid=str(uuid4()), nodes=V_prime, edges=E_prime)
 
     def dfs_forest(
         self,
@@ -174,7 +174,7 @@ class UndirectedGraph(Graph):
         for u in self.V:
             if marked[u] is False:
                 res = self.dfs_forest(
-                    u=u, pred=pred, marked=marked, d=d, f=f, time=time
+                    u=u, pred=pred, marked=marked, d=d, f=f, time=time, check_cycle=True
                 )
                 if res is not None:
                     start_end_cycle, before_last = res
