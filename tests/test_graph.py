@@ -26,6 +26,10 @@ class GraphTest(unittest.TestCase):
         self.e3 = Edge(
             "e3", start_node=self.n3, end_node=self.n4, edge_type=EdgeType.UNDIRECTED
         )
+        self.e4 = Edge(
+            "e4", start_node=self.n1, end_node=self.n4, edge_type=EdgeType.UNDIRECTED
+        )
+
         self.graph = Graph(
             "g1",
             data={"my": "graph", "data": "is", "very": "awesome"},
@@ -111,6 +115,19 @@ class GraphTest(unittest.TestCase):
         #
         # a -- b -- e
         #  \
+        #   +-----f
+
+        self.ugraph4 = Graph(
+            "ug4",
+            data={"my": "graph", "data": "is", "very": "awesome"},
+            nodes=self.ugraph2.nodes().union(self.graph_2.nodes()),
+            edges=self.ugraph2.edges().union(self.graph_2.edges()),
+        )
+        # ugraph 4
+        #   +-----+     n1 -- n2 -- n3 -- n4
+        #  /       \     \                /
+        # a -- b -- e     +--------------+
+        #  \       /
         #   +-----f
 
         # make some directed edges
@@ -428,6 +445,23 @@ class GraphTest(unittest.TestCase):
         com2 = self.ugraph2.props["nb-component"]
         self.assertEqual(com, 2)
         self.assertEqual(com2, 1)
+
+    def test_get_components(self):
+        ""
+        comps = self.ugraph4.get_components()
+        cs = list(comps)
+        cs0ns = cs[0].nodes()
+        cs0es = cs[0].edges()
+        cs1ns = cs[1].nodes()
+        cs1es = cs[1].edges()
+        cond1 = self.ugraph2.nodes() == cs0ns or self.ugraph2.nodes() == cs1ns
+        cond2 = self.graph_2.nodes() == cs0ns or self.graph_2.nodes() == cs1ns
+        cond3 = self.ugraph2.edges() == cs0es or self.ugraph2.edges() == cs1es
+        cond4 = self.graph_2.edges() == cs0es or self.graph_2.edges() == cs1es
+        self.assertTrue(cond1)
+        self.assertTrue(cond2)
+        self.assertTrue(cond3)
+        self.assertTrue(cond4)
 
     def test_visit_graph_dfs_cycles_false(self):
         "test visit graph dfs function"

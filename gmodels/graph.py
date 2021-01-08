@@ -12,7 +12,7 @@ import math
 
 class Graph(GraphObject):
     """!
-    Simple graph
+    Simple finite graph
     G = (V, E)
     V - {v}
     """
@@ -527,7 +527,8 @@ class Graph(GraphObject):
         ""
         time = 0
         marked: Dict[str, bool] = {n: False for n in self.V}
-        pred: Dict[str, Optional[str]] = {n: None for n in self.V}
+        preds: Dict[str, Dict[str, str]] = {}
+        Ts: Dict[str, Set[str]] = {}
         d: Dict[str, int] = {n: math.inf for n in self.V}
         f: Dict[str, int] = {n: math.inf for n in self.V}
         cycles: Dict[str, List[Dict[str, Union[str, int]]]] = {n: [] for n in self.V}
@@ -535,36 +536,60 @@ class Graph(GraphObject):
         #
         for u in self.V:
             if marked[u] is False:
+                pred: Dict[str, Optional[str]] = {n: None for n in self.V}
+                T: Set[str] = set()
                 self.dfs_forest(
                     u=u,
                     pred=pred,
                     cycles=cycles,
                     marked=marked,
                     d=d,
+                    T=T,
                     f=f,
                     time=time,
                     check_cycle=check_cycle,
                     generative_fn=generative_fn,
                 )
                 component_counter += 1
+                for child, parent in pred.copy().items():
+                    if child != u and child is None:
+                        pred.pop(child)
+                Ts[u] = T
+                preds[u] = pred
         #
-
         res = {
-            "dfs-forest": pred,
+            "dfs-forest": self.from_preds_to_edgeset(preds),
             "first-visit-times": d,
             "last-visit-times": f,
+            "components": Ts,
             "cycle-info": cycles,
             "nb-component": component_counter,
         }
         return res
 
+    def from_preds_to_edgeset(
+        self, preds: Dict[str, Dict[str, str]]
+    ) -> Dict[str, Set[Edge]]:
+        ""
+        esets: Dict[str, Set[Edge]] = {}
+        for u, forest in preds.copy().items():
+            eset: Set[Edge] = set()
+            for child, parent in forest.items():
+                cnode = self.V[child]
+                if parent is not None:
+                    pnode = self.V[parent]
+                    eset.add(self.edge_by_vertices(n1=pnode, n2=cnode))
+            esets[u] = eset
+        return esets
+
     def dfs_forest(
         self,
         u: str,
-        pred: Dict[str, Optional[str]],
+        pred: Dict[str, str],
         marked: Dict[str, int],
         d: Dict[str, int],
         f: Dict[str, int],
+        T: Set[str],
         cycles: Dict[str, List[Dict[str, Union[str, int]]]],
         time: int,
         generative_fn: Callable[[Node], Set[Node]],
@@ -581,6 +606,7 @@ class Graph(GraphObject):
         \param pred storing the parent of nodes
         \param g graph we are searching for
         \param u node id
+        \param T set of pred nodes
         \param time global visit counter
         \param check_cycle fill cycles if it is detected
         \param generative_fn generate neighbour of a vertex with respect to graph type
@@ -593,12 +619,14 @@ class Graph(GraphObject):
             v = vnode.id()
             if marked[v] is False:
                 pred[v] = u
+                T.add(v)
                 self.dfs_forest(
                     u=v,
                     pred=pred,
                     marked=marked,
                     d=d,
                     f=f,
+                    T=T,
                     cycles=cycles,
                     time=time,
                     check_cycle=check_cycle,
@@ -639,6 +667,51 @@ class Graph(GraphObject):
 
     def nb_components(self) -> int:
         return self.props["nb-component"]
+
+    def child_from_parent(
+        self, current: str, preds: Dict[str, Optional[str]], root: str,
+    ) -> Optional[str]:
+        ""
+        c, p = None, None
+        for child, parent_id in preds.copy().items():
+            if parent_id == current:
+                preds.pop(child)
+                c = child
+        for child, parent_id in preds.copy().items():
+            if child == current:
+                p = preds.pop(child)
+        if c is not None:
+            return c
+        if p is not None:
+            return p
+        return None
+
+    def get_component(self, node_id: str) -> GraphObject:
+        """!
+        get a component from graph
+        """
+        v = self.V[node_id]
+        Ts = self.props["components"]
+        T = Ts[node_id]
+        vertices = [self.V[v] for v in T]
+        edges = [self.gdata[v] for v in T]
+        es: Set[Edge] = set()
+        for elst in edges:
+            for e in elst:
+                es.add(self.E[e])
+
+        return Graph(gid=str(uuid4()), nodes=vertices, edges=es)
+
+    def get_components(self):
+        """!
+        Get components of graph
+        """
+        if self.nb_components() == 1:
+            return self
+
+        # Extract component roots
+        component_roots = [k for k in self.props["dfs-forest"].keys()]
+        return set([self.get_component(node_id=root) for root in component_roots])
 
     def __add__(
         self, a: Union[Set[Edge], Set[Node], Node, Edge, GraphObject]
