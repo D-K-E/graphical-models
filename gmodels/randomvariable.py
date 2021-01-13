@@ -127,6 +127,7 @@ class NumCatRVariable(CatRandomVariable):
     def P_X(self):
         """!
         Biagini, Campanino, 2016, p.11
+        it is also the marginal over all values
         """
         return self.expected_value()
 
