@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['undirectedgraph_66',['UndirectedGraph',['../dc/d1d/classgmodels_1_1undirgraph_1_1UndirectedGraph.html',1,'gmodels::undirgraph']]]
+  ['singlenaivebayesmle_103',['SingleNaiveBayesMLE',['../d2/dfb/classgmodels_1_1legacy_1_1NaiveBayes_1_1SingleNaiveBayesMLE.html',1,'gmodels::legacy::NaiveBayes']]]
 ];

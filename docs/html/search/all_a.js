@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['node_40',['Node',['../d6/d0b/classgmodels_1_1node_1_1Node.html',1,'gmodels::node']]],
-  ['node_2epy_41',['node.py',['../d1/dfb/node_8py.html',1,'']]],
-  ['nodeposition_42',['NodePosition',['../d6/d1d/classgmodels_1_1abstractobj_1_1NodePosition.html',1,'gmodels::abstractobj']]]
+  ['mk_5fnew_5frvar_56',['mk_new_rvar',['../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html#a141ea917afcf91d999d81516b18b1146',1,'gmodels::randomvariable::NumCatRVariable']]],
+  ['multinaivebayesmle_57',['MultiNaiveBayesMLE',['../dd/dda/classgmodels_1_1legacy_1_1NaiveBayes_1_1MultiNaiveBayesMLE.html',1,'gmodels::legacy::NaiveBayes']]]
 ];

@@ -2,13 +2,13 @@
 \file edge.py
 \ingroup graphgroup edgegroup
 
-\see \link graphgroup Graph Object \endlink edgegroup
+\see \link graphgroup Graph Object \endlink edgegroup nodegroup
 
 """
 from typing import Set
-from gmodels.abstractobj import AbstractEdge, EdgeType
-from gmodels.node import Node
-from gmodels.graphobj import GraphObject
+from gmodels.gtypes.abstractobj import AbstractEdge, EdgeType
+from gmodels.gtypes.node import Node
+from gmodels.gtypes.graphobj import GraphObject
 
 
 class Edge(AbstractEdge, GraphObject):
@@ -114,6 +114,20 @@ class Edge(AbstractEdge, GraphObject):
         """
         return self.start_node
 
+    def is_start(self, n: Node) -> bool:
+        """!
+        """
+        if n.id() == self.start().id():
+            return True
+        return False
+
+    def is_end(self, n: Node) -> bool:
+        """!
+        """
+        if n.id() == self.end().id():
+            return True
+        return False
+
     def end(self) -> Node:
         """!
         \brief Returns the Node at which the attribute ends.
@@ -131,6 +145,11 @@ class Edge(AbstractEdge, GraphObject):
         """
         return self.etype
 
+    def set_type(self, etype: EdgeType):
+        """!
+        """
+        self.etype = etype
+
     def node_ids(self) -> Set[str]:
         """!
         \brief Spit out ids of nodes that belong to this edge
@@ -146,6 +165,16 @@ class Edge(AbstractEdge, GraphObject):
         """
         ids = self.node_ids()
         return n.id() in ids
+
+    def get_other(self, n: Node) -> Node:
+        """!
+        """
+        if not self.is_endvertice(n):
+            raise ValueError("node is not an end vertex")
+        if self.start().id() == n.id():
+            return self.end()
+        else:
+            return self.start()
 
 
 """!

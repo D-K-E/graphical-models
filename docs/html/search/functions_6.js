@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['px_5fgiven_5fy_5fgumbel_93',['px_given_y_gumbel',['../d5/d0c/namespacegmodels_1_1legacy_1_1bayesutils.html#ad657b2c412ffb40ff85cca2d9679b238',1,'gmodels::legacy::bayesutils']]],
-  ['px_5fgiven_5fy_5flaplace_94',['px_given_y_laplace',['../d5/d0c/namespacegmodels_1_1legacy_1_1bayesutils.html#a65cf4141984f45254c257bc39bf35a4d',1,'gmodels::legacy::bayesutils']]],
-  ['px_5fgiven_5fy_5flogistic_95',['px_given_y_logistic',['../d5/d0c/namespacegmodels_1_1legacy_1_1bayesutils.html#a048c83aa0252f4c6a2d6e26cce151d11',1,'gmodels::legacy::bayesutils']]]
+  ['get_5fcomponent_140',['get_component',['../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a23573c31ba323e5c4aa045f55f83b3c2',1,'gmodels::gtypes::graph::Graph']]],
+  ['get_5fcomponents_141',['get_components',['../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a22537554ec4c1adef41e1f3f1aa566cd',1,'gmodels::gtypes::graph::Graph']]]
 ];

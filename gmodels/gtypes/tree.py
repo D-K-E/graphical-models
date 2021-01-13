@@ -3,9 +3,10 @@ Path in a given graph
 """
 
 from typing import Set, Optional, Callable, List, Tuple, Dict, Union
-from gmodels.edge import Edge, EdgeType
-from gmodels.node import Node
-from gmodels.graph import Graph
+from gmodels.gtypes.edge import Edge, EdgeType
+from gmodels.gtypes.node import Node
+from gmodels.gtypes.graph import Graph
+from gmodels.gtypes.queue import PriorityQueue
 from uuid import uuid4
 import math
 
@@ -99,6 +100,88 @@ class Tree(Graph):
     def greater_than_or_equal(self, first: Node, second: Node) -> bool:
         ""
         raise NotImplementedError
+
+    @classmethod
+    def find_mst_prim(
+        cls, g: Graph, edge_generator: Callable[[Node], Set[Node]]
+    ) -> Graph:
+        """!
+        Find minimum spanning tree as per Prim's algorithm
+        Even and Guy Even 2012, p. 32
+        """
+        l_e = 1  # length of an edge
+        l_vs = {}
+        vs = []
+        eps = {}
+
+        for v in g.V:
+            l_vs[v] = math.inf
+            vs.append(v)
+        #
+        s = vs[0]
+        l_vs[s] = 0
+        eps[s] = set()
+        TEMP = vs.copy()
+        T: Set[Edge] = set()
+        while TEMP:
+            minv = None
+            minl = math.inf
+            for v in TEMP:
+                if l_vs[v] < minl:
+                    minl = l_vs[v]
+                    minv = v
+            TEMP = [v for v in TEMP if v != minv]
+            if minv is None:
+                raise ValueError(
+                    "Min vertex is not found. Graph is probably not connected"
+                )
+            T = T.union(eps[minv])
+            for edge in edge_generator(g.V[minv]):
+                unode = edge.get_other(g.V[minv])
+                u = unode.id()
+                if u in TEMP and l_vs[u] > l_e:
+                    l_vs[u] = l_e
+                    eps[u] = set([edge])
+        return cls.from_edgeset(eset=T)
+
+    @classmethod
+    def find_mnmx_st(
+        cls,
+        g: Graph,
+        edge_generator: Callable[[Node], Set[Edge]],
+        weight_function: Callable[[Edge], float] = lambda x: 1,
+        is_min: bool = True,
+    ):
+        """!
+        a modified version of kruskal minimum spanning tree adapted for
+        finding minimum and maximum weighted spanning tree of a graph
+
+        from Even and Guy Even 2012, p. 42
+        """
+        queue = PriorityQueue(is_min=is_min)
+        T: Set[Edge] = set()
+        clusters = {v: set([v]) for v in g.V}
+        L: List[Edge] = []
+        for e, edge in g.E.items():
+            queue.insert(weight_function(edge), edge)
+        #
+        while len(queue) > 0:
+            edge = None
+            if is_min is True:
+                k, edge = queue.min()
+            else:
+                k, edge = queue.max()
+            #
+            u = edge.start().id()
+            v = edge.end().id()
+            vset = clusters[v]
+            uset = clusters[u]
+            if vset != uset:
+                T.add(edge)
+                L.append(edge)
+                clusters[v] = vset.union(uset)
+                clusters[u] = vset.union(uset)
+        return cls.from_edgeset(eset=T), L
 
     #
     def assign_num(

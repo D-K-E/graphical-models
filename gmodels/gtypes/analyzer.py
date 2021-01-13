@@ -3,8 +3,8 @@
 graph analyzer
 """
 from typing import Set, Optional, Callable, List, Tuple
-from graph import Graph
-from node import Node
+from gmodels.gtypes.graph import Graph
+from gmodels.gtypes.node import Node
 
 
 class GraphAnalyzer:

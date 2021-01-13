@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['graph_58',['Graph',['../dc/d71/classgmodels_1_1graph_1_1Graph.html',1,'gmodels::graph']]],
-  ['graphanalyzer_59',['GraphAnalyzer',['../d2/df3/classgmodels_1_1analyzer_1_1GraphAnalyzer.html',1,'gmodels::analyzer']]],
-  ['graphobject_60',['GraphObject',['../d9/d61/classgmodels_1_1graphobj_1_1GraphObject.html',1,'gmodels::graphobj']]]
+  ['graph_93',['Graph',['../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html',1,'gmodels::gtypes::graph']]],
+  ['graphanalyzer_94',['GraphAnalyzer',['../dc/dfb/classgmodels_1_1gtypes_1_1analyzer_1_1GraphAnalyzer.html',1,'gmodels::gtypes::analyzer']]],
+  ['graphobject_95',['GraphObject',['../dc/de3/classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject.html',1,'gmodels::gtypes::graphobj']]]
 ];

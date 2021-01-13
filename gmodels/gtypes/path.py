@@ -2,9 +2,9 @@
 Path in a given graph
 """
 from typing import Set, Optional, Callable, List, Tuple, Dict, Union
-from gmodels.edge import Edge, EdgeType
-from gmodels.node import Node
-from gmodels.graph import Graph
+from gmodels.gtypes.edge import Edge, EdgeType
+from gmodels.gtypes.node import Node
+from gmodels.gtypes.graph import Graph
 from uuid import uuid4
 import math
 

@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['is_5ffamily_5fof_37',['is_family_of',['../d6/dcd/classgmodels_1_1dirgraph_1_1DirectedGraph.html#ae1decf5ab9d6af47daf0bf61d69615b3',1,'gmodels::dirgraph::DirectedGraph']]],
-  ['is_5finduced_5fsubgraph_38',['is_induced_subgraph',['../d2/df3/classgmodels_1_1analyzer_1_1GraphAnalyzer.html#a2e231cf349867e8cb012669a157a5f6f',1,'gmodels::analyzer::GraphAnalyzer']]]
+  ['has_5fcycles_51',['has_cycles',['../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a60e7d0083348977abb6329bc1ef323eb',1,'gmodels::gtypes::graph::Graph']]]
 ];
