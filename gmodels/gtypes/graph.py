@@ -3,9 +3,9 @@
 
 """
 from typing import Set, Optional, Callable, List, Tuple, Union, Dict
-from gmodels.graphobj import GraphObject
-from gmodels.edge import Edge
-from gmodels.node import Node
+from gmodels.gtypes.graphobj import GraphObject
+from gmodels.gtypes.edge import Edge, EdgeType
+from gmodels.gtypes.node import Node
 from uuid import uuid4
 import math
 
@@ -43,7 +43,7 @@ class Graph(GraphObject):
         self.mk_nodes(ns=nodes, es=edges)
         self.mk_gdata()
         self.props = self.visit_graph_dfs(
-            generative_fn=self.neighbours_of, check_cycle=True
+            edge_generator=self.edges_of, check_cycle=True
         )
 
     def mk_nodes(self, ns: Optional[Set[Node]], es: Optional[Set[Edge]]):
@@ -59,6 +59,51 @@ class Graph(GraphObject):
                 nodes.add(e.end())
         #
         self._nodes = {n.id(): n for n in nodes}
+
+    def to_adjmat(self, vtype=int):
+        """!
+        transform adjacency list to adjacency matrix representation
+        """
+        gmat = {}
+        for v in self.V:
+            for k in self.V:
+                common = set(self.gdata[v]).intersection(set(self.gdata[k]))
+                gmat[(v, k)] = vtype(0)
+        for edge in self.edges():
+            tpl1 = (edge.start().id(), edge.end().id())
+            tpl2 = (edge.end().id(), edge.start().id())
+            if tpl1 in gmat:
+                gmat[tpl1] = vtype(1)
+            if edge.type() == EdgeType.UNDIRECTED:
+                if tpl2 in gmat:
+                    gmat[tpl2] = vtype(1)
+        return gmat
+
+    def has_self_loop(self) -> bool:
+        ""
+        for edge in self.edges():
+            if edge.start() == edge.end():
+                return True
+        return False
+
+    def transitive_closure_matrix(self) -> Dict[Tuple[str, str], bool]:
+        """!
+        From algorithmic graph theory Joyner, Phillips, Nguyen, 2013, p.134
+        """
+        if self.has_self_loop():
+            raise ValueError("Graph has a self loop")
+        #
+        n = len(self.gdata)
+        T = self.to_adjmat(vtype=bool)
+        for k in self.V.copy():
+            for i in self.V.copy():
+                for j in self.V.copy():
+                    t_ij = T[(i, j)]
+                    t_ik = T[(i, k)]
+                    t_ki = T[(i, k)]
+                    T[(i, j)] = t_ij or (t_ik and t_ki)
+        T = {(k, i): v for (k, i), v in T.items() if k != i}
+        return T
 
     def mk_gdata(self):
         "make graph data"
@@ -168,6 +213,19 @@ class Graph(GraphObject):
         edge_ids = self.gdata[n.id()]
         return set([self.E[eid] for eid in edge_ids])
 
+    def outgoing_edges_of(self, n: Node) -> Set[Edge]:
+        ""
+        return set([e for e in self.edges() if e.start() == n])
+
+    def incoming_edges_of(self, n: Node) -> Set[Edge]:
+        ""
+        return set([e for e in self.edges() if e.end() == n])
+
+    def edges_by_end(self, n: Node) -> Set[Edge]:
+        ""
+        edge_ids = self.gdata[n.id()]
+        return set([self.E[e] for e in edge_ids if self.E[e].is_end(n)])
+
     def vertices(self) -> Set[Node]:
         return set([n for n in self.V.values()])
 
@@ -210,8 +268,9 @@ class Graph(GraphObject):
             raise ValueError("edge id not in graph")
         return self.E[edge_id]
 
-    def edge_by_vertices(self, n1: Node, n2: Node) -> Edge:
-        ""
+    def edge_by_vertices(self, n1: Node, n2: Node) -> Set[Edge]:
+        """!
+        """
         if not self.is_in(n1) or not self.is_in(n2):
             raise ValueError("one of the nodes is not present in graph")
         n1id = n1.id()
@@ -221,14 +280,7 @@ class Graph(GraphObject):
         common_edge_ids = first_eset.intersection(second_eset)
         if len(common_edge_ids) == 0:
             raise ValueError("No common edges between given nodes")
-        for edge_id in common_edge_ids:
-            edge = self.E[edge_id]
-            fid = edge.start().id()
-            sid = edge.end().id()
-            n1id_ = n1id == fid or n1id == sid
-            n2id_ = n2id == fid or n2id == sid
-            if n1id_ and n2id_:
-                return edge
+        return set([self.E[e] for e in common_edge_ids])
 
     def vertices_of(self, e: Edge) -> Tuple[Node, Node]:
         ""
@@ -419,6 +471,14 @@ class Graph(GraphObject):
             gid=str(uuid4()), data=self.data(), nodes=self.nodes(), edges=edges
         )
 
+    def subtract_edge_with_nodes(self, e) -> GraphObject:
+        ""
+        edges = self._subtract_edge(e)
+        enode1, enode2 = e.start(), e.end()
+        nodes = self.nodes()
+        nodes = nodes.difference(set([enode1, enode2]))
+        return Graph(gid=str(uuid4()), nodes=nodes, edges=edges)
+
     def subtract(self, a: Union[Node, Edge]):
         ""
         if isinstance(a, Node):
@@ -522,7 +582,7 @@ class Graph(GraphObject):
         return self.ev_ratio_from_average_degree(self.average_degree())
 
     def visit_graph_dfs(
-        self, generative_fn: Callable[[Node], Set[Node]], check_cycle: bool = False,
+        self, edge_generator: Callable[[Node], Set[Node]], check_cycle: bool = False,
     ):
         ""
         time = 0
@@ -548,7 +608,7 @@ class Graph(GraphObject):
                     f=f,
                     time=time,
                     check_cycle=check_cycle,
-                    generative_fn=generative_fn,
+                    edge_generator=edge_generator,
                 )
                 component_counter += 1
                 for child, parent in pred.copy().items():
@@ -578,7 +638,7 @@ class Graph(GraphObject):
                 cnode = self.V[child]
                 if parent is not None:
                     pnode = self.V[parent]
-                    eset.add(self.edge_by_vertices(n1=pnode, n2=cnode))
+                    eset = eset.union(self.edge_by_vertices(n1=pnode, n2=cnode))
             esets[u] = eset
         return esets
 
@@ -592,7 +652,7 @@ class Graph(GraphObject):
         T: Set[str],
         cycles: Dict[str, List[Dict[str, Union[str, int]]]],
         time: int,
-        generative_fn: Callable[[Node], Set[Node]],
+        edge_generator: Callable[[Node], Set[Edge]],
         check_cycle: bool = False,
     ) -> Optional[Tuple[str, str]]:
         """!
@@ -609,13 +669,14 @@ class Graph(GraphObject):
         \param T set of pred nodes
         \param time global visit counter
         \param check_cycle fill cycles if it is detected
-        \param generative_fn generate neighbour of a vertex with respect to graph type
+        \param edge_generator generate edges of a vertex with respect to graph type
         """
         marked[u] = True
         time += 1
         d[u] = time
         unode = self.V[u]
-        for vnode in generative_fn(unode):
+        for edge in edge_generator(unode):
+            vnode = edge.get_other(unode)
             v = vnode.id()
             if marked[v] is False:
                 pred[v] = u
@@ -630,7 +691,7 @@ class Graph(GraphObject):
                     cycles=cycles,
                     time=time,
                     check_cycle=check_cycle,
-                    generative_fn=generative_fn,
+                    edge_generator=edge_generator,
                 )
         #
         time += 1
@@ -640,7 +701,8 @@ class Graph(GraphObject):
             # edge between them is a back edge
             # see p. 151, and p. 159-160
             unode = self.V[u]
-            for vnode in generative_fn(unode):
+            for edge in edge_generator(unode):
+                vnode = edge.get_other(unode)
                 vid = vnode.id()
                 if pred[u] != vid:
                     first_visit = d.get(vid)
@@ -658,12 +720,28 @@ class Graph(GraphObject):
         return None
 
     def has_cycles(self) -> bool:
-        ""
-        info: Dict = self.props["cycle-info"]
-        for cycle_list in info.values():
-            if len(cycle_list) > 0:
-                return True
+        """!
+        see Diestel 2017, p. 8
+        """
+        md = self.min_degree()
+        if md >= 2:
+            return True
         return False
+
+    def shortest_path_length(self) -> int:
+        """!
+        see Diestel 2017, p. 8
+        """
+        return self.min_degree()
+
+    def shortest_cycle_length(self) -> int:
+        """!
+        see Diestel 2017, p. 8
+        """
+        if self.has_cycles():
+            return self.min_degree() + 1
+        else:
+            return 0
 
     def nb_components(self) -> int:
         return self.props["nb-component"]
@@ -712,6 +790,64 @@ class Graph(GraphObject):
         # Extract component roots
         component_roots = [k for k in self.props["dfs-forest"].keys()]
         return set([self.get_component(node_id=root) for root in component_roots])
+
+    def find_shortest_paths(
+        self, n1: Node, edge_generator: Callable[[Node], Set[Edge]]
+    ) -> Tuple[Dict[str, Dict[str, str]], Set[Node], Dict[str, int]]:
+        """!
+        Breadth first search
+        Even and Guy Even 2012, p. 12
+        """
+        if not self.is_in(n1):
+            raise ValueError("argument node is not in graph")
+        nid = n1.id()
+        Q = [nid]
+        l_vs = {v: math.inf for v in self.V}
+        l_vs[nid] = 0
+        T = set([nid])
+        P: Dict[str, Dict[str, str]] = {}
+        P[nid] = {}
+        while Q:
+            u = Q.pop(0)
+            unode = self.V[u]
+            for edge in edge_generator(unode):
+                vnode = edge.get_other(unode)
+                vid = vnode.id()
+                if vid not in T:
+                    T.add(vid)
+                    l_vs[vid] = int(l_vs[u] + 1)
+                    P[nid][u] = vid
+                    Q.append(vid)
+        #
+        T = set([self.V[t] for t in T])
+        path_props = {"bfs-tree": P, "path-set": T, "top-sort": l_vs}
+        return path_props
+
+    def find_articulation_points(
+        self, graph_maker: Callable[[Node], GraphObject]
+    ) -> Set[Node]:
+        """!
+        naive version see, Erciyes 2018, p. 228
+        """
+        nb_component = self.nb_components()
+        points: Set[Node] = set()
+        for node in self.nodes():
+            graph = graph_maker(node)
+            if graph.nb_components() > nb_component:
+                points.add(node)
+        return points
+
+    def find_bridges(self, graph_maker: Callable[[Edge], GraphObject]) -> Set[Edge]:
+        """!
+        naive version
+        """
+        nb_component = self.nb_components()
+        bridges: Set[Edge] = set()
+        for edge in self.edges():
+            graph = self.subtract(edge)
+            if graph.nb_components() > nb_component:
+                bridges.add(edge)
+        return bridges
 
     def __add__(
         self, a: Union[Set[Edge], Set[Node], Node, Edge, GraphObject]

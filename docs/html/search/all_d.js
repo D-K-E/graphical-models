@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['undirectedgraph_48',['UndirectedGraph',['../dc/d1d/classgmodels_1_1undirgraph_1_1UndirectedGraph.html',1,'gmodels::undirgraph']]]
+  ['randomvariable_70',['RandomVariable',['../de/dfe/classgmodels_1_1randomvariable_1_1RandomVariable.html',1,'gmodels::randomvariable']]]
 ];

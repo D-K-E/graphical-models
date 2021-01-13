@@ -1,16 +1,17 @@
 """!
 \file node.py
 
-\ingroup graphgroup Node documentation
-\see \link graphgroup Graph Object \endlink
+\ingroup graphgroup nodegroup
 
-For more theoretical explanation \ref nodepage
+\see \link graphgroup Graph Object \endlink nodegroup edgegroup
+
+For more theoretical explanation \see nodegroup
 
 """
 from typing import Dict, Set, Tuple, Optional
-from gmodels.abstractobj import AbstractEdge, EdgeType
-from gmodels.abstractobj import NodePosition
-from gmodels.graphobj import GraphObject
+from gmodels.gtypes.abstractobj import AbstractEdge, EdgeType
+from gmodels.gtypes.abstractobj import NodePosition
+from gmodels.gtypes.graphobj import GraphObject
 
 
 class Node(GraphObject):
@@ -78,7 +79,7 @@ class Node(GraphObject):
 
 
 """!
-\page nodepage
+\defgroup nodegroup Node documentation
 
 \section desc_sect Description
 

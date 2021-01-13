@@ -1,10 +1,11 @@
 """!
 Test undirected graph object
 """
-from gmodels.undigraph import UndiGraph
-from gmodels.node import Node
-from gmodels.edge import Edge, EdgeType
+from gmodels.gtypes.undigraph import UndiGraph
+from gmodels.gtypes.node import Node
+from gmodels.gtypes.edge import Edge, EdgeType
 import unittest
+from random import choice
 
 
 class UndiGraphTest(unittest.TestCase):
@@ -43,38 +44,83 @@ class UndiGraphTest(unittest.TestCase):
         self.f = Node("f", {})  # d
         self.e = Node("e", {})  # e
         self.g = Node("g", {})
+        self.h = Node("h", {})
         self.ae = Edge(
             "ae", start_node=self.a, end_node=self.e, edge_type=EdgeType.UNDIRECTED
         )
         self.ab = Edge(
-            "ab", start_node=self.a, end_node=self.b, edge_type=EdgeType.UNDIRECTED
+            "ab",
+            start_node=self.a,
+            end_node=self.b,
+            data={"w": 1},
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.af = Edge(
             "af", start_node=self.a, end_node=self.f, edge_type=EdgeType.UNDIRECTED
+        )
+        self.ah = Edge(
+            "ah", start_node=self.a, end_node=self.h, edge_type=EdgeType.UNDIRECTED
+        )
+        self.bh = Edge(
+            "bh", start_node=self.b, end_node=self.h, edge_type=EdgeType.UNDIRECTED
         )
         self.be = Edge(
             "be", start_node=self.b, end_node=self.e, edge_type=EdgeType.UNDIRECTED
         )
         self.ef = Edge(
-            "ef", start_node=self.e, end_node=self.f, edge_type=EdgeType.UNDIRECTED
+            "ef",
+            data={"w": 5},
+            start_node=self.e,
+            end_node=self.f,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.de = Edge(
-            "de", start_node=self.d, end_node=self.e, edge_type=EdgeType.UNDIRECTED
+            "de",
+            data={"w": 4},
+            start_node=self.d,
+            end_node=self.e,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.df = Edge(
-            "df", start_node=self.d, end_node=self.f, edge_type=EdgeType.UNDIRECTED
+            "df",
+            data={"w": 8},
+            start_node=self.d,
+            end_node=self.f,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.cd = Edge(
-            "cd", start_node=self.c, end_node=self.d, edge_type=EdgeType.UNDIRECTED
+            "cd",
+            data={"w": 3},
+            start_node=self.c,
+            end_node=self.d,
+            edge_type=EdgeType.UNDIRECTED,
+        )
+        self.cg = Edge(
+            "cg", start_node=self.c, end_node=self.g, edge_type=EdgeType.UNDIRECTED
         )
         self.gd = Edge(
-            "gd", start_node=self.g, end_node=self.d, edge_type=EdgeType.UNDIRECTED
+            "gd",
+            data={"w": 7},
+            start_node=self.g,
+            end_node=self.d,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.bg = Edge(
-            "bg", start_node=self.b, end_node=self.g, edge_type=EdgeType.UNDIRECTED
+            "bg",
+            data={"w": 6},
+            start_node=self.b,
+            end_node=self.g,
+            edge_type=EdgeType.UNDIRECTED,
+        )
+        self.fg = Edge(
+            "fg", start_node=self.f, end_node=self.g, edge_type=EdgeType.UNDIRECTED
         )
         self.bc = Edge(
-            "bc", start_node=self.b, end_node=self.c, edge_type=EdgeType.UNDIRECTED
+            "bc",
+            start_node=self.b,
+            end_node=self.c,
+            data={"w": 2},
+            edge_type=EdgeType.UNDIRECTED,
         )
 
         # undirected graph
@@ -138,10 +184,6 @@ class UndiGraphTest(unittest.TestCase):
         #  \       /
         #   +-----f
 
-        self.e_n = Edge(
-            "en", start_node=self.e, end_node=self.n1, edge_type=EdgeType.UNDIRECTED
-        )
-
         self.ugraph5 = UndiGraph(
             "ug5",
             data={"my": "graph", "data": "is", "very": "awesome"},
@@ -151,19 +193,44 @@ class UndiGraphTest(unittest.TestCase):
             ),
         )
         # ugraph 5
-        #   +-----+    n1 -- n2 -- n3 -- n4
-        #  /       \  /  \               /
-        # a -- b -- e     +-------------+
-        #  \       /
-        #   +-----f
+        #        +----c---+   +--e
+        #       /  2     3 \ / 4 |
+        # a --- b           d    | 5
+        #    1   \ 6     7 / \ 8 |
+        #         +---g---+   +--f
+
+        self.ugraph6 = UndiGraph(
+            "ug6",
+            data={"my": "graph", "data": "is", "very": "awesome"},
+            nodes=set([self.a, self.b, self.c, self.d, self.e, self.f, self.g, self.h]),
+            edges=set(
+                [
+                    self.ab,
+                    self.ah,
+                    self.bc,
+                    self.bh,
+                    self.cd,
+                    self.de,
+                    self.df,
+                    self.cg,
+                    self.fg,
+                ]
+            ),
+        )
+        # ugraph 6
+        # a--+   e----d
+        # |   \      / \
+        # |    b----c   f
+        # |   /      \ /
+        # h--+        g
 
     def test_id(self):
         return self.assertEqual(self.ugraph1.id(), "ug1")
 
     def test_find_shortest_path(self):
         ""
-        path = self.ugraph4.find_shortest_paths(n1=self.n1)
-        pathl = path[2]
+        path_props = self.ugraph4.find_shortest_paths(n1=self.n1)
+        pathl = path_props["top-sort"]
         lpath = [(k, v) for k, v in pathl.items() if v < float("inf")]
         lpath.sort(key=lambda x: x[1])
         nps = [x[0] for x in lpath]
@@ -175,14 +242,32 @@ class UndiGraphTest(unittest.TestCase):
 
     def test_minimum_spanning_tree(self):
         ""
-        tree = self.ugraph3.find_minimum_spanning_tree()
-        leaves = tree.leaves()
-        self.assertEqual(leaves, set([self.e, self.f]))
+        tree, L = self.ugraph5.find_minimum_spanning_tree(
+            weight_fn=lambda e: e.data()["w"]
+        )
+
+        self.assertEqual(
+            [l.id() for l in L], ["ab", "bc", "cd", "de", "ef", "bg", "gd", "df"]
+        )
+
+    def test_maximum_spanning_tree(self):
+        ""
+        tree, L = self.ugraph5.find_maximum_spanning_tree(
+            weight_fn=lambda e: e.data()["w"]
+        )
+        self.assertEqual(
+            [l.id() for l in L], ["df", "gd", "bg", "ef", "de", "cd", "bc", "ab"]
+        )
 
     def test_find_articulation_points(self):
         ""
         points = self.ugraph5.find_articulation_points()
         self.assertEqual(set([self.b, self.d]), points)
+
+    def test_find_bridges(self):
+        ""
+        bridges = self.ugraph6.find_bridges()
+        self.assertEqual(bridges, set([self.de, self.bc]))
 
 
 if __name__ == "__main__":

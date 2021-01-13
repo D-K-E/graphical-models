@@ -1,9 +1,9 @@
 """!
 Test general Graph object
 """
-from gmodels.graph import Graph
-from gmodels.node import Node
-from gmodels.edge import Edge, EdgeType
+from gmodels.gtypes.graph import Graph
+from gmodels.gtypes.node import Node
+from gmodels.gtypes.edge import Edge, EdgeType
 import unittest
 import pprint
 
@@ -161,6 +161,77 @@ class GraphTest(unittest.TestCase):
     def test_id(self):
         return self.assertEqual(self.graph.id(), "g1")
 
+    def test_adjmat_int(self):
+        ""
+        mat = self.ugraph1.to_adjmat()
+        self.assertEqual(
+            mat,
+            {
+                ("b", "b"): 0,
+                ("b", "e"): 0,
+                ("b", "f"): 0,
+                ("b", "a"): 0,
+                ("e", "b"): 0,
+                ("e", "e"): 0,
+                ("e", "f"): 1,
+                ("e", "a"): 1,
+                ("f", "b"): 0,
+                ("f", "e"): 1,
+                ("f", "f"): 0,
+                ("f", "a"): 1,
+                ("a", "b"): 0,
+                ("a", "e"): 1,
+                ("a", "f"): 1,
+                ("a", "a"): 0,
+            },
+        )
+
+    def test_adjmat_bool(self):
+        ""
+        mat = self.ugraph1.to_adjmat(vtype=bool)
+        self.assertEqual(
+            mat,
+            {
+                ("b", "b"): False,
+                ("b", "e"): False,
+                ("b", "f"): False,
+                ("b", "a"): False,
+                ("e", "b"): False,
+                ("e", "e"): False,
+                ("e", "f"): True,
+                ("e", "a"): True,
+                ("f", "b"): False,
+                ("f", "e"): True,
+                ("f", "f"): False,
+                ("f", "a"): True,
+                ("a", "b"): False,
+                ("a", "e"): True,
+                ("a", "f"): True,
+                ("a", "a"): False,
+            },
+        )
+
+    def test_transitive_closure_mat(self):
+        ""
+        mat = self.ugraph1.transitive_closure_matrix()
+        self.assertEqual(
+            mat,
+            {
+                ("a", "b"): True,
+                ("a", "e"): True,
+                ("a", "f"): True,
+                ("b", "a"): False,
+                ("b", "e"): False,
+                ("b", "f"): False,
+                ("e", "a"): True,
+                ("e", "b"): True,
+                ("e", "f"): True,
+                ("f", "a"): True,
+                ("f", "b"): True,
+                ("f", "e"): True,
+            },
+        )
+
     def test_equal(self):
         n1 = Node("n1", {})
         n2 = Node("n2", {})
@@ -275,7 +346,7 @@ class GraphTest(unittest.TestCase):
 
     def test_edge_by_vertices(self):
         e = self.graph.edge_by_vertices(self.n2, self.n3)
-        self.assertEqual(e, self.e2)
+        self.assertEqual(e, set([self.e2]))
 
     def test_edge_by_vertices_n(self):
         check = False
