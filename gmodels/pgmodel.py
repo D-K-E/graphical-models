@@ -192,3 +192,16 @@ class PGModel(UndiGraph):
         contains the probability of the most likely assignment that contains
         Z=x.
         """
+
+    def expand_edge(self, e: Edge) -> Set[Edge]:
+        """!
+        Expand given edge using its nodes' values.
+        """
+        n1 = e.start()
+        n2 = e.end()
+        es = set()
+
+    def to_search_tree(self):
+        """!
+        construct a tree with assignments
+        """

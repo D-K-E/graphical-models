@@ -274,3 +274,18 @@ class NumCatRVariable(CatRandomVariable):
         self.type_check(other)
         joint = self.max_joint(other)
         return max([v for v in other.apply_to_marginals(lambda x: joint / x)])
+
+
+class ORNode(Node):
+    def __init__(self, node_id: str, var: NumCatRVariable, data={}):
+        ""
+        super().__init__(node_id=node_id, data=data)
+        self.var = var
+
+
+class ANDNode(Node):
+    def __init__(self, node_id: str, var: NumCatRVariable, val: float, data={}):
+        ""
+        super().__init__(node_id=node_id, data=data)
+        self.var = var
+        self.val = val
