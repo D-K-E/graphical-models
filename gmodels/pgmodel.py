@@ -3,8 +3,8 @@ Probabilistic Graph Model, a general model for inference
 """
 from gmodels.gtypes.undigraph import UndiGraph
 from gmodels.gtypes.edge import Edge, EdgeType
-from gmodels.randomvariable import NumCatRVariable
-from typing import Callable, Set, List, Optional
+from gmodels.randomvariable import NumCatRVariable, NumericValue
+from typing import Callable, Set, List, Optional, Dict, Tuple
 import math
 from uuid import uuid4
 
@@ -62,10 +62,18 @@ class PGModel(UndiGraph):
         marginal_over = Z.P_X_e() * prod
         return self.merge_factors(marginal_over, scope_factors, other_factors)
 
-    def sum_product_elimination(self, factors: Set[Edge], Zs: List[NumCatRVariable]):
+    def sum_product_elimination(
+        self, factors: Set[Edge], Zs: List[NumCatRVariable]
+    ) -> float:
         """!
         sum product variable elimination
         Koller and Friedman 2009, p. 298
+
+        \param factors factor representation of our graph, it corresponds
+        mostly to edges.
+
+        \param Zs elimination variables. They correspond to all variables that
+        are not query variables.
         """
         for Z in Zs:
             factors = self.sum_prod_var_eliminate(factors, Z)
@@ -100,11 +108,11 @@ class PGModel(UndiGraph):
         #
         return cardinality
 
-    def min_unmarked_neighbours(self, g, marked):
+    def min_unmarked_neighbours(self, nodes, marked):
         """!
         find an unmarked node with minimum number of neighbours
         """
-        ordered = [(n, self.nb_neighbours_of(n)) for n in g.nodes()]
+        ordered = [(n, self.nb_neighbours_of(n)) for n in nodes]
         ordered.sort(key=lambda x: x[1])
         for X, nb in ordered:
             if marked[X.id()] is False:
@@ -115,14 +123,14 @@ class PGModel(UndiGraph):
         self,
         nodes: Set[NumCatRVariable],
         s: Callable[[Graph, Dict[Node, bool]], Optional[Node]],
-    ):
+    ) -> Dict[str, int]:
         """!
         From Koller and Friedman 2009, p. 314
         """
         marked = {n.id(): False for n in nodes}
         cardinality = {n.id(): -1 for n in nodes}
         for i in range(len(nodes)):
-            X = s(self, marked)
+            X = s(nodes, marked)
             if X is not None:
                 cardinality[X.id()] = i
                 TEMP = self.neighbours_of(X)
@@ -132,6 +140,58 @@ class PGModel(UndiGraph):
                         self.added_edge_between_if_none(n_x, n)
                 marked[X.id()] = True
         return cardinality
+
+    def cond_prod_by_variable_elimination(self, queries: Set[NumCatRVariable]):
+        """!
+        Compute conditional probabilities with variable elimination
+        from Koller and Friedman 2009, p. 304
+        """
+        factors = self.edges()
+        Zs = set([z for z in self.nodes() if z not in queries])
+        cardinality = self.order_by_greedy_metric(
+            nodes=Zs, s=self.min_unmarked_neighbours
+        )
+        ordering = [n[0] for n in sorted(list(cardinality.items()), key=lambda x: x[1])]
+        phi = self.sum_product_elimination(factors, ordering)
+        alpha = sum([q.P_X_e() for q in queries])
+        return phi, alpha, (phi / alpha)
+
+    def max_product_eliminate_var(
+        self, factors: Set[Edge], Z: NumCatRVariable, table: Dict[str, NumericValue]
+    ):
+        """!
+        from Koller and Friedman 2009, p. 557
+        """
+        prod, scope_factors, other_factors = self.get_factor_product(factors, Z)
+        max_marginal = Z.max() * prod
+        table[Z.id()] = Z.max_marginal_value()
+        return self.merge_factors(max_marginal, scope_factors, other_factors)
+
+    def max_product_variable_elimination(
+        self, factors: Set[Edge], Zs: List[NumCatRVariable]
+    ):
+        """!
+        from Koller and Friedman 2009, p. 557
+        """
+        Z_potential = {}
+        value_table = {Z.id(): None for Z in Zs}
+        for i in range(len(Zs)):
+            Z = Zs[i]
+            factors, z_phi = self.max_product_eliminate_var(
+                factors, Z, table=value_table
+            )
+            Z_potential[Z.id()] = (z_phi, i)
+
+    def traceback_map(
+        self, potentials: Dict[str, Tuple[float, int]], Zs: List[NumCatRVariable]
+    ):
+        """!
+        from Koller and Friedman 2009, p. 557
+        The idea here is the following: 
+        For the last variable eliminated, Z, the factor for the value x
+        contains the probability of the most likely assignment that contains
+        Z=x.
+        """
 
     def add_moral_edges(self, n: NumCatRVariable):
         """!

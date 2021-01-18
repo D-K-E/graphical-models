@@ -6,6 +6,7 @@ from gmodels.gtypes.node import Node
 from typing import Callable, Set, Any, List, Dict
 import math
 from uuid import uuid4
+from random import choice
 
 
 class RandomVariable(Node):
@@ -103,6 +104,21 @@ class NumCatRVariable(CatRandomVariable):
         values = self.data()["outcome-values"]
         return max([self.marginal(v) for v in values])
 
+    def max_marginal_value(self):
+        if "evidence" in self.data():
+            return self.data()["evidence"]
+
+        values = self.data()["outcome-values"]
+        mx = self.max_marginal_e()
+        vs = []
+        for v in values:
+            marginal = self.marginal(v)
+            if marginal == mx:
+                vs.append((v, marginal))
+        # break ties
+        v, marginal = choice(vs)
+        return v
+
     def min(self):
         values = self.data()["outcome-values"]
         return min([self.marginal(v) for v in values])
@@ -170,6 +186,15 @@ class NumCatRVariable(CatRandomVariable):
             return self.marginal(self.data()["evidence"])
         return self.expected_value()
 
+    def max_marginal_e(self):
+        """!
+        evaluate max probability with given random variable's evidence if it is
+        present.
+        """
+        if "evidence" in self.data():
+            return self.marginal(self.data()["evidence"])
+        return self.max()
+
     def p_x_fn(self, phi: Callable[[float], float]):
         """!
         probability of a function applied to random variable
@@ -185,6 +210,12 @@ class NumCatRVariable(CatRandomVariable):
         """
         values = self.data()["outcome-values"]
         return [phi(v) for v in values]
+
+    def apply_to_marginals(self, phi: Callable[[float], float]) -> List[float]:
+        """!
+        """
+        values = self.data()["outcome-values"]
+        return [phi(self.marginal(v)) for v in values]
 
     def expected_apply(self, phi: Callable[[NumericValue], NumericValue]):
         """!
@@ -222,6 +253,13 @@ class NumCatRVariable(CatRandomVariable):
         self.type_check(v)
         return self.P_X_e() * v.P_X_e()
 
+    def max_joint(self, v):
+        """!
+        max joint probability
+        """
+        self.type_check(v)
+        return self.max_marginal_e() * v.max_marginal_e()
+
     def conditional(self, other):
         """!
         Conditional probability distribution (Bayes rule)
@@ -229,3 +267,10 @@ class NumCatRVariable(CatRandomVariable):
         """
         self.type_check(other)
         return self.joint(other) / other.P_X_e()
+
+    def max_conditional(self, other):
+        """!
+        """
+        self.type_check(other)
+        joint = self.max_joint(other)
+        return max([v for v in other.apply_to_marginals(lambda x: joint / x)])
