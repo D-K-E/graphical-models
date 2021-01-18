@@ -208,6 +208,9 @@ class Graph(GraphObject):
                 neighbours.add(n2)
         return neighbours
 
+    def nb_neighbours_of(self, n: Node) -> int:
+        return len(self.neighbours_of(n))
+
     def edges_of(self, n: Node) -> Set[Edge]:
         ""
         edge_ids = self.gdata[n.id()]
@@ -494,6 +497,18 @@ class Graph(GraphObject):
         ""
         for e in es:
             self = self.subtract_edge(e)
+
+    def added_edge_between_if_none(self, n1: Node, n2: Node) -> bool:
+        """!
+        Add edges between nodes if there are no edges in between
+        """
+        try:
+            es = self.edge_by_vertices(n1, n2)
+        except ValueError:
+            e = Edge(edge_id=str(uuid4()), data={}, start_node=n1, end_node=n2)
+            self.add_edge_to_self(e)
+            return True
+        return False
 
     def add_edge_to_self(self, e: Edge):
         ""
