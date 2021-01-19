@@ -2,7 +2,7 @@
 and/or search tree implementation
 """
 from gmodels.gtypes.tree import Tree
-from gmodels.gtypes.edge import Edge
+from gmodels.gtypes.edge import Edge, EdgeType
 from gmodels.randomvariable import ANDNode, ORNode
 from gmodels.pgmodel import PGModel
 from uuid import uuid4
@@ -38,6 +38,19 @@ class OrTree(Tree):
                     es.add(ne)
         #
         super().__init__(gid=str(uuid4()), edges=es)
+
+    def greedy_search(self, costfn=lambda x: x["weight"]):
+        """!
+        greedy search for paths between roots and leaves given a cost function
+        """
+        e = self.E[[e for e in self.E][0]]
+        if e.type() == EdgeType.DIRECTED:
+            edge_generator = self.outgoing_edges_of
+        else:
+            edge_generator = self.edges_of
+        paths = self.find_shortest_paths(
+            n1=self.root_node(), edge_generator=edge_generator
+        )
 
 
 class AndOrTree(Tree):
