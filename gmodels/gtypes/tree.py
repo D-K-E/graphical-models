@@ -28,6 +28,13 @@ class Tree(Graph):
                 nodes.add(eend)
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
         self.root = self._root()
+        es = [e.type() for e in self.edges()]
+        if es[0] == EdgeType.DIRECTED:
+            egen = self.outgoing_edges_of
+        else:
+            egen = self.edges_of
+        self.paths = self.find_shortest_paths(n1=self.root_node(), edge_generator=egen)
+        self.topsort = self.paths["top-sort"]
 
     @classmethod
     def from_node_tuples(cls, ntpls: Set[Tuple[Node, Node, EdgeType]]):
@@ -85,13 +92,50 @@ class Tree(Graph):
         ""
         return self.root
 
-    def upset_of(self, n: Node) -> Set[Node]:
+    def height_of(self, n: Node) -> int:
+        """!
+        """
+        if not self.is_in(n):
+            raise ValueError("node not in tree")
+        nid = n.id()
+        return self.topsort[nid]
+
+    def _is_closure_of(self, x: Node, y: Node, fn: Callable[[int, int], bool]) -> bool:
         ""
-        raise NotImplementedError
+        xheight = self.height_of(x)
+        yheight = self.height_of(y)
+        return fn(xheight, yheight)
+
+    def is_upclosure_of(self, x_src: Node, y_dst: Node) -> bool:
+        """!
+        From Diestel 2017, p. 15
+        is x upclosure of y
+        """
+        return self._is_closure_of(x_src, y_dst, fn=lambda x, y: y >= x)
+
+    def is_downclosure_of(self, x_src: Node, y_dst: Node) -> bool:
+        """!
+        From Diestel 2017, p. 15
+        is x down closure of y
+        """
+        return self._is_closure_of(x_src, y_dst, fn=lambda x, y: y <= x)
+
+    def upset_of(self, n: Node) -> Set[Node]:
+        """!
+        From Diestel 2017, p. 15
+        """
+        return self.is_set_of(n, fn=self.is_upclosure_of)
 
     def downset_of(self, n: Node) -> Set[Node]:
-        ""
-        raise NotImplementedError
+        """!
+        From Diestel 2017, p. 15
+        """
+        return self.is_set_of(n, fn=self.is_downclosure_of)
+
+    def is_set_of(self, n: Node, fn: Callable[[Node, Node], bool]) -> Set[Node]:
+        nodes = self.nodes()
+        nset = set([y for y in nodes if fn(n, y)])
+        return nset
 
     def less_than_or_equal(self, first: Node, second: Node) -> bool:
         ""

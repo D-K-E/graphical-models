@@ -761,6 +761,15 @@ class Graph(GraphObject):
     def nb_components(self) -> int:
         return self.props["nb-component"]
 
+    def is_tree(self) -> bool:
+        """!
+        see Diestel 2017, p. 14 - 15
+        """
+        nb_c = self.nb_components()
+        nb_vs = len(self.nodes())
+        nb_es = len(self.edges())
+        return nb_c == 1 and nb_vs - 1 == nb_es
+
     def child_from_parent(
         self, current: str, preds: Dict[str, Optional[str]], root: str,
     ) -> Optional[str]:
