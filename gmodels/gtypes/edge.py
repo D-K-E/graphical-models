@@ -5,7 +5,7 @@
 \see \link graphgroup Graph Object \endlink edgegroup nodegroup
 
 """
-from typing import Set
+from typing import Set, Union
 from gmodels.gtypes.abstractobj import AbstractEdge, EdgeType
 from gmodels.gtypes.node import Node
 from gmodels.gtypes.graphobj import GraphObject
@@ -159,19 +159,23 @@ class Edge(AbstractEdge, GraphObject):
         ids.add(self.end().id())
         return ids
 
-    def is_endvertice(self, n: Node) -> bool:
+    def is_endvertice(self, n: Union[Node, str]) -> bool:
         """!
         \brief Check if Node is contained by this edge
         """
         ids = self.node_ids()
-        return n.id() in ids
+        if isinstance(n, str):
+            return n in ids
+        else:
+            return n.id() in ids
 
-    def get_other(self, n: Node) -> Node:
+    def get_other(self, n: Union[Node, str]) -> Node:
         """!
         """
         if not self.is_endvertice(n):
             raise ValueError("node is not an end vertex")
-        if self.start().id() == n.id():
+        cmpv: str = n if isinstance(n, str) else n.id()
+        if self.start().id() == cmpv:
             return self.end()
         else:
             return self.start()

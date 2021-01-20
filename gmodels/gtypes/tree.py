@@ -2,8 +2,9 @@
 Path in a given graph
 """
 
-from typing import Set, Optional, Callable, List, Tuple, Dict, Union
+from typing import Set, Optional, Callable, List, Tuple, Dict, Union, Any
 from gmodels.gtypes.edge import Edge, EdgeType
+from gmodels.gtypes.path import Path
 from gmodels.gtypes.node import Node
 from gmodels.gtypes.graph import Graph
 from gmodels.gtypes.queue import PriorityQueue
@@ -33,8 +34,11 @@ class Tree(Graph):
             egen = self.outgoing_edges_of
         else:
             egen = self.edges_of
-        self.paths = self.find_shortest_paths(n1=self.root_node(), edge_generator=egen)
+        self.paths: Dict[str, Union[dict, set]] = self.find_shortest_paths(
+            n1=self.root_node(), edge_generator=egen
+        )
         self.topsort = self.paths["top-sort"]
+        self.bfs_tree = self.paths["bfs-tree"][self.root_node().id()]
 
     @classmethod
     def from_node_tuples(cls, ntpls: Set[Tuple[Node, Node, EdgeType]]):
@@ -104,21 +108,29 @@ class Tree(Graph):
         ""
         xheight = self.height_of(x)
         yheight = self.height_of(y)
-        return fn(xheight, yheight)
+        f = fn(xheight, yheight)
+        print(f)
+        print(x)
+        print(y)
+        return f
 
     def is_upclosure_of(self, x_src: Node, y_dst: Node) -> bool:
         """!
         From Diestel 2017, p. 15
         is x upclosure of y
         """
-        return self._is_closure_of(x_src, y_dst, fn=lambda x, y: y >= x)
+        xheight = self.height_of(x_src)
+        yheight = self.height_of(y_dst)
+        return yheight >= xheight
 
     def is_downclosure_of(self, x_src: Node, y_dst: Node) -> bool:
         """!
         From Diestel 2017, p. 15
         is x down closure of y
         """
-        return self._is_closure_of(x_src, y_dst, fn=lambda x, y: y <= x)
+        xheight = self.height_of(x_src)
+        yheight = self.height_of(y_dst)
+        return yheight <= xheight
 
     def upset_of(self, n: Node) -> Set[Node]:
         """!
@@ -134,16 +146,43 @@ class Tree(Graph):
 
     def is_set_of(self, n: Node, fn: Callable[[Node, Node], bool]) -> Set[Node]:
         nodes = self.nodes()
-        nset = set([y for y in nodes if fn(n, y)])
+        nset = set([y for y in nodes if fn(n, y) is True])
         return nset
 
     def less_than_or_equal(self, first: Node, second: Node) -> bool:
         ""
-        raise NotImplementedError
+        return self.height_of(first) <= self.height_of(second)
 
     def greater_than_or_equal(self, first: Node, second: Node) -> bool:
         ""
-        raise NotImplementedError
+        return self.height_of(first) >= self.height_of(second)
+
+    def nodes_per_level(self, level: int) -> Set[Node]:
+        """!
+        extract nodes of certain level in tree
+        """
+        return set([n for n in self.nodes() if self.height_of(n) == level])
+
+    def extract_path(self, start: Node, end: Node) -> Path:
+        """!
+        Extract path from tree
+        """
+        if self.is_in(start) is False or self.is_in(end) is False:
+            raise ValueError("start or end node is not inside tree")
+        #
+        upset = self.upset_of(start)
+        if end not in upset:
+            raise ValueError("end node is not in upset of start.")
+        downset = self.downset_of(end)
+        upset_edges = set()
+        for u in upset:
+            for e in self.outgoing_edges_of(u):
+                upset_edges.add(e)
+        downset_edges = set()
+        for d in downset:
+            for e in self.outgoing_edges_of(d):
+                downset_edges.add(e)
+        problem_set = upset_edges.intersection(downset_edges)
 
     @classmethod
     def find_mst_prim(

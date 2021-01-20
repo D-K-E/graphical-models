@@ -26,21 +26,21 @@ class PriorityQueue:
         else:
             self.queue.sort(key=lambda x: x[0], reverse=True)
 
-    def index(self, val) -> int:
+    def index(self, val, f: Callable = lambda x: x) -> int:
         """!
         """
         if not self.queue:
             return -1
         for i, (k, v) in enumerate(self.queue):
-            if v == val:
+            if f(v) == f(val):
                 return i
         return -1
 
-    def insert(self, key, val):
+    def insert(self, key, val, f: Callable = lambda x: x):
         """!
-        push element if val is not queue, if not queue
+        push element if val is not in queue, else replace element with new key
         """
-        index = self.index(val)
+        index = self.index(val, f)
         if index == -1:
             self.push(key, val)
         else:
@@ -59,18 +59,27 @@ class PriorityQueue:
         else:
             return self.queue.pop(0)
 
-    def key(self, v):
+    def pop(self):
+        """!
+        pops the first element from queue. First element can be either
+        min or max depending on the is_min property.
+        If one wants min or max regardless of the property, use
+        min or max methods
+        """
+        return self.queue.pop(0)
+
+    def key(self, v, f: Callable[[Any], Any] = lambda x: x):
         """!
         """
         for k, val in self.queue:
-            if val == v:
+            if f(val) == f(v):
                 return k
         raise ValueError("value not in queue: " + str(v))
 
-    def values(self, k):
+    def values(self, k, f: Callable = lambda x: x):
         """!
         """
-        return set([v for key, v in self.queue if key == k])
+        return set([v for key, v in self.queue if f(key) == f(k)])
 
     def _range(self, mn=float("-inf"), mx=float("inf")):
         """!
@@ -118,8 +127,16 @@ class PriorityQueue:
         return len(self.queue)
 
     def __contains__(self, v):
+        return self.is_in(v)
+
+    def is_in(self, v, cmp_f: Callable = lambda x: x):
+        """!
+        test if object is in queue using a comparison function.
+        The comparison function transforms both the queue value, 
+        and the argument.
+        """
         for key, val in self.queue:
-            if val == v:
+            if cmp_f(val) == cmp_f(v):
                 return True
         return False
 
