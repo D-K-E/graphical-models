@@ -98,9 +98,54 @@ class TreeTest(unittest.TestCase):
         self.assertEqual(self.gtree.root_node(), temp.root_node())
         self.assertEqual(self.gtree.leaves(), temp.leaves())
 
-    def test_upset_of(self):
+    def test_height_of(self):
         ""
-        print(self.gtree.paths)
+        c = self.gtree.height_of(self.g)
+        self.assertEqual(c, 2)
+
+    def test_is_upclosure_of_t(self):
+        ""
+        c = self.gtree.is_upclosure_of(self.g, self.k)
+        self.assertTrue(c)
+
+    def test_is_upclosure_of_f(self):
+        ""
+        c = self.gtree.is_upclosure_of(self.g, self.b)
+        self.assertFalse(c)
+
+    def test_is_downclosure_of_t(self):
+        ""
+        c = self.gtree.is_downclosure_of(self.g, self.k)
+        self.assertFalse(c)
+
+    def test_is_downclosure_of_f(self):
+        ""
+        c = self.gtree.is_downclosure_of(self.g, self.b)
+        self.assertTrue(c)
+
+    def test_upset_of_t(self):
+        ""
+        uset = self.gtree.upset_of(self.k)
+        self.assertTrue(uset == set([self.k, self.m, self.h, self.j]))
+
+    def test_upset_of_f(self):
+        ""
+        uset = self.gtree.upset_of(self.k)
+        self.assertFalse(uset == set([self.k, self.m, self.h, self.b]))
+
+    def test_downset_of_t(self):
+        ""
+        uset = self.gtree.downset_of(self.b)
+        self.assertTrue(uset == set([self.b, self.a, self.c]))
+
+    def test_downset_of_f(self):
+        ""
+        uset = self.gtree.downset_of(self.b)
+        self.assertFalse(uset == set([self.b, self.a, self.d]))
+
+    def test_extract_path(self):
+        ""
+        uset = self.gtree.extract_path(start=self.b, end=self.m)
 
 
 if __name__ == "__main__":

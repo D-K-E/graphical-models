@@ -46,6 +46,16 @@ class Graph(GraphObject):
             edge_generator=self.edges_of, check_cycle=True
         )
 
+    @classmethod
+    def from_edgeset(cls, edges: Set[Edge]):
+        """!
+        """
+        nodes: Set[Node] = set()
+        for e in edges:
+            nodes.add(e.start())
+            nodes.add(e.end())
+        return Graph(gid=str(uuid4()), nodes=nodes, edges=edges)
+
     def mk_nodes(self, ns: Optional[Set[Node]], es: Optional[Set[Edge]]):
         ""
         nodes = set()
@@ -817,7 +827,7 @@ class Graph(GraphObject):
 
     def find_shortest_paths(
         self, n1: Node, edge_generator: Callable[[Node], Set[Edge]]
-    ) -> Tuple[Dict[str, Dict[str, str]], Set[Node], Dict[str, int]]:
+    ) -> Dict[str, Union[dict, set]]:
         """!
         Breadth first search
         Even and Guy Even 2012, p. 12
