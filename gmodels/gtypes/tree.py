@@ -14,7 +14,7 @@ import math
 
 class Tree(Graph):
     """!
-    Tree object
+    Ordered Tree object
     """
 
     def __init__(self, gid: str, data={}, edges: Set[Edge] = None):
@@ -163,10 +163,17 @@ class Tree(Graph):
         """
         return set([n for n in self.nodes() if self.height_of(n) == level])
 
-    def extract_path(self, start: Node, end: Node) -> Path:
-        """!
-        Extract path from tree
-        """
+    def extract_path_info(
+        self,
+        start: Node,
+        end: Node,
+        filter_fn: Callable[[Set[Edge], str], Set[Edge]] = lambda es, n: set(
+            [e for e in es if e.start().id() == n]
+        ),
+        costfn: Callable[[Edge, float], float] = lambda x, y: y + 1.0,
+        is_min=True,
+    ):
+        ""
         if self.is_in(start) is False or self.is_in(end) is False:
             raise ValueError("start or end node is not inside tree")
         #
@@ -183,6 +190,31 @@ class Tree(Graph):
             for e in self.outgoing_edges_of(d):
                 downset_edges.add(e)
         problem_set = upset_edges.intersection(downset_edges)
+        ucs_solution = Path.uniform_cost_search(
+            goal=end,
+            start=start,
+            problem_set=problem_set,
+            filter_fn=filter_fn,
+            costfn=costfn,
+            is_min=is_min,
+        )
+        return ucs_solution
+
+    def extract_path(
+        self,
+        start: Node,
+        end: Node,
+        filter_fn: Callable[[Set[Edge], str], Set[Edge]] = lambda es, n: set(
+            [e for e in es if e.start().id() == n]
+        ),
+        costfn: Callable[[Edge, int], int] = lambda x, y: y + 1,
+        is_min=True,
+    ) -> Path:
+        """!
+        Extract path from tree
+        """
+        solution = self.extract_path_info(start, end, filter_fn, costfn, is_min)
+        return Path.from_ucs_result(solution)
 
     @classmethod
     def find_mst_prim(

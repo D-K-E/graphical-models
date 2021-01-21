@@ -2,10 +2,12 @@
 and/or search tree implementation
 """
 from gmodels.gtypes.tree import Tree
+from gmodels.gtypes.path import Path
 from gmodels.gtypes.edge import Edge, EdgeType
-from gmodels.randomvariable import ANDNode, ORNode
+from gmodels.randomvariable import ANDNode, ORNode, NumCatRVariable
 from gmodels.pgmodel import PGModel
 from uuid import uuid4
+from copy import deepcopy
 
 
 class OrTree(Tree):
@@ -18,6 +20,7 @@ class OrTree(Tree):
         (self.mst, self.edge_order) = self.model.find_minimum_spanning_tree(
             weight_fn=lambda x: x.data()["factor"] if "factor" in x.data() else 1
         )
+        # expand mst to cover values
         es = set()
         for e in self.mst.edges():
             n = e.start()
@@ -27,30 +30,45 @@ class OrTree(Tree):
             else:
                 values = ndata["outcome-values"]
                 for v in values:
-                    marg = n.marginal(v)
+                    ncp = deepcopy(n)
+                    ncp.add_evidence(v)
                     ne = Edge(
                         edge_id=str(uuid4()),
                         edge_type=e.type(),
-                        data={"weight": marg},
-                        start_node=n,
+                        start_node=ncp,
                         end_node=e.end(),
                     )
                     es.add(ne)
         #
         super().__init__(gid=str(uuid4()), edges=es)
 
-    def greedy_search(self, costfn=lambda x: x["weight"]):
+    def highest_probability_path(self, leaf: NumCatRVariable) -> Path:
         """!
-        greedy search for paths between roots and leaves given a cost function
+        find the highest probability yielding path between the root node and
+        the leaf.
         """
-        e = self.E[[e for e in self.E][0]]
-        if e.type() == EdgeType.DIRECTED:
-            edge_generator = self.outgoing_edges_of
-        else:
-            edge_generator = self.edges_of
-        paths = self.find_shortest_paths(
-            n1=self.root_node(), edge_generator=edge_generator
-        )
+        start = self.root_node()
+        end = leaf
+
+        def costfn(e: Edge, parent_cost: float):
+            ""
+            return self.model.factor(e) + parent_cost
+
+        return self.extract_path_info(end=end, start=start, costfn=costfn, is_min=False)
+
+    def most_likely_instants(self):
+        """!
+        Search paths between the root node and leaves.
+        We assume that the evidence is already incorporated into
+        nodes. By maximizing the cost function we ensure that we end up with
+        highest marginals for each random variable
+        """
+        leave_paths = []
+        for leaf in self.leaves():
+            info = self.highest_probability_path(leaf)
+            leave_paths.append(info)
+        leave_paths.sort(key=lambda x: x["cost"], reverse=True)
+        return leave_paths
 
 
 class AndOrTree(Tree):

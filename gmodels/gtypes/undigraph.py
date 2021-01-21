@@ -84,3 +84,43 @@ class UndiGraph(Graph):
         """
         gmaker = lambda x: self.from_graph(self.subtract(x))
         return super().find_bridges(graph_maker=gmaker)
+
+    def bron_kerbosch(
+        self, P: Set[Node], R: Set[Node], X: Set[Node], Cs: List[Set[Node]]
+    ):
+        """!
+        \code
+        proc BronKerbosch(P,R,X)
+        1: if P∪X = empty then
+        2:   report R as a maximal clique
+        3: end if
+        4: for each vertex v∈P do
+        5:   BronKerbosch(P ∩ Neigbours(v), R ∪ {v}, X ∩ Neighbours(v))
+        6:   P←P\{v}
+        7:   X←X∪{v}
+        8: end for
+        \endcode
+        """
+        if len(P.union(X)) == 0:
+            Cs.append(R)
+        for v in P:
+            self.bron_kerbosch(
+                P=P.intersection(self.neighbours_of(v)),
+                R=R.union([v]),
+                X=X.intersection(self.neighbours_of(v)),
+                Cs=Cs,
+            )
+            P = P.difference([v])
+            X = X.union([v])
+
+    def find_maximal_cliques(self):
+        """!
+        find maximal cliques in graph using Bron Kerbosch algorithm
+        as per arxiv.org/1006.5440
+        """
+        P: Set[Node] = self.nodes()
+        X: Set[Node] = set()
+        R: Set[Node] = set()
+        Cs: List[Set[Node]] = []
+        self.bron_kerbosch(P, R, X, Cs)
+        return Cs
