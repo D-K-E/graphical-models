@@ -67,7 +67,7 @@ class Path(Graph):
         filter_fn: Callable[[Set[Edge], str], Set[Edge]] = lambda es, n: set(
             [e for e in es if e.start().id() == n]
         ),
-        costfn: Callable[[Edge, int], int] = lambda x, y: y + 1,
+        costfn: Callable[[Edge, float], float] = lambda x, y: y + 1.0,
         is_min=True,
     ):
         """!
@@ -101,6 +101,19 @@ class Path(Graph):
                         frontier.insert(cnode["cost"], cnode, f=lambda x: x["state"])
 
     @classmethod
+    def from_ucs_result(cls, ucs_solution):
+        """!
+        parse uniform cost search solution to create a path
+        """
+        edges = [ucs_solution["edge"]]
+        while ucs_solution["parent"] is not None:
+            ucs_solution = ucs_solution["parent"]
+            edges.append(ucs_solution["edge"])
+        edges.pop()  # last element edge is None
+        edges = list(reversed(edges))
+        return cls.from_edgelist(edges)
+
+    @classmethod
     def from_ucs(
         cls,
         goal: Node,
@@ -109,11 +122,11 @@ class Path(Graph):
         filter_fn: Callable[[Set[Edge], str], Set[Edge]] = lambda es, n: set(
             [e for e in es if e.start().id() == n]
         ),
-        costfn: Callable[[Edge, int], int] = lambda x, y: y + 1,
+        costfn: Callable[[Edge, float], float] = lambda x, y: y + 1,
         is_min=True,
     ):
         ""
-        ucs_solution = Path.uniform_cost_search(
+        ucs_solution = cls.uniform_cost_search(
             goal=goal,
             start=start,
             problem_set=problem_set,
@@ -121,13 +134,7 @@ class Path(Graph):
             costfn=costfn,
             is_min=is_min,
         )
-        edges = [ucs_solution["edge"]]
-        while ucs_solution["parent"] is not None:
-            ucs_solution = ucs_solution["parent"]
-            edges.append(ucs_solution["edge"])
-        edges.pop()  # last element edge is None
-        edges = list(reversed(edges))
-        return cls.from_edgelist(edges)
+        return cls.from_ucs_result(ucs_solution)
 
 
 class Cycle(Path):

@@ -1,5 +1,5 @@
 # different queues for use
-from typing import Callable, Any, Tuple
+from typing import Callable, Any, Tuple, List
 from random import choice as rchoice
 
 
@@ -7,8 +7,8 @@ class PriorityQueue:
     def __init__(self, is_min: bool):
         """!
         """
-        self.is_min = is_min
-        self.queue = []
+        self.is_min: bool = is_min
+        self.queue: List[Tuple[float, Any]] = []
 
     def push(self, key, val):
         """!

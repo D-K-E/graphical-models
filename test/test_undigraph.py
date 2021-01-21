@@ -223,6 +223,21 @@ class UndiGraphTest(unittest.TestCase):
         # |    b----c   f
         # |   /      \ /
         # h--+        g
+        self.ad = Edge(
+            "ad", start_node=self.a, end_node=self.d, edge_type=EdgeType.UNDIRECTED
+        )
+        #
+        self.ugraph7 = UndiGraph(
+            "ug7",
+            nodes=set([self.a, self.b, self.c, self.d]),
+            edges=set([self.ab, self.bc, self.cd, self.ad]),
+        )
+        # ugraph7
+        #     a
+        #    / \
+        #   d   b
+        #    \ /
+        #     c
 
     def test_id(self):
         return self.assertEqual(self.ugraph1.id(), "ug1")
@@ -268,6 +283,21 @@ class UndiGraphTest(unittest.TestCase):
         ""
         bridges = self.ugraph6.find_bridges()
         self.assertEqual(bridges, set([self.de, self.bc]))
+
+    def test_find_maximal_cliques(self):
+        """!
+        """
+        cliques = self.ugraph7.find_maximal_cliques()
+        compare = [
+            set([self.a, self.b]),
+            set([self.b, self.c]),
+            set([self.a, self.d]),
+            set([self.c, self.d]),
+        ]
+        for c in compare:
+            indx = cliques.index(c)
+            cliques.pop(indx)
+        self.assertEqual(cliques, [])
 
 
 if __name__ == "__main__":

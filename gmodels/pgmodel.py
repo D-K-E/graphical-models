@@ -1,7 +1,7 @@
 """!
 Probabilistic Graph Model, a general model for inference
 """
-from gmodels.gtypes.undigraph import UndiGraph
+from gmodels.gtypes.digraph import DiGraph
 from gmodels.gtypes.edge import Edge, EdgeType
 from gmodels.randomvariable import NumCatRVariable, NumericValue
 from typing import Callable, Set, List, Optional, Dict, Tuple
@@ -9,12 +9,38 @@ import math
 from uuid import uuid4
 
 
-class PGModel(UndiGraph):
+class PGModel(DiGraph):
     def __init__(
         self, gid: str, nodes: Set[NumCatRVariable], edges: Set[Edge], data={}
     ):
         ""
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
+
+    def markov_blanket(self, t: NumCatRVariable) -> Set[NumCatRVariable]:
+        """!
+        get markov blanket of a node
+        from K. Murphy, 2012, p. 662
+        """
+        if self.is_in(t) is False:
+            raise ValueError("Node not in graph: " + str(t))
+        ns: Set[NumCatRVariable] = self.neighbours_of(t)
+        return ns
+
+    def closure_of(self, t: NumCatRVariable) -> Set[NumCatRVariable]:
+        """!
+        get closure of node 
+        from K. Murphy, 2012, p. 662
+        """
+        return set([t]).union(self.markov_blanket(t))
+
+    def is_conditionaly_independent_of(
+        self, n1: NumCatRVariable, n2: NumCatRVariable
+    ) -> bool:
+        """!
+        check if two nodes are conditionally independent
+        from K. Murphy, 2012, p. 662
+        """
+        return self.is_node_independant_of(n1, n2)
 
     def factor(self, f: Edge):
         """!
@@ -22,6 +48,9 @@ class PGModel(UndiGraph):
         Pa_X = f.start()
         X = f.end()
         return X.conditional(Pa_X)
+
+    def log_factor(self, e: Edge, base=10):
+        return math.log(self.factor(e), base)
 
     def scope_of(self, phi_X_i: Edge) -> Set[NumCatRVariable]:
         """!

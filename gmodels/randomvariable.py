@@ -101,17 +101,17 @@ class NumCatRVariable(CatRandomVariable):
         return True
 
     def max(self):
-        values = self.data()["outcome-values"]
-        return max([self.marginal(v) for v in values])
+        """!
+        """
+        return max([self.marginal(v) for v in self.values()])
 
     def max_marginal_value(self):
         if "evidence" in self.data():
-            return self.data()["evidence"]
+            return self.marginal(self.data()["evidence"])
 
-        values = self.data()["outcome-values"]
         mx = self.max_marginal_e()
         vs = []
-        for v in values:
+        for v in self.values():
             marginal = self.marginal(v)
             if marginal == mx:
                 vs.append((v, marginal))
@@ -119,9 +119,14 @@ class NumCatRVariable(CatRandomVariable):
         v, marginal = choice(vs)
         return v
 
+    def values(self):
+        vdata = self.data()
+        if "outcome-values" not in vdata:
+            raise KeyError("This random variable has no associated set of values")
+        return vdata["outcome-values"]
+
     def min(self):
-        values = self.data()["outcome-values"]
-        return min([self.marginal(v) for v in values])
+        return min([self.marginal(v) for v in self.values()])
 
     def marginal_over(self, evidence_value: float, other) -> float:
         """!
@@ -153,8 +158,7 @@ class NumCatRVariable(CatRandomVariable):
 
         \f \sum_{i=1}^n x_i p(x_i) \f
         """
-        values = self.data()["outcome-values"]
-        return sum([value * self.p_x(value) for value in values])
+        return sum([value * self.p_x(value) for value in self.values()])
 
     def add_evidence(self, evidence_value: float):
         """!
@@ -202,20 +206,17 @@ class NumCatRVariable(CatRandomVariable):
         implements:
         \f \sum_{i=1}^n \phi(x_i) p(x_i) \f
         """
-        values = self.data()["outcome-values"]
-        return sum([phi(value) * self.p_x(value) for value in values])
+        return sum([phi(value) * self.p_x(value) for value in self.values()])
 
     def apply(self, phi: Callable[[NumericValue], NumericValue]):
         """!
         """
-        values = self.data()["outcome-values"]
-        return [phi(v) for v in values]
+        return [phi(v) for v in self.values()]
 
     def apply_to_marginals(self, phi: Callable[[float], float]) -> List[float]:
         """!
         """
-        values = self.data()["outcome-values"]
-        return [phi(self.marginal(v)) for v in values]
+        return [phi(self.marginal(v)) for v in self.values()]
 
     def expected_apply(self, phi: Callable[[NumericValue], NumericValue]):
         """!
@@ -274,18 +275,3 @@ class NumCatRVariable(CatRandomVariable):
         self.type_check(other)
         joint = self.max_joint(other)
         return max([v for v in other.apply_to_marginals(lambda x: joint / x)])
-
-
-class ORNode(Node):
-    def __init__(self, node_id: str, var: NumCatRVariable, data={}):
-        ""
-        super().__init__(node_id=node_id, data=data)
-        self.var = var
-
-
-class ANDNode(Node):
-    def __init__(self, node_id: str, var: NumCatRVariable, val: float, data={}):
-        ""
-        super().__init__(node_id=node_id, data=data)
-        self.var = var
-        self.val = val

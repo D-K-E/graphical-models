@@ -145,7 +145,8 @@ class TreeTest(unittest.TestCase):
 
     def test_extract_path(self):
         ""
-        uset = self.gtree.extract_path(start=self.b, end=self.m)
+        p = self.gtree.extract_path(start=self.b, end=self.m)
+        self.assertEqual(p.node_list(), [self.b, self.f, self.m])
 
 
 if __name__ == "__main__":
