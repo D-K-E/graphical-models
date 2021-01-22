@@ -1,20 +1,36 @@
 """!
-Probabilistic Graph Model, a general model for inference
+
 """
-from gmodels.gtypes.digraph import DiGraph
+from gmodels.gtypes.undigraph import UndiGraph
 from gmodels.gtypes.edge import Edge, EdgeType
 from gmodels.randomvariable import NumCatRVariable, NumericValue
+from gmodels.factor import Factor
 from typing import Callable, Set, List, Optional, Dict, Tuple
 import math
 from uuid import uuid4
 
 
-class PGModel(DiGraph):
+class MarkovNetwork(UndiGraph):
     def __init__(
-        self, gid: str, nodes: Set[NumCatRVariable], edges: Set[Edge], data={}
+        self,
+        gid: str,
+        nodes: Set[NumCatRVariable],
+        edges: Set[Edge],
+        factors: Optional[Set[Factor]] = None,
+        data={},
     ):
         ""
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
+        if factors is None:
+            fs: Set[Factor] = set()
+            for e in self.edges():
+                estart = e.start()
+                eend = e.end()
+                f = Factor(gid=str(uuid4()), scope_vars=set([estart, eend]))
+                fs.add(f)
+            self.factors = fs
+        else:
+            self.factors = factors
 
     def markov_blanket(self, t: NumCatRVariable) -> Set[NumCatRVariable]:
         """!
@@ -42,22 +58,25 @@ class PGModel(DiGraph):
         """
         return self.is_node_independant_of(n1, n2)
 
-    def factor(self, f: Edge):
+    def scope_of(self, phi: Factor) -> Set[NumCatRVariable]:
         """!
         """
-        Pa_X = f.start()
-        X = f.end()
-        return X.conditional(Pa_X)
+        return phi.scope_vars()
 
-    def log_factor(self, e: Edge, base=10):
-        return math.log(self.factor(e), base)
-
-    def scope_of(self, phi_X_i: Edge) -> Set[NumCatRVariable]:
+    def is_scope_subset_of(self, phi: Factor, X: Set[NumCatRVariable]) -> bool:
         """!
+        filter factors using Koller, Friedman 2009, p. 299 as criteria
         """
-        return set([phi_X_i.start(), phi_X_i.end()])
+        s = self.scope_of(phi)
+        return s.intersection(X) == s
 
-    def get_factor_product(self, fs: Set[Edge], Z: NumCatRVariable):
+    def scope_subset_factors(self, X: Set[NumCatRVariable]) -> Set[Factor]:
+        """!
+        choose factors using Koller, Friedman 2009, p. 299 as criteria
+        """
+        return set([f for f in self.factors if self.is_scope_subset_of(f, X) is True])
+
+    def get_factor_product(self, fs: Set[Factor], Z: NumCatRVariable):
         """!
         """
         factors = set([f for f in fs if Z in self.scope_of(f)])
@@ -229,8 +248,3 @@ class PGModel(DiGraph):
         n1 = e.start()
         n2 = e.end()
         es = set()
-
-    def to_search_tree(self):
-        """!
-        construct a tree with assignments
-        """

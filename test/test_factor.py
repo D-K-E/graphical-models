@@ -104,7 +104,7 @@ class TestFactor(unittest.TestCase):
 
     def test_partition_value(self):
         ""
-        pval = self.f.partition_value()
+        pval = self.f.zval()
         self.assertTrue(pval, 1.0)
 
     def test_phi(self):
@@ -120,7 +120,7 @@ class TestFactor(unittest.TestCase):
         dmarg = self.dice.marginal(2)
         imarg = self.intelligence.marginal(0.1)
         gmarg = self.grade.marginal(0.4)
-        self.assertTrue(mjoint, (dmarg * imarg * gmarg) / self.f.partition_value())
+        self.assertTrue(mjoint, (dmarg * imarg * gmarg) / self.f.zval())
 
     def test_factor_product(self):
         ""

@@ -39,10 +39,31 @@ class Factor(GraphObject):
 
         self.scope_matches: Set[Tuple[str, NumCatRVariable]] = set()
 
-        self.Zval = self.partition_value()
+        self.Zval = self.zval()
 
     def scope_vars(self, f=lambda x: x):
         return f(self.svars)
+
+    def domain(
+        self,
+        rvar_filter=lambda x: True,
+        value_filter=lambda x, y: True,
+        value_transform=lambda x: x,
+    ) -> List[Set[Tuple[str, NumericValue]]]:
+        """!
+        Get factor domain
+        """
+        return [
+            set(
+                [
+                    value_transform((s.id(), v))
+                    for v in s.values()
+                    if value_filter(s.id(), v) is True
+                ]
+            )
+            for s in self.svars
+            if rvar_filter(s) is True
+        ]
 
     def has_var(self, ids: str) -> Tuple[bool, Optional[NumCatRVariable]]:
         ""
@@ -70,12 +91,17 @@ class Factor(GraphObject):
     def phi_normal(self, svars: Set[Tuple[str, NumericValue]]) -> float:
         return self.normalize(self.phi(svars))
 
-    def partition_value(self):
+    def partition_value(self, svars):
         """!
         compute partition value aka normalizing value for the factor
         from Koller, Friedman 2009 p. 105
         """
-        svars = [set([(s.id(), v) for v in s.values()]) for s in self.svars]
+        scope_matches = list(product(*svars))
+        return sum([self.factor_fn(svars=sv) for sv in scope_matches])
+
+    def zval(self):
+        ""
+        svars = self.domain()
         self.scope_matches = list(product(*svars))
         return sum([self.factor_fn(svars=sv) for sv in self.scope_matches])
 
@@ -128,3 +154,34 @@ class Factor(GraphObject):
                         multi = self.factor_fn(s) * other.factor_fn(o)
                         prod *= multi
         return prod
+
+    def reduce_by_value(self, context: Set[Tuple[str, NumericValue]]):
+        """!
+        Koller, Friedman 2009, p. 111
+        """
+        svars = [
+            set([(s.id(), v) for v in s.values() if (s.id(), v) in context])
+            for s in self.svars
+        ]
+        self.scope_matches = list(product(*svars))
+        self.Z = self.partition_value(svars)
+
+    def reduce_by_vars(self, context: Set[NumCatRVariable]):
+        """!
+        Koller, Friedman 2009, p. 111
+        """
+        svars = [
+            set([(s.id(), v) for v in s.values()])
+            for s in self.svars.intersection(context)
+        ]
+        self.scope_matches = list(product(*svars))
+        self.Z = self.partition_value(svars)
+
+    def sumout_var(self, Y: NumCatRVariable):
+        """!
+        Sum the variable out of factor as per Koller, Friedman 2009, p. 297
+        """
+        if Y not in self.scope_vars():
+            raise ValueError("argument is not in scope of this factor")
+
+        Y_vals = set([(Y.id(), v) for v in Y.values()])
