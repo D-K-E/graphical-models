@@ -6,6 +6,7 @@ from gmodels.randomvariable import NumCatRVariable
 from gmodels.gtypes.edge import Edge, EdgeType
 import unittest
 from random import choice
+import math
 
 
 class TestFactor(unittest.TestCase):
@@ -123,5 +124,38 @@ class TestFactor(unittest.TestCase):
         self.assertTrue(mjoint, (dmarg * imarg * gmarg) / self.f.zval())
 
     def test_factor_product(self):
+        ""  # TODO needs a better test case
+        f3 = self.f.product(
+            self.f2,
+            product_fn=lambda x, y: round(x * y, 8),
+            accumulator=lambda x, y: round(x * y, 7),
+        )
+
+    def test_reduced_by_value(self):
         ""
-        f3 = self.f.product(self.f2)
+        red = set([("dice", 3), ("grade", 0.4)])
+        self.f.reduced_by_value(context=red)
+        com = sum(
+            [
+                self.f.factor_fn(f)
+                for f in [
+                    {("dice", 3), ("int", 0.1), ("grade", 0.4)},
+                    {("dice", 3), ("int", 0.9), ("grade", 0.4)},
+                ]
+            ]
+        )
+        self.assertEqual(com, self.f.Z)
+
+    def test_reduce_by_vars(self):
+        ""
+        # TODO This needs a better test
+        assignments = set([("grade", 0.4)])
+        var = set([self.fdice, self.grade])
+        self.f.reduce_by_vars(assignment_context=var, assignments=assignments)
+        com = sum([self.f.factor_fn(f) for f in [{("grade", 0.4)}]])
+        self.assertEqual(self.f.Z, com)
+
+    def test_sumout_var(self):
+        ""
+        nf = self.f.sumout_var(self.grade)
+        self.assertEqual(round(nf), 1.0)
