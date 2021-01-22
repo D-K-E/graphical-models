@@ -61,6 +61,24 @@ class CatRandomVariable(RandomVariable):
         """
         return self.p_x(value)
 
+    def values(self):
+        vdata = self.data()
+        if "outcome-values" not in vdata:
+            raise KeyError("This random variable has no associated set of values")
+        return vdata["outcome-values"]
+
+    def value_set(
+        self, value_filter=lambda x: True, value_transform=lambda x: x,
+    ):
+        sid = self.id()
+        return set(
+            [
+                (sid, value_transform(v))
+                for v in self.values()
+                if value_filter(v) is True
+            ]
+        )
+
 
 class NumCatRVariable(CatRandomVariable):
     """!
@@ -118,12 +136,6 @@ class NumCatRVariable(CatRandomVariable):
         # break ties
         v, marginal = choice(vs)
         return v
-
-    def values(self):
-        vdata = self.data()
-        if "outcome-values" not in vdata:
-            raise KeyError("This random variable has no associated set of values")
-        return vdata["outcome-values"]
 
     def min(self):
         return min([self.marginal(v) for v in self.values()])

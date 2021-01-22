@@ -28,9 +28,9 @@ class MarkovNetwork(UndiGraph):
                 eend = e.end()
                 f = Factor(gid=str(uuid4()), scope_vars=set([estart, eend]))
                 fs.add(f)
-            self.factors = fs
+            self.Fs = fs
         else:
-            self.factors = factors
+            self.Fs = factors
 
     def markov_blanket(self, t: NumCatRVariable) -> Set[NumCatRVariable]:
         """!
@@ -41,6 +41,12 @@ class MarkovNetwork(UndiGraph):
             raise ValueError("Node not in graph: " + str(t))
         ns: Set[NumCatRVariable] = self.neighbours_of(t)
         return ns
+
+    def factors(self, f=lambda x: x):
+        """!
+        Get factors of graph
+        """
+        return set([f(ff) for ff in self.Fs])
 
     def closure_of(self, t: NumCatRVariable) -> Set[NumCatRVariable]:
         """!
@@ -79,16 +85,22 @@ class MarkovNetwork(UndiGraph):
     def get_factor_product(self, fs: Set[Factor], Z: NumCatRVariable):
         """!
         """
-        factors = set([f for f in fs if Z in self.scope_of(f)])
+        factors = list(set([f for f in fs if Z in self.scope_of(f)]))
         other_factors = set([f for f in fs if f not in factors])
-        prod = 1.0
-        for potential in factors:
-            pdata = potential.data()
-            if "factor" in pdata:
-                prod *= pdata["factor"]
-            else:
-                prod *= self.factor(potential)
-        return prod, factors, other_factors
+        prod, v = factors[0].product(
+            factors[1],
+            product_fn=lambda x, y: math.log(x) + math.log(y),
+            accumulator=lambda x, y: x + y,
+        )
+
+        for i in range(1, len(factors)):
+            f = factors[i]
+            prod, val = prod.product(
+                f,
+                product_fn=lambda x, y: math.log(x) + math.log(y),
+                accumulator=lambda x, y: x + y,
+            )
+        return prod, set(factors), other_factors
 
     def merge_factors(self, val: float, fs: Set[Edge], ofs: Set[Edge]):
         """!
@@ -102,27 +114,26 @@ class MarkovNetwork(UndiGraph):
         ofs = ofs.union(fs)
         return ofs
 
-    def sum_prod_var_eliminate(self, factors: Set[Edge], Z: NumCatRVariable):
+    def sum_prod_var_eliminate(self, factors: Set[Factor], Z: NumCatRVariable):
         """!
         Koller and Friedman 2009, p. 298
         """
         (prod, scope_factors, other_factors) = self.get_factor_product(factors, Z)
-        marginal_over = Z.P_X_e() * prod
+        sum_factor = prod.sumout_var(Z)
         return self.merge_factors(marginal_over, scope_factors, other_factors)
 
-    def sum_product_elimination(
-        self, factors: Set[Edge], Zs: List[NumCatRVariable]
-    ) -> float:
+    def sum_product_elimination(self, Zs: List[NumCatRVariable]) -> float:
         """!
         sum product variable elimination
         Koller and Friedman 2009, p. 298
 
         \param factors factor representation of our graph, it corresponds
-        mostly to edges.
+        mostly to edges if other factors are not provided.
 
         \param Zs elimination variables. They correspond to all variables that
         are not query variables.
         """
+        factors = self.factors()
         for Z in Zs:
             factors = self.sum_prod_var_eliminate(factors, Z)
         prod = 1.0
