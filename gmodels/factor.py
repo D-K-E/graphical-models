@@ -144,8 +144,8 @@ class Factor(GraphObject):
         """
         return phi_result / self.Z
 
-    def phi_normal(self, svars: Set[Tuple[str, NumericValue]]) -> float:
-        return self.normalize(self.phi(svars))
+    def phi_normal(self, scope_product: Set[Tuple[str, NumericValue]]) -> float:
+        return self.normalize(self.phi(scope_product))
 
     def partition_value(self, svars):
         """!
@@ -202,21 +202,22 @@ class Factor(GraphObject):
         svar = self.scope_vars()
         ovar = other.scope_vars()
         var_inter = svar.intersection(ovar)
-        if len(var_inter) > 1:
-            raise ValueError("factor intersecting more than 1 variable")
-        #
-        var_inter = list(var_inter)[0]
+        var_inter = list(var_inter)
+        vsets = [v.value_set() for v in var_inter]
+        inter_products = list(product(*vsets))
         smatch = self.scope_products
         omatch = other.scope_products
-        var_column = var_inter.value_set()
         prod = 1.0
         common_match = set()
-        for colv in var_column:
+        for iproduct in inter_products:
             for o in omatch:
                 for s in smatch:
-                    if colv in s and colv in o:
-                        common = set(o).union(set(s))
-                        multi = product_fn(self.factor_fn(s), other.factor_fn(o))
+                    ss = set(s)
+                    ost = set(o)
+                    prod_s = set(iproduct)
+                    if prod_s.issubset(ss) and prod_s.issubset(ost):
+                        common = ss.union(ost)
+                        multi = product_fn(self.factor_fn(ss), other.factor_fn(ost))
                         common_match.add((multi, tuple(common)))
                         prod = accumulator(multi, prod)
 
@@ -249,6 +250,7 @@ class Factor(GraphObject):
             ss = set(s)
             if context.issubset(ss):
                 svars.append(ss)
+
         self.scope_products = svars
         self.Z = sum([self.factor_fn(s) for s in self.scope_products])
 
@@ -301,9 +303,17 @@ class Factor(GraphObject):
             raise ValueError("argument is not in scope of this factor")
 
         Y_vals = Y.value_set()
-        sdiffs = []
-        for s in self.scope_products:
-            ss = set(s)
-            if len(ss.intersection(Y_vals)) > 0:
-                sdiffs.append(ss)
-        return sum([self.factor_fn(s) for s in sdiffs])
+        products = self.scope_products
+        fn = self.factor_fn
+
+        def psi(scope_product: Set[Tuple[str, NumericValue]]):
+            ""
+            s = set(scope_product)
+            if len(s.intersection(Y_vals)) > 0:
+                scope_diff = s.difference(Y_vals)
+                diffs = set([p for p in products if scope_diff.issubset(p) is True])
+                return sum([fn(d) for d in diffs])
+            else:
+                return fn(s)
+
+        return Factor(gid=str(uuid4()), scope_vars=self.scope_vars(), factor_fn=psi)
