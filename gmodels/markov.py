@@ -26,7 +26,16 @@ class MarkovNetwork(UndiGraph):
             for e in self.edges():
                 estart = e.start()
                 eend = e.end()
+                sdata = estart.data()
+                edata = eend.data()
+                evidences = set()
+                if "evidence" in sdata:
+                    evidences.add((estart.id(), sdata["evidence"]))
+                if "evidence" in edata:
+                    evidences.add((eend.id(), edata["evidence"]))
                 f = Factor(gid=str(uuid4()), scope_vars=set([estart, eend]))
+                if len(evidences) != 0:
+                    f.reduced_by_value(evidences)
                 fs.add(f)
             self.Fs = fs
         else:
@@ -101,7 +110,9 @@ class MarkovNetwork(UndiGraph):
             )
         return prod, val
 
-    def get_factor_product_var(self, fs: Set[Factor], Z: NumCatRVariable):
+    def get_factor_product_var(
+        self, fs: Set[Factor], Z: NumCatRVariable
+    ) -> Tuple[Factor, Set[Factor], Set[Factor]]:
         """!
         """
         factors = set([f for f in fs if Z in self.scope_of(f)])
@@ -200,15 +211,18 @@ class MarkovNetwork(UndiGraph):
         Compute conditional probabilities with variable elimination
         from Koller and Friedman 2009, p. 304
         """
-        factors = self.edges()
-        Zs = set([z for z in self.nodes() if z not in queries])
+        Zs = set(
+            [z for z in self.nodes() if z not in queries and "evidence" not in z.data()]
+        )
         cardinality = self.order_by_greedy_metric(
             nodes=Zs, s=self.min_unmarked_neighbours
         )
-        ordering = [n[0] for n in sorted(list(cardinality.items()), key=lambda x: x[1])]
-        phi = self.sum_product_elimination(factors, ordering)
-        alpha = sum([q.P_X_e() for q in queries])
-        return phi, alpha, (phi / alpha)
+        ordering = [
+            self.V[n[0]] for n in sorted(list(cardinality.items()), key=lambda x: x[1])
+        ]
+        phi = self.sum_product_elimination(Zs=ordering)
+        alpha = phi.sumout_vars(queries)
+        return phi, alpha
 
     def max_product_eliminate_var(
         self, factors: Set[Edge], Z: NumCatRVariable, table: Dict[str, NumericValue]
@@ -216,7 +230,9 @@ class MarkovNetwork(UndiGraph):
         """!
         from Koller and Friedman 2009, p. 557
         """
-        prod, scope_factors, other_factors = self.get_factor_product(factors, Z)
+        prod_factor, scope_factors, other_factors = self.get_factor_product_var(
+            fs=factors, Z=Z
+        )
         max_marginal = Z.max() * prod
         table[Z.id()] = Z.max_marginal_value()
         return self.merge_factors(max_marginal, scope_factors, other_factors)

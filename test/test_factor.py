@@ -375,3 +375,25 @@ class TestFactor(unittest.TestCase):
                 self.assertEqual(f, 0.24)
             elif diff == set([("C", 50), ("A", 20)]):
                 self.assertEqual(f, 0.39)
+
+    def test_maxout_var(self):
+        "from Koller, Friedman 2009, p. 555 figure 13.1"
+        aB_c, prod = self.aB.product(self.bc)
+        a_c = aB_c.maxout_var(self.Bf)
+        dset = self.Bf.value_set()
+        for p in a_c.scope_products:
+            ps = set(p)
+            f = round(a_c.phi(ps), 4)
+            diff = ps.difference(dset)
+            if diff == set([("C", 10), ("A", 10)]):
+                self.assertEqual(f, 0.25)
+            elif diff == set([("C", 50), ("A", 10)]):
+                self.assertEqual(f, 0.35)
+            elif diff == set([("C", 10), ("A", 50)]):
+                self.assertEqual(f, 0.05)
+            elif diff == set([("C", 50), ("A", 50)]):
+                self.assertEqual(f, 0.07)
+            elif diff == set([("C", 10), ("A", 20)]):
+                self.assertEqual(f, 0.15)
+            elif diff == set([("C", 50), ("A", 20)]):
+                self.assertEqual(f, 0.21)

@@ -317,3 +317,40 @@ class Factor(GraphObject):
                 return fn(s)
 
         return Factor(gid=str(uuid4()), scope_vars=self.scope_vars(), factor_fn=psi)
+
+    def maxout_var(self, Y: NumCatRVariable):
+        """!
+        max the variable out of factor as per Koller, Friedman 2009, p. 555
+        which creates a new factor
+        """
+        if Y not in self.scope_vars():
+            raise ValueError("argument is not in scope of this factor")
+
+        Y_vals = Y.value_set()
+        products = self.scope_products
+        fn = self.factor_fn
+
+        def psi(scope_product: Set[Tuple[str, NumericValue]]):
+            ""
+            s = set(scope_product)
+            if len(s.intersection(Y_vals)) > 0:
+                scope_diff = s.difference(Y_vals)
+                diffs = set([p for p in products if scope_diff.issubset(p) is True])
+                return max([fn(d) for d in diffs])
+            else:
+                return fn(s)
+
+        return Factor(gid=str(uuid4()), scope_vars=self.scope_vars(), factor_fn=psi)
+
+    def sumout_vars(self, Ys: Set[NumCatRVariable]):
+        """!
+        Sum the variable out of factor as per Koller, Friedman 2009, p. 297
+        which creates a new factor
+        """
+        if len(Ys) < 2:
+            raise ValueError("number of variables must be more than 1")
+        ylst = list(Ys)
+        fac = self.sumout_var(ylst[0])
+        for i in range(1, len(ylst)):
+            fac = fac.sumout_var(ylst[i])
+        return fac
