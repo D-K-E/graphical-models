@@ -82,11 +82,10 @@ class MarkovNetwork(UndiGraph):
         """
         return set([f for f in self.factors if self.is_scope_subset_of(f, X) is True])
 
-    def get_factor_product(self, fs: Set[Factor], Z: NumCatRVariable):
+    def get_factor_product(self, fs: Set[Factor]):
         """!
         """
-        factors = list(set([f for f in fs if Z in self.scope_of(f)]))
-        other_factors = set([f for f in fs if f not in factors])
+        factors = list(fs)
         prod, v = factors[0].product(
             factors[1],
             product_fn=lambda x, y: math.log(x) + math.log(y),
@@ -100,29 +99,26 @@ class MarkovNetwork(UndiGraph):
                 product_fn=lambda x, y: math.log(x) + math.log(y),
                 accumulator=lambda x, y: x + y,
             )
-        return prod, set(factors), other_factors
+        return prod, val
 
-    def merge_factors(self, val: float, fs: Set[Edge], ofs: Set[Edge]):
+    def get_factor_product_var(self, fs: Set[Factor], Z: NumCatRVariable):
         """!
-        Koller and Friedman 2009, p. 298
-        Bottom part of the algorithm
         """
-        for f in fs:
-            fdata = f.data()
-            fdata["factor"] = val
-
-        ofs = ofs.union(fs)
-        return ofs
+        factors = set([f for f in fs if Z in self.scope_of(f)])
+        other_factors = set([f for f in fs if f not in factors])
+        prod, v = self.get_factor_product(factors)
+        return prod, set(factors), other_factors
 
     def sum_prod_var_eliminate(self, factors: Set[Factor], Z: NumCatRVariable):
         """!
         Koller and Friedman 2009, p. 298
         """
-        (prod, scope_factors, other_factors) = self.get_factor_product(factors, Z)
+        (prod, scope_factors, other_factors) = self.get_factor_product_var(factors, Z)
         sum_factor = prod.sumout_var(Z)
-        return self.merge_factors(marginal_over, scope_factors, other_factors)
+        other_factors = other_factors.union(sum_factor)
+        return other_factors
 
-    def sum_product_elimination(self, Zs: List[NumCatRVariable]) -> float:
+    def sum_product_elimination(self, Zs: List[NumCatRVariable]) -> Factor:
         """!
         sum product variable elimination
         Koller and Friedman 2009, p. 298
@@ -136,9 +132,8 @@ class MarkovNetwork(UndiGraph):
         factors = self.factors()
         for Z in Zs:
             factors = self.sum_prod_var_eliminate(factors, Z)
-        prod = 1.0
-        for f in factors:
-            prod *= f.data()["factor"]
+
+        prod, v = self.get_factor_product(factors)
         return prod
 
     def order_by_max_cardinality(self, nodes: Set[NumCatRVariable]):

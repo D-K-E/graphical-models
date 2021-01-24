@@ -323,7 +323,7 @@ class TestFactor(unittest.TestCase):
                 self.assertEqual(ff, 0.041656)
 
     def test_reduced_by_value(self):
-        ""
+        "from Koller, Friedman 2009, p. 111 figure 4.5"
         red = set([("C", 10)])
         aB_c, prod = self.aB.product(self.bc)
         # print(aB_c.scope_products)
@@ -355,7 +355,23 @@ class TestFactor(unittest.TestCase):
         self.assertEqual(self.f.Z, com)
 
     def test_sumout_var(self):
-        ""
-        nf = self.f.sumout_var(self.grade)
-        print(self.f.Z)
-        print(nf.Z)
+        "from Koller, Friedman 2009, p. 297 figure 9.7"
+        aB_c, prod = self.aB.product(self.bc)
+        a_c = aB_c.sumout_var(self.Bf)
+        dset = self.Bf.value_set()
+        for p in a_c.scope_products:
+            ps = set(p)
+            f = round(a_c.phi(ps), 4)
+            diff = ps.difference(dset)
+            if diff == set([("C", 10), ("A", 10)]):
+                self.assertEqual(f, 0.33)
+            elif diff == set([("C", 50), ("A", 10)]):
+                self.assertEqual(f, 0.51)
+            elif diff == set([("C", 10), ("A", 50)]):
+                self.assertEqual(f, 0.05)
+            elif diff == set([("C", 50), ("A", 50)]):
+                self.assertEqual(f, 0.07)
+            elif diff == set([("C", 10), ("A", 20)]):
+                self.assertEqual(f, 0.24)
+            elif diff == set([("C", 50), ("A", 20)]):
+                self.assertEqual(f, 0.39)
