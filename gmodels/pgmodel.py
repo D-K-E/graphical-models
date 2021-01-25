@@ -2,6 +2,7 @@
 Probabilistic Graphic Model with Factors
 """
 from gmodels.gtypes.edge import Edge, EdgeType
+from gmodels.gtypes.node import Node
 from gmodels.randomvariable import NumCatRVariable, NumericValue
 from gmodels.factor import Factor
 from gmodels.gtypes.graph import Graph
@@ -98,17 +99,13 @@ class PGModel(Graph):
         """
         factors = list(fs)
         prod, v = factors[0].product(
-            factors[1],
-            product_fn=lambda x, y: math.log(x) + math.log(y),
-            accumulator=lambda x, y: x + y,
+            factors[1], product_fn=lambda x, y: x * y, accumulator=lambda x, y: x * y,
         )
 
         for i in range(1, len(factors)):
             f = factors[i]
             prod, val = prod.product(
-                f,
-                product_fn=lambda x, y: math.log(x) + math.log(y),
-                accumulator=lambda x, y: x + y,
+                f, product_fn=lambda x, y: x * y, accumulator=lambda x, y: x * y,
             )
         return prod, val
 
@@ -131,7 +128,9 @@ class PGModel(Graph):
         other_factors = other_factors.union(sum_factor)
         return other_factors
 
-    def sum_product_elimination(self, Zs: List[NumCatRVariable]) -> Factor:
+    def sum_product_elimination(
+        self, factors: Set[Factor], Zs: List[NumCatRVariable]
+    ) -> Factor:
         """!
         sum product variable elimination
         Koller and Friedman 2009, p. 298
@@ -142,7 +141,6 @@ class PGModel(Graph):
         \param Zs elimination variables. They correspond to all variables that
         are not query variables.
         """
-        factors = self.factors()
         for Z in Zs:
             factors = self.sum_prod_var_eliminate(factors, Z)
 
@@ -208,21 +206,37 @@ class PGModel(Graph):
                 marked[X.id()] = True
         return cardinality
 
-    def cond_prod_by_variable_elimination(self, queries: Set[NumCatRVariable]):
+    def cond_prod_by_variable_elimination(
+        self, queries: Set[NumCatRVariable], evidences: Set[Tuple[str, NumericValue]]
+    ):
         """!
         Compute conditional probabilities with variable elimination
         from Koller and Friedman 2009, p. 304
         """
-        Zs = set(
-            [z for z in self.nodes() if z not in queries and "evidence" not in z.data()]
-        )
+        if queries.issubset(self.nodes()) is False:
+            raise ValueError("Query variables must be a subset of vertices of graph")
+        if any(e[0] not in self.V for e in evidences):
+            raise ValueError("evidence set contains variables out of vertices of graph")
+        E = set([self.V[e[0]] for e in evidences])
+        print(*E)
+        fs = self.factors()
+        factors = set()
+        for f in fs:
+            if E.issubset(self.scope_of(f)) is True:
+                f.reduced_by_value(evidences)
+            factors.add(f)
+
+        Zs = set()
+        for z in self.nodes():
+            if z not in E and z not in queries:
+                Zs.add(z)
         cardinality = self.order_by_greedy_metric(
             nodes=Zs, s=self.min_unmarked_neighbours
         )
         ordering = [
             self.V[n[0]] for n in sorted(list(cardinality.items()), key=lambda x: x[1])
         ]
-        phi = self.sum_product_elimination(Zs=ordering)
+        phi = self.sum_product_elimination(factors=factors, Zs=ordering)
         alpha = phi.sumout_vars(queries)
         return phi, alpha
 
