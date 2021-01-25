@@ -397,3 +397,7 @@ class TestFactor(unittest.TestCase):
                 self.assertEqual(f, 0.15)
             elif diff == set([("C", 50), ("A", 20)]):
                 self.assertEqual(f, 0.21)
+
+
+if __name__ == "__main__":
+    unittest.main()
