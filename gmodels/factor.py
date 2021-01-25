@@ -45,6 +45,30 @@ class Factor(GraphObject):
         return f(self.svars)
 
     @classmethod
+    def from_joint_vars(cls, svars: Set[NumCatRVariable]):
+        """!
+        Make factor from joint variables
+        """
+        return Factor(gid=str(uuid4()), scope_vars=svars)
+
+    @classmethod
+    def from_conditional_vars(cls, X_i: NumCatRVariable, Pa_Xi: Set[NumCatRVariable]):
+        """!
+        Make factor from joint variables
+        """
+        Pa_Xs = 1.0
+        for p in Pa_Xi:
+            Pa_Xs *= p.P_X_e()
+
+        X_i_PaXi = X_i.P_X_e() * Pa_Xs
+
+        def fx(scope_product: Set[Tuple[str, NumericValue]]):
+            return X_i_PaXi / Pa_Xs
+
+        Pa_Xi.add(X_i)
+        return Factor(gid=str(uuid4()), scope_vars=Pa_Xi, factor_fn=fx)
+
+    @classmethod
     def fdomain(
         cls,
         D: Set[NumCatRVariable],
