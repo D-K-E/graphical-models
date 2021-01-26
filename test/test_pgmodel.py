@@ -231,22 +231,23 @@ class PGModelTest(unittest.TestCase):
         )
 
     def test_cond_prod_by_variable_elimination(self):
-        ""
-        ev = set([("a", True), ("b", True)])
+        """!
+        Test based on the computation in Darwiche 2009, p. 140
+        """
+        ev = set([("a", True)])
         qs = set([self.c])
-        # p, a = self.pgm.cond_prod_by_variable_elimination(qs, ev)
-
-    # for ps in p.scope_products:
-    #     pss = set(ps)
-    #     f = p.phi(pss) / a.phi(pss)
-    #     if set([("c", True)]).issubset(pss):
-    #         print("----------------")
-    #         print(f)
-    #         print(pss)
-    #     elif set([("c", False)]).issubset(pss):
-    #         print("================")
-    #         print(f)
-    #         print(pss)
+        p, a = self.pgm.cond_prod_by_variable_elimination(qs, ev)
+        # check if it is a valid distribution
+        s = 0
+        for ps in p.scope_products:
+            pss = set(ps)
+            f = round(p.phi(pss) / a.phi(pss), 4)
+            s += f
+            if set([("c", True)]).issubset(pss):
+                self.assertEqual(f, 0.32)
+            elif set([("c", False)]).issubset(pss):
+                self.assertEqual(f, 0.68)
+        self.assertTrue(s, 1.0)
 
 
 if __name__ == "__main__":
