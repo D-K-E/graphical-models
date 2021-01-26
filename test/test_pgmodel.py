@@ -40,10 +40,10 @@ class PGModelTest(unittest.TestCase):
             end_node=self.b,
         )
         self.bc = Edge(
-            edge_id="ab",
+            edge_id="bc",
             edge_type=EdgeType.UNDIRECTED,
-            start_node=self.a,
-            end_node=self.b,
+            start_node=self.b,
+            end_node=self.c,
         )
 
         def phi_ba(scope_product):
@@ -180,6 +180,24 @@ class PGModelTest(unittest.TestCase):
                 self.assertEqual(res, 0.376)
             elif set([("c", False)]).issubset(sps):
                 self.assertEqual(res, 0.624)
+
+    def test_order_by_greedy_metric(self):
+        ""
+        ns = set([self.a, self.b])
+        cards = self.pgm.order_by_greedy_metric(
+            nodes=ns, s=self.pgm.min_unmarked_neighbours
+        )
+        self.assertEqual(cards, {"a": 0, "b": 1})
+        ns = set([self.c, self.b])
+        cards2 = self.pgm.order_by_greedy_metric(
+            nodes=ns, s=self.pgm.min_unmarked_neighbours
+        )
+        self.assertEqual(cards2, {"c": 0, "b": 1})
+        ns = set([self.c, self.a])
+        cards3 = self.pgm.order_by_greedy_metric(
+            nodes=ns, s=self.pgm.min_unmarked_neighbours
+        )
+        self.assertTrue(cards3 == {"a": 0, "c": 1} or cards3 == {"a": 1, "c": 0})
 
 
 if __name__ == "__main__":

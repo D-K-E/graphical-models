@@ -185,7 +185,7 @@ class PGModel(Graph):
         """
         ordered = [(n, self.nb_neighbours_of(n)) for n in nodes]
         ordered.sort(key=lambda x: x[1])
-        for X, nb in ordered:
+        for X, nb in sorted(ordered, key=lambda x: x[1]):
             if marked[X.id()] is False:
                 return X
         return None
@@ -212,6 +212,23 @@ class PGModel(Graph):
                 marked[X.id()] = True
         return cardinality
 
+    def reduce_factors_with_evidence(self, evidences: Set[Tuple[str, NumericValue]]):
+        """!
+        reduce factors if there is evidence
+        """
+        if len(evidences) == 0:
+            return self.factors(), set()
+        if any(e[0] not in self.V for e in evidences):
+            raise ValueError("evidence set contains variables out of vertices of graph")
+        E = set([self.V[e[0]] for e in evidences])
+        fs = self.factors()
+        factors = set()
+        for f in fs:
+            if E.issubset(self.scope_of(f)) is True:
+                f.reduced_by_value(evidences)
+            factors.add(f)
+        return factors, E
+
     def cond_prod_by_variable_elimination(
         self, queries: Set[NumCatRVariable], evidences: Set[Tuple[str, NumericValue]]
     ):
@@ -221,25 +238,19 @@ class PGModel(Graph):
         """
         if queries.issubset(self.nodes()) is False:
             raise ValueError("Query variables must be a subset of vertices of graph")
-        if any(e[0] not in self.V for e in evidences):
-            raise ValueError("evidence set contains variables out of vertices of graph")
-        E = set([self.V[e[0]] for e in evidences])
-        print(*E)
-        fs = self.factors()
-        factors = set()
-        for f in fs:
-            if E.issubset(self.scope_of(f)) is True:
-                f.reduced_by_value(evidences)
-            factors.add(f)
-
+        factors, E = self.reduce_factors_with_evidence(evidences)
         Zs = set()
         for z in self.nodes():
-            if len(evidences) > 0:
-                E = set([self.V[e[0]] for e in evidences])
-                if z not in E and z not in queries:
-                    Zs.add(z)
-            elif z not in queries:
+            if z not in E and z not in queries:
                 Zs.add(z)
+        return self.conditional_prod_by_variable_elimination(Zs, factors)
+
+    def conditional_prod_by_variable_elimination(
+        self, Zs: Set[NumCatRVariable], factors: Set[Factor]
+    ):
+        """!
+        Main conditional product by variable elimination function
+        """
         cardinality = self.order_by_greedy_metric(
             nodes=Zs, s=self.min_unmarked_neighbours
         )
