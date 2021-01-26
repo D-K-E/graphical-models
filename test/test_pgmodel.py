@@ -15,7 +15,10 @@ class PGModelTest(unittest.TestCase):
     ""
 
     def setUp(self):
-        ""
+        """!
+        Graph made from values of
+        Darwiche 2009, p. 132, figure 6.4
+        """
         idata = {
             "a": {"outcome-values": [True, False]},
             "b": {"outcome-values": [True, False]},
@@ -150,7 +153,9 @@ class PGModelTest(unittest.TestCase):
                     self.assertEqual(afbf.phi(prs), p.phi(psps))
 
     def test_sum_prod_var_eliminate(self):
-        ""
+        """!
+        based on values of Darwiche 2009 p. 133
+        """
         ofacs = self.pgm.sum_prod_var_eliminate(factors=self.pgm.factors(), Z=self.a)
         smf = [o for o in ofacs if o.id() != "cb"][0]
         for s in smf.scope_products:
@@ -162,10 +167,19 @@ class PGModelTest(unittest.TestCase):
                 self.assertEqual(f, 0.38)
 
     def test_sum_product_elimination(self):
-        ""
+        """!
+        based on values of Darwiche 2009 p. 133
+        """
         p = self.pgm.sum_product_elimination(
-            factors=self.pgm.factors(), Zs=set([self.b, self.a])
+            factors=self.pgm.factors(), Zs=[self.a, self.b]
         )
+        for sp in p.scope_products:
+            sps = set(sp)
+            res = round(p.phi(sps), 4)
+            if set([("c", True)]).issubset(sps):
+                self.assertEqual(res, 0.376)
+            elif set([("c", False)]).issubset(sps):
+                self.assertEqual(res, 0.624)
 
 
 if __name__ == "__main__":
