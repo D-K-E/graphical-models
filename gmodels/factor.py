@@ -279,13 +279,13 @@ class Factor(GraphObject):
         | a2   | b1   |  c2  |
         +======+======+======+
         """
-        svars = []
+        svars = set()
         for sv in self.scope_vars():
             for kval in context:
                 k, value = kval
                 if sv.id() == k:
                     sv.reduce_to_value(value)
-            svars.append(sv)
+            svars.add(sv)
         return Factor(gid=str(uuid4()), scope_vars=svars, factor_fn=self.phi)
 
     def reduced_by_value(self, context: Set[Tuple[str, NumericValue]]):
