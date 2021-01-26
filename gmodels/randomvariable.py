@@ -186,6 +186,13 @@ class NumCatRVariable(CatRandomVariable):
             data.pop("evidence")
         self.update_data(data)
 
+    def reduce_to_value(self, val: NumericValue):
+        ""
+        vs = [v for v in self.values() if v == val]
+        vdata = self.data()
+        vdata["outcome-values"] = vs
+        self.update_data(vdata)
+
     def P_X(self):
         """!
         Biagini, Campanino, 2016, p.11

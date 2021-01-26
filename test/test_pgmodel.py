@@ -199,6 +199,55 @@ class PGModelTest(unittest.TestCase):
         )
         self.assertTrue(cards3 == {"a": 0, "c": 1} or cards3 == {"a": 1, "c": 0})
 
+    def test_reduce_factors_with_evidence(self):
+        ""
+        ev = set([("a", True), ("b", True)])
+        fs, es = self.pgm.reduce_factors_with_evidence(ev)
+        fs_s = set([frozenset([frozenset(s) for s in f.scope_products]) for f in fs])
+        self.assertEqual(
+            fs_s,
+            set(
+                [
+                    frozenset(
+                        [
+                            frozenset(s)
+                            for s in self.ba_f.reduced_by_value(ev).scope_products
+                        ]
+                    ),
+                    frozenset(
+                        [
+                            frozenset(s)
+                            for s in self.a_f.reduced_by_value(ev).scope_products
+                        ]
+                    ),
+                    frozenset(
+                        [
+                            frozenset(s)
+                            for s in self.cb_f.reduced_by_value(ev).scope_products
+                        ]
+                    ),
+                ]
+            ),
+        )
+
+    def test_cond_prod_by_variable_elimination(self):
+        ""
+        ev = set([("a", True), ("b", True)])
+        qs = set([self.c])
+        # p, a = self.pgm.cond_prod_by_variable_elimination(qs, ev)
+
+    # for ps in p.scope_products:
+    #     pss = set(ps)
+    #     f = p.phi(pss) / a.phi(pss)
+    #     if set([("c", True)]).issubset(pss):
+    #         print("----------------")
+    #         print(f)
+    #         print(pss)
+    #     elif set([("c", False)]).issubset(pss):
+    #         print("================")
+    #         print(f)
+    #         print(pss)
+
 
 if __name__ == "__main__":
     unittest.main()
