@@ -92,20 +92,22 @@ class PGModel(Graph):
         """!
         choose factors using Koller, Friedman 2009, p. 299 as criteria
         """
-        return set([f for f in self.factors if self.is_scope_subset_of(f, X) is True])
+        return set([f for f in self.factors() if self.is_scope_subset_of(f, X) is True])
 
     def get_factor_product(self, fs: Set[Factor]):
         """!
+        Multiply a set of factors.
+        \f \prod_{i} \phi_i \f
         """
         factors = list(fs)
-        prod, v = factors[0].product(
-            factors[1], product_fn=lambda x, y: x * y, accumulator=lambda x, y: x * y,
-        )
-
-        for i in range(1, len(factors)):
-            f = factors[i]
+        if len(factors) == 1:
+            return factors[0], None
+        prod = factors.pop(0)
+        for i in range(0, len(factors)):
             prod, val = prod.product(
-                f, product_fn=lambda x, y: x * y, accumulator=lambda x, y: x * y,
+                factors[i],
+                product_fn=lambda x, y: x * y,
+                accumulator=lambda x, y: x * y,
             )
         return prod, val
 
@@ -113,6 +115,7 @@ class PGModel(Graph):
         self, fs: Set[Factor], Z: NumCatRVariable
     ) -> Tuple[Factor, Set[Factor], Set[Factor]]:
         """!
+        Get products of factors whose scope involves variable Z.
         """
         factors = set([f for f in fs if Z in self.scope_of(f)])
         other_factors = set([f for f in fs if f not in factors])
@@ -122,10 +125,13 @@ class PGModel(Graph):
     def sum_prod_var_eliminate(self, factors: Set[Factor], Z: NumCatRVariable):
         """!
         Koller and Friedman 2009, p. 298
+        multiply factors and sum out the given variable
+        \param factors factors that we are going to multiply
+        \param Z variable that we are going to sum out, i.e. marginalize
         """
         (prod, scope_factors, other_factors) = self.get_factor_product_var(factors, Z)
         sum_factor = prod.sumout_var(Z)
-        other_factors = other_factors.union(sum_factor)
+        other_factors = other_factors.union({sum_factor})
         return other_factors
 
     def sum_product_elimination(
@@ -228,7 +234,11 @@ class PGModel(Graph):
 
         Zs = set()
         for z in self.nodes():
-            if z not in E and z not in queries:
+            if len(evidences) > 0:
+                E = set([self.V[e[0]] for e in evidences])
+                if z not in E and z not in queries:
+                    Zs.add(z)
+            elif z not in queries:
                 Zs.add(z)
         cardinality = self.order_by_greedy_metric(
             nodes=Zs, s=self.min_unmarked_neighbours
