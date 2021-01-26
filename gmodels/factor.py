@@ -264,7 +264,7 @@ class Factor(GraphObject):
         f = Factor(gid=str(uuid4()), scope_vars=svar.union(ovar), factor_fn=fx)
         return f, prod
 
-    def reduced_by_value(self, context: Set[Tuple[str, NumericValue]]):
+    def reduced(self, context: Set[Tuple[str, NumericValue]]):
         """!
         Koller, Friedman 2009, p. 111
         reduction by value example
@@ -280,13 +280,16 @@ class Factor(GraphObject):
         +======+======+======+
         """
         svars = []
-        for s in self.scope_products:
-            ss = set(s)
-            if context.issubset(ss):
-                svars.append(ss)
+        for sv in self.scope_vars():
+            for kval in context:
+                k, value = kval
+                if sv.id() == k:
+                    sv.reduce_to_value(value)
+            svars.append(sv)
+        return Factor(gid=str(uuid4()), scope_vars=svars, factor_fn=self.phi)
 
-        self.scope_products = svars
-        self.Z = sum([self.factor_fn(s) for s in self.scope_products])
+    def reduced_by_value(self, context: Set[Tuple[str, NumericValue]]):
+        return self.reduced(context)
 
     def filter_assignments(
         self, assignments: Set[Tuple[str, NumericValue]], context: Set[NumCatRVariable]
@@ -301,7 +304,7 @@ class Factor(GraphObject):
                 assignment_d.pop(a)
         return set([(k, v) for k, v in assignment_d.items()])
 
-    def reduce_by_vars(
+    def reduced_by_vars(
         self,
         assignment_context: Set[NumCatRVariable],
         assignments: Set[Tuple[str, NumericValue]],
@@ -312,21 +315,7 @@ class Factor(GraphObject):
         \f U' = U \cap Y \f , and u' = u<U>, where u<U> denotes the assignment
         in u to the variables in U'.
         """
-        svars = []
-        cdomain = self.fdomain(assignment_context)
-        if any(assignments.issubset(c) for c in cdomain) is False:
-            raise ValueError("assignments do not belong to domain of context")
-        if assignment_context.issubset(self.scope_vars()) is True:
-            self.reduced_by_value(assignments)
-            return
-        U_x = self.scope_vars().intersection(assignment_context)
-        u_x = self.filter_assignments(assignments=assignments, context=U_x)
-        for s in self.matches(D=U_x):
-            ss = set(s)
-            if u_x.issubset(ss) is True:
-                svars.append(ss)
-        self.scope_products = svars
-        self.Z = sum([self.factor_fn(s) for s in self.scope_products])
+        return self.reduced(context=assignments)
 
     def sumout_var(self, Y: NumCatRVariable):
         """!
@@ -381,8 +370,11 @@ class Factor(GraphObject):
         Sum the variable out of factor as per Koller, Friedman 2009, p. 297
         which creates a new factor
         """
-        if len(Ys) < 2:
-            raise ValueError("number of variables must be more than 1")
+        if len(Ys) == 0:
+            raise ValueError("variables not be an empty set")
+        if len(Ys) == 1:
+            v = Ys.pop()
+            return self.sumout_var(v)
         ylst = list(Ys)
         fac = self.sumout_var(ylst[0])
         for i in range(1, len(ylst)):

@@ -327,11 +327,25 @@ class TestFactor(unittest.TestCase):
         red = set([("C", 10)])
         aB_c, prod = self.aB.product(self.bc)
         # print(aB_c.scope_products)
-        aB_c.reduced_by_value(context=red)
-        # print(aB_c.scope_products)
-        for p in aB_c.scope_products:
+        nf = aB_c.reduced_by_value(context=red)
+        sps = set([frozenset(s) for s in nf.scope_products])
+
+        self.assertEqual(
+            sps,
+            set(
+                [
+                    frozenset([("A", 10), ("B", 50), ("C", 10)]),
+                    frozenset([("A", 10), ("B", 10), ("C", 10)]),
+                    frozenset([("B", 50), ("A", 20), ("C", 10)]),
+                    frozenset([("B", 10), ("A", 20), ("C", 10)]),
+                    frozenset([("A", 50), ("B", 50), ("C", 10)]),
+                    frozenset([("A", 50), ("B", 10), ("C", 10)]),
+                ]
+            ),
+        )
+        for p in nf.scope_products:
             ps = set(p)
-            f = round(aB_c.phi(ps), 5)
+            f = round(nf.phi(ps), 5)
             if ps == set([("A", 10), ("B", 50), ("C", 10)]):
                 self.assertEqual(f, 0.08)
             elif ps == set([("A", 10), ("B", 10), ("C", 10)]):
@@ -347,12 +361,27 @@ class TestFactor(unittest.TestCase):
 
     def test_reduce_by_vars(self):
         ""
-        # TODO This needs a better test
-        assignments = set([("grade", 0.4)])
-        var = set([self.fdice, self.grade])
-        self.f.reduce_by_vars(assignment_context=var, assignments=assignments)
-        com = sum([self.f.factor_fn(f) for f in [{("grade", 0.4)}]])
-        self.assertEqual(self.f.Z, com)
+        evidence = set([("C", 10), ("D", 50)])
+        aB_c, prod = self.aB.product(self.bc)
+        # print(aB_c.scope_products)
+        nf = aB_c.reduced_by_vars(
+            assignments=evidence, assignment_context=set([self.Cf, self.Df])
+        )
+        sps = set([frozenset(s) for s in nf.scope_products])
+
+        self.assertEqual(
+            sps,
+            set(
+                [
+                    frozenset([("A", 10), ("B", 50), ("C", 10)]),
+                    frozenset([("A", 10), ("B", 10), ("C", 10)]),
+                    frozenset([("B", 50), ("A", 20), ("C", 10)]),
+                    frozenset([("B", 10), ("A", 20), ("C", 10)]),
+                    frozenset([("A", 50), ("B", 50), ("C", 10)]),
+                    frozenset([("A", 50), ("B", 10), ("C", 10)]),
+                ]
+            ),
+        )
 
     def test_sumout_var(self):
         "from Koller, Friedman 2009, p. 297 figure 9.7"

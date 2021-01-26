@@ -222,11 +222,7 @@ class PGModel(Graph):
             raise ValueError("evidence set contains variables out of vertices of graph")
         E = set([self.V[e[0]] for e in evidences])
         fs = self.factors()
-        factors = set()
-        for f in fs:
-            if E.issubset(self.scope_of(f)) is True:
-                f.reduced_by_value(evidences)
-            factors.add(f)
+        factors = set([f.reduced_by_value(context=evidences) for f in fs])
         return factors, E
 
     def cond_prod_by_variable_elimination(
@@ -243,10 +239,13 @@ class PGModel(Graph):
         for z in self.nodes():
             if z not in E and z not in queries:
                 Zs.add(z)
-        return self.conditional_prod_by_variable_elimination(Zs, factors)
+        return self.conditional_prod_by_variable_elimination(queries, Zs, factors)
 
     def conditional_prod_by_variable_elimination(
-        self, Zs: Set[NumCatRVariable], factors: Set[Factor]
+        self,
+        queries: Set[NumCatRVariable],
+        Zs: Set[NumCatRVariable],
+        factors: Set[Factor],
     ):
         """!
         Main conditional product by variable elimination function
