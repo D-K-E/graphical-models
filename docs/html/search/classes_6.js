@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['multinaivebayesmle_96',['MultiNaiveBayesMLE',['../dd/dda/classgmodels_1_1legacy_1_1NaiveBayes_1_1MultiNaiveBayesMLE.html',1,'gmodels::legacy::NaiveBayes']]]
+  ['graph_165',['Graph',['../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html',1,'gmodels::gtypes::graph']]],
+  ['graphanalyzer_166',['GraphAnalyzer',['../dc/dfb/classgmodels_1_1gtypes_1_1analyzer_1_1GraphAnalyzer.html',1,'gmodels::gtypes::analyzer']]],
+  ['graphobject_167',['GraphObject',['../dc/de3/classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject.html',1,'gmodels::gtypes::graphobj']]]
 ];

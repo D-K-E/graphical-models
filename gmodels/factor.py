@@ -181,6 +181,18 @@ class Factor(GraphObject):
     def phi_normal(self, scope_product: Set[Tuple[str, NumericValue]]) -> float:
         return self.normalize(self.phi(scope_product))
 
+    def max_value(self):
+        ""
+        mx = float("-inf")
+        max_val = None
+        for sp in self.scope_products:
+            ss = set(sp)
+            phi_s = self.phi(ss)
+            if phi_s > mx:
+                mx = phi_s
+                max_val = ss
+        return max_val
+
     def partition_value(self, svars):
         """!
         compute partition value aka normalizing value for the factor

@@ -94,6 +94,154 @@ class PGModelTest(unittest.TestCase):
             factors=set([self.ba_f, self.cb_f, self.a_f]),
         )
 
+        # most probable explanation instantiations
+        # graph
+        odata = {"outcome-values": [True, False]}
+        self.J = NumCatRVariable(
+            node_id="J", input_data=odata, distribution=lambda x: 0.5
+        )
+        self.I = NumCatRVariable(
+            node_id="I", input_data=odata, distribution=lambda x: 0.5
+        )
+        self.X = NumCatRVariable(
+            node_id="X", input_data=odata, distribution=lambda x: 0.5
+        )
+        self.Y = NumCatRVariable(
+            node_id="Y", input_data=odata, distribution=lambda x: 0.5
+        )
+        self.O = NumCatRVariable(
+            node_id="O", input_data=odata, distribution=lambda x: 0.5
+        )
+        self.JX = Edge(
+            edge_id="JX",
+            edge_type=EdgeType.DIRECTED,
+            start_node=self.J,
+            end_node=self.X,
+        )
+        self.JY = Edge(
+            edge_id="JY",
+            edge_type=EdgeType.DIRECTED,
+            start_node=self.J,
+            end_node=self.Y,
+        )
+        self.IX = Edge(
+            edge_id="IX",
+            edge_type=EdgeType.DIRECTED,
+            start_node=self.I,
+            end_node=self.X,
+        )
+        self.XO = Edge(
+            edge_id="XO",
+            edge_type=EdgeType.DIRECTED,
+            start_node=self.X,
+            end_node=self.O,
+        )
+        self.YO = Edge(
+            edge_id="YO",
+            edge_type=EdgeType.DIRECTED,
+            start_node=self.Y,
+            end_node=self.O,
+        )
+
+        def phi_ij(scope_product, i: str):
+            ""
+            ss = set(scope_product)
+            if ss == set([(i, True)]):
+                return 0.5
+            elif ss == set([(i, False)]):
+                return 0.5
+            else:
+                raise ValueError("unknown scope product")
+
+        def phi_i(scope_product):
+            ""
+            return phi_ij(scope_product, i="I")
+
+        self.I_f = Factor(gid="I_f", scope_vars=set([self.I]), factor_fn=phi_i)
+
+        def phi_j(scope_product):
+            ""
+            return phi_ij(scope_product, i="J")
+
+        self.J_f = Factor(gid="J_f", scope_vars=set([self.J]), factor_fn=phi_j)
+
+        def phi_jy(scope_product):
+            ""
+            ss = set(scope_product)
+            if ss == set([("J", True), ("Y", True)]):
+                return 0.01
+            elif ss == set([("J", True), ("Y", False)]):
+                return 0.99
+            elif ss == set([("J", False), ("Y", True)]):
+                return 0.99
+            elif ss == set([("J", False), ("Y", False)]):
+                return 0.01
+            else:
+                raise ValueError("scope product unknown")
+
+        self.JY_f = Factor(
+            gid="JY_f", scope_vars=set([self.J, self.Y]), factor_fn=phi_jy
+        )
+
+        def phi_ijx(scope_product):
+            ""
+            ss = set(scope_product)
+            if ss == set([("I", True), ("J", True), ("X", True)]):
+                return 0.95
+            elif ss == set([("I", True), ("J", True), ("X", False)]):
+                return 0.05
+            elif ss == set([("I", True), ("J", False), ("X", True)]):
+                return 0.05
+            elif ss == set([("I", True), ("J", False), ("X", False)]):
+                return 0.95
+            elif ss == set([("I", False), ("J", True), ("X", True)]):
+                return 0.05
+            elif ss == set([("I", False), ("J", True), ("X", False)]):
+                return 0.95
+            elif ss == set([("I", False), ("J", False), ("X", True)]):
+                return 0.05
+            elif ss == set([("I", False), ("J", False), ("X", False)]):
+                return 0.95
+            else:
+                raise ValueError("scope product unknown")
+
+        self.IJX_f = Factor(
+            gid="IJX_f", scope_vars=set([self.J, self.X, self.I]), factor_fn=phi_ijx
+        )
+
+        def phi_xyo(scope_product):
+            ""
+            ss = set(scope_product)
+            if ss == set([("X", True), ("Y", True), ("O", True)]):
+                return 0.98
+            elif ss == set([("X", True), ("Y", True), ("O", False)]):
+                return 0.02
+            elif ss == set([("X", True), ("Y", False), ("O", True)]):
+                return 0.98
+            elif ss == set([("X", True), ("Y", False), ("O", False)]):
+                return 0.02
+            elif ss == set([("X", False), ("Y", True), ("O", True)]):
+                return 0.98
+            elif ss == set([("X", False), ("Y", True), ("O", False)]):
+                return 0.02
+            elif ss == set([("X", False), ("Y", False), ("O", True)]):
+                return 0.02
+            elif ss == set([("X", False), ("Y", False), ("O", False)]):
+                return 0.98
+            else:
+                raise ValueError("scope product unknown")
+
+        self.XYO_f = Factor(
+            gid="XYO_f", scope_vars=set([self.Y, self.X, self.O]), factor_fn=phi_xyo
+        )
+
+        self.pgm_mpe = PGModel(
+            gid="mpe",
+            nodes=set([self.J, self.Y, self.X, self.I, self.O]),
+            edges=set([self.JY, self.JX, self.YO, self.IX, self.XO]),
+            factors=set([self.I_f, self.J_f, self.JY_f, self.IJX_f, self.XYO_f]),
+        )
+
     def test_id(self):
         ""
         self.assertEqual(self.pgm.id(), "pgm")
@@ -248,6 +396,13 @@ class PGModelTest(unittest.TestCase):
             elif set([("c", False)]).issubset(pss):
                 self.assertEqual(f, 0.68)
         self.assertTrue(s, 1.0)
+
+    def test_mpe(self):
+        ""
+        ev = set([("J", True), ("O", False)])
+        assignments, factors = self.pgm_mpe.max_product_ve(evidences=ev)
+        [print(a) for a in assignments]
+        print(list(factors)[0].phi(assignments[0]))
 
 
 if __name__ == "__main__":

@@ -1,15 +1,19 @@
 var searchData=
 [
-  ['abstractobj_106',['abstractobj',['../d0/dab/namespacegmodels_1_1gtypes_1_1abstractobj.html',1,'gmodels::gtypes']]],
-  ['basicnaivebayes_107',['BasicNaiveBayes',['../d3/dec/namespacegmodels_1_1legacy_1_1BasicNaiveBayes.html',1,'gmodels::legacy']]],
-  ['basicprob_108',['BasicProb',['../d7/d2a/namespacegmodels_1_1legacy_1_1BasicProb.html',1,'gmodels::legacy']]],
-  ['bayesian_109',['bayesian',['../d6/dad/namespacegmodels_1_1bayesian.html',1,'gmodels']]],
-  ['bayesutils_110',['bayesutils',['../d5/d0c/namespacegmodels_1_1legacy_1_1bayesutils.html',1,'gmodels::legacy']]],
-  ['digraph_111',['digraph',['../db/d91/namespacegmodels_1_1gtypes_1_1digraph.html',1,'gmodels::gtypes']]],
-  ['graphobj_112',['graphobj',['../de/df5/namespacegmodels_1_1gtypes_1_1graphobj.html',1,'gmodels::gtypes']]],
-  ['naivebayes_113',['NaiveBayes',['../dd/dfd/namespacegmodels_1_1legacy_1_1NaiveBayes.html',1,'gmodels::legacy']]],
-  ['path_114',['path',['../db/d71/namespacegmodels_1_1gtypes_1_1path.html',1,'gmodels::gtypes']]],
-  ['randomvariable_115',['randomvariable',['../da/d3d/namespacegmodels_1_1randomvariable.html',1,'gmodels']]],
-  ['tree_116',['tree',['../d4/d53/namespacegmodels_1_1gtypes_1_1tree.html',1,'gmodels::gtypes']]],
-  ['undigraph_117',['undigraph',['../dc/ded/namespacegmodels_1_1gtypes_1_1undigraph.html',1,'gmodels::gtypes']]]
+  ['abstractobj_181',['abstractobj',['../d0/dab/namespacegmodels_1_1gtypes_1_1abstractobj.html',1,'gmodels::gtypes']]],
+  ['basicnaivebayes_182',['BasicNaiveBayes',['../d3/dec/namespacegmodels_1_1legacy_1_1BasicNaiveBayes.html',1,'gmodels::legacy']]],
+  ['basicprob_183',['BasicProb',['../d7/d2a/namespacegmodels_1_1legacy_1_1BasicProb.html',1,'gmodels::legacy']]],
+  ['bayesian_184',['bayesian',['../d6/dad/namespacegmodels_1_1bayesian.html',1,'gmodels']]],
+  ['bayesutils_185',['bayesutils',['../d5/d0c/namespacegmodels_1_1legacy_1_1bayesutils.html',1,'gmodels::legacy']]],
+  ['digraph_186',['digraph',['../db/d91/namespacegmodels_1_1gtypes_1_1digraph.html',1,'gmodels::gtypes']]],
+  ['factor_187',['factor',['../d8/d34/namespacegmodels_1_1factor.html',1,'gmodels']]],
+  ['graphobj_188',['graphobj',['../de/df5/namespacegmodels_1_1gtypes_1_1graphobj.html',1,'gmodels::gtypes']]],
+  ['markov_189',['markov',['../da/d54/namespacegmodels_1_1markov.html',1,'gmodels']]],
+  ['naivebayes_190',['NaiveBayes',['../dd/dfd/namespacegmodels_1_1legacy_1_1NaiveBayes.html',1,'gmodels::legacy']]],
+  ['path_191',['path',['../db/d71/namespacegmodels_1_1gtypes_1_1path.html',1,'gmodels::gtypes']]],
+  ['pgmodel_192',['pgmodel',['../de/d0f/namespacegmodels_1_1pgmodel.html',1,'gmodels']]],
+  ['randomvariable_193',['randomvariable',['../da/d3d/namespacegmodels_1_1randomvariable.html',1,'gmodels']]],
+  ['searchtree_194',['searchtree',['../d6/d6e/namespacegmodels_1_1searchtree.html',1,'gmodels']]],
+  ['tree_195',['tree',['../d4/d53/namespacegmodels_1_1gtypes_1_1tree.html',1,'gmodels::gtypes']]],
+  ['undigraph_196',['undigraph',['../dc/ded/namespacegmodels_1_1gtypes_1_1undigraph.html',1,'gmodels::gtypes']]]
 ];

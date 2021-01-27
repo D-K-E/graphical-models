@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['randomvariable_102',['RandomVariable',['../de/dfe/classgmodels_1_1randomvariable_1_1RandomVariable.html',1,'gmodels::randomvariable']]]
+  ['ortree_173',['OrTree',['../d9/d6b/classgmodels_1_1searchtree_1_1OrTree.html',1,'gmodels::searchtree']]]
 ];

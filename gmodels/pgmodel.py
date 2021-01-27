@@ -122,6 +122,21 @@ class PGModel(Graph):
         prod, v = self.get_factor_product(factors)
         return prod, set(factors), other_factors
 
+    def eliminate_variable_by(
+        self,
+        factors: Set[Factor],
+        Z: NumCatRVariable,
+        elimination_strategy=lambda x, y: x.sumout_var(y),
+    ):
+        """!
+        eliminate variables using given strategy. Unites max product and sum
+        product
+        """
+        (prod, scope_factors, other_factors) = self.get_factor_product_var(factors, Z)
+        sum_factor = elimination_strategy(prod, Z)
+        other_factors = other_factors.union({sum_factor})
+        return other_factors, sum_factor
+
     def sum_prod_var_eliminate(self, factors: Set[Factor], Z: NumCatRVariable):
         """!
         Koller and Friedman 2009, p. 298
@@ -129,10 +144,10 @@ class PGModel(Graph):
         \param factors factors that we are going to multiply
         \param Z variable that we are going to sum out, i.e. marginalize
         """
-        (prod, scope_factors, other_factors) = self.get_factor_product_var(factors, Z)
-        sum_factor = prod.sumout_var(Z)
-        other_factors = other_factors.union({sum_factor})
-        return other_factors
+        res = self.eliminate_variable_by(
+            factors=factors, Z=Z, elimination_strategy=lambda x, y: x.sumout_var(y)
+        )
+        return res[0]
 
     def sum_product_elimination(
         self, factors: Set[Factor], Zs: List[NumCatRVariable]
@@ -266,11 +281,9 @@ class PGModel(Graph):
         """!
         from Koller and Friedman 2009, p. 557
         """
-        prod_factor, scope_factors, other_factors = self.get_factor_product_var(
-            fs=factors, Z=Z
+        return self.eliminate_variable_by(
+            factors=factors, Z=Z, elimination_strategy=lambda x, y: x.maxout_var(y)
         )
-        max_factor = prod_factor.maxout_var(Z)
-        return other_factors.union(max_factor), prod_factor
 
     def max_product_variable_elimination(
         self, factors: Set[Edge], Zs: List[NumCatRVariable]
@@ -278,20 +291,51 @@ class PGModel(Graph):
         """!
         from Koller and Friedman 2009, p. 557
         """
-        Z_potential = {}
-        value_table = {Z.id(): None for Z in Zs}
+        Z_potential: List[Tuple[Factor, int]] = []
         for i in range(len(Zs)):
             Z = Zs[i]
             factors, z_phi = self.max_product_eliminate_var(factors, Z=Z)
-            Z_potential[Z.id()] = (z_phi, i)
+            Z_potential.append(z_phi)
+        #
+        values = self.traceback_map(potentials=Z_potential)
+        return values, factors
 
-    def traceback_map(
-        self, potentials: Dict[str, Tuple[float, int]], Zs: List[NumCatRVariable]
-    ):
+    def max_product_ve(self, evidences: Set[Tuple[str, NumericValue]]):
+        """!
+        Compute most probable assignments given evidences
+        """
+        factors, E = self.reduce_factors_with_evidence(evidences)
+        Zs = set()
+        for z in self.nodes():
+            if z not in E:
+                Zs.add(z)
+        cardinality = self.order_by_greedy_metric(
+            nodes=Zs, s=self.min_unmarked_neighbours
+        )
+        ordering = [
+            self.V[n[0]] for n in sorted(list(cardinality.items()), key=lambda x: x[1])
+        ]
+        assignments, factors = self.max_product_variable_elimination(
+            factors=factors, Zs=ordering
+        )
+        return assignments, factors
+
+    def traceback_map(self, potentials: List[Factor]) -> List[Tuple[str, NumericValue]]:
         """!
         from Koller and Friedman 2009, p. 557
         The idea here is the following: 
         For the last variable eliminated, Z, the factor for the value x
         contains the probability of the most likely assignment that contains
         Z=x.
+        For example:
+        let's say g* = argmax(psi(G))
+        2. l* = argmax(psi[g*](L))
+        3. d* = argmax(psi[l*](D))
         """
+        lmap = potentials.pop()
+        max_assignments = []
+        for i in range(len(potentials) - 1, -1, -1):
+            mvalue = lmap.max_value()
+            max_assignments.append(mvalue)
+            lmap = potentials[i].reduced_by_value(context=mvalue)
+        return max_assignments
