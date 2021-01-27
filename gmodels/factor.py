@@ -344,14 +344,14 @@ class Factor(GraphObject):
         def psi(scope_product: Set[Tuple[str, NumericValue]]):
             ""
             s = set(scope_product)
-            if len(s.intersection(Y_vals)) > 0:
-                scope_diff = s.difference(Y_vals)
-                diffs = set([p for p in products if scope_diff.issubset(p) is True])
-                return sum([fn(d) for d in diffs])
-            else:
-                return fn(s)
+            diffs = set([p for p in products if s.issubset(p) is True])
+            return sum([fn(d) for d in diffs])
 
-        return Factor(gid=str(uuid4()), scope_vars=self.scope_vars(), factor_fn=psi)
+        return Factor(
+            gid=str(uuid4()),
+            scope_vars=self.scope_vars().difference({Y}),
+            factor_fn=psi,
+        )
 
     def maxout_var(self, Y: NumCatRVariable):
         """!
@@ -368,14 +368,14 @@ class Factor(GraphObject):
         def psi(scope_product: Set[Tuple[str, NumericValue]]):
             ""
             s = set(scope_product)
-            if len(s.intersection(Y_vals)) > 0:
-                scope_diff = s.difference(Y_vals)
-                diffs = set([p for p in products if scope_diff.issubset(p) is True])
-                return max([fn(d) for d in diffs])
-            else:
-                return fn(s)
+            diffs = set([p for p in products if s.issubset(p) is True])
+            return max([fn(d) for d in diffs])
 
-        return Factor(gid=str(uuid4()), scope_vars=self.scope_vars(), factor_fn=psi)
+        return Factor(
+            gid=str(uuid4()),
+            scope_vars=self.scope_vars().difference({Y}),
+            factor_fn=psi,
+        )
 
     def sumout_vars(self, Ys: Set[NumCatRVariable]):
         """!
