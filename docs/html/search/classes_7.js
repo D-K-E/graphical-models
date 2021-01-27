@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['node_97',['Node',['../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html',1,'gmodels::gtypes::node']]],
-  ['nodeposition_98',['NodePosition',['../dd/d8d/classgmodels_1_1gtypes_1_1abstractobj_1_1NodePosition.html',1,'gmodels::gtypes::abstractobj']]],
-  ['numcatrvariable_99',['NumCatRVariable',['../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html',1,'gmodels::randomvariable']]]
+  ['markovnetwork_168',['MarkovNetwork',['../df/dd7/classgmodels_1_1markov_1_1MarkovNetwork.html',1,'gmodels::markov']]],
+  ['multinaivebayesmle_169',['MultiNaiveBayesMLE',['../dd/dda/classgmodels_1_1legacy_1_1NaiveBayes_1_1MultiNaiveBayesMLE.html',1,'gmodels::legacy::NaiveBayes']]]
 ];

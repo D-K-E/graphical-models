@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['cond_126',['cond',['../d2/d4f/classgmodels_1_1bayesian_1_1BayesianNetwork.html#ada6879618f7f7a1c64bcf32658543e86',1,'gmodels::bayesian::BayesianNetwork']]],
-  ['cond2_127',['cond2',['../d2/d4f/classgmodels_1_1bayesian_1_1BayesianNetwork.html#ab9aa0d53886a58d1babd10ac4e22cb87',1,'gmodels::bayesian::BayesianNetwork']]],
-  ['cond3_128',['cond3',['../d2/d4f/classgmodels_1_1bayesian_1_1BayesianNetwork.html#abcef0bf83f0b24aa4e0b2c5dfba3311b',1,'gmodels::bayesian::BayesianNetwork']]]
+  ['bron_5fkerbosch_206',['bron_kerbosch',['../d8/d73/classgmodels_1_1gtypes_1_1undigraph_1_1UndiGraph.html#a9554d5f8e229e8504b7367fea8d0a7fa',1,'gmodels::gtypes::undigraph::UndiGraph']]]
 ];

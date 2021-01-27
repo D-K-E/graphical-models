@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['end_130',['end',['../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html#a45fab0bc9855df1ba3296d146f3b0227',1,'gmodels::gtypes::edge::Edge']]],
-  ['ev_5fratio_5ffrom_5faverage_5fdegree_131',['ev_ratio_from_average_degree',['../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a84d447c5d64a7b522283048ed416b8c2',1,'gmodels::gtypes::graph::Graph']]],
-  ['expected_5fvalue_132',['expected_value',['../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html#a787c67e33ebe936c392aef0881579628',1,'gmodels::randomvariable::NumCatRVariable']]]
+  ['dfs_5fforest_211',['dfs_forest',['../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a0d0e8d39b5c3e805ff0a8f935963c95a',1,'gmodels::gtypes::graph::Graph']]],
+  ['domain_212',['domain',['../de/d55/classgmodels_1_1factor_1_1Factor.html#ac831173d51a9b355f1a7fb2ef4ce43c7',1,'gmodels::factor::Factor']]],
+  ['domain_5fscope_213',['domain_scope',['../de/d55/classgmodels_1_1factor_1_1Factor.html#a8e52bcb35f56e45cd64056ddd1bcdaa2',1,'gmodels::factor::Factor']]],
+  ['downset_5fof_214',['downset_of',['../d7/db3/classgmodels_1_1gtypes_1_1tree_1_1Tree.html#ad559cef4b6b88554bb036ba415903c8a',1,'gmodels::gtypes::tree::Tree']]]
 ];
