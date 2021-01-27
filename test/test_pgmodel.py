@@ -397,12 +397,21 @@ class PGModelTest(unittest.TestCase):
                 self.assertEqual(f, 0.68)
         self.assertTrue(s, 1.0)
 
-    def test_mpe(self):
-        ""
+    def test_mpe_prob(self):
+        """!
+        From Darwiche 2009, p. 250
+        """
         ev = set([("J", True), ("O", False)])
-        assignments, factors = self.pgm_mpe.max_product_ve(evidences=ev)
+        prob = self.pgm_mpe.mpe_prob(evidences=ev)
+        self.assertEqual(round(prob, 5), 0.23042)
+
+    def test_max_product_ve(self):
+        """!
+        From Darwiche 2009, p. 250
+        """
+        ev = set([("J", True), ("O", False)])
+        assignments, fac = self.pgm_mpe.max_product_ve(evidences=ev)
         [print(a) for a in assignments]
-        print(list(factors)[0].phi(assignments[0]))
 
 
 if __name__ == "__main__":
