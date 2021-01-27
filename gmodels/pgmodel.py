@@ -292,6 +292,7 @@ class PGModel(Graph):
         from Koller and Friedman 2009, p. 557
         """
         Z_potential: List[Tuple[Factor, int]] = []
+        fs = []
         for i in range(len(Zs)):
             Z = Zs[i]
             factors, z_phi = self.max_product_eliminate_var(factors, Z=Z)
@@ -319,6 +320,16 @@ class PGModel(Graph):
             factors=factors, Zs=ordering
         )
         return assignments, factors
+
+    def mpe_prob(self, evidences: Set[Tuple[str, NumericValue]]):
+        """!
+        obtain the probability of the most probable instantiation of
+        the model
+        """
+        assignments, factors = self.max_product_ve(evidences=evidences)
+        last_factor = factors.pop()
+        last_assignment = assignments[0]
+        return last_factor.phi(last_assignment)
 
     def traceback_map(self, potentials: List[Factor]) -> List[Tuple[str, NumericValue]]:
         """!
