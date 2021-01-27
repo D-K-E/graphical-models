@@ -135,7 +135,7 @@ class PGModel(Graph):
         (prod, scope_factors, other_factors) = self.get_factor_product_var(factors, Z)
         sum_factor = elimination_strategy(prod, Z)
         other_factors = other_factors.union({sum_factor})
-        return other_factors, sum_factor
+        return other_factors, sum_factor, prod
 
     def sum_prod_var_eliminate(self, factors: Set[Factor], Z: NumCatRVariable):
         """!
@@ -285,9 +285,7 @@ class PGModel(Graph):
             factors=factors, Z=Z, elimination_strategy=lambda x, y: x.maxout_var(y)
         )
 
-    def max_product_variable_elimination(
-        self, factors: Set[Edge], Zs: List[NumCatRVariable]
-    ):
+    def max_product_eliminate_vars(self, factors: Set[Edge], Zs: List[NumCatRVariable]):
         """!
         from Koller and Friedman 2009, p. 557
         """
@@ -295,11 +293,11 @@ class PGModel(Graph):
         fs = []
         for i in range(len(Zs)):
             Z = Zs[i]
-            factors, z_phi = self.max_product_eliminate_var(factors, Z=Z)
+            factors, maxed_out, z_phi = self.max_product_eliminate_var(factors, Z=Z)
             Z_potential.append(z_phi)
         #
-        values = self.traceback_map(potentials=Z_potential)
-        return values, factors
+        values = self.traceback_map(potentials=Z_potential, X_is=Zs)
+        return values, factors, z_phi
 
     def max_product_ve(self, evidences: Set[Tuple[str, NumericValue]]):
         """!
@@ -316,22 +314,22 @@ class PGModel(Graph):
         ordering = [
             self.V[n[0]] for n in sorted(list(cardinality.items()), key=lambda x: x[1])
         ]
-        assignments, factors = self.max_product_variable_elimination(
+        assignments, factors, z_phi = self.max_product_eliminate_vars(
             factors=factors, Zs=ordering
         )
-        return assignments, factors
+        return assignments, factors, z_phi
 
     def mpe_prob(self, evidences: Set[Tuple[str, NumericValue]]):
         """!
         obtain the probability of the most probable instantiation of
         the model
         """
-        assignments, factors = self.max_product_ve(evidences=evidences)
-        last_factor = factors.pop()
-        last_assignment = assignments[0]
-        return last_factor.phi(last_assignment)
+        assignments, factors, z_phi = self.max_product_ve(evidences=evidences)
+        return z_phi.phi(set())
 
-    def traceback_map(self, potentials: List[Factor]) -> List[Tuple[str, NumericValue]]:
+    def traceback_map(
+        self, potentials: List[Factor], X_is: List[NumCatRVariable]
+    ) -> List[Tuple[str, NumericValue]]:
         """!
         from Koller and Friedman 2009, p. 557
         The idea here is the following: 
@@ -343,10 +341,10 @@ class PGModel(Graph):
         2. l* = argmax(psi[g*](L))
         3. d* = argmax(psi[l*](D))
         """
-        lmap = potentials.pop()
-        max_assignments = []
+        max_assignments = {}
         for i in range(len(potentials) - 1, -1, -1):
-            mvalue = lmap.max_value()
-            max_assignments.append(mvalue)
-            lmap = potentials[i].reduced_by_value(context=mvalue)
+            pmax = potentials[i].max_value()
+            diff = set([p for p in pmax if p[0] not in max_assignments])
+            max_assign = diff.pop()
+            max_assignments[max_assign[0]] = max_assign[1]
         return max_assignments

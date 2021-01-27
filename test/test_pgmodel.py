@@ -330,7 +330,8 @@ class PGModelTest(unittest.TestCase):
                 self.assertEqual(res, 0.624)
 
     def test_order_by_greedy_metric(self):
-        ""
+        """!
+        """
         ns = set([self.a, self.b])
         cards = self.pgm.order_by_greedy_metric(
             nodes=ns, s=self.pgm.min_unmarked_neighbours
@@ -389,11 +390,11 @@ class PGModelTest(unittest.TestCase):
         s = 0
         for ps in p.scope_products:
             pss = set(ps)
-            f = round(p.phi(pss) / a.phi(pss), 4)
+            f = round(p.phi_normal(pss), 4)
             s += f
-            if set([("c", True)]).issubset(pss):
+            if set([("c", True)]) == pss:
                 self.assertEqual(f, 0.32)
-            elif set([("c", False)]).issubset(pss):
+            elif set([("c", False)]) == pss:
                 self.assertEqual(f, 0.68)
         self.assertTrue(s, 1.0)
 
@@ -410,8 +411,14 @@ class PGModelTest(unittest.TestCase):
         From Darwiche 2009, p. 250
         """
         ev = set([("J", True), ("O", False)])
-        assignments, fac = self.pgm_mpe.max_product_ve(evidences=ev)
-        [print(a) for a in assignments]
+        assignments, fac, f = self.pgm_mpe.max_product_ve(evidences=ev)
+        assign = set([a for a in assignments.items()])
+        possibles = [
+            set([("J", True), ("O", False), ("X", False), ("Y", False), ("I", False)]),
+            set([("J", True), ("O", False), ("X", False), ("Y", False), ("I", True)]),
+        ]
+        cond = assign == possibles[0] or assign == possibles[1]
+        self.assertTrue(cond)
 
 
 if __name__ == "__main__":
