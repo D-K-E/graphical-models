@@ -177,21 +177,41 @@ class Graph(GraphObject):
         ""
         return e.is_endvertice(n)
 
+    def is_related_to(
+        self,
+        n1: Node,
+        n2: Node,
+        condition: Callable[[Node, Node, Edge], bool],
+        es: Set[Edge] = None,
+    ):
+        """!
+        are nodes related by an edge with respect to given condition
+        """
+        if es is None:
+            es = self.edges()
+        for e in es:
+            if condition(n1, n2, e) is True:
+                return True
+        return False
+
     def is_neighbour_of(self, n1: Node, n2: Node) -> bool:
         """!
         """
+
+        def cond(n_1: Node, n_2: Node, e: Edge) -> bool:
+            ""
+            estart = e.start()
+            eend = e.end()
+            c1 = estart == n_1 and eend == n_2
+            c2 = estart == n_2 and eend == n_1
+            return c1 or c2
+
         n1_edge_ids = set(self.gdata[n1.id()])
         n2_edge_ids = set(self.gdata[n2.id()])
         edge_ids = n1_edge_ids.intersection(n2_edge_ids)
         # filter self loops
         edges = set([self.E[e] for e in edge_ids])
-        es = set()
-        for edge in edges:
-            first_condition = edge.start() == n1 and edge.end() == n2
-            second_condition = edge.start() == n2 and edge.end() == n1
-            if first_condition or second_condition:
-                es.add(edge.id())
-        return len(es) > 0
+        return self.is_related_to(n1=n1, n2=n2, condition=cond, es=edges)
 
     def is_node_independant_of(self, n1: Node, n2: Node) -> bool:
         return not self.is_neighbour_of(n1, n2)

@@ -41,7 +41,7 @@ class BayesianNetwork(PGModel, DiGraph):
                     evidences.add((n.id(), n.data()["evidence"]))
             f = Factor.from_conditional_vars(X_i=X_i, Pa_Xi=dig.parents_of(X_i))
             if len(evidences) != 0:
-                f.reduced_by_value(evidences)
+                f = f.reduced_by_value(evidences)
             fs.add(f)
         #
         return BayesianNetwork(
