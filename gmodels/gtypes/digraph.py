@@ -56,16 +56,16 @@ class DiGraph(Graph):
         return False
 
     def is_parent_of(self, parent: Node, child: Node) -> bool:
-        for e in self.edges():
-            if e.start() == parent and e.end() == child:
-                return True
-        return False
+        def cond(n_1: Node, n_2: Node, e: Edge):
+            ""
+            c = n_1 == e.start() and e.end() == n_2
+            return c
+
+        return self.is_related_to(n1=parent, n2=child, condition=cond)
 
     def is_child_of(self, child: Node, parent: Node) -> bool:
-        for e in self.edges():
-            if e.start() == parent and e.end() == child:
-                return True
-        return False
+        ""
+        return self.is_parent_of(parent=parent, child=child)
 
     def edge_by_vertices(self, n1: Node, n2: Node) -> Set[Edge]:
         """!

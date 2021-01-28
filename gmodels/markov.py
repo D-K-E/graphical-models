@@ -37,7 +37,7 @@ class MarkovNetwork(PGModel, UndiGraph):
                     evidences.add((n.id(), edata["evidence"]))
             f = Factor(gid=str(uuid4()), scope_vars=clique)
             if len(evidences) != 0:
-                f.reduced_by_value(evidences)
+                f = f.reduced_by_value(evidences)
             fs.add(f)
         return MarkovNetwork(
             gid=str(uuid4()), nodes=udi.nodes(), edges=udi.edges(), factors=fs

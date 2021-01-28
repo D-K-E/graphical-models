@@ -32,6 +32,9 @@ class UndiGraph(Graph):
     @classmethod
     def from_graph(cls, g: Graph):
         ""
+        for e in g.edges():
+            if e.type() == EdgeType.DIRECTED:
+                raise ValueError("Graph contains directed edges")
         return UndiGraph(
             gid=str(uuid4()), data=g.data(), nodes=g.nodes(), edges=g.edges()
         )
