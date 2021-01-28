@@ -38,7 +38,7 @@ class PGModel(Graph):
                     evidences.add((eend.id(), edata["evidence"]))
                 f = Factor(gid=str(uuid4()), scope_vars=set([estart, eend]))
                 if len(evidences) != 0:
-                    f.reduced_by_value(evidences)
+                    f = f.reduced_by_value(evidences)
                 fs.add(f)
             self.Fs = fs
         else:

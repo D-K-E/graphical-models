@@ -114,7 +114,28 @@ class Factor(GraphObject):
         )
         return list(product(*svars))
 
-    def domain(
+    def factor_domain(
+        self,
+        rvar_filter=lambda x: True,
+        value_filter=lambda x: True,
+        value_transform=lambda x: x,
+    ):
+        """!
+        For a factor phi(A,B) return factor function's domain values, such as:
+        phi(A,B)     
+        +======+======+
+        | a1   | b1   |
+        +======+======+
+        | a1   | b2   |
+        +======+======+  ---> [set(("A", a1), ("B", b1)), 
+        | a2   | b1   |        set(("A", a1), ("B", b2)),...
+        +======+======+       ]
+        | a2   | b2   |
+        +======+======+
+        """
+        return list(product(*self.vars_domain()))
+
+    def vars_domain(
         self,
         rvar_filter=lambda x: True,
         value_filter=lambda x: True,
@@ -185,7 +206,7 @@ class Factor(GraphObject):
         ""
         mx = float("-inf")
         max_val = None
-        for sp in self.scope_products:
+        for sp in self.factor_domain():
             ss = set(sp)
             phi_s = self.phi(ss)
             if phi_s > mx:
@@ -203,9 +224,9 @@ class Factor(GraphObject):
 
     def zval(self):
         ""
-        svars = self.domain()
+        svars = self.vars_domain()
         self.scope_products = list(product(*svars))
-        return sum([self.factor_fn(scope_product=sv) for sv in self.scope_products])
+        return sum([self.factor_fn(scope_product=sv) for sv in self.factor_domain()])
 
     def marginal_joint(self, scope_product: Set[Tuple[str, NumericValue]]) -> float:
         ""
@@ -251,8 +272,8 @@ class Factor(GraphObject):
         var_inter = list(var_inter)
         vsets = [v.value_set() for v in var_inter]
         inter_products = list(product(*vsets))
-        smatch = self.scope_products
-        omatch = other.scope_products
+        smatch = self.factor_domain()
+        omatch = other.factor_domain()
         prod = 1.0
         common_match = set()
         for iproduct in inter_products:
@@ -338,7 +359,7 @@ class Factor(GraphObject):
             raise ValueError("argument is not in scope of this factor")
 
         Y_vals = Y.value_set()
-        products = self.scope_products
+        products = self.factor_domain()
         fn = self.factor_fn
 
         def psi(scope_product: Set[Tuple[str, NumericValue]]):
@@ -362,7 +383,7 @@ class Factor(GraphObject):
             raise ValueError("argument is not in scope of this factor")
 
         Y_vals = Y.value_set()
-        products = self.scope_products
+        products = self.factor_domain()
         fn = self.factor_fn
 
         def psi(scope_product: Set[Tuple[str, NumericValue]]):
