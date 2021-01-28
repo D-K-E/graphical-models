@@ -388,7 +388,7 @@ class PGModelTest(unittest.TestCase):
         p, a = self.pgm.cond_prod_by_variable_elimination(qs, ev)
         # check if it is a valid distribution
         s = 0
-        for ps in p.scope_products:
+        for ps in p.factor_domain():
             pss = set(ps)
             f = round(p.phi_normal(pss), 4)
             s += f
