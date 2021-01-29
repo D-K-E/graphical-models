@@ -170,8 +170,49 @@ product_factor, a = pgm.cond_prod_by_variable_elimination(queries, evidences)
 print(round( product_factor.phi_normal(set([("c", True)])), 4))
 # should give you 0.32
 
-
 ```
 
 
-### MarkovNetwork
+### Markov Network
+
+Simply a `PGModel` whose edges are checked for being only undirected.
+
+### Conditional Random Field
+
+A markov network with target variables.
+
+
+### LWF Chain Graphs
+
+A `PGModel` with mixed edges.
+
+
+## General Note
+
+Most of the inference related functionality belongs to `PGModel` which largely
+depend on methods defined in `Factor` class. Other models are treated as
+different instances of `PGModel` whenever possible. This means that other
+models are there to interface with different probability distributions.
+
+## References
+
+Here is a complete list of references used throughout the source code:
+```bibtex
+
+ @book{Cowell_2005, place={New York}, title={Probabilistic networks and expert systems}, url={http://accesbib.uqam.ca/cgi-bin/bduqam/transit.pl?&noMan=25126878}, publisher={Springer-Verlag}, author={Cowell, Robert G}, year={2005} }
+
+
+ @article{Drton_2009, title={Discrete chain graph models}, volume={15}, ISSN={1350-7265}, url={http://arxiv.org/abs/0909.0843}, DOI={10.3150/08-BEJ172}, note={arXiv: 0909.0843}, number={3}, journal={Bernoulli}, author={Drton, Mathias}, year={2009}, month={Aug}, pages={736–753} }
+
+
+ @book{Koller_Friedman_2009, place={Cambridge, MA}, series={Adaptive computation and machine learning}, title={Probabilistic graphical models: principles and techniques}, ISBN={978-0-262-01319-2}, publisher={MIT Press}, author={Koller, Daphne and Friedman, Nir}, year={2009}, collection={Adaptive computation and machine learning} }
+
+
+ @book{Darwiche_2009, place={Cambridge ; New York}, title={Modeling and reasoning with Bayesian networks}, ISBN={978-0-521-88438-9}, publisher={Cambridge University Press}, author={Darwiche, Adnan}, year={2009} }
+
+```
+
+## Contributors
+
+[Nihan](https://github.com/comecloseridontbyte)
+[Kaan](https://github.com/D-K-E)
