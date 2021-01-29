@@ -11,7 +11,7 @@ from gmodels.pgmodel import PGModel
 from gmodels.gtypes.graph import Graph
 from gmodels.gtypes.tree import Tree
 from gmodels.gtypes.undigraph import UndiGraph
-from typing import Callable, Set, List, Optional, Dict, Tuple
+from typing import Callable, Set, List, Optional, Dict, Tuple, Union
 import math
 from uuid import uuid4
 
@@ -31,19 +31,95 @@ class LWFChainGraph(PGModel):
     ):
         ""
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges, factors=factors)
-        self.chain_components = {str(uuid4()): c for c in self.get_chain_components()}
+        self.ccomponents = list(self.get_chain_components())
+        self.chain_components: Dict[str, Set[UndiGraph]] = {
+            str(uuid4()): c for c in self.ccomponents
+        }
         self.nb_components = (
-            len(self.chain_components) if len(self.chain_components) != 0 else 1
+            len(self.ccomponents) if len(self.chain_components) != 0 else 1
         )
         self.dag_components = self.get_chain_dag()
 
     def moralize(self) -> PGModel:
         """!
-        Moralize given chain graph
+        Moralize given chain graph: For any \f X,Y \in Pa_{K_i} \f add an edge
+        between them if it does not exist. Then drop the direction of edges.
         """
-        raise NotImplementedError
+        chain_ids = set([cid for cid in self.chain_components])
+        edges = self.edges()
+        # add edges
+        for cid in chain_ids:
+            pa_k_i: Set[NumCatRVariable] = self.parents_of_K(i=cid)
+            while pa_k_i:
+                parent_node = pa_k_i.pop()
+                for pnode in pa_k_i:
+                    if self.is_node_independant_of(parent_node, pnode) is True:
+                        e = Edge(
+                            edge_id=str(uuid4()),
+                            start_node=parent_node,
+                            end_node=pnode,
+                            edge_type=EdgeType.UNDIRECTED,
+                        )
+                        edges.add(e)
 
-    def get_chain_components(self) -> Set[UndiGraph]:
+        # drop orientation
+        nedges = set()
+        for e in edges:
+            if e.type() == EdgeType.DIRECTED:
+                ne = Edge(
+                    edge_id=str(uuid4()),
+                    start_node=e.start(),
+                    end_node=e.end(),
+                    edge_type=EdgeType.UNDIRECTED,
+                    data=e.data(),
+                )
+                nedges.add(ne)
+            else:
+                nedges.add(e)
+        #
+        return PGModel(
+            gid=str(uuid4()), nodes=self.nodes, edges=nedges, factors=self.factors()
+        )
+
+    def chain_component(self, dag_id: str) -> Set[UndiGraph]:
+        """!
+        """
+        return self.chain_components[dag_id]
+
+    def K(self, i: int) -> Union[NumCatRVariable, UndiGraph]:
+        """!
+        From Koller, Friedman 2009, p. 148
+        """
+        return self.ccomponents[i]
+
+    def parents_of_K(self, i: int) -> Set[NumCatRVariable]:
+        """!
+        obtain parent nodes of vertices of chain component K.
+        Models V[Pa(K_i)]
+        """
+        K_i: Union[UndiGraph, NumCatRVariable] = self.K(i)
+        Pa_Ki_nodes = set()
+        if isinstance(K_i, UndiGraph):
+            knodes = K_i.nodes()
+            for kn in knodes:
+                for pa_k in self.parents_of(kn):
+                    Pa_Ki_nodes.add(kn)
+        else:
+            for pa_k in self.parents_of(K_i):
+                Pa_Ki_nodes.add(kn)
+        return Pa_Ki_nodes
+
+    def parents_of(self, n: NumCatRVariable) -> Set[NumCatRVariable]:
+        ""
+        return set(
+            [
+                n_p
+                for n_p in self.nodes()
+                if self.is_parent_of(parent=n_p, child=n) is True
+            ]
+        )
+
+    def get_chain_components(self) -> Set[Union[UndiGraph, NumCatRVariable]]:
         """!
         Based on the equivalence relation defined by Drton 2009
         and the answer in so: https://stackoverflow.com/a/14518552/7330813
@@ -54,19 +130,24 @@ class LWFChainGraph(PGModel):
         equivalence classes under this equivalence relation are the chain
         components of G.
         Basically the connected components of an undirected graph whose
-        vertices are incident with undirected edges of the given chain graph.
+        vertices are incident with undirected edges of the given chain graph,
+        and nodes that are only pointed by directed edges.
         """
         edges = set()
         for e in self.edges():
             if e.type() == EdgeType.UNDIRECTED:
                 edges.add(e)
 
-        g = Graph.from_edgeset(edges)
-        undi = UndiGraph.from_graph(g)
-        chain_components: Set[UndiGraph] = set()
+        undi = UndiGraph.from_graph(Graph.from_edgeset(edges))
+        chain_components: Set[Union[Node, UndiGraph]] = set()
         for cg in undi.get_components():
             component = UndiGraph.from_graph(cg)
             chain_components.add(component)
+
+        for n in self.nodes():
+            es = self.edges_of(n)
+            if all(e.type() == EdgeType.DIRECTED for e in es):
+                chain_components.add(n)
         return chain_components
 
     def get_chain_component_factors(self) -> Dict[str, Set[Factor]]:
@@ -90,10 +171,17 @@ class LWFChainGraph(PGModel):
         start_component_id = None
         end_component_id = None
         for cid, component in self.chain_components.items():
-            if estart in component.nodes():
-                start_component_id = cid
-            if eend in component.nodes():
-                end_component_id = cid
+            if isinstance(component, UndiGraph) is True:
+                cnodes = component.nodes()
+                if estart in cnodes:
+                    start_component_id = cid
+                if eend in cnodes:
+                    end_component_id = cid
+            else:
+                if estart == component:
+                    start_component_id = cid
+                if eend == component:
+                    end_component_id = cid
         return (
             start_component_id != end_component_id,
             start_component_id,
@@ -106,9 +194,11 @@ class LWFChainGraph(PGModel):
         """
         dag_nodes = {
             cid: NumCatRVariable(
-                node_id=cid, distribution=lambda x: 1.0 / self.nb_components
+                node_id=cid,
+                input_data={"outcome-values": [True, False]},
+                distribution=lambda x: 1.0 / self.nb_components,
             )
-            for cid in chain_factors
+            for cid in self.chain_components
         }
         dag_edges = set()
         for e in self.edges():
@@ -118,7 +208,9 @@ class LWFChainGraph(PGModel):
                     start_component_id,
                     end_component_id,
                 ) = self.check_edge_between_components(e)
-                if edge_between_components_check is True:
+                if edge_between_components_check is True and (
+                    start_component_id is not None and end_component_id is not None
+                ):
                     dag_edge = Edge(
                         edge_id=str(uuid4()),
                         start_node=dag_nodes[start_component_id],
@@ -126,7 +218,10 @@ class LWFChainGraph(PGModel):
                         edge_type=EdgeType.DIRECTED,
                     )
                     dag_edges.add(dag_edge)
-        dag = Tree.from_edgeset(dag_edges)
+        if len(dag_edges) > 0:
+            dag = Tree.from_edgeset(dag_edges)
+        else:
+            dag = None
         return dag
 
     def is_parent_of(self, parent: Node, child: Node):
@@ -135,9 +230,13 @@ class LWFChainGraph(PGModel):
 
         def cond(n_1: Node, n_2: Node, e: Edge):
             ""
-            c1 = n_1 == e.start() and e.end() == n_2
-            c2 = c1 and e.type() == EdgeType.DIRECTED
-            return c2
+            if e.type() == EdgeType.DIRECTED:
+                c1 = n_1 == e.start() and e.end() == n_2
+                return c1
+            else:
+                c1 = n_1 == e.start() and e.end() == n_2
+                c2 = n_2 == e.start() and e.end() == n_1
+                return c1 or c2
 
         return self.is_related_to(n1=parent, n2=child, condition=cond)
 
