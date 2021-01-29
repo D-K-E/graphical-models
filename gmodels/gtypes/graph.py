@@ -36,9 +36,11 @@ class Graph(GraphObject):
             self.is_empty = True
 
         if self.is_trivial():
-            raise ValueError(
-                "This library is not compatible with computations with trivial graph"
-            )
+            msg = "This library is not compatible with computations with trivial graph"
+            msg += "\nNodes: "
+            msg += str(self._nodes.keys())
+            msg += "\nEdges: " + str(self._edges.keys())
+            raise ValueError(msg)
         #
         self.mk_nodes(ns=nodes, es=edges)
         self.mk_gdata()
@@ -65,8 +67,10 @@ class Graph(GraphObject):
             nodes.add(n)
         if es is not None:
             for e in es:
-                nodes.add(e.start())
-                nodes.add(e.end())
+                estart = e.start()
+                eend = e.end()
+                nodes.add(estart)
+                nodes.add(eend)
         #
         self._nodes = {n.id(): n for n in nodes}
 
@@ -825,6 +829,7 @@ class Graph(GraphObject):
         v = self.V[node_id]
         Ts = self.props["components"]
         T = Ts[node_id]
+        T.add(v.id())
         vertices = [self.V[v] for v in T]
         edges = [self.gdata[v] for v in T]
         es: Set[Edge] = set()
@@ -839,7 +844,7 @@ class Graph(GraphObject):
         Get components of graph
         """
         if self.nb_components() == 1:
-            return self
+            return set([self])
 
         # Extract component roots
         component_roots = [k for k in self.props["dfs-forest"].keys()]
