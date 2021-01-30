@@ -8,11 +8,13 @@ from gmodels.gtypes.node import Node
 from gmodels.randomvariable import NumCatRVariable, NumericValue
 from gmodels.factor import Factor
 from gmodels.pgmodel import PGModel
+from gmodels.markov import MarkovNetwork, ConditionalRandomField
 from gmodels.gtypes.graph import Graph
 from gmodels.gtypes.tree import Tree
 from gmodels.gtypes.undigraph import UndiGraph
 from typing import Callable, Set, List, Optional, Dict, Tuple, Union
 import math
+import pdb
 from uuid import uuid4
 
 
@@ -40,20 +42,25 @@ class LWFChainGraph(PGModel):
         )
         self.dag_components = self.get_chain_dag()
 
-    def moralize(self) -> PGModel:
+    def moralize(self) -> MarkovNetwork:
         """!
         Moralize given chain graph: For any \f X,Y \in Pa_{K_i} \f add an edge
         between them if it does not exist. Then drop the direction of edges.
         """
-        chain_ids = set([cid for cid in self.chain_components])
         edges = self.edges()
+        enodes = set([frozenset([e.start(), e.end()]) for e in edges])
         # add edges
-        for cid in chain_ids:
+        for cid in range(len(self.ccomponents)):
             pa_k_i: Set[NumCatRVariable] = self.parents_of_K(i=cid)
-            while pa_k_i:
-                parent_node = pa_k_i.pop()
+            pa_k_i_cp = set([p for p in pa_k_i])
+            while len(pa_k_i_cp) > 0:
+                parent_node = pa_k_i_cp.pop()
                 for pnode in pa_k_i:
-                    if self.is_node_independant_of(parent_node, pnode) is True:
+                    is_n_ind = self.is_node_independent_of(parent_node, pnode)
+                    if (
+                        is_n_ind is True
+                        and frozenset([parent_node, pnode]).issubset(enodes) is False
+                    ):
                         e = Edge(
                             edge_id=str(uuid4()),
                             start_node=parent_node,
@@ -77,9 +84,28 @@ class LWFChainGraph(PGModel):
             else:
                 nedges.add(e)
         #
-        return PGModel(
-            gid=str(uuid4()), nodes=self.nodes, edges=nedges, factors=self.factors()
+        return MarkovNetwork(
+            gid=str(uuid4()), nodes=self.nodes(), edges=nedges, factors=self.factors()
         )
+
+    def component_to_crf(self, i: int) -> ConditionalRandomField:
+        """!
+        get conditional random field corresponding to chain component
+        with respect to Koller, Friedman 2009, p. 148-149
+        """
+        component = self.K_nodes(i)
+        parents = self.parents_of_K(i)
+        fs = set()
+        for f in self.factors():
+            if f.scope_vars().issubset(parents.union(component)) is True:
+                fs.add(f)
+        return ConditionalRandomField(
+            gid=str(uuid4()), observed_vars=parents, target_vars=component, factors=fs,
+        )
+
+    def to_crfs(self) -> Set[ConditionalRandomField]:
+        ""
+        return set([self.component_to_crf(i) for i in range(len(self.ccomponents))])
 
     def chain_component(self, dag_id: str) -> Set[UndiGraph]:
         """!
@@ -92,21 +118,36 @@ class LWFChainGraph(PGModel):
         """
         return self.ccomponents[i]
 
+    def K_nodes(self, i: int) -> Set[NumCatRVariable]:
+        """!
+        """
+        K = self.K(i)
+        if isinstance(K, UndiGraph):
+            return K.nodes()
+        elif instance(K, frozenset):
+            return set(K)
+        else:
+            raise TypeError("Unknown component type")
+
     def parents_of_K(self, i: int) -> Set[NumCatRVariable]:
         """!
         obtain parent nodes of vertices of chain component K.
         Models V[Pa(K_i)]
         """
-        K_i: Union[UndiGraph, NumCatRVariable] = self.K(i)
+        K_i: Union[UndiGraph, Set[NumCatRVariable]] = self.K(i)
         Pa_Ki_nodes = set()
         if isinstance(K_i, UndiGraph):
             knodes = K_i.nodes()
             for kn in knodes:
                 for pa_k in self.parents_of(kn):
-                    Pa_Ki_nodes.add(kn)
+                    if pa_k not in knodes:
+                        Pa_Ki_nodes.add(pa_k)
+        elif isinstance(K_i, frozenset) is True:
+            for k_i in K_i:
+                for pa_k in self.parents_of(k_i):
+                    Pa_Ki_nodes.add(pa_k)
         else:
-            for pa_k in self.parents_of(K_i):
-                Pa_Ki_nodes.add(kn)
+            raise TypeError("Component has an unacceptable type:" + str(type(K_i)))
         return Pa_Ki_nodes
 
     def parents_of(self, n: NumCatRVariable) -> Set[NumCatRVariable]:
@@ -138,16 +179,17 @@ class LWFChainGraph(PGModel):
             if e.type() == EdgeType.UNDIRECTED:
                 edges.add(e)
 
-        undi = UndiGraph.from_graph(Graph.from_edgeset(edges))
-        chain_components: Set[Union[Node, UndiGraph]] = set()
-        for cg in undi.get_components():
-            component = UndiGraph.from_graph(cg)
-            chain_components.add(component)
+        undi = UndiGraph.from_graph(
+            Graph.from_edge_node_set(edges=edges, nodes=self.nodes())
+        )
+        chain_components: Set[Union[Set[Node], UndiGraph]] = set()
+        for cg in undi.get_components_as_node_sets():
+            if len(cg) > 1:
+                component = UndiGraph.from_graph(undi.get_subgraph_by_vertices(vs=cg))
+                chain_components.add(component)
+            else:
+                chain_components.add(cg)
 
-        for n in self.nodes():
-            es = self.edges_of(n)
-            if all(e.type() == EdgeType.DIRECTED for e in es):
-                chain_components.add(n)
         return chain_components
 
     def get_chain_component_factors(self) -> Dict[str, Set[Factor]]:
@@ -178,9 +220,9 @@ class LWFChainGraph(PGModel):
                 if eend in cnodes:
                     end_component_id = cid
             else:
-                if estart == component:
+                if estart in component:
                     start_component_id = cid
-                if eend == component:
+                if eend in component:
                     end_component_id = cid
         return (
             start_component_id != end_component_id,

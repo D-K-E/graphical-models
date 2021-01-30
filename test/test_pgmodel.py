@@ -2,11 +2,12 @@
 Test probabilistic graph model
 """
 
-from gmodels.pgmodel import PGModel
+from gmodels.pgmodel import PGModel, min_unmarked_neighbours
 from gmodels.gtypes.edge import Edge, EdgeType
 from gmodels.factor import Factor
 from gmodels.randomvariable import NumCatRVariable
 from uuid import uuid4
+import pdb
 
 import unittest
 
@@ -264,7 +265,9 @@ class PGModelTest(unittest.TestCase):
 
     def test_conditionaly_independent_of_f(self):
         ""
-        self.assertEqual(self.pgm.is_conditionaly_independent_of(self.a, self.b), False)
+        # pdb.set_trace()
+        iscond = self.pgm.is_conditionaly_independent_of(self.a, self.b)
+        self.assertEqual(iscond, False)
 
     def test_scope_of(self):
         ""
@@ -333,19 +336,13 @@ class PGModelTest(unittest.TestCase):
         """!
         """
         ns = set([self.a, self.b])
-        cards = self.pgm.order_by_greedy_metric(
-            nodes=ns, s=self.pgm.min_unmarked_neighbours
-        )
+        cards = self.pgm.order_by_greedy_metric(nodes=ns, s=min_unmarked_neighbours)
         self.assertEqual(cards, {"a": 0, "b": 1})
         ns = set([self.c, self.b])
-        cards2 = self.pgm.order_by_greedy_metric(
-            nodes=ns, s=self.pgm.min_unmarked_neighbours
-        )
+        cards2 = self.pgm.order_by_greedy_metric(nodes=ns, s=min_unmarked_neighbours)
         self.assertEqual(cards2, {"c": 0, "b": 1})
         ns = set([self.c, self.a])
-        cards3 = self.pgm.order_by_greedy_metric(
-            nodes=ns, s=self.pgm.min_unmarked_neighbours
-        )
+        cards3 = self.pgm.order_by_greedy_metric(nodes=ns, s=min_unmarked_neighbours)
         self.assertTrue(cards3 == {"a": 0, "c": 1} or cards3 == {"a": 1, "c": 0})
 
     def test_reduce_factors_with_evidence(self):
