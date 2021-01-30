@@ -11,6 +11,18 @@ import math
 from uuid import uuid4
 
 
+def min_unmarked_neighbours(g: Graph, nodes: Set[Node], marked: Dict[str, Node]):
+    """!
+        find an unmarked node with minimum number of neighbours
+        """
+    ordered = [(n, g.nb_neighbours_of(n)) for n in nodes]
+    ordered.sort(key=lambda x: x[1])
+    for X, nb in sorted(ordered, key=lambda x: x[1]):
+        if marked[X.id()] is False:
+            return X
+    return None
+
+
 class PGModel(Graph):
     ""
 
@@ -74,7 +86,7 @@ class PGModel(Graph):
         check if two nodes are conditionally independent
         from K. Murphy, 2012, p. 662
         """
-        return self.is_node_independant_of(n1, n2)
+        return self.is_node_independent_of(n1, n2)
 
     def scope_of(self, phi: Factor) -> Set[NumCatRVariable]:
         """!
@@ -194,21 +206,12 @@ class PGModel(Graph):
         #
         return cardinality
 
-    def min_unmarked_neighbours(self, nodes, marked):
-        """!
-        find an unmarked node with minimum number of neighbours
-        """
-        ordered = [(n, self.nb_neighbours_of(n)) for n in nodes]
-        ordered.sort(key=lambda x: x[1])
-        for X, nb in sorted(ordered, key=lambda x: x[1]):
-            if marked[X.id()] is False:
-                return X
-        return None
-
     def order_by_greedy_metric(
         self,
         nodes: Set[NumCatRVariable],
-        s: Callable[[Graph, Dict[Node, bool]], Optional[Node]],
+        s: Callable[
+            [Graph, Dict[Node, bool]], Optional[Node]
+        ] = min_unmarked_neighbours,
     ) -> Dict[str, int]:
         """!
         From Koller and Friedman 2009, p. 314
@@ -216,7 +219,7 @@ class PGModel(Graph):
         marked = {n.id(): False for n in nodes}
         cardinality = {n.id(): -1 for n in nodes}
         for i in range(len(nodes)):
-            X = s(nodes, marked)
+            X = s(g=self, nodes=nodes, marked=marked)
             if X is not None:
                 cardinality[X.id()] = i
                 TEMP = self.neighbours_of(X)
@@ -241,7 +244,10 @@ class PGModel(Graph):
         return factors, E
 
     def cond_prod_by_variable_elimination(
-        self, queries: Set[NumCatRVariable], evidences: Set[Tuple[str, NumericValue]]
+        self,
+        queries: Set[NumCatRVariable],
+        evidences: Set[Tuple[str, NumericValue]],
+        ordering_fn=min_unmarked_neighbours,
     ):
         """!
         Compute conditional probabilities with variable elimination
@@ -254,20 +260,21 @@ class PGModel(Graph):
         for z in self.nodes():
             if z not in E and z not in queries:
                 Zs.add(z)
-        return self.conditional_prod_by_variable_elimination(queries, Zs, factors)
+        return self.conditional_prod_by_variable_elimination(
+            queries, Zs, factors, ordering_fn=ordering_fn
+        )
 
     def conditional_prod_by_variable_elimination(
         self,
         queries: Set[NumCatRVariable],
         Zs: Set[NumCatRVariable],
         factors: Set[Factor],
+        ordering_fn=min_unmarked_neighbours,
     ):
         """!
         Main conditional product by variable elimination function
         """
-        cardinality = self.order_by_greedy_metric(
-            nodes=Zs, s=self.min_unmarked_neighbours
-        )
+        cardinality = self.order_by_greedy_metric(nodes=Zs, s=ordering_fn)
         ordering = [
             self.V[n[0]] for n in sorted(list(cardinality.items()), key=lambda x: x[1])
         ]
@@ -308,9 +315,7 @@ class PGModel(Graph):
         for z in self.nodes():
             if z not in E:
                 Zs.add(z)
-        cardinality = self.order_by_greedy_metric(
-            nodes=Zs, s=self.min_unmarked_neighbours
-        )
+        cardinality = self.order_by_greedy_metric(nodes=Zs, s=min_unmarked_neighbours)
         ordering = [
             self.V[n[0]] for n in sorted(list(cardinality.items()), key=lambda x: x[1])
         ]

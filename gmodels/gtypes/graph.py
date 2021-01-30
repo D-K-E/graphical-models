@@ -58,6 +58,15 @@ class Graph(GraphObject):
             nodes.add(e.end())
         return Graph(gid=str(uuid4()), nodes=nodes, edges=edges)
 
+    @classmethod
+    def from_edge_node_set(cls, edges: Set[Edge], nodes: Set[Node]):
+        ""
+        nodes = set(nodes)
+        for e in edges:
+            nodes.add(e.start())
+            nodes.add(e.end())
+        return Graph(gid=str(uuid4()), nodes=nodes, edges=edges)
+
     def mk_nodes(self, ns: Optional[Set[Node]], es: Optional[Set[Edge]]):
         ""
         nodes = set()
@@ -217,8 +226,10 @@ class Graph(GraphObject):
         edges = set([self.E[e] for e in edge_ids])
         return self.is_related_to(n1=n1, n2=n2, condition=cond, es=edges)
 
-    def is_node_independant_of(self, n1: Node, n2: Node) -> bool:
-        return not self.is_neighbour_of(n1, n2)
+    def is_node_independent_of(self, n1: Node, n2: Node) -> bool:
+        if n1 == n2:
+            return False
+        return True if self.is_neighbour_of(n1, n2) is False else False
 
     def is_stable(self, ns: Set[Node]) -> bool:
         ""
@@ -822,16 +833,22 @@ class Graph(GraphObject):
             return p
         return None
 
-    def get_component(self, node_id: str) -> GraphObject:
+    def get_component_nodes(self, node_id: str) -> Set[Node]:
         """!
-        get a component from graph
+        Get component nodes of a graph
         """
         v = self.V[node_id]
         Ts = self.props["components"]
         T = Ts[node_id]
         T.add(v.id())
-        vertices = [self.V[v] for v in T]
-        edges = [self.gdata[v] for v in T]
+        return set([self.V[v] for v in T])
+
+    def get_component(self, node_id: str) -> GraphObject:
+        """!
+        get a component from graph
+        """
+        vertices = self.get_component_nodes(node_id)
+        edges = [self.gdata[v.id()] for v in vertices]
         es: Set[Edge] = set()
         for elst in edges:
             for e in elst:
@@ -849,6 +866,15 @@ class Graph(GraphObject):
         # Extract component roots
         component_roots = [k for k in self.props["dfs-forest"].keys()]
         return set([self.get_component(node_id=root) for root in component_roots])
+
+    def get_components_as_node_sets(self) -> Set[Set[Node]]:
+        ""
+        if self.nb_components() == 1:
+            return self.nodes()
+
+        # Extract component roots
+        component_roots = [k for k in self.props["dfs-forest"].keys()]
+        return set([frozenset(self.get_component_nodes(k)) for k in component_roots])
 
     def find_shortest_paths(
         self, n1: Node, edge_generator: Callable[[Node], Set[Edge]]
@@ -907,6 +933,27 @@ class Graph(GraphObject):
             if graph.nb_components() > nb_component:
                 bridges.add(edge)
         return bridges
+
+    def get_subgraph_by_vertices(
+        self,
+        vs: Set[Node],
+        edge_policy: Callable[[Edge, Set[Node]], bool] = lambda x, ys: set(
+            [x.start(), x.end()]
+        ).issubset(ys)
+        is True,
+    ) -> GraphObject:
+        """!
+        Get the subgraph using vertices.
+
+        \param vs set of vertices for the subgraph
+        \param edge_policy determines which edges should be conserved. By
+        default we conserve edges whose incident nodes are a subset of vs
+        """
+        es: Set[Edge] = set()
+        for e in self.edges():
+            if edge_policy(e, vs) is True:
+                es.add(e)
+        return Graph.from_edge_node_set(edges=es, nodes=vs)
 
     def __add__(
         self, a: Union[Set[Edge], Set[Node], Node, Edge, GraphObject]

@@ -287,7 +287,7 @@ class GraphTest(unittest.TestCase):
         self.assertFalse(isneighbor)
 
     def test_is_node_independant_of(self):
-        self.assertTrue(self.graph_2.is_node_independant_of(self.n1, self.n3))
+        self.assertTrue(self.graph_2.is_node_independent_of(self.n1, self.n3))
 
     def test_is_neighbours_of(self):
         ndes = set([n.id() for n in self.graph_2.neighbours_of(self.n2)])

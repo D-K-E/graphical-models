@@ -214,5 +214,6 @@ Here is a complete list of references used throughout the source code:
 
 ## Contributors
 
-[Nihan](https://github.com/comecloseridontbyte)
-[Kaan](https://github.com/D-K-E)
+- [Nihan](https://github.com/comecloseridontbyte)
+
+- [Kaan](https://github.com/D-K-E)
