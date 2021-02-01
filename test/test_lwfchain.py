@@ -130,7 +130,10 @@ class LWFChainGraphTest(unittest.TestCase):
         # Factors
         #
         def phi_e(scope_product):
-            ""
+            """!
+            Visit to Asia factor
+            p(a)
+            """
             ss = set(scope_product)
             if ss == set([("E", True)]):
                 return 0.01
@@ -142,7 +145,10 @@ class LWFChainGraphTest(unittest.TestCase):
         self.E_cf = Factor(gid="E_cf", scope_vars=set([self.E]), factor_fn=phi_e)
 
         def phi_fe(scope_product):
-            ""
+            """!
+            Tuberculosis | Visit to Asia factor
+            p(t,a)
+            """
             ss = set(scope_product)
             if ss == set([("F", True), ("E", True)]):
                 return 0.05
@@ -160,7 +166,10 @@ class LWFChainGraphTest(unittest.TestCase):
         )
 
         def phi_dg(scope_product):
-            ""
+            """!
+            either tuberculosis or lung cancer | x ray
+            p(e,x)
+            """
             ss = set(scope_product)
             if ss == set([("D", True), ("G", True)]):
                 return 0.98
@@ -178,7 +187,10 @@ class LWFChainGraphTest(unittest.TestCase):
         )
 
         def phi_a(scope_product):
-            ""
+            """!
+            smoke factor
+            p(s)
+            """
             ss = set(scope_product)
             if ss == set([("A", True)]):
                 return 0.5
@@ -190,7 +202,10 @@ class LWFChainGraphTest(unittest.TestCase):
         self.A_cf = Factor(gid="A_cf", scope_vars=set([self.A]), factor_fn=phi_a)
 
         def phi_ab(scope_product):
-            ""
+            """!
+            smoke given bronchitis
+            p(s,b)
+            """
             ss = set(scope_product)
             if ss == set([("A", True), ("B", True)]):
                 return 0.6
@@ -208,7 +223,10 @@ class LWFChainGraphTest(unittest.TestCase):
         )
 
         def phi_ac(scope_product):
-            ""
+            """!
+            lung cancer given smoke
+            p(s,l)
+            """
             ss = set(scope_product)
             if ss == set([("A", True), ("C", True)]):
                 return 0.1
@@ -226,7 +244,10 @@ class LWFChainGraphTest(unittest.TestCase):
         )
 
         def phi_cdf(scope_product):
-            ""
+            """!
+            either tuberculosis or lung given lung cancer and tuberculosis
+            p(e, l, t)
+            """
             ss = set(scope_product)
             if ss == set([("C", True), ("D", True), ("F", True)]):
                 return 1
@@ -251,74 +272,86 @@ class LWFChainGraphTest(unittest.TestCase):
             gid="CDF_cf", scope_vars=set([self.D, self.C, self.F]), factor_fn=phi_cdf
         )
 
-        def phi_cdb(scope_product):
-            ""
+        def phi_ihb(scope_product):
+            """!
+            cough, dyspnoea, bronchitis
+            I, H, B
+            p(c,d,b)
+            """
             ss = set(scope_product)
-            if ss == set([("C", True), ("D", True), ("B", True)]):
+            if ss == set([("H", True), ("I", True), ("B", True)]):
                 return 16
-            elif ss == set([("C", True), ("D", False), ("B", True)]):
+            elif ss == set([("H", True), ("I", False), ("B", True)]):
                 return 1
-            elif ss == set([("C", False), ("D", True), ("B", True)]):
+            elif ss == set([("H", False), ("I", True), ("B", True)]):
                 return 4
-            elif ss == set([("C", False), ("D", False), ("B", True)]):
+            elif ss == set([("H", False), ("I", False), ("B", True)]):
                 return 1
-            elif ss == set([("C", True), ("D", True), ("B", False)]):
+            elif ss == set([("H", True), ("I", True), ("B", False)]):
                 return 2
-            elif ss == set([("C", True), ("D", False), ("B", False)]):
+            elif ss == set([("H", True), ("I", False), ("B", False)]):
                 return 1
-            elif ss == set([("C", False), ("D", True), ("B", False)]):
+            elif ss == set([("H", False), ("I", True), ("B", False)]):
                 return 1
-            elif ss == set([("C", False), ("D", False), ("B", False)]):
+            elif ss == set([("H", False), ("I", False), ("B", False)]):
                 return 1
             else:
                 raise ValueError("Unknown scope product")
 
-        self.CDB_cf = Factor(
-            gid="CDB_cf", scope_vars=set([self.D, self.C, self.B]), factor_fn=phi_cdb
+        self.IHB_cf = Factor(
+            gid="IHB_cf", scope_vars=set([self.H, self.I, self.B]), factor_fn=phi_ihb
         )
 
-        def phi_cbe(scope_product):
-            ""
+        def phi_hbd(scope_product):
+            """!
+            cough, either tuberculosis or lung cancer, bronchitis
+            D, H, B
+            p(c,b,e)
+            """
             ss = set(scope_product)
-            if ss == set([("C", True), ("E", True), ("B", True)]):
+            if ss == set([("H", True), ("D", True), ("B", True)]):
                 return 5
-            elif ss == set([("C", True), ("E", False), ("B", True)]):
+            elif ss == set([("H", True), ("D", False), ("B", True)]):
                 return 2
-            elif ss == set([("C", False), ("E", True), ("B", True)]):
+            elif ss == set([("H", False), ("D", True), ("B", True)]):
                 return 1
-            elif ss == set([("C", False), ("E", False), ("B", True)]):
+            elif ss == set([("H", False), ("D", False), ("B", True)]):
                 return 1
-            elif ss == set([("C", True), ("E", True), ("B", False)]):
+            elif ss == set([("H", True), ("D", True), ("B", False)]):
                 return 3
-            elif ss == set([("C", True), ("E", False), ("B", False)]):
+            elif ss == set([("H", True), ("D", False), ("B", False)]):
                 return 1
-            elif ss == set([("C", False), ("E", True), ("B", False)]):
+            elif ss == set([("H", False), ("D", True), ("B", False)]):
                 return 1
-            elif ss == set([("C", False), ("E", False), ("B", False)]):
+            elif ss == set([("H", False), ("D", False), ("B", False)]):
                 return 1
             else:
                 raise ValueError("Unknown scope product")
 
-        self.CBE_cf = Factor(
-            gid="CBE_cf", scope_vars=set([self.E, self.C, self.B]), factor_fn=phi_cbe
+        self.HBD_cf = Factor(
+            gid="HBD_cf", scope_vars=set([self.H, self.D, self.B]), factor_fn=phi_hbd
         )
 
-        def phi_be(scope_product):
-            ""
+        def phi_bd(scope_product):
+            """!
+            bronchitis, either tuberculosis or lung cancer
+            B, D
+            p(b,e)
+            """
             ss = set(scope_product)
-            if ss == set([("B", True), ("E", True)]):
+            if ss == set([("B", True), ("D", True)]):
                 return 1 / 90
-            elif ss == set([("B", False), ("E", True)]):
+            elif ss == set([("B", False), ("D", True)]):
                 return 1 / 11
-            elif ss == set([("B", True), ("E", False)]):
+            elif ss == set([("B", True), ("D", False)]):
                 return 1 / 39
-            elif ss == set([("B", False), ("E", False)]):
+            elif ss == set([("B", False), ("D", False)]):
                 return 1 / 5
             else:
                 raise ValueError("Unknown scope product")
 
-        self.BE_cf = Factor(
-            gid="BE_cf", scope_vars=set([self.E, self.B]), factor_fn=phi_be
+        self.BD_cf = Factor(
+            gid="BD_cf", scope_vars=set([self.D, self.B]), factor_fn=phi_bd
         )
 
         self.cowell = LWFChainGraph(
@@ -342,16 +375,16 @@ class LWFChainGraphTest(unittest.TestCase):
             ),
             factors=set(
                 [
-                    self.BE_cf,
-                    self.CBE_cf,
-                    self.CDB_cf,
-                    self.CDF_cf,
-                    self.AC_cf,
-                    self.AB_cf,
-                    self.A_cf,
-                    self.DG_cf,
-                    self.EF_cf,
                     self.E_cf,
+                    self.EF_cf,
+                    self.DG_cf,
+                    self.A_cf,
+                    self.AB_cf,
+                    self.AC_cf,
+                    self.CDF_cf,
+                    self.IHB_cf,
+                    self.HBD_cf,
+                    self.BD_cf,
                 ]
             ),
         )
@@ -451,6 +484,29 @@ class LWFChainGraphTest(unittest.TestCase):
             ),
             factors=None,
         )
+        # evidence values taken from
+        # Cowell 2005, p. 119, table 6.12
+        e_comp_val = [("E", True, 0.0096), ("E", False, 0.9904)]
+        h_comp_val = [("H", True, 0.7635), ("H", False, 0.2365)]
+        c_comp_val = [("C", True, 0.0025), ("C", False, 0.9975)]
+        i_comp_val = [("I", True, 0.7939), ("I", False, 0.2061)]
+        g_comp_val = [("G", True, 0.1849), ("G", False, 0.8151)]
+        a_comp_val = [("A", True, 0.4767), ("A", False, 0.5233)]
+        f_comp_val = [("F", True, 0.0012), ("F", False, 0.9988)]
+        d_comp_val = [("D", True, 0.0036), ("D", False, 0.9964)]
+        b_comp_val = [("B", True, 0.60), ("B", False, 0.40)]
+        self.evidences = set([("E", True), ("A", True), ("G", False)])
+        self.q_tsts = {
+            (self.E): e_comp_val,  # asia
+            (self.I): i_comp_val,  # dyspnoea
+            (self.H): h_comp_val,  # cough
+            (self.A): a_comp_val,  # smoke
+            (self.B): b_comp_val,  # bronchitis
+            (self.C): c_comp_val,  # lung
+            (self.D): d_comp_val,  # either
+            (self.F): f_comp_val,  # tuberculosis
+            (self.G): g_comp_val,  # x ray
+        }
 
     def test_id(self):
         ""
@@ -547,14 +603,12 @@ class LWFChainGraphTest(unittest.TestCase):
             ms, koller_moralized,
         )
 
-    def test_cond_prod_by_variable_elimination(self):
+    def test_cond_prod_by_variable_elimination_evidence(self):
         """!
         """
         qs = set([self.B])
         evs = set([("E", True), ("A", True), ("G", False)])
-        # moral = self.cowell.moralize()
         moral = self.cowell
-        pdb.set_trace()
         p, a = moral.cond_prod_by_variable_elimination(qs, evs)
         # check if it is a valid distribution
         s = 0
@@ -567,6 +621,150 @@ class LWFChainGraphTest(unittest.TestCase):
             elif set([("A", False)]) == pss:
                 self.assertEqual(f, 0.99)
         self.assertTrue(s, 1.0)
+
+    def test_cond_prod_by_variable_elimination(self):
+        """!
+        Test values taken from
+        Cowell 2005, p. 116, table 6.9
+        """
+        qs = set(
+            [
+                #  self.I,  # dyspnoea
+                # self.E,  # visit to asia
+                #  self.H,  # cough
+                #  self.A,  # smoke
+                #  self.B,  # bronchitis
+                #  self.C,  # lung
+                #  self.D,  # either
+                #  self.G,  # positive x ray
+                #  self.F,  # tuberculosis
+                #  self.E,  # visit to asia
+            ]
+        )
+        e_comp_val = [("E", True, 0.01), ("E", False, 0.99)]
+        i_comp_val = [("I", True, 0.7468), ("I", False, 0.2532)]
+        h_comp_val = [("H", True, 0.7312), ("H", False, 0.2688)]
+        c_comp_val = [("C", True, 0.055), ("C", False, 0.945)]
+        a_comp_val = [("A", True, 0.5), ("A", False, 0.5)]
+        b_comp_val = [("B", True, 0.45), ("B", False, 0.55)]
+        d_comp_val = [("D", True, 0.0648), ("D", False, 0.9352)]
+        f_comp_val = [("F", True, 0.0104), ("F", False, 0.9896)]
+        q_tsts = {
+            (self.E): e_comp_val,
+            (self.I): i_comp_val,  # dyspnoea
+            (self.H): h_comp_val,  # cough
+            (self.A): a_comp_val,  # smoke
+            (self.B): b_comp_val,  # bronchitis
+            (self.C): c_comp_val,  # lung
+            (self.D): d_comp_val,  # either
+            (self.F): f_comp_val,  # tuberculosis
+        }
+        evs = set()
+        for q, cvals in q_tsts.items():
+            final_factor, a = self.cowell.cond_prod_by_variable_elimination(
+                set([q]), evs
+            )
+            s = 0
+            for cval in cvals:
+                cname = cval[0]
+                c_v = cval[1]
+                c_a = cval[2]
+                cs = set([(cname, c_v)])
+                f = round(final_factor.phi_normal(cs), 4)
+                s += f
+                self.assertEqual(c_a, f)
+            self.assertEqual(s, 1)
+
+    def test_cond_prod_by_variable_elimination_evidences_B(self):
+        """!
+        Test values taken from
+        Cowell 2005, p. 119, table 6.12
+        """
+        comp_vals = self.q_tsts[self.B]
+        final_factor, a = self.cowell.cond_prod_by_variable_elimination(
+            set([self.B]), self.evidences
+        )
+        for e_val in comp_vals:
+            ename = e_val[0]
+            e_v = e_val[1]
+            f = round(final_factor.phi_normal(set([(ename, e_v)])), 4)
+            self.assertEqual(f, e_val[2])
+
+    def test_cond_prod_by_variable_elimination_evidences_I(self):
+        """!
+        Test values taken from
+        Cowell 2005, p. 119, table 6.12
+        """
+        comp_vals = self.q_tsts[self.I]
+        final_factor, a = self.cowell.cond_prod_by_variable_elimination(
+            set([self.I]), self.evidences
+        )
+        for e_val in comp_vals:
+            ename = e_val[0]
+            e_v = e_val[1]
+            f = round(final_factor.phi_normal(set([(ename, e_v)])), 4)
+            self.assertEqual(f, e_val[2])
+
+    def test_cond_prod_by_variable_elimination_evidences_H(self):
+        """!
+        Test values taken from
+        Cowell 2005, p. 119, table 6.12
+        """
+        comp_vals = self.q_tsts[self.H]
+        final_factor, a = self.cowell.cond_prod_by_variable_elimination(
+            set([self.H]), self.evidences
+        )
+        for e_val in comp_vals:
+            ename = e_val[0]
+            e_v = e_val[1]
+            f = round(final_factor.phi_normal(set([(ename, e_v)])), 4)
+            self.assertEqual(f, e_val[2])
+
+    def test_cond_prod_by_variable_elimination_evidences_C(self):
+        """!
+        Test values taken from
+        Cowell 2005, p. 119, table 6.12
+        """
+        comp_vals = self.q_tsts[self.C]
+        final_factor, a = self.cowell.cond_prod_by_variable_elimination(
+            set([self.C]), self.evidences
+        )
+        for e_val in comp_vals:
+            ename = e_val[0]
+            e_v = e_val[1]
+            f = round(final_factor.phi_normal(set([(ename, e_v)])), 4)
+            self.assertEqual(f, e_val[2])
+
+    def test_cond_prod_by_variable_elimination_evidences_F(self):
+        """!
+        Test values taken from
+        Cowell 2005, p. 119, table 6.12
+        """
+        comp_vals = self.q_tsts[self.F]
+        final_factor, a = self.cowell.cond_prod_by_variable_elimination(
+            set([self.F]), self.evidences
+        )
+        for e_val in comp_vals:
+            ename = e_val[0]
+            e_v = e_val[1]
+            f = round(final_factor.phi_normal(set([(ename, e_v)])), 4)
+            self.assertEqual(f, e_val[2])
+
+    def test_cond_prod_by_variable_elimination_evidences_G(self):
+        """!
+        Test values taken from
+        Cowell 2005, p. 119, table 6.12
+        """
+        comp_vals = self.q_tsts[self.G]
+        final_factor, a = self.cowell.cond_prod_by_variable_elimination(
+            set([self.G]), self.evidences
+        )
+
+    # for e_val in comp_vals:
+    #     ename = e_val[0]
+    #     e_v = e_val[1]
+    #     f = round(final_factor.phi_normal(set([(ename, e_v)])), 4)
+    #     self.assertEqual(f, e_val[2])
 
 
 if __name__ == "__main__":
