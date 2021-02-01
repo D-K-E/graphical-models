@@ -9,6 +9,7 @@ from gmodels.gtypes.graph import Graph
 from typing import Callable, Set, List, Optional, Dict, Tuple
 import math
 from uuid import uuid4
+import pdb
 
 
 def min_unmarked_neighbours(g: Graph, nodes: Set[Node], marked: Dict[str, Node]):
@@ -112,6 +113,8 @@ class PGModel(Graph):
         \f \prod_{i} \phi_i \f
         """
         factors = list(fs)
+        if len(factors) == 0:
+            raise ValueError("Must have a non empty list of factors")
         if len(factors) == 1:
             return factors[0], None
         prod = factors.pop(0)
@@ -261,7 +264,7 @@ class PGModel(Graph):
             if z not in E and z not in queries:
                 Zs.add(z)
         return self.conditional_prod_by_variable_elimination(
-            queries, Zs, factors, ordering_fn=ordering_fn
+            queries=queries, Zs=Zs, factors=factors, ordering_fn=ordering_fn
         )
 
     def conditional_prod_by_variable_elimination(

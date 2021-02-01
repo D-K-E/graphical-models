@@ -9,6 +9,7 @@ from typing import Set, Callable, Optional, List, Union, Tuple
 from itertools import product, combinations
 from uuid import uuid4
 from pprint import pprint
+import pdb
 
 
 class Factor(GraphObject):
@@ -350,30 +351,6 @@ class Factor(GraphObject):
         """
         return self.reduced(context=assignments)
 
-    def sumout_var(self, Y: NumCatRVariable):
-        """!
-        Sum the variable out of factor as per Koller, Friedman 2009, p. 297
-        which creates a new factor
-        """
-        if Y not in self.scope_vars():
-            raise ValueError("argument is not in scope of this factor")
-
-        Y_vals = Y.value_set()
-        products = self.factor_domain()
-        fn = self.factor_fn
-
-        def psi(scope_product: Set[Tuple[str, NumericValue]]):
-            ""
-            s = set(scope_product)
-            diffs = set([p for p in products if s.issubset(p) is True])
-            return sum([fn(d) for d in diffs])
-
-        return Factor(
-            gid=str(uuid4()),
-            scope_vars=self.scope_vars().difference({Y}),
-            factor_fn=psi,
-        )
-
     def maxout_var(self, Y: NumCatRVariable):
         """!
         max the variable out of factor as per Koller, Friedman 2009, p. 555
@@ -391,6 +368,33 @@ class Factor(GraphObject):
             s = set(scope_product)
             diffs = set([p for p in products if s.issubset(p) is True])
             return max([fn(d) for d in diffs])
+
+        return Factor(
+            gid=str(uuid4()),
+            scope_vars=self.scope_vars().difference({Y}),
+            factor_fn=psi,
+        )
+
+    def sumout_var(self, Y: NumCatRVariable):
+        """!
+        Sum the variable out of factor as per Koller, Friedman 2009, p. 297
+        which creates a new factor
+        """
+        if Y not in self.scope_vars():
+            msg = "Argument " + str(Y)
+            msg += " is not in scope of this factor: "
+            msg += " ".join(self.scope_vars())
+            raise ValueError(msg)
+
+        Y_vals = Y.value_set()
+        products = self.factor_domain()
+        fn = self.factor_fn
+
+        def psi(scope_product: Set[Tuple[str, NumericValue]]):
+            ""
+            s = set(scope_product)
+            diffs = set([p for p in products if s.issubset(p) is True])
+            return sum([fn(d) for d in diffs])
 
         return Factor(
             gid=str(uuid4()),
