@@ -9,7 +9,6 @@ from typing import Set, Callable, Optional, List, Union, Tuple
 from itertools import product, combinations
 from uuid import uuid4
 from pprint import pprint
-import pdb
 
 
 class Factor(GraphObject):
