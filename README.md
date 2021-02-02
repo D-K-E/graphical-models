@@ -1,6 +1,8 @@
 # Graphical Models
 
-See the [documentation](https://viva-lambda.github.io/graphical-models/)
+![Build Status](https://github.com/D-K-E/graphical-models/workflows/Python%20Package%20using%20Conda/badge.svg?branch=master)
+
+See doxygen generated [documentation](https://viva-lambda.github.io/graphical-models/)
 
 The library is focused on analysis than io. Everything is implemented from 
 scratch. Only standard library is used for now. 
