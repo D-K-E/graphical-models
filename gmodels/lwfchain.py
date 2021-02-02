@@ -124,7 +124,7 @@ class LWFChainGraph(PGModel):
         K = self.K(i)
         if isinstance(K, UndiGraph):
             return K.nodes()
-        elif instance(K, frozenset):
+        elif isinstance(K, frozenset):
             return set(K)
         else:
             raise TypeError("Unknown component type")
