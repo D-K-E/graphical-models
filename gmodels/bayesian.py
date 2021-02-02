@@ -8,7 +8,6 @@ from gmodels.randomvariable import NumCatRVariable
 from gmodels.factor import Factor
 from gmodels.pgmodel import PGModel
 from typing import Set
-import math
 from uuid import uuid4
 
 

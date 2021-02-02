@@ -9,7 +9,6 @@ from gmodels.gtypes.graph import Graph
 from typing import Callable, Set, List, Optional, Dict, Tuple
 import math
 from uuid import uuid4
-import pdb
 
 
 def min_unmarked_neighbours(g: Graph, nodes: Set[Node], marked: Dict[str, Node]):

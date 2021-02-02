@@ -2,6 +2,10 @@
 
 ![Build Status](https://github.com/D-K-E/graphical-models/workflows/Python%20Package%20using%20Conda/badge.svg?branch=master)
 
+
+[![DOI](https://zenodo.org/badge/321839625.svg)](https://zenodo.org/badge/latestdoi/321839625)
+
+
 See doxygen generated [documentation](https://viva-lambda.github.io/graphical-models/)
 
 The library is focused on analysis than io. Everything is implemented from 
