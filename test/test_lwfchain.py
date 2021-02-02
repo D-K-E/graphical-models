@@ -630,7 +630,7 @@ class LWFChainGraphTest(unittest.TestCase):
         qs = set(
             [
                 #  self.I,  # dyspnoea
-                # self.E,  # visit to asia
+                #  self.E,  # visit to asia
                 #  self.H,  # cough
                 #  self.A,  # smoke
                 #  self.B,  # bronchitis
@@ -750,21 +750,48 @@ class LWFChainGraphTest(unittest.TestCase):
             f = round(final_factor.phi_normal(set([(ename, e_v)])), 4)
             self.assertEqual(f, e_val[2])
 
-    def test_cond_prod_by_variable_elimination_evidences_G(self):
+    def test_most_probable_assignment(self):
         """!
-        Test values taken from
-        Cowell 2005, p. 119, table 6.12
+        From Cowell 2005, p. 119
         """
-        comp_vals = self.q_tsts[self.G]
-        final_factor, a = self.cowell.cond_prod_by_variable_elimination(
-            set([self.G]), self.evidences
-        )
+        compare_value = {}
+        assignments, factors, z_phi = self.cowell.max_product_ve(set())
 
-    # for e_val in comp_vals:
-    #     ename = e_val[0]
-    #     e_v = e_val[1]
-    #     f = round(final_factor.phi_normal(set([(ename, e_v)])), 4)
-    #     self.assertEqual(f, e_val[2])
+    def test_mpe_prob_no_evidence(self):
+        """!
+        From Cowell 2005, p. 119
+        """
+        cval = 0.2063
+        prob = self.cowell.mpe_prob(set())
+        self.assertEqual(round(prob, 4), cval)
+
+    def test_mpe_prob_evidence(self):
+        """!
+        From Cowell 2005, p. 119
+        """
+        cval = 0.002
+        evs = set([("E", True), ("A", True), ("G", False)])
+        prob = self.cowell.mpe_prob(evs)
+        self.assertEqual(round(prob, 4), cval)
+
+    def test_max_product_ve_evidence(self):
+        """!
+        From Cowell 2005, p. 119
+        """
+        cval = {
+            "B": True,
+            "A": True,
+            "C": False,
+            "D": False,
+            "F": False,
+            "H": True,
+            "G": False,
+            "I": True,
+            "E": True,
+        }
+        evs = set([("E", True), ("A", True), ("G", False)])
+        assignments, factors, z_phi = self.cowell.max_product_ve(evs)
+        self.assertEqual(assignments, cval)
 
 
 if __name__ == "__main__":

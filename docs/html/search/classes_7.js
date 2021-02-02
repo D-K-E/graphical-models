@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['markovnetwork_168',['MarkovNetwork',['../df/dd7/classgmodels_1_1markov_1_1MarkovNetwork.html',1,'gmodels::markov']]],
-  ['multinaivebayesmle_169',['MultiNaiveBayesMLE',['../dd/dda/classgmodels_1_1legacy_1_1NaiveBayes_1_1MultiNaiveBayesMLE.html',1,'gmodels::legacy::NaiveBayes']]]
+  ['lwfchaingraph_252',['LWFChainGraph',['../d1/da6/classgmodels_1_1lwfchain_1_1LWFChainGraph.html',1,'gmodels::lwfchain']]]
 ];

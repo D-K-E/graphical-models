@@ -25,6 +25,4 @@ The main objects of the library are:
 
 \section contr_sec Contributors
 
-
-
 """
