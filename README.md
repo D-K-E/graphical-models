@@ -212,10 +212,19 @@ Here is a complete list of references used throughout the source code:
 
  @book{Darwiche_2009, place={Cambridge ; New York}, title={Modeling and reasoning with Bayesian networks}, ISBN={978-0-521-88438-9}, publisher={Cambridge University Press}, author={Darwiche, Adnan}, year={2009} }
 
+
+ @book{Erciyes_2018, place={Cham}, edition={1st ed. 2018}, series={Texts in Computer Science}, title={Guide to Graph Algorithms: Sequential, Parallel and Distributed}, ISBN={978-3-319-73235-0}, DOI={10.1007/978-3-319-73235-0}, publisher={Springer International Publishing : Imprint: Springer}, author={Erciyes, K.}, year={2018}, collection={Texts in Computer Science} }
+
+ @book{Even_Guy Even_2012, place={Cambridge, NY}, edition={2nd ed}, title={Graph algorithms}, ISBN={978-0-521-51718-8}, publisher={Cambridge University Press}, author={Even, Shimon and Guy Even}, year={2012} }
+
+
+ @book{Cohen_Joyner_Nguyen_2011, title={Algorithmic Graph Theory}, url={https://code.google.com/archive/p/graphbook/}, author={Cohen, Nathan and Joyner, David and Nguyen, Minh}, year={2011}, month={May} }
+
+ @book{Diestel_2017, place={Hamburg}, edition={5}, title={Graph Theory}, ISBN={978-3-662-53621-6}, publisher={Springer}, author={Diestel, Reinhard}, year={2017} }
+
 ```
 
 ## Contributors
 
 - [Nihan](https://github.com/comecloseridontbyte)
 
-- [Kaan](https://github.com/D-K-E)
