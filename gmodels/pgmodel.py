@@ -233,6 +233,19 @@ class PGModel(Graph):
                 marked[X.id()] = True
         return cardinality
 
+    def reduce_queries_with_evidence(
+        self, queries: Set[NumCatRVariable], evidences: Set[Tuple[str, NumericValue]],
+    ) -> Set[NumCatRVariable]:
+        ""
+        reduced_queries = set()
+        evs = {e[0]: e[1] for e in evidences}
+        for q in queries:
+            if q.id() in evs:
+                ev = evs[q.id()]
+                q.reduce_to_value(ev)
+            reduced_queries.add(q)
+        return reduced_queries
+
     def reduce_factors_with_evidence(self, evidences: Set[Tuple[str, NumericValue]]):
         """!
         reduce factors if there is evidence
@@ -258,6 +271,7 @@ class PGModel(Graph):
         """
         if queries.issubset(self.nodes()) is False:
             raise ValueError("Query variables must be a subset of vertices of graph")
+        queries = self.reduce_queries_with_evidence(queries, evidences)
         factors, E = self.reduce_factors_with_evidence(evidences)
         Zs = set()
         for z in self.nodes():
@@ -327,13 +341,16 @@ class PGModel(Graph):
         )
         return assignments, factors, z_phi
 
-    def mpe_prob(self, evidences: Set[Tuple[str, NumericValue]]):
+    def mpe_prob(self, evidences: Set[Tuple[str, NumericValue]]) -> float:
         """!
         obtain the probability of the most probable instantiation of
         the model
         """
         assignments, factors, z_phi = self.max_product_ve(evidences=evidences)
-        return z_phi.phi(set())
+        probs = set()
+        for f in z_phi.factor_domain():
+            probs.add(z_phi.phi(f))
+        return max(probs)
 
     def traceback_map(
         self, potentials: List[Factor], X_is: List[NumCatRVariable]

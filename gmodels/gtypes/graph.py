@@ -1,8 +1,13 @@
 """!
+\file graph.py
+
 \defgroup graphgroup Graph and Related Objects
 
+Contains a general graph object. Most of the functionality is based on 
+Diestel 2017.
+
 """
-from typing import Set, Optional, Callable, List, Tuple, Union, Dict
+from typing import Set, Optional, Callable, List, Tuple, Union, Dict, FrozenSet
 from gmodels.gtypes.graphobj import GraphObject
 from gmodels.gtypes.edge import Edge, EdgeType
 from gmodels.gtypes.node import Node
@@ -13,14 +18,28 @@ import math
 class Graph(GraphObject):
     """!
     Simple finite graph
-    G = (V, E)
-    V - {v}
+    \f G = (V, E) \f where \f V \f is the vertex set and \f E \f is the edge set.
     """
 
     def __init__(
         self, gid: str, data={}, nodes: Set[Node] = None, edges: Set[Edge] = None
     ):
-        ""
+        """!
+        \brief Graph Constructor
+
+        \param gid unique graph id. In most cases we generate a random id with
+        uuid4
+
+        \param data is any data associated with the graph.
+
+        \param nodes a node/vertex set.
+        \param edges an edge set.
+
+        We construct the graph from given node and edge set. For quick look up
+        we store them in hash tables. The gdata member also stores an edge list
+        representation, in order to facilitate some of the basic look up
+        functionality concerning neighbours of vertices.
+        """
         super().__init__(oid=gid, odata=data)
         self._nodes: Optional[Dict[str, Node]] = None
         if nodes is not None:
@@ -51,6 +70,9 @@ class Graph(GraphObject):
     @classmethod
     def from_edgeset(cls, edges: Set[Edge]):
         """!
+        \brief We construct the graph from given edge set using a random id.
+
+        See \see #Graph for more information
         """
         nodes: Set[Node] = set()
         for e in edges:
@@ -60,7 +82,10 @@ class Graph(GraphObject):
 
     @classmethod
     def from_edge_node_set(cls, edges: Set[Edge], nodes: Set[Node]):
-        ""
+        """!
+        \brief We construct the graph from given node, and edge sets using a random id.
+        See \see #Graph for more information
+        """
         nodes = set(nodes)
         for e in edges:
             nodes.add(e.start())
@@ -68,7 +93,17 @@ class Graph(GraphObject):
         return Graph(gid=str(uuid4()), nodes=nodes, edges=edges)
 
     def mk_nodes(self, ns: Optional[Set[Node]], es: Optional[Set[Edge]]):
-        ""
+        """!
+        \brief Obtain all nodes in a single set.
+
+        \param ns set of nodes
+        \param es set of edges
+
+        We assume that node set and edge set might contain different nodes,
+        that is \f V[G] = V[ns] \cup V[es] \f
+        We combine nodes given in both sets to create a final set of nodes
+        for the graph
+        """
         nodes = set()
         if ns is None:
             return
@@ -85,7 +120,7 @@ class Graph(GraphObject):
 
     def to_adjmat(self, vtype=int):
         """!
-        transform adjacency list to adjacency matrix representation
+        \brief Transform adjacency list to adjacency matrix representation
         """
         gmat = {}
         for v in self.V:
@@ -103,7 +138,10 @@ class Graph(GraphObject):
         return gmat
 
     def has_self_loop(self) -> bool:
-        ""
+        """!
+        \brief Check if graph has a self loop.
+        We check whether the incident vertices of an edge is same.
+        """
         for edge in self.edges():
             if edge.start() == edge.end():
                 return True
@@ -111,7 +149,10 @@ class Graph(GraphObject):
 
     def transitive_closure_matrix(self) -> Dict[Tuple[str, str], bool]:
         """!
-        From algorithmic graph theory Joyner, Phillips, Nguyen, 2013, p.134
+        \brief Obtain transitive closure matrix of a given graph
+
+        We apply the algorithm from algorithmic graph theory Joyner, Phillips,
+        Nguyen, 2013, p.134
         """
         if self.has_self_loop():
             raise ValueError("Graph has a self loop")
@@ -129,7 +170,11 @@ class Graph(GraphObject):
         return T
 
     def mk_gdata(self):
-        "make graph data"
+        """!
+        \brief Create edge list representation of graph
+
+        For each node we register the edges.
+        """
         if self._nodes is not None:
             for vertex in self._nodes.values():
                 self.gdata[vertex.id()] = []
@@ -143,12 +188,21 @@ class Graph(GraphObject):
                         self.gdata[node_id].append(edge.id())
 
     def __eq__(self, n):
+        """!
+        \brief Check for equality
+
+        This is not a strict check for equality of graphs. We simply check
+        for ids. There is nothing mathematical about it. Should not be
+        used in the context of graph algebra.
+        """
         if isinstance(n, Graph):
             return self.id() == n.id()
         return False
 
     def __str__(self):
-        ""
+        """!
+        \brief Obtain string representation of the graph.
+        """
         return (
             self.id()
             + "--"
@@ -160,34 +214,60 @@ class Graph(GraphObject):
         )
 
     def __hash__(self):
+        """!
+        \brief Create a hash value for the graph.
+
+        Since the identifiers of graphs are randomly generated in most cases,
+        hashing them by their string representation should not create a
+        problem, because the string representation contains the identifier
+        of the graph.
+        """
         return hash(self.__str__())
 
     @property
     def V(self) -> Dict[str, Node]:
-        "vertices of graph"
+        """!
+        \brief Obtain vertices of the graph
+
+        \throws ValueError if node set is empty for the graph
+        """
         if self._nodes is None:
             raise ValueError("Nodes are None for this graph")
         return self._nodes
 
     @property
     def E(self) -> Dict[str, Edge]:
-        "edges of graph"
+        """!
+        \brief obtain edges of the graph
+        \throws ValueError if edge set is empty for the graph.
+        """
         if self._edges is None:
             raise ValueError("Edges are None for this graph")
         return self._edges
 
     def is_connected(self) -> bool:
-        ""
-        return all([len(es) != 0 for es in self.gdata.values()])
+        """!
+        \brief Check if graph is connected
+        If a graph has a single component, then we assume that it is connected
+        graph
+        """
+        return self.nb_components() == 1
 
     def is_adjacent_of(self, e1: Edge, e2: Edge) -> bool:
-        ""
+        """!
+        \brief Check if two edges are adjacent
+        """
         n1_ids = e1.node_ids()
         n2_ids = e2.node_ids()
         return len(n1_ids.intersection(n2_ids)) > 0
 
     def is_node_incident(self, n: Node, e: Edge) -> bool:
-        ""
+        """!
+        \brief Check if a node is incident of an edge
+
+        \param n node We check if this node is an endvertex of the edge.
+        \param e The queried edge.
+        """
         return e.is_endvertice(n)
 
     def is_related_to(
@@ -198,7 +278,15 @@ class Graph(GraphObject):
         es: Set[Edge] = None,
     ):
         """!
-        are nodes related by an edge with respect to given condition
+        \brief Generic function for applying proximity conditions on a node pair
+
+        \param n1 first node subject to proximity condition
+        \param n2 second node subject to proximity condition
+        \param condition proximity condition in the form of a callable.
+        \param es edge set. We query the proximity condition in this set if it
+        is specified
+
+        We check whether a proximity condition is valid for given two nodes.
         """
         if es is None:
             es = self.edges()
@@ -209,10 +297,14 @@ class Graph(GraphObject):
 
     def is_neighbour_of(self, n1: Node, n2: Node) -> bool:
         """!
+        \brief check if two nodes are neighbours
+        We define the condition of neighborhood as having a common edge.
         """
 
         def cond(n_1: Node, n_2: Node, e: Edge) -> bool:
-            ""
+            """!
+            \brief neighborhood condition
+            """
             estart = e.start()
             eend = e.end()
             c1 = estart == n_1 and eend == n_2
@@ -227,13 +319,26 @@ class Graph(GraphObject):
         return self.is_related_to(n1=n1, n2=n2, condition=cond, es=edges)
 
     def is_node_independent_of(self, n1: Node, n2: Node) -> bool:
+        """!
+        \brief check if two nodes are independent
+        We consider two nodes independent if they are not the same, and they
+        are not neighbours.
+        """
         if n1 == n2:
             return False
         return True if self.is_neighbour_of(n1, n2) is False else False
 
     def is_stable(self, ns: Set[Node]) -> bool:
-        ""
-        if not self.contains_vertices(ns):
+        """!
+        \brief check if given node set is stable
+
+        We ensure that no nodes in the given node set is a neighbour of one
+        another as per the definition of Diestel 2017, p. 3.
+
+        \throws ValueError if argument node set is not a subset of vertices of
+        the graph
+        """
+        if ns.issubset(self.nodes()) is False:
             raise ValueError("node set is not contained in graph")
         node_list = list(ns)
         while node_list:
@@ -244,7 +349,10 @@ class Graph(GraphObject):
         return True
 
     def neighbours_of(self, n1: Node) -> Set[Node]:
-        ""
+        """!
+        \brief obtain neighbour set of a given node.
+        \throws ValueError if node is not inside the graph
+        """
         if not self.is_in(n1):
             raise ValueError("node is not in graph")
         neighbours = set()
@@ -254,70 +362,137 @@ class Graph(GraphObject):
         return neighbours
 
     def nb_neighbours_of(self, n: Node) -> int:
+        """!
+        \brief obtain number of neighbours of a given node.
+        """
         return len(self.neighbours_of(n))
 
     def edges_of(self, n: Node) -> Set[Edge]:
-        ""
+        """!
+        \brief obtain the edge set of a given node.
+        """
         edge_ids = self.gdata[n.id()]
         return set([self.E[eid] for eid in edge_ids])
 
     def outgoing_edges_of(self, n: Node) -> Set[Edge]:
-        ""
+        """!
+        \brief obtain the outgoing edge set of a given node.
+
+        Outgoing edge set means all edges that start with the given node
+        and end in another node. This information is mostly trivial for 
+        undirected graphs but becomes important for distinguishing 
+        parents from children in directed graphs.
+        """
         return set([e for e in self.edges() if e.start() == n])
 
     def incoming_edges_of(self, n: Node) -> Set[Edge]:
-        ""
+        """!
+        \brief obtain incoming edges of a given graph
+
+        Incoming edges are defined as edges that end with the given node.
+        We only check for the position and do not consider the type of the edge
+        For its use case see \see outgoing_edges_of()
+        """
         return set([e for e in self.edges() if e.end() == n])
 
     def edges_by_end(self, n: Node) -> Set[Edge]:
-        ""
-        edge_ids = self.gdata[n.id()]
-        return set([self.E[e] for e in edge_ids if self.E[e].is_end(n)])
+        """!
+        \brief obtain edge set of node.
+
+        This function should not be confused with incoming_edges_of() or
+        outgoing_edges_of() functions.
+        This function provides the edge set of the given node considering the
+        type of the edge as well.
+
+        If the edge is undirected, it is going to be included in the set if the
+        node is an endvertex of it.  If the edge is directed, it is going to be
+        included in the set if the node is at the end position of the vertex.
+        """
+        return set([self.E[e] for e in self.E if self.E[e].is_end(n)])
 
     def vertices(self) -> Set[Node]:
+        """!
+        \brief obtain vertex set of the given graph
+        """
         return set([n for n in self.V.values()])
 
     def nodes(self) -> Set[Node]:
+        """!
+        \brief obtain vertex set of the graph
+        """
         return self.vertices()
 
     def edges(self) -> Set[Edge]:
+        """!
+        \brief obtain edge set of the graph
+        """
         return set([n for n in self.E.values()])
 
     def is_in(self, ne: Union[Node, Edge]) -> bool:
-        ""
+        """!
+        \brief check if given edge or node is in graph
+
+        We check if given graph object is in the graph.
+        \throws TypeError if the argument is not a node or an edge
+        """
         if isinstance(ne, Node):
-            return ne.id() in self.gdata
+            return ne.id() in self.V
+        elif isinstance(ne, Edge):
+            return ne.id() in self.E
         else:
-            check = False
-            nid = ne.id()
-            for elist in self.gdata.values():
-                if nid in elist:
-                    check = True
-            return check
+            raise TypeError("Given argument should be either edge or node")
 
     def order(self) -> int:
+        """!
+        \brief obtain the number of vertices in the graph.
+
+        It corresponds to \f |G| \f.
+        This interpretation of order is taken from Diestel 2017, p. 2.
+        """
         return len(self.V)
 
     def nb_edges(self) -> int:
+        """!
+        \brief obtain number of edges in the graph
+        It corresponds to \f ||G|| \f.
+        This interpretation is taken from Diestel 2017, p. 2.
+        """
         return len(self.E)
 
     def is_trivial(self) -> bool:
-        "check if graph is trivial"
+        """!
+        \brief check if graph is trivial.
+        This triviality condition is taken from
+        Diestel 2017, p. 2
+        """
         return self.order() < 2
 
     def vertex_by_id(self, node_id: str) -> Node:
+        """!
+        \brief obtain vertex by using its identifier
+        \throws ValueError if the node is not in graph
+        """
         if node_id not in self.V:
             raise ValueError("node id not in graph")
         return self.V[node_id]
 
     def edge_by_id(self, edge_id: str) -> Edge:
-        ""
+        """!
+        \brief obtain edge by using its identifier
+        \throws ValueError if the edge id is not in graph
+        """
         if edge_id not in self.E:
             raise ValueError("edge id not in graph")
         return self.E[edge_id]
 
     def edge_by_vertices(self, n1: Node, n2: Node) -> Set[Edge]:
         """!
+        \brief obtain edge set by using its vertices.
+
+        We take all edges that consist of given two nodes
+
+        \throws ValueError if any of argument nodes are not inside the graph.
+        \throws ValueError if there are no edges that consist of argument nodes.
         """
         if not self.is_in(n1) or not self.is_in(n2):
             raise ValueError("one of the nodes is not present in graph")
@@ -331,7 +506,11 @@ class Graph(GraphObject):
         return set([self.E[e] for e in common_edge_ids])
 
     def vertices_of(self, e: Edge) -> Tuple[Node, Node]:
-        ""
+        """!
+        \brief obtain all vertices associated with an edge.
+
+        \throws ValueError if edge is not inside the graph
+        """
         if self.is_in(e):
             return (e.start(), e.end())
         else:
@@ -339,24 +518,35 @@ class Graph(GraphObject):
 
     def is_homomorphism(
         self,
-        fn: Callable[[Node], Node],
-        graph_builder: Callable[[Set[Node]], GraphObject],
+        phi_map: Callable[[Node], Node] = lambda x: x,
+        psi_map: Callable[[Edge], Edge] = lambda x: x,
     ) -> bool:
-        "Check if a function is a homomorphism"
-        edges = self.edges()
-        nodes = set()
-        for n in self.nodes():
-            nodes.add(fn(n))
-        ngraph = graph_builder(nodes)
+        """!
+        \brief Check if a function is a homomorphism on the given graph.
 
+        \warning Absolutely untested function that tries to follow the definition
+        given in Diestel 2017, p. 3. Basically if a function transforms 
+        vertex set of graph but conserve adjacency properties of the graph,
+        it is a homomorphism.
+        
+        """
+        edges = self.edges()
+        adjacency_of_vertices = set()
+        nedges = set()
+        nnodes = set()
         for e in edges:
-            vs = self.vertices_of(e)
-            v1 = vs[0]
-            v2 = vs[1]
-            v1_ = fn(v1)
-            v2_ = fn(v2)
-            nedge = ngraph.edge_by_vertices(v1_, v2_)
-            if nedge is None:
+            estart = e.start()
+            eend = e.end()
+            adjacency_of_vertices.add((estart, eend))
+            nnodes.add(phi_map(estart))
+            nnodes.add(phi_map(eend))
+            nedges.add(psi_map(e))
+
+        g = Graph.from_edge_node_set(edges=nedges, nodes=nnodes)
+        for e in g.edges():
+            estart = e.start()
+            eend = e.end()
+            if (estart, eend) not in adjacency_of_vertices:
                 return False
         return True
 
@@ -365,7 +555,19 @@ class Graph(GraphObject):
         obj: Union[Set[Node], Set[Edge], GraphObject],
         op: Callable[[Union[Set[Node], Set[Edge]]], Union[Set[Node], Set[Edge], bool]],
     ) -> Optional[Union[Set[Node], Set[Edge], bool]]:
-        ""
+        """!
+        \brief generic set operation for graph
+
+        \param obj the hooked object to operation. We deduce its corresponding
+        argument from its type.
+        \param op operation that is going to be applied to obj and its
+        corresponding object.
+
+        The idea is to give a single interface for generic set operation
+        functions. For example if object is a set of nodes we provide
+        the target for the operation as the nodes of this graph, if it is an
+        edge we provide a set of edges of this graph
+        """
         if isinstance(obj, set):
             lst = list(obj)
             if isinstance(lst[0], Node):
@@ -379,7 +581,9 @@ class Graph(GraphObject):
     def intersection(
         self, aset: Union[Set[Node], Set[Edge], GraphObject]
     ) -> Union[Set[Node], Set[Edge], GraphObject]:
-        "intersection of either node or edge set"
+        """!
+        \brief obtain intersection of either node or edge set
+        """
         v = self.set_op(obj=aset, op=lambda x: x.intersection(aset))
         if v is None:
             return self.graph_intersection(aset)
@@ -388,7 +592,9 @@ class Graph(GraphObject):
     def union(
         self, aset: Union[Set[Node], Set[Edge], GraphObject]
     ) -> Union[Set[Node], Set[Edge], GraphObject]:
-        ""
+        """!
+        \brief obtain union of either node or edge set
+        """
         v = self.set_op(obj=aset, op=lambda x: x.union(aset))
         if v is None:
             return self.graph_union(aset)
@@ -397,7 +603,9 @@ class Graph(GraphObject):
     def difference(
         self, aset: Union[Set[Node], Set[Edge], GraphObject]
     ) -> Union[Set[Node], Set[Edge], GraphObject]:
-        ""
+        """!
+        \brief obtain set difference of either node or edge set
+        """
         v = self.set_op(obj=aset, op=lambda x: x.difference(aset))
         if v is None:
             return self.graph_difference(aset)
@@ -406,21 +614,30 @@ class Graph(GraphObject):
     def symmetric_difference(
         self, aset: Union[Set[Node], Set[Edge], GraphObject]
     ) -> Union[Set[Node], Set[Edge], GraphObject]:
-        ""
+        """!
+        \brief obtain symmetric set difference of either node or edge set.
+        """
         v = self.set_op(obj=aset, op=lambda x: x.symmetric_difference(aset))
         if v is None:
             return self.graph_symmetric_difference(aset)
         return v
 
     def contains(self, a: Union[Set[Edge], Set[Node], GraphObject]) -> bool:
-        ""
-        v = self.set_op(obj=a, op=lambda x: x.intersection(a) == a)
+        """!
+        \brief check if argument set of nodes or edges is contained by graph
+        """
+        v = self.set_op(obj=a, op=lambda x: a.issubset(x) is True)
         if v is None:
             return self.contains(a.nodes()) and self.contains(a.edges())
         return v
 
     def graph_intersection(self, gs):
-        ""
+        """!
+        \brief intersection operation adapted for graph.
+
+        Intersection of graph with another is the graph resulting from
+        intersection sets of their nodes and their edges.
+        """
         ns: Set[Node] = gs.nodes()
         es: Set[Edge] = gs.edges()
         es_ = self.intersection(es)
@@ -428,7 +645,12 @@ class Graph(GraphObject):
         return Graph(gid=str(uuid4()), nodes=ns_, edges=es_)
 
     def graph_union(self, gs):
-        ""
+        """!
+        \brief union operation adapted for graph.
+
+        Union of graph with another is the graph resulting from
+        union sets of their nodes and their edges.
+        """
         ns: Set[Node] = gs.nodes()
         es: Set[Edge] = gs.edges()
         es_ = self.union(es)
@@ -436,6 +658,13 @@ class Graph(GraphObject):
         return Graph(gid=str(uuid4()), nodes=ns_, edges=es_)
 
     def graph_difference(self, gs):
+        """!
+        \brief set difference operation adapted for graph.
+
+        Difference of graph with another is the graph resulting from
+        set difference sets of their nodes and their edges.
+        """
+
         ns: Set[Node] = gs.nodes()
         es: Set[Edge] = gs.edges()
         es_ = self.difference(es)
@@ -450,6 +679,9 @@ class Graph(GraphObject):
         return Graph(gid=str(uuid4()), nodes=ns_, edges=ess)
 
     def graph_symmetric_difference(self, gs):
+        """!
+        \brief symmetric set difference operation adapted for graph.
+        """
         ns: Set[Node] = gs.nodes()
         es: Set[Edge] = gs.edges()
         es_ = self.symmetric_difference(es)
@@ -457,47 +689,64 @@ class Graph(GraphObject):
         return Graph(gid=str(uuid4()), nodes=ns_, edges=es_)
 
     def _subtract_node(self, n: Node) -> Tuple[Set[Node], Set[Edge]]:
-        "subtract a given node from graph"
+        """!
+        \brief subtract a given node from graph
+
+        Output a node and edge set which do not contain the node.
+
+        \todo This function look extra correct and elegant but it is quite
+        inefficient with respect to look ups.
+        """
         if not isinstance(n, Node):
             raise TypeError("argument is not an instance of node")
-        nodes = self.nodes()
-        edges = self.edges()
-        nnodes: Set[Node] = set()
-        nedges: Set[Edge] = set()
         n_id = n.id()
-        for node in nodes:
-            if node != n:
-                nnodes.add(node)
-        for edge in edges:
-            node_ids = edge.node_ids()
-            if n_id not in node_ids:
-                nedges.add(edge)
+        nnodes: Set[Node] = set([self.V[v] for v in self.V if v != n_id])
+        nedges: Set[Edge] = set(
+            [self.E[e] for e in self.E if n_id not in self.E[e].node_ids()]
+        )
         return (nnodes, nedges)
 
     def subtract_node_from_self(self, n: Node):
-        ""
+        """!
+        \brief subtract given node from the graph instance
+        """
         nodes, edges = self._subtract_node(n)
         self._nodes = {n.id(): n for n in nodes}
         self._edges = {e.id(): e for e in edges}
 
     def subtract_node(self, n: Node):
-        ""
+        """!
+        \brief create a new graph by subtracting the argument node.
+        """
         nodes, edges = self._subtract_node(n)
         data = self.data()
         return Graph(gid=str(uuid4()), data=data, nodes=nodes, edges=edges)
 
     def subtract_nodes_from_self(self, ns: Set[Node]):
-        ""
+        """!
+        \brief subtract the set of nodes from graph instance
+        """
         for n in ns:
             self.subtract_node_from_self(n)
 
     def subtract_nodes(self, ns: Set[Node]):
-        ""
-        for n in ns:
-            self = self.subtract_node(n)
+        """!
+        \brief create a new graph by subtracting given set of nodes from graph instance
+        """
+        nslst = list(ns)
+        if len(nslst) == 1:
+            return self.subtract_node(nslst.pop())
+        nn = nslst.pop()
+        g = self.subtract_node(nn)
+        g.subtract_nodes_from_self(nslst)
+        return g
 
     def _subtract_edge(self, e: Edge) -> Set[Edge]:
-        "subtract a given node from graph"
+        """!
+        \brief subtract an edge from graph's edge set
+
+        By default we do not remove the nodes associated with the edge.
+        """
         if not isinstance(e, Edge):
             raise TypeError("argument is not an instance of edge")
         edges = self.edges()
@@ -508,19 +757,26 @@ class Graph(GraphObject):
         return nedges
 
     def subtract_edge_from_self(self, e: Edge):
-        ""
+        """!
+        \brief subtract edge from edge set of graph instance
+        """
         edges = self._subtract_edge(e)
         self._edges = {e.id(): e for e in edges}
 
     def subtract_edge(self, e: Edge) -> GraphObject:
-        ""
+        """!
+        \brief create a new graph by subtracting edge from edge set of graph instance
+        \see subtract_node() as well
+        """
         edges = self._subtract_edge(e)
         return Graph(
             gid=str(uuid4()), data=self.data(), nodes=self.nodes(), edges=edges
         )
 
     def subtract_edge_with_nodes(self, e) -> GraphObject:
-        ""
+        """!
+        \brief subtract edge and remove its nodes as well.
+        """
         edges = self._subtract_edge(e)
         enode1, enode2 = e.start(), e.end()
         nodes = self.nodes()
@@ -528,20 +784,34 @@ class Graph(GraphObject):
         return Graph(gid=str(uuid4()), nodes=nodes, edges=edges)
 
     def subtract(self, a: Union[Node, Edge]):
-        ""
+        """!
+        \brief Generic subtraction operation
+        """
         if isinstance(a, Node):
             return self.subtract_node(a)
-        return self.subtract_edge(a)
+        elif isinstance(a, Edge):
+            return self.subtract_edge(a)
+        else:
+            raise TypeError("Argument must be node or edge: " + str(type(a)))
 
     def subtract_edges_from_self(self, es: Set[Edge]):
-        ""
+        """!
+        \brief subtract edge set from graph instance
+        """
         for e in es:
             self.subtract_edge_from_self(e)
 
     def subtract_edges(self, es: Set[Edge]):
-        ""
-        for e in es:
-            self = self.subtract_edge(e)
+        """!
+        \brief create a new graph by subtracting edge set from graph instance
+        """
+        nslst = list(es)
+        if len(nslst) == 1:
+            return self.subtract_edge(nslst.pop())
+        nn = nslst.pop()
+        g = self.subtract_edge(nn)
+        g.subtract_edges_from_self(nslst)
+        return g
 
     def added_edge_between_if_none(self, n1: Node, n2: Node) -> bool:
         """!
@@ -556,7 +826,8 @@ class Graph(GraphObject):
         return False
 
     def add_edge_to_self(self, e: Edge):
-        ""
+        """!
+        """
         edges = self.edges()
         edges.add(e)
         self._edges = {e.id(): e for e in edges}
@@ -580,7 +851,12 @@ class Graph(GraphObject):
             self = self.add_edge(e)
 
     def comp_degree(self, fn: Callable[[int, int], bool], comp_val: int) -> int:
-        ""
+        """!
+        \brief generic comparison function for degree related operations
+
+        It is used in the context of finding maximum or minimum degree of the
+        graph instance.
+        """
         compare_v = comp_val
         for nid in self.V:
             nb_edges = len(self.gdata[nid])
@@ -589,14 +865,18 @@ class Graph(GraphObject):
         return compare_v
 
     def max_degree(self) -> int:
-        ""
+        """!
+        \brief obtain maximum degree of the graph instance
+        """
         v = self.comp_degree(
             fn=lambda nb_edges, compare: nb_edges > compare, comp_val=0
         )
         return v
 
     def max_degree_vs(self) -> Set[Node]:
-        ""
+        """!
+        \brief obtain vertex set of whose degrees are equal to maximum degree.
+        """
         md = self.max_degree()
         nodes = set()
         for nid in self.V:
@@ -605,7 +885,9 @@ class Graph(GraphObject):
         return nodes
 
     def min_degree(self) -> int:
-        ""
+        """!
+        \brief obtain minimum degree of graph instance
+        """
         return int(
             self.comp_degree(
                 fn=lambda nb_edges, compare: nb_edges < compare, comp_val=math.inf
@@ -613,7 +895,10 @@ class Graph(GraphObject):
         )
 
     def min_degree_vs(self) -> Set[Node]:
-        ""
+        """!
+        \brief obtain set of vertices whose degree equal to minimum degree of
+        graph instance
+        """
         md = self.min_degree()
         nodes = set()
         for nid in self.V:
@@ -623,28 +908,48 @@ class Graph(GraphObject):
 
     def average_degree(self) -> float:
         """!
+        \brief obtain the average degree of graph instance
+
+        The average degree is calculated using the formula:
         \f d(G) = \frac{1}{V[G]} \sum_{v \in V[G]} d(v) \f
+
+        It can be found in Diestel 2017, p. 5
         """
         return sum([len(self.gdata[nid]) for nid in self.V]) / len(self.V)
 
     def edge_vertex_ratio(self) -> float:
-        ""
+        """!
+        \brief obtain edge vertex ratio of graph instance
+        Corresponds to \f\epsilon(G)\f. 
+        The formula comes from Diestel 2017, p. 5.
+        """
         return len(self.E) / len(self.V)
 
     def ev_ratio_from_average_degree(self, average_degree: float):
         """!
+        \brief obtain edge vertex ratio from average degree
+
+        Applies the following formula:
         \f |E[G]| = \frac{1}{2} \sum_{v \in V[G]} d(v) = 1/2 * d(G) * |V[G]| \f
+        It comes from Diestel 2017, p. 5
         """
         return average_degree / 2
 
     def ev_ratio(self):
-        ""
+        """!
+        \brief shorthand for ev_ratio_from_average_degree()
+        """
         return self.ev_ratio_from_average_degree(self.average_degree())
 
     def visit_graph_dfs(
         self, edge_generator: Callable[[Node], Set[Node]], check_cycle: bool = False,
     ):
-        ""
+        """!
+        \brief interior visit function for depth first enumeration of graph
+        instance.
+
+        \see dfs_forest() method for more information on parameters.
+        """
         time = 0
         marked: Dict[str, bool] = {n: False for n in self.V}
         preds: Dict[str, Dict[str, str]] = {}
@@ -690,7 +995,9 @@ class Graph(GraphObject):
     def from_preds_to_edgeset(
         self, preds: Dict[str, Dict[str, str]]
     ) -> Dict[str, Set[Edge]]:
-        ""
+        """!
+        \brief obtain the edge set implied by the predecessor array.
+        """
         esets: Dict[str, Set[Edge]] = {}
         for u, forest in preds.copy().items():
             eset: Set[Edge] = set()
@@ -781,7 +1088,9 @@ class Graph(GraphObject):
 
     def has_cycles(self) -> bool:
         """!
-        see Diestel 2017, p. 8
+        \brief Check if graph instance contains cycles.
+        This interpretation is from Diestel 2017, p. 8. The
+        proof is provided in the given page.
         """
         md = self.min_degree()
         if md >= 2:
@@ -790,13 +1099,17 @@ class Graph(GraphObject):
 
     def shortest_path_length(self) -> int:
         """!
-        see Diestel 2017, p. 8
+        \brief Give the shortest possible path length for graph instance
+        
+        This interpretation is taken from Diestel 2017, p. 8. The proof
+        is also given in the corresponding page.
         """
         return self.min_degree()
 
     def shortest_cycle_length(self) -> int:
         """!
-        see Diestel 2017, p. 8
+        \brief Give the shortest possible cycle length for graph instance
+        The interpretation comes from Diestel 2017, p. 8.
         """
         if self.has_cycles():
             return self.min_degree() + 1
@@ -804,50 +1117,46 @@ class Graph(GraphObject):
             return 0
 
     def nb_components(self) -> int:
+        """!
+        \brief the number of connected components in the given graph.
+
+        This number makes more sense in the case of undirected graphs as our
+        algorithm is adapted for that case. It is computed as we are traversing
+        the graph in dfs_forest()
+        """
         return self.props["nb-component"]
 
     def is_tree(self) -> bool:
         """!
-        see Diestel 2017, p. 14 - 15
+        \brief check if graph instance is a tree.
+
+        This interpretation comes from Diestel 2017, p. 14 - 15.
         """
         nb_c = self.nb_components()
         nb_vs = len(self.nodes())
         nb_es = len(self.edges())
         return nb_c == 1 and nb_vs - 1 == nb_es
 
-    def child_from_parent(
-        self, current: str, preds: Dict[str, Optional[str]], root: str,
-    ) -> Optional[str]:
-        ""
-        c, p = None, None
-        for child, parent_id in preds.copy().items():
-            if parent_id == current:
-                preds.pop(child)
-                c = child
-        for child, parent_id in preds.copy().items():
-            if child == current:
-                p = preds.pop(child)
-        if c is not None:
-            return c
-        if p is not None:
-            return p
-        return None
-
-    def get_component_nodes(self, node_id: str) -> Set[Node]:
+    def get_component_nodes(self, root_node_id: str) -> Set[Node]:
         """!
-        Get component nodes of a graph
+        \brief Get component nodes of a graph
+
+        Given a root node id for a component, obtain its node set.
         """
-        v = self.V[node_id]
+        v = self.V[root_node_id]
         Ts = self.props["components"]
-        T = Ts[node_id]
+        T = Ts[root_node_id]
         T.add(v.id())
         return set([self.V[v] for v in T])
 
-    def get_component(self, node_id: str) -> GraphObject:
+    def get_component(self, root_node_id: str) -> GraphObject:
         """!
-        get a component from graph
+        \brief get a component graph from graph instance
+
+        As subgraphs are also graphs, components are in the strict sense a
+        graph.
         """
-        vertices = self.get_component_nodes(node_id)
+        vertices = self.get_component_nodes(root_node_id)
         edges = [self.gdata[v.id()] for v in vertices]
         es: Set[Edge] = set()
         for elst in edges:
@@ -858,19 +1167,26 @@ class Graph(GraphObject):
 
     def get_components(self):
         """!
-        Get components of graph
+        \brief Get components of graph
+
+        Each component is provided as a graph
         """
         if self.nb_components() == 1:
             return set([self])
 
         # Extract component roots
         component_roots = [k for k in self.props["dfs-forest"].keys()]
-        return set([self.get_component(node_id=root) for root in component_roots])
+        return set([self.get_component(root_node_id=root) for root in component_roots])
 
-    def get_components_as_node_sets(self) -> Set[Set[Node]]:
-        ""
+    def get_components_as_node_sets(self) -> Set[FrozenSet[Node]]:
+        """!
+        \brief obtain component as a set of node sets.
+
+        The node set members of the returning set are of type frozenset due to
+        set being an unhashable type in python.
+        """
         if self.nb_components() == 1:
-            return self.nodes()
+            return set([frozenset(self.nodes())])
 
         # Extract component roots
         component_roots = [k for k in self.props["dfs-forest"].keys()]
@@ -880,8 +1196,11 @@ class Graph(GraphObject):
         self, n1: Node, edge_generator: Callable[[Node], Set[Edge]]
     ) -> Dict[str, Union[dict, set]]:
         """!
-        Breadth first search
-        Even and Guy Even 2012, p. 12
+        \brief find shortest path from given node to all other nodes
+
+        Applies the Breadth first search algorithm from Even and Guy Even 2012, p. 12
+
+        \throws ValueError if given node is not found in graph instance
         """
         if not self.is_in(n1):
             raise ValueError("argument node is not in graph")
@@ -912,7 +1231,14 @@ class Graph(GraphObject):
         self, graph_maker: Callable[[Node], GraphObject]
     ) -> Set[Node]:
         """!
-        naive version see, Erciyes 2018, p. 228
+        \brief find articulation points of graph.
+
+        Find the articulation points of a graph. An articulation point, also
+        called cut vertex is defined as the vertex that separates two other
+        vertices of the same component.
+
+        The algorithm we implement here is the naive version see, Erciyes 2018,
+        p. 228. For the definition of the cut vertex, see Diestel 2017, p. 11
         """
         nb_component = self.nb_components()
         points: Set[Node] = set()
@@ -924,7 +1250,12 @@ class Graph(GraphObject):
 
     def find_bridges(self, graph_maker: Callable[[Edge], GraphObject]) -> Set[Edge]:
         """!
-        naive version
+        \brief find bridges of a given graph.
+
+        A bridge is defined as the edge that separates its ends in the same
+        component.
+        The algorithm we implement here is the naive version provided by Erciyes 2018,
+        p. 228. For the definition of the bridge, see Diestel 2017, p. 11
         """
         nb_component = self.nb_components()
         bridges: Set[Edge] = set()
@@ -958,7 +1289,10 @@ class Graph(GraphObject):
     def __add__(
         self, a: Union[Set[Edge], Set[Node], Node, Edge, GraphObject]
     ) -> GraphObject:
-        ""
+        """!
+        \brief overloads + sign for doing algebraic operations with graph
+        objects.
+        """
         if isinstance(a, Node):
             nodes = self.union(set([a]))
             return Graph(gid=str(uuid4()), data={}, nodes=nodes, edges=self.edges())
@@ -971,7 +1305,10 @@ class Graph(GraphObject):
     def __sub__(
         self, a: Union[Set[Edge], Set[Node], Node, Edge, GraphObject]
     ) -> GraphObject:
-        ""
+        """!
+        \brief overloads - sign for doing algebraic operations with graph
+        objects.
+        """
         if isinstance(a, Node):
             nodes = self.difference(set([a]))
             return Graph(gid=str(uuid4()), data={}, nodes=nodes, edges=self.edges())

@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['path_174',['Path',['../d0/d1c/classgmodels_1_1gtypes_1_1path_1_1Path.html',1,'gmodels::gtypes::path']]],
-  ['pgmodel_175',['PGModel',['../df/da1/classgmodels_1_1pgmodel_1_1PGModel.html',1,'gmodels::pgmodel']]],
-  ['priorityqueue_176',['PriorityQueue',['../d7/d6e/classgmodels_1_1gtypes_1_1queue_1_1PriorityQueue.html',1,'gmodels::gtypes::queue']]]
+  ['ortree_258',['OrTree',['../d9/d6b/classgmodels_1_1searchtree_1_1OrTree.html',1,'gmodels::searchtree']]]
 ];

@@ -117,6 +117,8 @@ class Edge(AbstractEdge, GraphObject):
     def is_start(self, n: Node) -> bool:
         """!
         """
+        if self.type() == EdgeType.UNDIRECTED:
+            return self.is_endvertice(n)
         if n.id() == self.start().id():
             return True
         return False
@@ -124,6 +126,9 @@ class Edge(AbstractEdge, GraphObject):
     def is_end(self, n: Node) -> bool:
         """!
         """
+
+        if self.type() == EdgeType.UNDIRECTED:
+            return self.is_endvertice(n)
         if n.id() == self.end().id():
             return True
         return False
