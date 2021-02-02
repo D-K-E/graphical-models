@@ -285,4 +285,4 @@ class LWFChainGraph(PGModel):
     def is_child_of(self, child: Node, parent: Node):
         """!
         """
-        return self.is_parent_of(n1=parent, n2=child, condition=cond)
+        return self.is_parent_of(n1=parent, n2=child)
