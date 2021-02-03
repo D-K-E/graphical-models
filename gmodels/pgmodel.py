@@ -1,7 +1,16 @@
 """!
-Probabilistic Graphic Model with Factors
+\file pgmodel.py
+
+# Probabilistic Graphic Model with Factors
+
+This file contains the main model that drives the inference algorithms. It
+extends the graph definition by adding a new set called a set of factors.
+The set of factors can be arbitrarily defined or can be deduced from edges
+using independence structure assumed by the model. The #PGModel is the most
+generic model, hence we do not assume a particular independence structure.
+
 """
-from gmodels.gtypes.edge import Edge, EdgeType
+from gmodels.gtypes.edge import Edge
 from gmodels.gtypes.node import Node
 from gmodels.randomvariable import NumCatRVariable, NumericValue
 from gmodels.factor import Factor
@@ -13,8 +22,8 @@ from uuid import uuid4
 
 def min_unmarked_neighbours(g: Graph, nodes: Set[Node], marked: Dict[str, Node]):
     """!
-        find an unmarked node with minimum number of neighbours
-        """
+    \brief find an unmarked node with minimum number of neighbours
+    """
     ordered = [(n, g.nb_neighbours_of(n)) for n in nodes]
     ordered.sort(key=lambda x: x[1])
     for X, nb in sorted(ordered, key=lambda x: x[1]):
@@ -34,7 +43,13 @@ class PGModel(Graph):
         factors: Optional[Set[Factor]] = None,
         data={},
     ):
-        ""
+        """!
+        \brief constructor for a generic Probabilistic Graphical Model
+
+        The generic model that extends the #Graph definition by adding a new
+        set, called set of factors.
+        Most of the parameters are documented in #Graph.
+        """
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
         if factors is None:
             fs: Set[Factor] = set()
