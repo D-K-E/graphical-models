@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['uniform_5fcost_5fsearch_457',['uniform_cost_search',['../d0/d1c/classgmodels_1_1gtypes_1_1path_1_1Path.html#a77a304703d7b511f6245fa2554ccc273',1,'gmodels::gtypes::path::Path']]],
-  ['union_458',['union',['../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a2ee3e394b96067bec663d665f7438ae8',1,'gmodels::gtypes::graph::Graph']]],
-  ['upset_5fof_459',['upset_of',['../d7/db3/classgmodels_1_1gtypes_1_1tree_1_1Tree.html#ac51409a988123ac84c6d210fa48d4d9e',1,'gmodels::gtypes::tree::Tree']]]
+  ['to_5fadjmat_463',['to_adjmat',['../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a2f8e97d5aa9e6b770b3bb2ce97e67eb6',1,'gmodels::gtypes::graph::Graph']]],
+  ['to_5fundirected_464',['to_undirected',['../dd/d00/classgmodels_1_1gtypes_1_1digraph_1_1DiGraph.html#aa370ef5759e7451e0dc0a279eca9a67a',1,'gmodels::gtypes::digraph::DiGraph']]],
+  ['traceback_5fmap_465',['traceback_map',['../df/da1/classgmodels_1_1pgmodel_1_1PGModel.html#a2ecfc54cd7fe445e20db7bd36406cbbd',1,'gmodels::pgmodel::PGModel']]],
+  ['transitive_5fclosure_5fmatrix_466',['transitive_closure_matrix',['../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#ad0d0fc95e76ba3e1684901d07da832be',1,'gmodels::gtypes::graph::Graph']]]
 ];

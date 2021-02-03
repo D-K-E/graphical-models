@@ -18,7 +18,7 @@ import math
 class Graph(GraphObject):
     """!
     Simple finite graph
-    \f G = (V, E) \f where \f V \f is the vertex set and \f E \f is the edge set.
+    \f[ G = (V, E) \f] where \f[ V \f] is the vertex set and \f[ E \f] is the edge set.
     """
 
     def __init__(
@@ -72,7 +72,7 @@ class Graph(GraphObject):
         """!
         \brief We construct the graph from given edge set using a random id.
 
-        See \see #Graph for more information
+        See \see Graph for more information
         """
         nodes: Set[Node] = set()
         for e in edges:
@@ -84,7 +84,7 @@ class Graph(GraphObject):
     def from_edge_node_set(cls, edges: Set[Edge], nodes: Set[Node]):
         """!
         \brief We construct the graph from given node, and edge sets using a random id.
-        See \see #Graph for more information
+        \see Graph for more information
         """
         nodes = set(nodes)
         for e in edges:
@@ -100,7 +100,7 @@ class Graph(GraphObject):
         \param es set of edges
 
         We assume that node set and edge set might contain different nodes,
-        that is \f V[G] = V[ns] \cup V[es] \f
+        that is \f[ V[G] = V[ns] \cup V[es] \f]
         We combine nodes given in both sets to create a final set of nodes
         for the graph
         """
@@ -446,7 +446,7 @@ class Graph(GraphObject):
         """!
         \brief obtain the number of vertices in the graph.
 
-        It corresponds to \f |G| \f.
+        It corresponds to \f[ |G| \f].
         This interpretation of order is taken from Diestel 2017, p. 2.
         """
         return len(self.V)
@@ -454,7 +454,7 @@ class Graph(GraphObject):
     def nb_edges(self) -> int:
         """!
         \brief obtain number of edges in the graph
-        It corresponds to \f ||G|| \f.
+        It corresponds to \f[ ||G|| \f].
         This interpretation is taken from Diestel 2017, p. 2.
         """
         return len(self.E)
@@ -911,7 +911,7 @@ class Graph(GraphObject):
         \brief obtain the average degree of graph instance
 
         The average degree is calculated using the formula:
-        \f d(G) = \frac{1}{V[G]} \sum_{v \in V[G]} d(v) \f
+        \f[ d(G) = \frac{1}{V[G]} \sum_{v \in V[G]} d(v) \f]
 
         It can be found in Diestel 2017, p. 5
         """
@@ -920,7 +920,7 @@ class Graph(GraphObject):
     def edge_vertex_ratio(self) -> float:
         """!
         \brief obtain edge vertex ratio of graph instance
-        Corresponds to \f\epsilon(G)\f. 
+        Corresponds to \f[\epsilon(G)\f]. 
         The formula comes from Diestel 2017, p. 5.
         """
         return len(self.E) / len(self.V)
@@ -930,7 +930,8 @@ class Graph(GraphObject):
         \brief obtain edge vertex ratio from average degree
 
         Applies the following formula:
-        \f |E[G]| = \frac{1}{2} \sum_{v \in V[G]} d(v) = 1/2 * d(G) * |V[G]| \f
+        \f[ |E[G]| = \frac{1}{2} \sum_{v \in V[G]} d(v) = 1/2 * d(G) * |V[G]|
+        \f]
         It comes from Diestel 2017, p. 5
         """
         return average_degree / 2
