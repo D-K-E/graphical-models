@@ -9,7 +9,7 @@ parent class include in most cases a specific edge related function to pass
 along to the parent's method in order to adapt its functionality.
 
 """
-from typing import Set, List, Dict, Callable
+from typing import Set, List, Dict, Callable, Union
 from gmodels.gtypes.edge import Edge
 from gmodels.gtypes.node import Node
 from gmodels.gtypes.tree import Tree
