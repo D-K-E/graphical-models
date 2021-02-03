@@ -1,5 +1,5 @@
 ---
-title: "PyGModels: A Python package for Probabilistic Graphical Models oriented towards Graph Theory"
+title: "PyGModels: A Python package for exploring Probabilistic Graphical Models oriented towards Graph Theory"
 
 tags:
 
@@ -18,6 +18,7 @@ affiliations:
   index: 1
 
 date: 02 February 2021
+bibliography: paper.bib
 
 # Summary
 
