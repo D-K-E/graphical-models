@@ -5,13 +5,8 @@
 
 [![DOI](https://zenodo.org/badge/321839625.svg)](https://zenodo.org/badge/latestdoi/321839625)
 
-
 See doxygen generated [documentation](https://viva-lambda.github.io/graphical-models/)
 
-The library is focused on analysis than io. Everything is implemented from 
-scratch. Only standard library is used for now. 
-I might add numpy and cython later on if the performance becomes an issue 
-(it most likely will ...). Very experimental stuff use it at your own risk.
 
 The source code of this library aims to be accessible to all those interested
 in Probabilistic Graphical Models. The primary goal is to facilitate the
@@ -57,6 +52,25 @@ We distinguish from these by the following traits:
   published ressource to the doc string of the function/class. This also
   applies for tests.
 
+
+## Installation
+
+The entire library depends only on Python standard library. It is tested for
+Python 3.6 through Github Actions at each push to the library. If you have
+Python 3.6+, you should be good to go for installation.
+
+We had provided an environment file for facilitating creation of a virtual
+environment:
+
+- `conda env create -f environment.yml`
+- `conda activate graphical-models`
+
+You can then use the library directly from your source code.
+
+If you want to install without creating a virtual environment, just go to the
+main project directory that contains this readme file and call from terminal:
+
+- `pip install .`
   
 
 ## Guide for Contributors
@@ -68,6 +82,8 @@ can never be too much tests, so feel free to PR some of your own.
 Another area of improvement is documentation.
 
 Adding other inference strategies are also welcome.
+
+Just make an issue and we can discuss the rest.
 
 ## Currently Supported Models
 
