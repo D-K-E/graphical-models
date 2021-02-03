@@ -5,8 +5,7 @@ var indexSectionsWithContent =
   2: "g",
   3: "aegnp",
   4: "_abcdefghijkmnoprstuv",
-  5: "g",
-  6: "g"
+  5: "g"
 };
 
 var indexSectionNames =
@@ -16,8 +15,7 @@ var indexSectionNames =
   2: "namespaces",
   3: "files",
   4: "functions",
-  5: "groups",
-  6: "pages"
+  5: "groups"
 };
 
 var indexSectionLabels =
@@ -27,7 +25,6 @@ var indexSectionLabels =
   2: "Namespaces",
   3: "Files",
   4: "Functions",
-  5: "Modules",
-  6: "Pages"
+  5: "Modules"
 };
 
