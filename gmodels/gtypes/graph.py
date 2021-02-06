@@ -485,7 +485,7 @@ class Graph(GraphObject):
             raise ValueError("edge id not in graph")
         return self.E[edge_id]
 
-    def edge_by_vertices(self, n1: Node, n2: Node) -> Set[Edge]:
+    def edge_by_vertices(self, start: Node, end: Node) -> Set[Edge]:
         """!
         \brief obtain edge set by using its vertices.
 
@@ -494,10 +494,10 @@ class Graph(GraphObject):
         \throws ValueError if any of argument nodes are not inside the graph.
         \throws ValueError if there are no edges that consist of argument nodes.
         """
-        if not self.is_in(n1) or not self.is_in(n2):
+        if not self.is_in(start) or not self.is_in(end):
             raise ValueError("one of the nodes is not present in graph")
-        n1id = n1.id()
-        n2id = n2.id()
+        n1id = start.id()
+        n2id = end.id()
         first_eset = set(self.gdata[n1id])
         second_eset = set(self.gdata[n2id])
         common_edge_ids = first_eset.intersection(second_eset)
@@ -1006,7 +1006,7 @@ class Graph(GraphObject):
                 cnode = self.V[child]
                 if parent is not None:
                     pnode = self.V[parent]
-                    eset = eset.union(self.edge_by_vertices(n1=pnode, n2=cnode))
+                    eset = eset.union(self.edge_by_vertices(start=pnode, end=cnode))
             esets[u] = eset
         return esets
 
