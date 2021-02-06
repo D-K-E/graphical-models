@@ -21,20 +21,33 @@ affiliations:
 date: 02 February 2021
 bibliography: paper.bib
 
+---
+
 # Summary
 
 Probabilistic Graphical Models (PGMs) are a marriage between Graphs as in
 Graph Theory, and Probability as in statistics and probability theory. We aim
 to concertize this conceptual marriage by using object oriented paradigms.
-Most importantly, PGMs are a general framework which underlies most, if not
-all of, the popular probabilistic structures, such as Hidden Markov Models, or
-Bayesian Networks, that help with different artificial intelligence tasks. The
-current implementation follows very closely the mathematical definitions of
-all of the concepts involved in PGMs using several authoritative works as a
-reference. The library is intended for testing research ideas that are
-normally more easy to express using manual mathematical notation.
+We designed the library for facilitating working with mathematical definitions
+of the involved concepts. The goal is to facilitate testing inference
+algorithms that depend graph theoretical structures in order to compute
+probabilities in the case of PGMs. We do this by making the inferable
+probabilistic graph, a true graph in the sense of graph theory. We also
+implement other more specific PGMs like Bayesian Networks and Markov Random
+Fields again as a true digraph, and undirected graph, in the sense of graph
+theory. In most cases, the input of our library is, a set of random variables
+(functions specified by a certain probability distribution), edges that relate
+these random variables to one another, and factors in the form of objects
+which are instantiated by a set of random variables and a real valued
+function. The library then provides several options for probabilistic
+inference over these inputs, but more importantly since instantiated objects
+have both graph theoretical and statistical properties, it provides a basis
+for exploring ideas of inference algorithms that can both rooted in graph
+theory or statistics.
 
 # Statement of Need
+
+Let us try to demonstrate the need for this library by a use case.
 
 Though the name suggests otherwise PGMs and related software, for example
 
