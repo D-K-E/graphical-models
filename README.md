@@ -110,6 +110,8 @@ from gmodels.gtypes.edge import Edge, EdgeType
 from gmodels.factor import Factor
 from gmodels.randomvariable import NumCatRVariable
 
+# Example adapted from Darwiche 2009, p. 140
+
 idata = {
             "a": {"outcome-values": [True, False]},
             "b": {"outcome-values": [True, False]},
@@ -186,7 +188,7 @@ pgm = PGModel(
     factors=set([ba_f, cb_f, a_f]),
 )
 evidences = set([("a", True)])
-queries = set([self.c])
+queries = set([c])
 product_factor, a = pgm.cond_prod_by_variable_elimination(queries, evidences)
 
 print(round( product_factor.phi_normal(set([("c", True)])), 4))
