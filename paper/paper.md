@@ -126,7 +126,8 @@ graphs.
 # Acknowledgement
 
 We acknowledge contributions from Nihan Özcan on her help with documentation
-process. We also acknowledge CHart Laboratory of EPHE, PSL University
-for providing us a laptop during the development phase of this library.
+process. We also acknowledge CHart Laboratory of EPHE, PSL University for
+providing us the necessary tooling support during the development phase of
+this library.
 
 # References
