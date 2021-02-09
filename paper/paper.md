@@ -45,28 +45,30 @@ set of categorical random variables in the form of a function specified by a
 probability distribution. One has a set of edges that encode a certain
 independence assumption over her random variables, and one has a set of
 factors, factorizes a certain probability distribution over her entire graph.
-Given these, the API of `PyGModels` might solve two major issues for the
+Given these, `PyGModels` might solve two major issues for the
 researcher or the student alike:
 
 - Compute posterior probability distribution or most probable explanation
   given certain evidence.
 
-- Test new algorithms of inference.
+- Provide a basis for creating new algorithms of inference.
 
 Though the first issue is not irrelevant, the forte of `PyGModels` is the
 second issue due to its lightweight nature and its direct embodiment of
-statistical and graph theoretic (we follow mostly Diestel [see @Diestel_2017]
-for graph theoretic conventions and definitions; most of the graph algorithms
-come from K. Erciyes [see @Erciyes_2018] and S. Even [see
-@Even_Guy_Even_2012]; exact pages are cited in doc strings of related
-functions inside the source code) considerations in the same base class.
-The entire library depends only on python standard library which makes it
-very extendible and easy to integrate and adapt to other projects as well.
-Through its rigorous adoption of mathematical definitions of involved
-concepts, it becomes feasible to extend arbitrary factors through their
-point wise product, or apply common graph analysis algorithms such as
-finding articulation points or bridges, or finding an optimal path defined
-by a cost function.
+statistical (we follow mostly Koller and Friedman [see @Koller_Friedman_2009]
+for statistical conventions and definitions and inference algorithms) and
+graph theoretic (we follow mostly Diestel [see @Diestel_2017] for graph
+theoretic conventions and definitions; most of the graph algorithms come
+from K. Erciyes [see @Erciyes_2018] and S. Even [see @Even_Guy_Even_2012];
+exact pages are cited in doc strings of related functions inside the
+source code) considerations in the same base class.  The entire library
+depends only on python standard library which makes it very extendible and
+easy to integrate and adapt to other projects as well.  Through its
+rigorous adoption of mathematical definitions of involved concepts, it
+becomes feasible to extend arbitrary factors through their point wise
+product, or apply common graph analysis algorithms such as finding
+articulation points or bridges, or finding an optimal path defined by a
+cost function.
 
 # Applications and Similar Works
 
