@@ -106,12 +106,10 @@ for most of the compared values inside doc string of functions for key
 functions like inference over graphs. Factors are specified by a set of
 random variables and a function whose domain is the cartesian product of
 codomains of random variables. In all of the libraries above, a factor is
-specified through an array of values. Though it has not direct
-implications on the output. It has implications on the evaluation order of
-operations. Our implementation is lazier and it conforms to the
-definition provided by Koller and Friedman [see @Koller_Friedman_2009 p.
-106-107].
-
+specified through an array of values. This has not direct implications on
+the output. However, it has implications on the evaluation order of
+operations. Our implementation is lazier and it conforms to the definition
+provided by Koller and Friedman [see @Koller_Friedman_2009 p.  106-107].
 
 The last aspect we deem important, is our capacity of doing inference on LWF
 chain graphs [for theoretical foundations see @Lauritzen_1996; its causal
