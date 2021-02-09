@@ -1,26 +1,20 @@
 ---
-
 title: "PyGModels: A Python package for exploring Probabilistic Graphical
 Models with Graph Theoretical Structures"
-
 tags:
 - Python
 - probabilistic graphical models
 - Bayesian statistics
 - Probabilistic inference
-
 authors:
 - name: Doğu Kaan ERASLAN
   affiliation: 1
   orcid: 0000-0002-1552-8938
-
 affiliations:
 - name: EPHE, PSL
   index: 1
-
 date: 02 February 2021
 bibliography: paper.bib
-
 ---
 
 # Summary
