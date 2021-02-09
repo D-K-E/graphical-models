@@ -114,14 +114,16 @@ operations. Our implementation is lazier and it conforms to the definition
 provided by Koller and Friedman [see @Koller_Friedman_2009 p.  106-107].
 
 The last aspect we deem important, is our capacity of doing inference on LWF
-chain graphs [for theoretical foundations see @Lauritzen_1996; its causal
-interpretation is provided in @Lauritzen_Richardson_2002; for inference
-strategies over chain graphs see @Cowell_2005; and more recently
-@Dechter_2019], also known as mixed models or partially directed acyclic
-graphs [see @Koller_Friedman_2009 p. 37]. Our library shows that once we
-have the necessary set of factors, we can simply do inference over chain
-graphs just as we do over other PGMs like Bayesian Networks and Markov Random
-Fields. We implement several algorithms of interest for chain graphs such as
+chain graphs (its theoretical foundations are best explained by S. Lauritzen
+[see @Lauritzen_1996], the same author also provided its causal interpretation
+in a long article clearing out misconceptions [see
+@Lauritzen_Richardson_2002]; inference strategies over chain graphs are best
+exposed by R. Cowell [see @Cowell_2005]; and more recently by R. Dechter [see
+@Dechter_2019]), also known as mixed models or partially directed acyclic
+graphs [see @Koller_Friedman_2009 p. 37]. Our library shows that once we have
+the necessary set of factors, we can simply do inference over chain graphs
+just as we do over other PGMs like Bayesian Networks and Markov Random Fields.
+We implement several algorithms of interest for chain graphs such as
 decomposition of chain graphs to chain components, moralization of chain
 graphs.
 
