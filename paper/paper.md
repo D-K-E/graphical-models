@@ -1,5 +1,5 @@
 ---
-title: "PyGModels: A Python package for exploring Probabilistic Graphical Models with Graph Theoretical Structures"
+title: 'PyGModels: A Python package for exploring Probabilistic Graphical Models with Graph Theoretical Structures'
 tags:
 - Python
 - probabilistic graphical models
