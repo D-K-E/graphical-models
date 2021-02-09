@@ -96,7 +96,7 @@ use though.
 `pyGM` and `pgm` are particularly well organized alternatives to `PyGModels`,
 with `pyGM` being slightly more reliable than `pgm` due to its test suite.
 `pyfac` seems to concerns itself only with inference over factor graphs and
-`pgmPy` seems to be inactive (last commit is dates to 2013) side project
+`pgmPy` seems to be an inactive (last commit is dates to 2013) side project
 rather than a dedicated library. We will make a small comparison with `pgmpy`
 most of our remarks hold for other alternatives as well.
 
