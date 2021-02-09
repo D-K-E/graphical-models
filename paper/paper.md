@@ -57,7 +57,7 @@ Though the first issue is not irrelevant, the forte of `PyGModels` is the
 second issue due to its lightweight nature and its direct embodiment of
 statistical and graph theoretic [we follow mostly @Diestel_2017 for graph
 theoretic conventions and definitions; most of the graph algorithms come from
-@Erciyes_2018 and @Even_Guy; exact pages are cited in doc strings of related
+@Erciyes_2018 and @Even_Guy_Even_2012; exact pages are cited in doc strings of related
 functions inside the source code] considerations in the same base class. The
 entire library depends only on python standard library which makes it very
 extendible and easy to integrate and adapt to other projects as well. Through
@@ -101,14 +101,14 @@ most of our remarks hold for other alternatives as well.
 `PyGModels` distinguish from `pgmpy` by its lightweight nature (`PyGModels`
 depend only on python 3.6 standard library). Our test suit cites its source
 for most of the compared values inside doc string of functions for key
-    functions like inference over graphs. Factors are specified by a set of
-    random variables and a function whose domain is the cartesian product of
-    codomains of random variables. In all of the libraries above, a factor is
-    specified through an array of values. Though it has not direct
-    implications on the output. It has implications on the evaluation order of
-    operations. Our implementation is lazier and it conforms to the
-    definition provided by Koller and Friedman [see @Koller_Friedman_2009 p.
-    106-107].
+functions like inference over graphs. Factors are specified by a set of
+random variables and a function whose domain is the cartesian product of
+codomains of random variables. In all of the libraries above, a factor is
+specified through an array of values. Though it has not direct
+implications on the output. It has implications on the evaluation order of
+operations. Our implementation is lazier and it conforms to the
+definition provided by Koller and Friedman [see @Koller_Friedman_2009 p.
+106-107].
 
 
 The last aspect we deem important, is our capacity of doing inference on LWF
