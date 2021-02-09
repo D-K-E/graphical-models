@@ -12,7 +12,10 @@ from pprint import pprint
 
 
 class Factor(GraphObject):
-    ""
+    """!
+    \brief Factor from Koller and Friedman 2009, p. 106-107
+
+    """
 
     def __init__(
         self,
@@ -21,7 +24,8 @@ class Factor(GraphObject):
         factor_fn: Optional[Callable[[Set[Tuple[str, NumCatRVariable]]], float]] = None,
         data={},
     ):
-        ""
+        """!
+        """
         # check all values are positive
         super().__init__(oid=gid, odata=data)
         for svar in scope_vars:
@@ -191,6 +195,12 @@ class Factor(GraphObject):
         obtain a factor value for given scope random variables
         """
         return self.factor_fn(scope_product)
+
+    def __call__(self, scope_product: Set[Tuple[str, NumericValue]]) -> float:
+        """!
+        \brief Make a factor callable to reproduce more function like behavior
+        """
+        return self.phi(scope_product)
 
     def normalize(self, phi_result: float) -> float:
         """!
