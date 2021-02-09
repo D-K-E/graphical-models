@@ -55,16 +55,18 @@ researcher or the student alike:
 
 Though the first issue is not irrelevant, the forte of `PyGModels` is the
 second issue due to its lightweight nature and its direct embodiment of
-statistical and graph theoretic [we follow mostly @Diestel_2017 for graph
-theoretic conventions and definitions; most of the graph algorithms come from
-@Erciyes_2018 and @Even_Guy_Even_2012; exact pages are cited in doc strings of related
-functions inside the source code] considerations in the same base class. The
-entire library depends only on python standard library which makes it very
-extendible and easy to integrate and adapt to other projects as well. Through
-its rigorous adoption of mathematical definitions of involved concepts, it
-becomes feasible to extend arbitrary factors through their point wise product,
-or apply common graph analysis algorithms such as finding articulation points
-or bridges, or finding an optimal path defined by a cost function.
+statistical and graph theoretic (we follow mostly Diestel [see @Diestel_2017]
+for graph theoretic conventions and definitions; most of the graph algorithms
+come from K. Erciyes [see @Erciyes_2018] and S. Even [see
+@Even_Guy_Even_2012]; exact pages are cited in doc strings of related
+functions inside the source code) considerations in the same base class.
+The entire library depends only on python standard library which makes it
+very extendible and easy to integrate and adapt to other projects as well.
+Through its rigorous adoption of mathematical definitions of involved
+concepts, it becomes feasible to extend arbitrary factors through their
+point wise product, or apply common graph analysis algorithms such as
+finding articulation points or bridges, or finding an optimal path defined
+by a cost function.
 
 # Applications and Similar Works
 
