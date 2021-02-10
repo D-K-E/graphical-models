@@ -452,19 +452,19 @@ class Factor(GraphObject):
 
         phi(A,B,C)
 
-          A        B      C
-         ----  | ----  | ----
-          a1   |  b1   |  c1
-          a1   |  b1   |  c2
-          a2   |  b1   |  c1
-          a2   |  b1   |  c2
+         A      B      C
+        ---- | ---- | ----
+         a1  |  b1  |  c1
+         a1  |  b1  |  c2
+         a2  |  b1  |  c1
+         a2  |  b1  |  c2
 
         reduction C=c1 \f[\phi(A,B,C=c_1)\f]
 
-           A       B      C
-          ----  | ---- | ----
-           a1   |  b1  |  c1   
-           a2   |  b1  |  c1   
+           A      B      C
+          ---- | ---- | ----
+           a1  |  b1  |  c1   
+           a2  |  b1  |  c1   
 
         """
         svars = set()
