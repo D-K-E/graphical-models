@@ -1,4 +1,6 @@
 """!
+\file factor.py
+
 Defining a factor from Koller and Friedman 2009, p. 106-107
 """
 
