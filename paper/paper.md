@@ -90,7 +90,7 @@ Other open sourced python libraries about PGMs include the following:
 
 The most popular and goto library is `pgmpy`. It has also been used in several
 publications [see @Ankan_Panda_2015a; also @Ankan_Panda_2015b]. Its
-functionality is covered with a nice test suite as well. Overall it is
+functionality is covered with a nice test suite as well. Overall it is a
 reliable library for using PGMs in production. It comes with several
 dependencies that can be heavy handed (`pytorch` for example) for exploratory
 use though.
@@ -98,7 +98,7 @@ use though.
 `pyGM` and `pgm` are particularly well organized alternatives to `PyGModels`,
 with `pyGM` being slightly more reliable than `pgm` due to its test suite.
 `pyfac` seems to concerns itself only with inference over factor graphs and
-`pgmPy` seems to be an inactive (last commit is dates to 2013) side project
+`pgmPy` seems to be an inactive (last commit dates to 2013) side project
 rather than a dedicated library. We will make a small comparison with `pgmpy`
 most of our remarks hold for other alternatives as well.
 

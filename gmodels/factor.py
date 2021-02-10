@@ -25,6 +25,16 @@ class Factor(GraphObject):
         data={},
     ):
         """!
+        \brief Constructor for a factor \f[ \phi(A,B) \f]
+
+        A factor is defined by a set of random variables which constitutes its
+        scope and a real valued function. The canonical definition can be found
+        in Koller and Friedman 2009, p. 106-107.  During construction, we check
+        so that all random variables are positive valued. If no function is
+        provided, we instantiate the factor with a marginal joint function.
+
+        \param scope_vars variables that constitue scope of factor.
+        \param factor_fn a real valued function
         """
         # check all values are positive
         super().__init__(oid=gid, odata=data)
@@ -45,13 +55,39 @@ class Factor(GraphObject):
 
         self.Z = self.zval()
 
-    def scope_vars(self, f=lambda x: x):
+    def scope_vars(self, f=lambda x: x) -> Set[NumCatRVariable]:
+        """!
+        \brief get variables that are inside the scope of this factor
+
+        \param f is a function that transforms the scope of this factor.
+
+        \code
+
+        >>> A = NumCatRVariable("A",
+        >>>                     input_data={"outcome-values": [True, False]},
+        >>>                     distribution=lambda x: 0.5)
+        >>> fac = Factor(gid=str(uuid4()), scope_vars=set([A]))
+        >>> fac.scope_vars(f=lambda x: set([(x,x)]))
+        >>> set([(A, A)])
+
+        \endcode
+        """
         return f(self.svars)
 
     @classmethod
     def from_joint_vars(cls, svars: Set[NumCatRVariable]):
         """!
-        Make factor from joint variables
+        \brief Make factor from joint variables
+
+        \code
+
+        >>> A = NumCatRVariable("A",
+        >>>                     input_data={"outcome-values": [True, False]},
+        >>>                     distribution=lambda x: 0.5)
+
+        >>> fac = Factor.from_joint_vars(svars=set([A]))
+
+        \endcode
         """
         return Factor(gid=str(uuid4()), scope_vars=svars)
 
@@ -63,7 +99,29 @@ class Factor(GraphObject):
         fn: Optional[Callable[[Set[Tuple[str, NumericValue]]], float]] = None,
     ):
         """!
-        Make factor from joint variables
+        \brief Make factor from joint variables
+
+        \param X_i main variable
+        \param Pa_Xi parent variables of the main variable
+        \param fn factor function that defines the factor between parent and child
+
+        \code
+
+        >>> A = NumCatRVariable("A",
+        >>>                     input_data={"outcome-values": [True, False]},
+        >>>                     distribution=lambda x: 0.5)
+
+        >>> B = NumCatRVariable("B",
+        >>>                     input_data={"outcome-values": [True, False]},
+        >>>                     distribution=lambda x: 0.5)
+
+        >>> C = NumCatRVariable("C",
+        >>>                     input_data={"outcome-values": [True, False]},
+        >>>                     distribution=lambda x: 0.5)
+
+        >>> fac = Factor.from_conditional_vars(X_i=A, Pa_Xi=set([B,C]))
+
+        \endcode
         """
         Pa_Xs = 1.0
         for p in Pa_Xi:
@@ -91,7 +149,12 @@ class Factor(GraphObject):
         value_transform=lambda x: x,
     ) -> List[Set[Tuple[str, NumericValue]]]:
         """!
-        Get factor domain Val(D) D being a set of random variables
+        \brief Get factor domain Val(D) D being a set of random variables
+
+        \param D set of random variables
+        \param rvar_filter filtering function for random variables
+        \param value_filter filtering values from random variables' codomain
+        \param value_transform apply a certain transformation to values from random variables' codomain.
         """
         return [
             s.value_set(value_filter=value_filter, value_transform=value_transform)
@@ -108,7 +171,29 @@ class Factor(GraphObject):
         value_transform=lambda x: x,
     ):
         """!
-        Compute scope matches for arbitrary domain
+        \brief Compute scope matches for arbitrary domain
+        cartesian product over set of random variables
+
+        \code
+
+        >>> A = NumCatRVariable("A",
+        >>>                     input_data={"outcome-values": [True, False]},
+        >>>                     distribution=lambda x: 0.5)
+
+        >>> B = NumCatRVariable("B",
+        >>>                     input_data={"outcome-values": [True, False]},
+        >>>                     distribution=lambda x: 0.5)
+
+        >>> D = set([A,B])
+
+        >>> fmatches = Factor.matches(D=D)
+        >>> print(fmatches)
+
+        >>> [(("A", True), ("B", True)),
+        >>>  (("A", True), ("B", False)),
+        >>>  (("A", False), ("B", True)), (("A", False), ("B", False))]
+
+        \endcode
         """
         svars = cls.fdomain(
             D=D,
@@ -125,13 +210,14 @@ class Factor(GraphObject):
         value_transform=lambda x: x,
     ):
         """!
+        \brief \see Factor.matches(rvar_filter, value_filter, value_transform)
         For a factor phi(A,B) return factor function's domain values, such as:
-        phi(A,B)     
+        phi(A,B)
         +======+======+
         | a1   | b1   |
         +======+======+
         | a1   | b2   |
-        +======+======+  ---> [set(("A", a1), ("B", b1)), 
+        +======+======+  ---> [set(("A", a1), ("B", b1)),
         | a2   | b1   |        set(("A", a1), ("B", b2)),...
         +======+======+       ]
         | a2   | b2   |
@@ -146,7 +232,8 @@ class Factor(GraphObject):
         value_transform=lambda x: x,
     ) -> List[Set[Tuple[str, NumericValue]]]:
         """!
-        Get factor domain
+        \brief Get factor domain
+        \see Factor.fdomain(D, rvar_filter, value_filter, value_transform)
         """
         return self.fdomain(
             D=self.scope_vars(),
@@ -159,7 +246,11 @@ class Factor(GraphObject):
         self, domain: List[Set[Tuple[str, NumericValue]]]
     ) -> Set[NumCatRVariable]:
         """!
-        Given a domain of values obtain scope variables implied
+        \brief Given a domain of values obtain scope variables implied
+        Obtain random variables from given factor domain.
+        Each value in domain comes with an identifier of its random variable.
+        From these identifiers, we obtain set of random variables attested in
+        factor domain.
         """
         sids = {}
         for vs in domain:
@@ -180,7 +271,10 @@ class Factor(GraphObject):
 
     def has_var(self, ids: str) -> Tuple[bool, Optional[NumCatRVariable]]:
         """!
-        check if given id belongs to variable of this scope
+        \brief check if given id belongs to variable of this scope
+        Check if given random variable id is contained in scope of factor.
+
+        \param ids identifier of random variable
         """
         vs = [s for s in self.svars if s.id() == ids]
         if len(vs) == 0:
@@ -192,28 +286,52 @@ class Factor(GraphObject):
 
     def phi(self, scope_product: Set[Tuple[str, NumericValue]]) -> float:
         """!
-        obtain a factor value for given scope random variables
+        \brief obtain a factor value for given scope random variables
+
+        Obtain factor value for given argument
+
+        \code
+        >>> A = NumCatRVariable("A",
+        >>>                     input_data={"outcome-values": [True, False]},
+        >>>                     distribution=lambda x: 0.5)
+
+        >>> B = NumCatRVariable("B",
+        >>>                     input_data={"outcome-values": [True, False]},
+        >>>                     distribution=lambda x: 0.5)
+
+        >>> fac = Factor.from_joint_vars(svars=set([A, B]))
+        >>> fac.phi(scope_product=set([("A", True), ("B", True)]))
+        >>> 0.25
+
+        \endcode
         """
         return self.factor_fn(scope_product)
 
     def __call__(self, scope_product: Set[Tuple[str, NumericValue]]) -> float:
         """!
         \brief Make a factor callable to reproduce more function like behavior
+
+        \see Factor.phi(scope_product)
         """
         return self.phi(scope_product)
 
     def normalize(self, phi_result: float) -> float:
         """!
-        Normalize a given factorization result by dividing it to the value of
-        partition function value Z
+        \brief Normalize a given factorization result by dividing it to the
+        value of partition function value Z
         """
         return phi_result / self.Z
 
     def phi_normal(self, scope_product: Set[Tuple[str, NumericValue]]) -> float:
+        """!
+        \brief normalize a given factor value
+        """
         return self.normalize(self.phi(scope_product))
 
     def max_value(self):
-        ""
+        """!
+        \brief maximum factor value for this factor
+        """
         mx = float("-inf")
         max_val = None
         for sp in self.factor_domain():
@@ -226,20 +344,25 @@ class Factor(GraphObject):
 
     def partition_value(self, svars):
         """!
-        compute partition value aka normalizing value for the factor
+        \brief compute partition value aka normalizing value for the factor
         from Koller, Friedman 2009 p. 105
         """
         scope_matches = list(product(*svars))
         return sum([self.factor_fn(scope_product=sv) for sv in scope_matches])
 
     def zval(self):
-        ""
+        """!
+        \brief compute value of partition function for this factor
+        """
         svars = self.vars_domain()
         self.scope_products = list(product(*svars))
         return sum([self.factor_fn(scope_product=sv) for sv in self.factor_domain()])
 
     def marginal_joint(self, scope_product: Set[Tuple[str, NumericValue]]) -> float:
-        ""
+        """!
+        \brief marginal joint function.
+        Default factor function when none is provided.
+        """
         p = 1.0
         for sv in scope_product:
             var_id = sv[0]
@@ -251,6 +374,9 @@ class Factor(GraphObject):
         return p
 
     def in_scope(self, v: Union[NumCatRVariable, str]):
+        """!
+        Check if given parameter is in scope of this factor
+        """
         if isinstance(v, NumCatRVariable):
             return v in self.svars
         elif isinstance(v, str):
@@ -266,10 +392,15 @@ class Factor(GraphObject):
         accumulator=lambda added, accumulated: added * accumulated,
     ):
         """!
-        Factor product operation
-        from Koller, Friedman 2009, p. 107
-        \f \psi(X,Y,Z) =  \phi(X,Y) \cdot \phi(Y,Z) \f
-        \f \prod_i phi(X_i) \f
+        \brief Factor product operation from Koller, Friedman 2009, p. 107
+        \f[ \psi(X,Y,Z) =  \phi(X,Y) \cdot \phi(Y,Z) \f]
+        \f[ \prod_i phi(X_i) \f]
+
+        Point wise product of two different factor functions.
+        \param product_fn actual function for computing product. This function
+        can be exchanged with another function to compute log-sum for example.
+
+        \param accumulator this function decides how to accumulate resulting product.
 
         \return Factor
         """
@@ -309,6 +440,10 @@ class Factor(GraphObject):
 
     def reduced(self, context: Set[Tuple[str, NumericValue]]):
         """!
+        \brief reduce factor using given context
+
+        \param context member of factor domain
+
         Koller, Friedman 2009, p. 111
         reduction by value example
         phi(A,B,C)                                     phi(A,B,C=c1)
@@ -332,6 +467,11 @@ class Factor(GraphObject):
         return Factor(gid=str(uuid4()), scope_vars=svars, factor_fn=self.phi)
 
     def reduced_by_value(self, context: Set[Tuple[str, NumericValue]]):
+        """!
+        \brief \see Factor.reduced(context)
+
+        \return Factor
+        """
         return self.reduced(context)
 
     def filter_assignments(
@@ -354,16 +494,19 @@ class Factor(GraphObject):
     ):
         """!
         Koller, Friedman 2009, p. 111 follows the definition 4.5
-        For \f U \not \subset Y \f, we define phi[u] to be phi[U'=u'], where 
-        \f U' = U \cap Y \f , and u' = u<U>, where u<U> denotes the assignment
+        For \f[ U \not \subset Y \f], we define phi[u] to be phi[U'=u'], where 
+        \f[ U' = U \cap Y \f] , and u' = u<U>, where u<U> denotes the assignment
         in u to the variables in U'.
+
+        \return Factor
         """
         return self.reduced(context=assignments)
 
     def maxout_var(self, Y: NumCatRVariable):
         """!
         max the variable out of factor as per Koller, Friedman 2009, p. 555
-        which creates a new factor
+
+        \return Factor
         """
         if Y not in self.scope_vars():
             raise ValueError("argument is not in scope of this factor")
@@ -386,8 +529,9 @@ class Factor(GraphObject):
 
     def sumout_var(self, Y: NumCatRVariable):
         """!
-        Sum the variable out of factor as per Koller, Friedman 2009, p. 297
-        which creates a new factor
+        \brief Sum the variable out of factor as per Koller, Friedman 2009, p. 297
+
+        \return Factor
         """
         if Y not in self.scope_vars():
             msg = "Argument " + str(Y)
@@ -413,8 +557,9 @@ class Factor(GraphObject):
 
     def sumout_vars(self, Ys: Set[NumCatRVariable]):
         """!
-        Sum the variable out of factor as per Koller, Friedman 2009, p. 297
-        which creates a new factor
+        \brief Sum the variable out of factor as per Koller, Friedman 2009, p. 297
+
+        \return Factor
         """
         if len(Ys) == 0:
             raise ValueError("variables not be an empty set")
