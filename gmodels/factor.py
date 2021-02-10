@@ -212,16 +212,17 @@ class Factor(GraphObject):
         """!
         \brief \see Factor.matches(rvar_filter, value_filter, value_transform)
         For a factor phi(A,B) return factor function's domain values, such as:
-        phi(A,B)
-        +======+======+
-        | a1   | b1   |
-        +======+======+
-        | a1   | b2   |
-        +======+======+  ---> [set(("A", a1), ("B", b1)),
-        | a2   | b1   |        set(("A", a1), ("B", b2)),...
-        +======+======+       ]
-        | a2   | b2   |
-        +======+======+
+
+        \f[phi(A,B)\f]
+
+         A   |  B
+        ---- | ----
+         a1  |  b1
+         a1  |  b2
+         a2  |  b1
+         a2  |  b2
+
+        >>> set(("A", a1), ("B", b2)),...
         """
         return list(product(*self.vars_domain()))
 
@@ -446,16 +447,23 @@ class Factor(GraphObject):
 
         Koller, Friedman 2009, p. 111
         reduction by value example
-        phi(A,B,C)                                     phi(A,B,C=c1)
-        +======+======+======+                    +======+======+======+
-        | a1   | b1   |  c1  |                    | a1   | b1   |  c1  |
-        +======+======+======+                    +======+======+======+
-        | a1   | b1   |  c2  |  reduction C=c1    | a2   | b1   |  c1  |
-        +======+======+======+ ---------------->  +======+======+======+
-        | a2   | b1   |  c1  |
-        +======+======+======+
-        | a2   | b1   |  c2  |
-        +======+======+======+
+
+        phi(A,B,C)
+
+          A        B      C
+         ----  | ----  | ----
+          a1   |  b1   |  c1
+          a1   |  b1   |  c2
+          a2   |  b1   |  c1
+          a2   |  b1   |  c2
+
+        reduction C=c1 \f[\phi(A,B,C=c_1)\f]
+
+           A       B      C
+          ----  | ---- | ----
+           a1   |  b1  |  c1   
+           a2   |  b1  |  c1   
+
         """
         svars = set()
         for sv in self.scope_vars():
