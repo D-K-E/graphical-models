@@ -447,10 +447,9 @@ class Factor(GraphObject):
 
         \param context member of factor domain
 
-        Koller, Friedman 2009, p. 111
-        reduction by value example
+        Koller, Friedman 2009, p. 111 reduction by value example
 
-        phi(A,B,C)
+        \f[phi(A,B,C)\f]
 
          A      B      C
         ---- | ---- | ----
@@ -463,8 +462,8 @@ class Factor(GraphObject):
 
            A      B      C
           ---- | ---- | ----
-           a1  |  b1  |  c1   
-           a2  |  b1  |  c1   
+           a1  |  b1  |  c1
+           a2  |  b1  |  c1
 
         """
         svars = set()
@@ -504,9 +503,11 @@ class Factor(GraphObject):
     ):
         """!
         Koller, Friedman 2009, p. 111 follows the definition 4.5
-        For \f[ U \not \subset Y \f], we define phi[u] to be phi[U'=u'], where 
-        \f[ U' = U \cap Y \f] , and u' = u<U>, where u<U> denotes the assignment
-        in u to the variables in U'.
+
+        For \f[ U \not \subset Y \f], we define \f[phi[u]\f] to be
+        \f[phi[U'=u']\f], where \f[ U' = U \cap Y \f] , and \f[u' = u<U>\f],
+        where \f[u<U>\f] denotes the assignment in \f[u\f] to the variables in
+        \f[U'\f].
 
         \return Factor
         """

@@ -214,13 +214,6 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a4093543d1345f0ebcc787e10a3ed3bbd"><td class="memItemLeft" align="right" valign="top"><a id="a4093543d1345f0ebcc787e10a3ed3bbd"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>scope_products</b></td></tr>
 <tr class="separator:a4093543d1345f0ebcc787e10a3ed3bbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_attribs_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject')"><img src="../../closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="../../dc/de3/classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject.html">gmodels.gtypes.graphobj.GraphObject</a></td></tr>
-<tr class="memitem:ae9c5dabd5b681b0ab3027b187f911299 inherit pub_attribs_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject"><td class="memItemLeft" align="right" valign="top"><a id="ae9c5dabd5b681b0ab3027b187f911299"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>object_id</b></td></tr>
-<tr class="separator:ae9c5dabd5b681b0ab3027b187f911299 inherit pub_attribs_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63f17bfb396aa9d69ecdd77a9cd1536f inherit pub_attribs_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject"><td class="memItemLeft" align="right" valign="top"><a id="a63f17bfb396aa9d69ecdd77a9cd1536f"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>object_data</b></td></tr>
-<tr class="separator:a63f17bfb396aa9d69ecdd77a9cd1536f inherit pub_attribs_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html" title="Factor from Koller and Friedman 2009, p.">Factor</a> from Koller and Friedman 2009, p. </p>
@@ -905,14 +898,14 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 <p>Koller, Friedman 2009, p. 111 reduction by value example</p>
-<p>phi(A,B,C)</p>
+<p class="formulaDsp">
+\[phi(A,B,C)\]
+</p>
 <p>A B C -&mdash; | -&mdash; | -&mdash; a1 | b1 | c1 a1 | b1 | c2 a2 | b1 | c1 a2 | b1 | c2</p>
 <p>reduction C=c1 </p><p class="formulaDsp">
 \[\phi(A,B,C=c_1)\]
 </p>
-<p>A B C -&mdash; | -&mdash; | -&mdash; a1 | b1 | c1 <br  />
- a2 | b1 | c1 <br  />
- </p>
+<p>A B C -&mdash; | -&mdash; | -&mdash; a1 | b1 | c1 a2 | b1 | c1 </p>
 
 </div>
 </div>
@@ -979,15 +972,33 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Koller, Friedman 2009, p. </p>
-<p>111 follows the definition 4.5 For </p><p class="formulaDsp">
+<p>111 follows the definition 4.5</p>
+<p>For </p><p class="formulaDsp">
 \[ U \not \subset Y \]
 </p>
-<p>, we define phi[u] to be phi[U'=u'], where </p><p class="formulaDsp">
+<p>, we define </p><p class="formulaDsp">
+\[phi[u]\]
+</p>
+<p> to be </p><p class="formulaDsp">
+\[phi[U&#39;=u&#39;]\]
+</p>
+<p>, where </p><p class="formulaDsp">
 \[ U&#39; = U \cap Y \]
 </p>
-<p> , and u' = u<u>, where u<u> denotes the assignment in u to the variables in U'.</u></u></p>
-<p><u><u></p><dl class="section return"><dt>Returns</dt><dd><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html" title="Factor from Koller and Friedman 2009, p.">Factor</a> </dd></dl>
-<p></u></u></p>
+<p> , and </p><p class="formulaDsp">
+\[u&#39; = u&lt;U&gt;\]
+</p>
+<p>, where </p><p class="formulaDsp">
+\[u&lt;U&gt;\]
+</p>
+<p> denotes the assignment in </p><p class="formulaDsp">
+\[u\]
+</p>
+<p> to the variables in </p><p class="formulaDsp">
+\[U&#39;\]
+</p>
+<p>.</p>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html" title="Factor from Koller and Friedman 2009, p.">Factor</a> </dd></dl>
 
 </div>
 </div>
