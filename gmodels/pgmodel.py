@@ -73,8 +73,7 @@ class PGModel(Graph):
 
     def markov_blanket(self, t: NumCatRVariable) -> Set[NumCatRVariable]:
         """!
-        get markov blanket of a node
-        from K. Murphy, 2012, p. 662
+        get markov blanket of a node from K. Murphy, 2012, p. 662
         """
         if self.is_in(t) is False:
             raise ValueError("Node not in graph: " + str(t))
