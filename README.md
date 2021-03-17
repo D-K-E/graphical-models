@@ -59,19 +59,38 @@ The entire library depends only on Python standard library. It is tested for
 Python 3.6 through Github Actions at each push to the library. If you have
 Python 3.6+, you should be good to go for installation.
 
-We had provided an environment file for facilitating creation of a virtual
-environment:
-
-- `conda env create -f environment.yml`
-- `conda activate graphical-models`
-
-You can then use the library directly from your source code.
 
 If you want to install without creating a virtual environment, just go to the
 main project directory that contains this readme file and call from terminal:
 
 - `pip install .`
-  
+
+
+If you prefer conda for managing your virtual environments, simply create a
+new environment:
+
+- `conda create -n pygmodels python=3.6`
+
+Activate the environment:
+
+- `conda activate pygmodels`
+
+Install the library:
+
+- `pip install .`
+
+Lastly test your installation with following command:
+
+- `python -m unittest`
+
+You should see something like the following on the terminal:
+
+```python
+Ran 179 tests in 0.666s
+
+OK
+```
+
 
 ## Guide for Contributors
 
