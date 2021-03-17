@@ -1,6 +1,6 @@
 # Graphical Models
 
-[![Python package](https://github.com/D-K-E/graphical-models/actions/workflows/python-package.yml/badge.svg?branch=master)](https://github.com/D-K-E/graphical-models/actions/workflows/python-package.yml)
+[![Python package workflow ](https://github.com/D-K-E/graphical-models/actions/workflows/python-package.yml/badge.svg?branch=master)](https://github.com/D-K-E/graphical-models/actions/workflows/python-package.yml)
 
 
 [![DOI](https://zenodo.org/badge/321839625.svg)](https://zenodo.org/badge/latestdoi/321839625)
