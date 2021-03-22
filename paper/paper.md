@@ -19,33 +19,29 @@ bibliography: paper.bib
 # Summary
 
 Probabilistic Graphical Models (PGMs) are a marriage between Graphs as in
-Graph Theory, and Probability as in statistics and probability theory. We aim
-to concertize this conceptual marriage by using object oriented paradigms.
-We designed the library for facilitating working with mathematical definitions
-of the involved concepts. The goal is to facilitate testing inference
-algorithms that depend graph theoretical structures in order to compute
-probabilities in the case of PGMs. We do this by making the inferable
-probabilistic graph, a true graph in the sense of graph theory. We also
-implement other more specific PGMs like Bayesian Networks and Markov Random
-Fields again as a true digraph, and undirected graph, respectively. In the
-most common use cases, the input of our library is, a set of random variables
-(functions specified by a certain probability distribution), edges that relate
-these random variables to one another, and factors in the form of objects
-which are instantiated by a set of random variables and a real valued
-function. The library then provides several options for probabilistic
-inference over these inputs, but more importantly since instantiated objects
-have both graph theoretical and statistical properties, it provides a basis
-for exploring ideas of inference algorithms that can both rooted in graph
-theory or statistics.
+Graph Theory, and Probability as in statistics and probability theory and are
+widely used in many fields. We noticed that most existing PGM
+libraries implement PGMs in a way that ignores their graphical nature.
+`PyGModels`' value proposition is that it faithfully implements the graphical
+nature of PGMs, thereby giving `PyGModels`' instantiated objects both
+graph-theoretical and statistical properties, which allows users to explore
+and test inference algorithms that are rooted in both graph theory or
+statistics.
 
 # Statement of Need
 
-Let us try to demonstrate the need for `PyGModels` by a use case. One has a
-set of categorical random variables in the form of a function specified by a
-probability distribution. One has a set of edges that encode a certain
-independence assumption over her random variables, and one has a set of
-factors, factorizes a certain probability distribution over her entire graph.
-Given these, `PyGModels` might solve two major issues for the
+Though the students of computer science or statistics might find a pedagogical
+value going through source code along with a textbook on probabilistic
+graphical models (something like Sucar [see @Sucar_2015] or Cowell [see
+@Cowell_2005] or Koller and Friedman [see @Koller_Friedman_2009]), we believe
+that the value proposition of `PyGModels` speaks mostly to researchers.
+Let us try to demonstrate the need for `PyGModels` by a use case. 
+
+One has a set of categorical random variables in the form of a function
+specified by a probability distribution. One has a set of edges that encode a
+certain independence assumption over her random variables, and one has a set
+of factors, factorizes a certain probability distribution over her entire
+graph. Given these, `PyGModels` might solve two major issues for the
 researcher or the student alike:
 
 - Compute posterior probability distribution or most probable explanation
@@ -61,9 +57,9 @@ graph theoretic (we follow mostly Diestel [see @Diestel_2017] for graph
 theoretic conventions and definitions; most of the graph algorithms come
 from K. Erciyes [see @Erciyes_2018] and S. Even [see @Even_Guy_Even_2012];
 exact pages are cited in doc strings of related functions inside the
-source code) considerations in the same base class.  The entire library
+source code) considerations in the same base class. The entire library
 depends only on python standard library which makes it very extendible and
-easy to integrate and adapt to other projects as well.  Through its
+easy to integrate and adapt to other projects as well. Through its
 rigorous adoption of mathematical definitions of involved concepts, it
 becomes feasible to extend arbitrary factors through their point wise
 product, or apply common graph analysis algorithms such as finding
@@ -102,7 +98,7 @@ with `pyGM` being slightly more reliable than `pgm` due to its test suite.
 rather than a dedicated library. We will make a small comparison with `pgmpy`
 most of our remarks hold for other alternatives as well.
 
-`PyGModels` distinguish from `pgmpy` by its lightweight nature (`PyGModels`
+`PyGModels` distinguishes from `pgmpy` by its lightweight nature (`PyGModels`
 depends only on python 3.6 standard library). Our test suit cites its source
 for most of the compared values inside doc string of functions for key
 functions like inference over graphs. Factors are specified by a set of
@@ -111,7 +107,7 @@ codomains of random variables. In all of the libraries above, a factor is
 specified through an array of values. This has no direct implications on
 the output. However, it has implications on the evaluation order of
 operations. Our implementation is lazier and it conforms to the definition
-provided by Koller and Friedman [see @Koller_Friedman_2009 p.  106-107].
+provided by Koller and Friedman [see @Koller_Friedman_2009 p. 106-107].
 
 The last aspect we deem important, is our capacity of doing inference on LWF
 chain graphs (its theoretical foundations are best explained by S. Lauritzen
