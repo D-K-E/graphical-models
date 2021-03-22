@@ -168,3 +168,16 @@ discuss the rest.
 
 - [Nihan](https://github.com/comecloseridontbyte)
 
+
+## Citation
+
+This library has a mirror in another repository as well. The [Viva-Lambda
+repository](https://github.com/Viva-Lambda/graphical-models) is in principal
+identical to the
+[D-K-E/graphical-models](https://github.com/D-K-E/graphical-models) (it might
+be one or two commits behind). During the development of the library, the
+weekly effort had been committed to that repository as well. However since the
+DOI refers to D-K-E/graphical-models, it should be considered as the main
+repository, and any references should refer to that one and not to
+Viva-Lambda/graphical-models.
+
