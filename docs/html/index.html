@@ -147,26 +147,26 @@ Guide for Contributors</h2>
 </div><!-- fragment --><ul>
 <li>Full template:</li>
 </ul>
-<div class="fragment"><div class="line"><span class="keyword">def </span>my_function(myarg1: str, myarg2: int) -&gt; str:</div>
-<div class="line">    \<span class="stringliteral">&quot;\&quot;\&quot;!</span></div>
-<div class="line"><span class="stringliteral">    \brief One line explanation of functionality</span></div>
-<div class="line"><span class="stringliteral"></span> </div>
-<div class="line"><span class="stringliteral">    Long multilined</span></div>
-<div class="line"><span class="stringliteral">    description of</span></div>
-<div class="line"><span class="stringliteral">    functionality</span></div>
-<div class="line"><span class="stringliteral"></span> </div>
-<div class="line"><span class="stringliteral">    \param myarg1 description of the argument</span></div>
-<div class="line"><span class="stringliteral">    \param myarg2 description of the argument</span></div>
-<div class="line"><span class="stringliteral"></span> </div>
-<div class="line"><span class="stringliteral">    \exception TypeError description of the exception </span></div>
-<div class="line"><span class="stringliteral"></span> </div>
-<div class="line"><span class="stringliteral">    \</span><span class="keywordflow">return</span> description of the returned value</div>
+<div class="fragment"><div class="line">def my_function(myarg1: str, myarg2: int) -&gt; str:</div>
+<div class="line">    \&quot;\&quot;\&quot;!</div>
+<div class="line">    \brief One line explanation of functionality</div>
+<div class="line"> </div>
+<div class="line">    Long multilined</div>
+<div class="line">    description of</div>
+<div class="line">    functionality</div>
+<div class="line"> </div>
+<div class="line">    \param myarg1 description of the argument</div>
+<div class="line">    \param myarg2 description of the argument</div>
+<div class="line"> </div>
+<div class="line">    \exception TypeError description of the exception </div>
+<div class="line"> </div>
+<div class="line">    \return description of the returned value</div>
 <div class="line"> </div>
 <div class="line">    \code{.py}</div>
 <div class="line"> </div>
-<div class="line">    &gt;&gt;&gt; a = my_function(<span class="stringliteral">&quot;Lucky number is &quot;</span>, 7)</div>
+<div class="line">    &gt;&gt;&gt; a = my_function(&quot;Lucky number is &quot;, 7)</div>
 <div class="line">    &gt;&gt;&gt; print(a)</div>
-<div class="line">    &gt;&gt;&gt; <span class="stringliteral">&quot;Lucky number is 7&quot;</span></div>
+<div class="line">    &gt;&gt;&gt; &quot;Lucky number is 7&quot;</div>
 </div><!-- fragment --><p>""" if isinstance(myarg2, int) is False: raise TypeError( "myarg2 " + str(myarg2) + " is of type " + str(type(myarg2)) ) return myarg1 + str(myarg2)</p>
 <p>Besides adding a documentation, you can also add other inference strategies.</p>
 <p>Just file an issue in the case of doubt or signal your intent and we can discuss the rest.</p>

@@ -131,7 +131,7 @@ def my_function(myarg1: str, myarg2: int) -> str:
 
 - Full template:
 
-\code{.py}
+```python
 
 def my_function(myarg1: str, myarg2: int) -> str:
     \"\"\"!
@@ -164,7 +164,7 @@ def my_function(myarg1: str, myarg2: int) -> str:
             )
     return myarg1 + str(myarg2)
 
-\endcode
+```
 
 Besides adding a documentation, you can also add other inference strategies.
 
