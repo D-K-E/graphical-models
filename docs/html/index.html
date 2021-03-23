@@ -147,28 +147,37 @@ Guide for Contributors</h2>
 </div><!-- fragment --><ul>
 <li>Full template:</li>
 </ul>
-<div class="fragment"><div class="line">def my_function(myarg1: str, myarg2: int) -&gt; str:</div>
-<div class="line">    \&quot;\&quot;\&quot;!</div>
-<div class="line">    \brief One line explanation of functionality</div>
-<div class="line"> </div>
-<div class="line">    Long multilined</div>
-<div class="line">    description of</div>
-<div class="line">    functionality</div>
-<div class="line"> </div>
-<div class="line">    \param myarg1 description of the argument</div>
-<div class="line">    \param myarg2 description of the argument</div>
-<div class="line"> </div>
-<div class="line">    \exception TypeError description of the exception </div>
-<div class="line"> </div>
-<div class="line">    \return description of the returned value</div>
-<div class="line"> </div>
-<div class="line">    \code{.py}</div>
-<div class="line"> </div>
-<div class="line">    &gt;&gt;&gt; a = my_function(&quot;Lucky number is &quot;, 7)</div>
-<div class="line">    &gt;&gt;&gt; print(a)</div>
-<div class="line">    &gt;&gt;&gt; &quot;Lucky number is 7&quot;</div>
-</div><!-- fragment --><p>""" if isinstance(myarg2, int) is False: raise TypeError( "myarg2 " + str(myarg2) + " is of type " + str(type(myarg2)) ) return myarg1 + str(myarg2)</p>
-<p>Besides adding a documentation, you can also add other inference strategies.</p>
+<pre class="fragment">def my_function(myarg1: str, myarg2: int) -&gt; str:
+    \"\"\"!
+    \brief One line explanation of functionality
+
+    Long multilined
+    description of
+    functionality
+
+    \param myarg1 description of the argument
+    \param myarg2 description of the argument
+
+    \exception TypeError description of the exception 
+
+    \return description of the returned value
+
+    \code{.py}
+
+    &gt;&gt;&gt; a = my_function("Lucky number is ", 7)
+    &gt;&gt;&gt; print(a)
+    &gt;&gt;&gt; "Lucky number is 7"
+
+    \endcode
+
+    \"\"\"
+
+    if isinstance(myarg2, int) is False:
+        raise TypeError(
+            "myarg2 " + str(myarg2) + " is of type " +
+            str(type(myarg2))
+            )
+    return myarg1 + str(myarg2)</pre><p>Besides adding a documentation, you can also add other inference strategies.</p>
 <p>Just file an issue in the case of doubt or signal your intent and we can discuss the rest.</p>
 <h2><a class="anchor" id="autotoc_md3"></a>
 Currently Supported Models</h2>
