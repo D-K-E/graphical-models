@@ -77,7 +77,7 @@ $(function() {
 Graphical Models</h1>
 <p><a href="https://github.com/D-K-E/graphical-models/actions/workflows/python-package.yml"><img src="https://github.com/D-K-E/graphical-models/actions/workflows/python-package.yml/badge.svg?branch=master" alt="Python package workflow " style="pointer-events: none;" class="inline"/></a></p>
 <p><a href="https://zenodo.org/badge/latestdoi/321839625"><img src="https://zenodo.org/badge/321839625.svg" alt="DOI" style="pointer-events: none;" class="inline"/></a></p>
-<p>See doxygen generated <a href="https://viva-lambda.github.io/graphical-models/">documentation</a></p>
+<p>See doxygen generated <a href="https://d-k-e.github.io/graphical-models/">documentation</a></p>
 <p>The source code of this library aims to be accessible to all those interested in Probabilistic Graphical Models. The primary goal is to facilitate the understanding of models and basic inference strategies using well documented data structures based only on Python 3 standard library. Functions are annotated whenever possible.</p>
 <p>Note that there are other alternatives on the subject:</p>
 <ul>
@@ -133,8 +133,50 @@ Guide for Contributors</h2>
 <ul>
 <li>Partial template:</li>
 </ul>
-<p>```python</p>
-<p>def my_function(myarg1: str, myarg2: int) -&gt; str: </p>
+<div class="fragment"><div class="line"><span class="keyword">def </span>my_function(myarg1: str, myarg2: int) -&gt; str:</div>
+<div class="line">    \<span class="stringliteral">&quot;\&quot;\&quot;!</span></div>
+<div class="line"><span class="stringliteral">    \brief One line explanation of functionality</span></div>
+<div class="line"><span class="stringliteral"></span> </div>
+<div class="line"><span class="stringliteral">    \param myarg1 description of the argument</span></div>
+<div class="line"><span class="stringliteral">    \param myarg2 description of the argument</span></div>
+<div class="line"><span class="stringliteral"></span> </div>
+<div class="line"><span class="stringliteral">    \</span><span class="keywordflow">return</span> description of the returned value</div>
+<div class="line">    \<span class="stringliteral">&quot;\&quot;\&quot;</span></div>
+<div class="line"><span class="stringliteral">    </span><span class="keywordflow">return</span> myarg1 + str(myarg2)</div>
+</div><!-- fragment --><ul>
+<li>Full template:</li>
+</ul>
+<div class="fragment"><div class="line"><span class="keyword">def </span>my_function(myarg1: str, myarg2: int) -&gt; str:</div>
+<div class="line">    \<span class="stringliteral">&quot;\&quot;\&quot;!</span></div>
+<div class="line"><span class="stringliteral">    \brief One line explanation of functionality</span></div>
+<div class="line"><span class="stringliteral"></span> </div>
+<div class="line"><span class="stringliteral">    Long multilined</span></div>
+<div class="line"><span class="stringliteral">    description of</span></div>
+<div class="line"><span class="stringliteral">    functionality</span></div>
+<div class="line"><span class="stringliteral"></span> </div>
+<div class="line"><span class="stringliteral">    \param myarg1 description of the argument</span></div>
+<div class="line"><span class="stringliteral">    \param myarg2 description of the argument</span></div>
+<div class="line"><span class="stringliteral"></span> </div>
+<div class="line"><span class="stringliteral">    \exception TypeError description of the exception </span></div>
+<div class="line"><span class="stringliteral"></span> </div>
+<div class="line"><span class="stringliteral">    \</span><span class="keywordflow">return</span> description of the returned value</div>
+<div class="line"> </div>
+<div class="line">    \code{.py}</div>
+<div class="line"> </div>
+<div class="line">    &gt;&gt;&gt; a = my_function(<span class="stringliteral">&quot;Lucky number is &quot;</span>, 7)</div>
+<div class="line">    &gt;&gt;&gt; print(a)</div>
+<div class="line">    &gt;&gt;&gt; <span class="stringliteral">&quot;Lucky number is 7&quot;</span></div>
+</div><!-- fragment --><p>""" if isinstance(myarg2, int) is False: raise TypeError( "myarg2 " + str(myarg2) + " is of type " + str(type(myarg2)) ) return myarg1 + str(myarg2) </p>
+<p>Besides adding a documentation, you can also add other inference strategies.</p>
+<p>Just file an issue in the case of doubt or signal your intent and we can discuss the rest.</p>
+<h2><a class="anchor" id="autotoc_md3"></a>
+Contributors</h2>
+<ul>
+<li><a href="https://github.com/comecloseridontbyte">Nihan</a></li>
+</ul>
+<h2><a class="anchor" id="autotoc_md4"></a>
+Citation</h2>
+<p>This library has a mirror in another repository as well. The <a href="https://github.com/Viva-Lambda/graphical-models">Viva-Lambda repository</a> is in principal identical to the <a href="https://github.com/D-K-E/graphical-models">D-K-E/graphical-models</a> (it might be one or two commits behind). During the development of the library, the weekly effort had been committed to that repository as well. However since the DOI refers to D-K-E/graphical-models, it should be considered as the main repository, and any references should refer to that one and not to Viva-Lambda/graphical-models. </p>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->
