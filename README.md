@@ -161,7 +161,7 @@ def my_function(myarg1: str, myarg2: int) -> str:
 
 Besides adding a documentation, you can also add other inference strategies.
 
-Just file an issue in the case of doubt or just signal your intent and we can
+Just file an issue in the case of doubt or signal your intent and we can
 discuss the rest.
 
 ## Contributors
@@ -180,4 +180,3 @@ weekly effort had been committed to that repository as well. However since the
 DOI refers to D-K-E/graphical-models, it should be considered as the main
 repository, and any references should refer to that one and not to
 Viva-Lambda/graphical-models.
-
