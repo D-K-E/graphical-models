@@ -8,7 +8,7 @@
 
 [![DOI](https://zenodo.org/badge/321839625.svg)](https://zenodo.org/badge/latestdoi/321839625)
 
-See doxygen generated [documentation](https://viva-lambda.github.io/graphical-models/)
+See doxygen generated [documentation](https://d-k-e.github.io/graphical-models/)
 
 
 The source code of this library aims to be accessible to all those interested
