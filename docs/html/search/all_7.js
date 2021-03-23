@@ -24,11 +24,12 @@ var searchData=
   ['graph_20and_20related_20objects_101',['Graph and Related Objects',['../dd/dee/group__graphgroup.html',1,'']]],
   ['graphobj_102',['graphobj',['../de/df5/namespacegmodels_1_1gtypes_1_1graphobj.html',1,'gmodels::gtypes']]],
   ['graphobject_103',['GraphObject',['../dc/de3/classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject.html',1,'gmodels::gtypes::graphobj']]],
-  ['lwfchain_104',['lwfchain',['../de/d41/namespacegmodels_1_1lwfchain.html',1,'gmodels']]],
-  ['markov_105',['markov',['../da/d54/namespacegmodels_1_1markov.html',1,'gmodels']]],
-  ['naivebayes_106',['NaiveBayes',['../dd/dfd/namespacegmodels_1_1legacy_1_1NaiveBayes.html',1,'gmodels::legacy']]],
-  ['path_107',['path',['../db/d71/namespacegmodels_1_1gtypes_1_1path.html',1,'gmodels::gtypes']]],
-  ['randomvariable_108',['randomvariable',['../da/d3d/namespacegmodels_1_1randomvariable.html',1,'gmodels']]],
-  ['searchtree_109',['searchtree',['../d6/d6e/namespacegmodels_1_1searchtree.html',1,'gmodels']]],
-  ['tree_110',['tree',['../d4/d53/namespacegmodels_1_1gtypes_1_1tree.html',1,'gmodels::gtypes']]]
+  ['graphical_20models_104',['Graphical Models',['../index.html',1,'']]],
+  ['lwfchain_105',['lwfchain',['../de/d41/namespacegmodels_1_1lwfchain.html',1,'gmodels']]],
+  ['markov_106',['markov',['../da/d54/namespacegmodels_1_1markov.html',1,'gmodels']]],
+  ['naivebayes_107',['NaiveBayes',['../dd/dfd/namespacegmodels_1_1legacy_1_1NaiveBayes.html',1,'gmodels::legacy']]],
+  ['path_108',['path',['../db/d71/namespacegmodels_1_1gtypes_1_1path.html',1,'gmodels::gtypes']]],
+  ['randomvariable_109',['randomvariable',['../da/d3d/namespacegmodels_1_1randomvariable.html',1,'gmodels']]],
+  ['searchtree_110',['searchtree',['../d6/d6e/namespacegmodels_1_1searchtree.html',1,'gmodels']]],
+  ['tree_111',['tree',['../d4/d53/namespacegmodels_1_1gtypes_1_1tree.html',1,'gmodels::gtypes']]]
 ];
