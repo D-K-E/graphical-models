@@ -22,6 +22,8 @@ Note that there are other alternatives on the subject:
 
 - [pgm](https://github.com/paulorauber/pgm)
 
+- [pgmpy](https://github.com/pgmpy/pgmpy)
+
 We distinguish from these by the following traits:
 
 - Though not an entirely graph library like [NetworkX](https://networkx.org/),

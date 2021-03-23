@@ -25,6 +25,8 @@ Note that there are other alternatives on the subject:
 
 - [pgm](https://github.com/paulorauber/pgm)
 
+- [pgmpy](https://github.com/pgmpy/pgmpy)
+
 We distinguish from these by the following traits:
 
 - Though not an entirely graph library like [NetworkX](https://networkx.org/),
@@ -115,14 +117,14 @@ doxygen way of doing things:
 \code{.py}
 
 def my_function(myarg1: str, myarg2: int) -> str:
-    \"\"\"!
+    '''!
     \brief One line explanation of functionality
 
     \param myarg1 description of the argument
     \param myarg2 description of the argument
 
     \return description of the returned value
-    \"\"\"
+    '''
     return myarg1 + str(myarg2)
 \endcode
 
@@ -131,7 +133,7 @@ def my_function(myarg1: str, myarg2: int) -> str:
 \code{.py}
 
 def my_function(myarg1: str, myarg2: int) -> str:
-    \"\"\"!
+    '''!
     \brief One line explanation of functionality
 
     Long multilined
@@ -153,7 +155,7 @@ def my_function(myarg1: str, myarg2: int) -> str:
 
     \endcode
 
-    \"\"\"
+    '''
     if isinstance(myarg2, int) is False:
         raise TypeError(
             "myarg2 " + str(myarg2) + " is of type " +
