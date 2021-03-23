@@ -114,27 +114,28 @@ doxygen way of doing things:
 
 - Partial template:
 
-\code{.py}
+\verbatim
 
 def my_function(myarg1: str, myarg2: int) -> str:
-    \"\"\"!
+    """!
     \brief One line explanation of functionality
 
     \param myarg1 description of the argument
     \param myarg2 description of the argument
 
     \return description of the returned value
-    \"\"\"
+    """
     return myarg1 + str(myarg2)
 
-\endcode
+\endverbatim
+
 
 - Full template:
 
-```python
+\verbatim
 
 def my_function(myarg1: str, myarg2: int) -> str:
-    \"\"\"!
+    """!
     \brief One line explanation of functionality
 
     Long multilined
@@ -156,7 +157,7 @@ def my_function(myarg1: str, myarg2: int) -> str:
 
     \endcode
 
-    \"\"\"
+    """
     if isinstance(myarg2, int) is False:
         raise TypeError(
             "myarg2 " + str(myarg2) + " is of type " +
@@ -164,7 +165,7 @@ def my_function(myarg1: str, myarg2: int) -> str:
             )
     return myarg1 + str(myarg2)
 
-```
+\endverbatim
 
 Besides adding a documentation, you can also add other inference strategies.
 
