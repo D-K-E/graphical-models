@@ -68,76 +68,11 @@ $(function() {
 </iframe>
 </div>
 
-<div class="PageDoc"><div class="header">
+<div class="header">
   <div class="headertitle">
 <div class="title">PyGModels Documentation</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md0"></a>
-Graphical Models</h1>
-<p><a href="https://github.com/D-K-E/graphical-models/actions/workflows/python-package.yml"><img src="https://github.com/D-K-E/graphical-models/actions/workflows/python-package.yml/badge.svg?branch=master" alt="Python package workflow " style="pointer-events: none;" class="inline"/></a></p>
-<p><a href="https://zenodo.org/badge/latestdoi/321839625"><img src="https://zenodo.org/badge/321839625.svg" alt="DOI" style="pointer-events: none;" class="inline"/></a></p>
-<p>See doxygen generated <a href="https://d-k-e.github.io/graphical-models/">documentation</a></p>
-<p>The source code of this library aims to be accessible to all those interested in Probabilistic Graphical Models. The primary goal is to facilitate the understanding of models and basic inference strategies using well documented data structures based only on Python 3 standard library. Functions are annotated whenever possible.</p>
-<p>Note that there are other alternatives on the subject:</p>
-<ul>
-<li><a href="https://github.com/ihler/pyGM">pyGM</a></li>
-<li><a href="https://github.com/indapa/pgmPy">pgmPy</a></li>
-<li><a href="https://github.com/paulorauber/pgm">pgm</a></li>
-<li><a href="https://github.com/pgmpy/pgmpy">pgmpy</a></li>
-</ul>
-<p>We distinguish from these by the following traits:</p>
-<ul>
-<li>Though not an entirely graph library like <a href="https://networkx.org/">NetworkX</a>, This library is more focused on Graph Theory than probabilistic structures. We implement several graph structures by the book. For example, <code>Tree</code>s are implemented as a <code>Graph</code>, just like <code>Path</code>s.</li>
-<li>Several graph analysis algorithms for:<ul>
-<li>Finding bridges</li>
-<li>Finding articulation points</li>
-<li>Finding connected components</li>
-<li>Finding minimum and maximum spanning trees.</li>
-<li>Finding shortest paths.</li>
-</ul>
-</li>
-<li>We are also one of the rare open sourced python libraries that support inference on LWF Chain Graphs also known as <a href="https://en.wikipedia.org/wiki/Mixed_graph">Mixed Graphs</a>. As the overall library is not built for efficiency, we recommend not to use it in production. It should not be to difficult to transfer the concepts introduced in the source code though.</li>
-<li>References are important for us. Whenever possible we add a reference to a published ressource to the doc string of the function/class. This also applies for tests.</li>
-</ul>
-<h2><a class="anchor" id="autotoc_md1"></a>
-Installation</h2>
-<p>The entire library depends only on Python standard library. It is tested for Python 3.6 through Github Actions at each push to the library. If you have Python 3.6+, you should be good to go for installation.</p>
-<p>If you want to install without creating a virtual environment, just go to the main project directory that contains this readme file and call from terminal:</p>
-<ul>
-<li><code>pip install .</code></li>
-</ul>
-<p>If you prefer conda for managing your virtual environments, simply create a new environment:</p>
-<ul>
-<li><code>conda create -n pygmodels python=3.6</code></li>
-</ul>
-<p>Activate the environment:</p>
-<ul>
-<li><code>conda activate pygmodels</code></li>
-</ul>
-<p>Install the library:</p>
-<ul>
-<li><code>pip install .</code></li>
-</ul>
-<p>Lastly test your installation with following command:</p>
-<ul>
-<li><code>python -m unittest</code></li>
-</ul>
-<p>You should see something like the following on the terminal:</p>
-<div class="fragment"><div class="line">Ran 179 tests in 0.666s</div>
-<div class="line"> </div>
-<div class="line">OK</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md2"></a>
-Guide for Contributors</h2>
-<p>As of now, most of the functions are unit tested. The test suit contains around 170 tests covering most of the important functionality. However, there can never be too much tests, so feel free to create a pull request with some of your own.</p>
-<p>Another area of improvement is documentation. As of now, we lack usage examples for graph theoretical functionality of the library. Some functions can also use more elaborate docstrings. Notice that we are not using sphinx or other regular pythonic documentation generators. We are using <a href="https://www.doxygen.nl/index.html">doxygen</a>. For the willing user, we provide two templates for filling out docstrings in case she is not familiar with doxygen way of doing things:</p>
-<ul>
-<li>Partial template:</li>
-</ul>
-<pre class="fragment">
-
-def my_function(myarg1: str, myarg2: int) -&gt; str:
-</pre></div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
