@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.19"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>PyGModels: Main Page</title>
+<title>PyGModels: Graphical Models</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -68,12 +68,256 @@ $(function() {
 </iframe>
 </div>
 
-<div class="header">
+<div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title">PyGModels Documentation</div>  </div>
+<div class="title">Graphical Models </div>  </div>
 </div><!--header-->
 <div class="contents">
+<div class="textblock"><p><a class="anchor" id="mainpage"></a> <a href="https://github.com/D-K-E/graphical-models/actions/workflows/python-package.yml"><img src="https://github.com/D-K-E/graphical-models/actions/workflows/python-package.yml/badge.svg?branch=master" alt="Python package workflow " style="pointer-events: none;" class="inline"/></a></p>
+<p><a href="https://zenodo.org/badge/latestdoi/321839625"><img src="https://zenodo.org/badge/321839625.svg" alt="DOI" style="pointer-events: none;" class="inline"/></a></p>
+<p>See doxygen generated <a href="https://viva-lambda.github.io/graphical-models/">documentation</a></p>
+<p>The source code of this library aims to be accessible to all those interested in Probabilistic Graphical Models. The primary goal is to facilitate the understanding of models and basic inference strategies using well documented data structures based only on Python 3 standard library. Functions are annotated whenever possible.</p>
+<p>Note that there are other alternatives on the subject:</p>
+<ul>
+<li><a href="https://github.com/ihler/pyGM">pyGM</a></li>
+<li><a href="https://github.com/indapa/pgmPy">pgmPy</a></li>
+<li><a href="https://github.com/paulorauber/pgm">pgm</a></li>
+<li><a href="https://github.com/pgmpy/pgmpy">pgmpy</a></li>
+</ul>
+<p>We distinguish from these by the following traits:</p>
+<ul>
+<li>Though not an entirely graph library like <a href="https://networkx.org/">NetworkX</a>, This library is more focused on Graph Theory than probabilistic structures. We implement several graph structures by the book. For example, <code>Tree</code>s are implemented as a <code>Graph</code>, just like <code>Path</code>s.</li>
+<li>Several graph analysis algorithms for:<ul>
+<li>Finding bridges</li>
+<li>Finding articulation points</li>
+<li>Finding connected components</li>
+<li>Finding minimum and maximum spanning trees.</li>
+<li>Finding shortest paths.</li>
+</ul>
+</li>
+<li>We are also one of the rare open sourced python libraries that support inference on LWF Chain Graphs also known as <a href="https://en.wikipedia.org/wiki/Mixed_graph">Mixed Graphs</a>. As the overall library is not built for efficiency, we recommend not to use it in production. It should not be to difficult to transfer the concepts introduced in the source code though.</li>
+<li>References are important for us. Whenever possible we add a reference to a published ressource to the doc string of the function/class. This also applies for tests.</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md15"></a>
+Installation</h1>
+<p>The entire library depends only on Python standard library. It is tested for Python 3.6 through Github Actions at each push to the library. If you have Python 3.6+, you should be good to go for installation.</p>
+<p>If you want to install without creating a virtual environment, just go to the main project directory that contains this readme file and call from terminal:</p>
+<ul>
+<li><code>pip install .</code></li>
+</ul>
+<p>If you prefer conda for managing your virtual environments, simply create a new environment:</p>
+<ul>
+<li><code>conda create -n pygmodels python=3.6</code></li>
+</ul>
+<p>Activate the environment:</p>
+<ul>
+<li><code>conda activate pygmodels</code></li>
+</ul>
+<p>Install the library:</p>
+<ul>
+<li><code>pip install .</code></li>
+</ul>
+<p>Lastly test your installation with following command:</p>
+<ul>
+<li><code>python -m unittest</code></li>
+</ul>
+<p>You should see something like the following on the terminal:</p>
+<div class="fragment"><div class="line">Ran 179 tests in 0.666s</div>
+<div class="line"> </div>
+<div class="line">OK</div>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md16"></a>
+Guide for Contributors</h1>
+<p>As of now, most of the functions are unit tested. The test suit contains around 170 tests covering most of the important functionality. However, there can never be too much tests, so feel free to create a pull request with some of your own.</p>
+<p>Another area of improvement is documentation. As of now, we lack usage examples for graph theoretical functionality of the library. Some functions can also use more elaborate docstrings. Notice that we are not using sphinx or other regular pythonic documentation generators. We are using <a href="https://www.doxygen.nl/index.html">doxygen</a>. For the willing user, we provide two templates for filling out docstrings in case she is not familiar with doxygen way of doing things:</p>
+<ul>
+<li>Partial template:</li>
+</ul>
+<div class="fragment"><div class="line">def my_function(myarg1: str, myarg2: int) -&gt; str:</div>
+<div class="line">    &quot;&quot;&quot;!</div>
+<div class="line">    \brief One line explanation of functionality</div>
+<div class="line"> </div>
+<div class="line">    \param myarg1 description of the argument</div>
+<div class="line">    \param myarg2 description of the argument</div>
+<div class="line"> </div>
+<div class="line">    \return description of the returned value</div>
+<div class="line">    &quot;&quot;&quot;</div>
+<div class="line">    return myarg1 + str(myarg2)</div>
+</div><!-- fragment --><ul>
+<li>Full template:</li>
+</ul>
+<pre class="fragment">def my_function(myarg1: str, myarg2: int) -&gt; str:
+    """!
+    \brief One line explanation of functionality
+
+    Long multilined
+    description of
+    functionality
+
+    \param myarg1 description of the argument
+    \param myarg2 description of the argument
+
+    \exception TypeError description of the exception 
+
+    \return description of the returned value
+
+    \code{.py}
+
+    &gt;&gt;&gt; a = my_function("Lucky number is ", 7)
+    &gt;&gt;&gt; print(a)
+    &gt;&gt;&gt; "Lucky number is 7"
+
+    \endcode
+
+    """
+
+    if isinstance(myarg2, int) is False:
+        raise TypeError(
+            "myarg2 " + str(myarg2) + " is of type " +
+            str(type(myarg2))
+            )
+    return myarg1 + str(myarg2)</pre><p>Besides adding a documentation, you can also add other inference strategies.</p>
+<p>Just file an issue in the case of doubt or signal your intent and we can discuss the rest.</p>
+<h1><a class="anchor" id="autotoc_md17"></a>
+Currently Supported Models</h1>
+<p>There are currently 4 primary models that might interest the general public:</p>
+<h2><a class="anchor" id="autotoc_md18"></a>
+PGModel</h2>
+<p><code>PGModel</code>, a graph with defined as <code>G=(V,E,F)</code> where <code>V</code> is vertex set composed of <code>NumCatRVariable</code>s which are numeric categorical random variables, <code>E</code> is edge set, and <code>F</code> is factor set. <br  />
+ If <code>F</code> is none the factor set is deduced from edge set where each edge is considered as a factor whose scope is the set of incident nodes to edge. Sum-Product and Max-Product variable elimination are supported by <code>PGModel</code>. Evidence encoded in nodes are directly used for reducing factors during the instantiation of <code>PGModel</code>. Additional evidence can be provided at query time as well for conditional and mpe queries. <code>Marginal Map</code> queries are not yet supported.</p>
+<p>Usage:</p>
+<div class="fragment"><div class="line"><span class="keyword">from</span> <a class="code" href="de/d0f/namespacegmodels_1_1pgmodel.html">gmodels.pgmodel</a> <span class="keyword">import</span> PGModel</div>
+<div class="line"><span class="keyword">from</span> <a class="code" href="d9/dc8/namespacegmodels_1_1gtypes_1_1edge.html">gmodels.gtypes.edge</a> <span class="keyword">import</span> Edge, EdgeType</div>
+<div class="line"><span class="keyword">from</span> <a class="code" href="d8/d34/namespacegmodels_1_1factor.html">gmodels.factor</a> <span class="keyword">import</span> Factor</div>
+<div class="line"><span class="keyword">from</span> <a class="code" href="da/d3d/namespacegmodels_1_1randomvariable.html">gmodels.randomvariable</a> <span class="keyword">import</span> NumCatRVariable</div>
+<div class="line"> </div>
+<div class="line"><span class="comment"># Example adapted from Darwiche 2009, p. 140</span></div>
+<div class="line"> </div>
+<div class="line">idata = {</div>
+<div class="line">            <span class="stringliteral">&quot;a&quot;</span>: {<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
+<div class="line">            <span class="stringliteral">&quot;b&quot;</span>: {<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
+<div class="line">            <span class="stringliteral">&quot;c&quot;</span>: {<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
+<div class="line">        }</div>
+<div class="line"> </div>
+<div class="line">a = NumCatRVariable(</div>
+<div class="line">            node_id=<span class="stringliteral">&quot;a&quot;</span>, input_data=idata[<span class="stringliteral">&quot;a&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.6 <span class="keywordflow">if</span> x <span class="keywordflow">else</span> 0.4</div>
+<div class="line">        )</div>
+<div class="line">b = NumCatRVariable(</div>
+<div class="line">    node_id=<span class="stringliteral">&quot;b&quot;</span>, input_data=idata[<span class="stringliteral">&quot;b&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.5 <span class="keywordflow">if</span> x <span class="keywordflow">else</span> 0.5</div>
+<div class="line">)</div>
+<div class="line">c = NumCatRVariable(</div>
+<div class="line">    node_id=<span class="stringliteral">&quot;c&quot;</span>, input_data=idata[<span class="stringliteral">&quot;c&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.5 <span class="keywordflow">if</span> x <span class="keywordflow">else</span> 0.5</div>
+<div class="line">)</div>
+<div class="line">ab = Edge(</div>
+<div class="line">    edge_id=<span class="stringliteral">&quot;ab&quot;</span>,</div>
+<div class="line">    edge_type=EdgeType.UNDIRECTED,</div>
+<div class="line">    start_node=a,</div>
+<div class="line">    end_node=b,</div>
+<div class="line">)</div>
+<div class="line">bc = Edge(</div>
+<div class="line">    edge_id=<span class="stringliteral">&quot;bc&quot;</span>,</div>
+<div class="line">    edge_type=EdgeType.UNDIRECTED,</div>
+<div class="line">    start_node=b,</div>
+<div class="line">    end_node=c,</div>
+<div class="line">)</div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">def </span>phi_ba(scope_product):</div>
+<div class="line">    <span class="stringliteral">&quot;&quot;</span></div>
+<div class="line">    ss = set(scope_product)</div>
+<div class="line">    <span class="keywordflow">if</span> ss == set([(<span class="stringliteral">&quot;a&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.9</div>
+<div class="line">    <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;a&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.1</div>
+<div class="line">    <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;a&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.2</div>
+<div class="line">    <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;a&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.8</div>
+<div class="line">    <span class="keywordflow">else</span>:</div>
+<div class="line">        <span class="keywordflow">raise</span> ValueError(<span class="stringliteral">&quot;product error&quot;</span>)</div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">def </span>phi_cb(scope_product):</div>
+<div class="line">    <span class="stringliteral">&quot;&quot;</span></div>
+<div class="line">    ss = set(scope_product)</div>
+<div class="line">    <span class="keywordflow">if</span> ss == set([(<span class="stringliteral">&quot;c&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.3</div>
+<div class="line">    <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;c&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.5</div>
+<div class="line">    <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;c&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.7</div>
+<div class="line">    <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;c&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.5</div>
+<div class="line">    <span class="keywordflow">else</span>:</div>
+<div class="line">        <span class="keywordflow">raise</span> ValueError(<span class="stringliteral">&quot;product error&quot;</span>)</div>
+<div class="line"> </div>
+<div class="line"><span class="keyword">def </span>phi_a(scope_product):</div>
+<div class="line">    s = set(scope_product)</div>
+<div class="line">    <span class="keywordflow">if</span> s == set([(<span class="stringliteral">&quot;a&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.6</div>
+<div class="line">    <span class="keywordflow">elif</span> s == set([(<span class="stringliteral">&quot;a&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.4</div>
+<div class="line">    <span class="keywordflow">else</span>:</div>
+<div class="line">        <span class="keywordflow">raise</span> ValueError(<span class="stringliteral">&quot;product error&quot;</span>)</div>
+<div class="line"> </div>
+<div class="line">ba_f = Factor(gid=<span class="stringliteral">&quot;ba&quot;</span>, scope_vars=set([b, a]), factor_fn=phi_ba)</div>
+<div class="line">cb_f = Factor(gid=<span class="stringliteral">&quot;cb&quot;</span>, scope_vars=set([c, b]), factor_fn=phi_cb)</div>
+<div class="line">a_f = Factor(gid=<span class="stringliteral">&quot;a&quot;</span>, scope_vars=set([a]), factor_fn=phi_a)</div>
+<div class="line"> </div>
+<div class="line">pgm = PGModel(</div>
+<div class="line">    gid=<span class="stringliteral">&quot;pgm&quot;</span>,</div>
+<div class="line">    nodes=set([a, b, c]),</div>
+<div class="line">    edges=set([ab, bc]),</div>
+<div class="line">    factors=set([ba_f, cb_f, a_f]),</div>
+<div class="line">)</div>
+<div class="line">evidences = set([(<span class="stringliteral">&quot;a&quot;</span>, <span class="keyword">True</span>)])</div>
+<div class="line">queries = set([c])</div>
+<div class="line">product_factor, a = pgm.cond_prod_by_variable_elimination(queries, evidences)</div>
+<div class="line"> </div>
+<div class="line">print(round( product_factor.phi_normal(set([(<span class="stringliteral">&quot;c&quot;</span>, <span class="keyword">True</span>)])), 4))</div>
+<div class="line"><span class="comment"># should give you 0.32</span></div>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md19"></a>
+Markov Network</h2>
+<p>Simply a <code>PGModel</code> whose edges are checked for being only undirected.</p>
+<h2><a class="anchor" id="autotoc_md20"></a>
+Conditional Random Field</h2>
+<p>A markov network with target variables.</p>
+<h2><a class="anchor" id="autotoc_md21"></a>
+LWF Chain Graphs</h2>
+<p>A <code>PGModel</code> with mixed edges.</p>
+<h1><a class="anchor" id="autotoc_md22"></a>
+General Note</h1>
+<p>Most of the inference related functionality belongs to <code>PGModel</code> which largely depend on methods defined in <code>Factor</code> class. Other models are treated as different instances of <code>PGModel</code> whenever possible. This means that other models are there to interface with different probability distributions.</p>
+<h1><a class="anchor" id="autotoc_md23"></a>
+References</h1>
+<p>Here is a complete list of references used throughout the source code: </p><div class="fragment"><div class="line">@book{Cowell_2005, place={New York}, title={Probabilistic networks and expert systems}, url={http://accesbib.uqam.ca/cgi-bin/bduqam/transit.pl?&amp;noMan=25126878}, publisher={Springer-Verlag}, author={Cowell, Robert G}, year={2005} }</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line">@article{Drton_2009, title={Discrete chain graph models}, volume={15}, ISSN={1350-7265}, url={http://arxiv.org/abs/0909.0843}, DOI={10.3150/08-BEJ172}, note={arXiv: 0909.0843}, number={3}, journal={Bernoulli}, author={Drton, Mathias}, year={2009}, month={Aug}, pages={736–753} }</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line">@book{Koller_Friedman_2009, place={Cambridge, MA}, series={Adaptive computation and machine learning}, title={Probabilistic graphical models: principles and techniques}, ISBN={978-0-262-01319-2}, publisher={MIT Press}, author={Koller, Daphne and Friedman, Nir}, year={2009}, collection={Adaptive computation and machine learning} }</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line">@book{Darwiche_2009, place={Cambridge ; New York}, title={Modeling and reasoning with Bayesian networks}, ISBN={978-0-521-88438-9}, publisher={Cambridge University Press}, author={Darwiche, Adnan}, year={2009} }</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line">@book{Erciyes_2018, place={Cham}, edition={1st ed. 2018}, series={Texts in Computer Science}, title={Guide to Graph Algorithms: Sequential, Parallel and Distributed}, ISBN={978-3-319-73235-0}, DOI={10.1007/978-3-319-73235-0}, publisher={Springer International Publishing : Imprint: Springer}, author={Erciyes, K.}, year={2018}, collection={Texts in Computer Science} }</div>
+<div class="line"> </div>
+<div class="line">@book{Even_Guy Even_2012, place={Cambridge, NY}, edition={2nd ed}, title={Graph algorithms}, ISBN={978-0-521-51718-8}, publisher={Cambridge University Press}, author={Even, Shimon and Guy Even}, year={2012} }</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line">@book{Cohen_Joyner_Nguyen_2011, title={Algorithmic Graph Theory}, url={https://code.google.com/archive/p/graphbook/}, author={Cohen, Nathan and Joyner, David and Nguyen, Minh}, year={2011}, month={May} }</div>
+<div class="line"> </div>
+<div class="line">@book{Diestel_2017, place={Hamburg}, edition={5}, title={Graph Theory}, ISBN={978-3-662-53621-6}, publisher={Springer}, author={Diestel, Reinhard}, year={2017} }</div>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md24"></a>
+Contributors</h1>
+<ul>
+<li><a href="https://github.com/comecloseridontbyte">Nihan</a> </li>
+</ul>
+</div></div><!-- PageDoc -->
 </div><!-- contents -->
+<div class="ttc" id="anamespacegmodels_1_1randomvariable_html"><div class="ttname"><a href="da/d3d/namespacegmodels_1_1randomvariable.html">gmodels.randomvariable</a></div><div class="ttdef"><b>Definition:</b> randomvariable.py:1</div></div>
+<div class="ttc" id="anamespacegmodels_1_1gtypes_1_1edge_html"><div class="ttname"><a href="d9/dc8/namespacegmodels_1_1gtypes_1_1edge.html">gmodels.gtypes.edge</a></div><div class="ttdef"><b>Definition:</b> edge.py:1</div></div>
+<div class="ttc" id="anamespacegmodels_1_1pgmodel_html"><div class="ttname"><a href="de/d0f/namespacegmodels_1_1pgmodel.html">gmodels.pgmodel</a></div><div class="ttdef"><b>Definition:</b> pgmodel.py:1</div></div>
+<div class="ttc" id="anamespacegmodels_1_1factor_html"><div class="ttname"><a href="d8/d34/namespacegmodels_1_1factor.html">gmodels.factor</a></div><div class="ttdef"><b>Definition:</b> factor.py:1</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">

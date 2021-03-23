@@ -126,7 +126,7 @@ def my_function(myarg1: str, myarg2: int) -> str:
 
 - Full template:
 
-```python
+\verbatim
 
 def my_function(myarg1: str, myarg2: int) -> str:
     """!
@@ -152,13 +152,15 @@ def my_function(myarg1: str, myarg2: int) -> str:
     \endcode
 
     """
+
     if isinstance(myarg2, int) is False:
         raise TypeError(
             "myarg2 " + str(myarg2) + " is of type " +
             str(type(myarg2))
             )
     return myarg1 + str(myarg2)
-```
+
+\endverbatim
 
 Besides adding a documentation, you can also add other inference strategies.
 
@@ -185,7 +187,8 @@ Additional evidence can be provided at query time as well for conditional and
 mpe queries. `Marginal Map` queries are not yet supported.
 
 Usage:
-```python
+
+\code{.py}
 
 from gmodels.pgmodel import PGModel
 from gmodels.gtypes.edge import Edge, EdgeType
@@ -276,7 +279,7 @@ product_factor, a = pgm.cond_prod_by_variable_elimination(queries, evidences)
 print(round( product_factor.phi_normal(set([("c", True)])), 4))
 # should give you 0.32
 
-```
+\endcode
 
 
 ### Markov Network
