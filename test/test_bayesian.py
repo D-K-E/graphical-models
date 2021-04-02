@@ -4,6 +4,7 @@ Test Bayesian Network
 
 from gmodels.bayesian import BayesianNetwork
 from gmodels.gtypes.edge import Edge, EdgeType
+from gmodels.gtypes.digraph import DiGraph
 from gmodels.factor import Factor
 from gmodels.randomvariable import NumCatRVariable
 from uuid import uuid4
@@ -20,6 +21,11 @@ class BayesianNetworkTest(unittest.TestCase):
             "rain": {"outcome-values": [True, False]},
             "sprink": {"outcome-values": [True, False]},
             "wet": {"outcome-values": [True, False]},
+            "road": {"outcome-values": [True, False]},
+            "winter": {"outcome-values": [True, False]},
+            "earthquake": {"outcome-values": [True, False]},
+            "burglary": {"outcome-values": [True, False]},
+            "alarm": {"outcome-values": [True, False]},
         }
         self.rain = NumCatRVariable(
             input_data=idata["rain"],
@@ -105,6 +111,42 @@ class BayesianNetworkTest(unittest.TestCase):
             edges=set([self.rain_wet, self.rain_sprink, self.sprink_wet]),
             factors=set([self.grass_wet_f, self.rain_sprink_f]),
         )
+        #
+        # Darwiche 2009, p. 30
+        #
+        #  Earthquake  Burglary
+        #         \    /
+        #          \  /
+        #         Alarm
+        #
+        self.EarthquakeN = NumCatRVariable(
+            input_data=idata["earthquake"],
+            node_id="EarthquakeN",
+            distribution=lambda x: 0.1 if x is True else 0.9,
+        )
+        self.BurglaryN = NumCatRVariable(
+            input_data=idata["burglary"],
+            node_id="BurglaryN",
+            distribution=lambda x: 0.2 if x is True else 0.8,
+        )
+        self.AlarmN = NumCatRVariable(
+            input_data=idata["alarm"],
+            node_id="AlarmN",
+            distribution=lambda x: 0.2442 if x is True else 0.7558,
+        )
+        self.burglar_alarm = Edge(
+            edge_id="burglar_alarm",
+            start_node=self.BurglaryN,
+            end_node=self.AlarmN,
+            edge_type=EdgeType.DIRECTED,
+        )
+        self.earthquake_alarm = Edge(
+            edge_id="earthquake_alarm",
+            start_node=self.EarthquakeN,
+            end_node=self.AlarmN,
+            edge_type=EdgeType.DIRECTED,
+        )
+
         idata = {"outcome-values": [True, False]}
 
         self.C = NumCatRVariable(

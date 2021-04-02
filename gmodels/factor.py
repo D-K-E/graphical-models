@@ -37,6 +37,51 @@ class Factor(GraphObject):
 
         \param scope_vars variables that constitue scope of factor.
         \param factor_fn a real valued function
+
+        \code{.py}
+
+        >>> Af = NumCatRVariable(
+        >>>         node_id="A", 
+        >>>         input_data={"outcome-values": [10, 50]},
+        >>>         distribution=lambda x: 0.5,
+        >>>      )
+        >>> Bf = NumCatRVariable(
+        >>>         node_id="B",
+        >>>         input_data={"outcome-values": [10, 50]},
+        >>>         distribution=lambda x: 0.5,
+        >>>     )
+        >>> Cf = NumCatRVariable(
+        >>>    node_id="C",
+        >>>    input_data={"outcome-values": [10, 50]},
+        >>>    distribution=lambda x: 0.5,
+        >>> )
+        >>> Df = NumCatRVariable(
+        >>>    node_id="D",
+        >>>    input_data={"outcome-values": [10, 50]},
+        >>>    distribution=lambda x: 0.5,
+        >>> )
+           
+        >>> def phiAB(scope_product):
+        >>>    ""
+        >>>    sfs = set(scope_product)
+        >>>    if sfs == set([("A", 10), ("B", 10)]):
+        >>>        return 30
+        >>>    elif sfs == set([("A", 10), ("B", 50)]):
+        >>>        return 5
+        >>>    elif sfs == set([("A", 50), ("B", 10)]):
+        >>>        return 1
+        >>>    elif sfs == set([("A", 50), ("B", 50)]):
+        >>>        return 10
+        >>>    else:
+        >>>        raise ValueError("unknown arg")
+           
+        >>> AB = Factor(gid="AB", 
+        >>>         scope_vars=set([self.Af, self.Bf]), 
+        >>>         factor_fn=phiAB
+        >>>     )
+
+        \endcode
+
         """
         # check all values are positive
         super().__init__(oid=gid, odata=data)

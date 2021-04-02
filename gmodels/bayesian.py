@@ -29,7 +29,23 @@ class BayesianNetwork(PGModel, DiGraph):
 
     @classmethod
     def from_digraph(cls, dig: DiGraph):
-        ""
+        """!
+        \brief Construct a BayesianNetwork from a directed graph
+
+        We assume that edges encode an independence structure of the system.
+        Hence we deduce factors from them. If there is any evidence associated
+        with a random variable, we apply them to reduce factors.
+
+        \param dig A Directed Graph whose nodes are random variables
+
+        \return BayesianNetwork 
+
+        \code{.py}
+
+        >>> myDiGraph = DiGraph()
+
+        \endcode
+        """
         fs: Set[Factor] = set()
         for X_i in dig.nodes():
             evidences = set()
