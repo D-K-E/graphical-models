@@ -205,6 +205,16 @@ class TestFactor(unittest.TestCase):
 
         self.bc = Factor(gid="bc", scope_vars=set([self.Bf, self.Cf]), factor_fn=phibc)
 
+    def test_max_value(self):
+        ""
+        mval = self.bc.max_value()
+        self.assertEqual(mval, set([("B", 10), ("C", 50)]))
+
+    def test_max_probability(self):
+        ""
+        mval = self.bc.max_probability()
+        self.assertEqual(mval, 0.7)
+
     def test_id(self):
         ""
         self.assertEqual(self.f.id(), "f")
@@ -234,7 +244,7 @@ class TestFactor(unittest.TestCase):
 
     def test_partition_value(self):
         ""
-        pval = self.f.zval()
+        pval = self.f.partition_value(self.f.vars_domain())
         self.assertTrue(pval, 1.0)
 
     def test_phi(self):
