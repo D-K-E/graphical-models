@@ -98,9 +98,11 @@ class Factor(GraphObject):
         else:
             self.factor_fn = factor_fn
 
-        self.scope_products: List[Set[Tuple[str, NumericValue]]] = []
+        self.scope_products: List[Set[Tuple[str, NumericValue]]] = list(
+            product(*self.vars_domain())
+        )
 
-        self.Z = self.zval()
+        self.Z = self.partition_value(self.vars_domain())
 
     def scope_vars(self, f=lambda x: x) -> Set[NumCatRVariable]:
         """!
@@ -299,7 +301,7 @@ class Factor(GraphObject):
         rvar_filter=lambda x: True,
         value_filter=lambda x: True,
         value_transform=lambda x: x,
-    ):
+    ) -> list:
         """!
         \brief \see Factor.matches(rvar_filter, value_filter, value_transform)
         For a factor phi(A,B) return factor function's domain values, such as:
@@ -339,6 +341,7 @@ class Factor(GraphObject):
     ) -> Set[NumCatRVariable]:
         """!
         \brief Given a domain of values obtain scope variables implied
+
         Obtain random variables from given factor domain.
         Each value in domain comes with an identifier of its random variable.
         From these identifiers, we obtain set of random variables attested in
@@ -420,9 +423,13 @@ class Factor(GraphObject):
         """
         return self.normalize(self.phi(scope_product))
 
-    def max_value(self):
+    def _max_prob_value(self):
         """!
-        \brief maximum factor value for this factor
+        \brief obtain highest yielding domain value and its associated codomain
+        member
+
+        Obtain the highest preference value yielding domain member of this
+        factor with its associated value.
         """
         mx = float("-inf")
         max_val = None
@@ -432,22 +439,158 @@ class Factor(GraphObject):
             if phi_s > mx:
                 mx = phi_s
                 max_val = ss
-        return max_val
+        return max_val, mx
 
-    def partition_value(self, svars):
+    def max_probability(self) -> float:
+        """!
+        \brief maximum preference value for this factor
+
+        \code{.py}
+
+        >>> #
+        >>> Bf = NumCatRVariable(
+        >>>     node_id="B",
+        >>>     input_data={"outcome-values": [10, 50]},
+        >>>     distribution=lambda x: 0.5,
+        >>> )
+        >>> Cf = NumCatRVariable(
+        >>>     node_id="C",
+        >>>     input_data={"outcome-values": [10, 50]},
+        >>>     distribution=lambda x: 0.5,
+        >>> )
+        >>> def phibc(scope_product):
+        >>>     ""
+        >>>     sfs = set(scope_product)
+        >>>     if sfs == set([("B", 10), ("C", 10)]):
+        >>>         return 0.5
+        >>>     elif sfs == set([("B", 10), ("C", 50)]):
+        >>>         return 0.7
+        >>>     elif sfs == set([("B", 50), ("C", 10)]):
+        >>>         return 0.1
+        >>>     elif sfs == set([("B", 50), ("C", 50)]):
+        >>>         return 0.2
+        >>>     else:
+        >>>         raise ValueError("unknown arg")
+
+        >>> bc = Factor(gid="bc", scope_vars=set([Bf, Cf]), factor_fn=phibc)
+        >>> mval = self.bc.max_probability()
+        >>> print(mval)
+        >>> 0.7
+
+        \endcode
+        """
+        mval, mprob = self._max_prob_value()
+        return mprob
+
+    def max_value(self) -> Set[Tuple[str, NumericValue]]:
+        """!
+        \brief maximum factor value for this factor
+
+        Obtain the highest probability yielding value from the domain of the
+        factor. Notice that it does not give a probability value. It outputs
+        the value which when evaluated yields the highest probability value.
+
+        \code{.py}
+
+        >>> #
+        >>> Bf = NumCatRVariable(
+        >>>     node_id="B",
+        >>>     input_data={"outcome-values": [10, 50]},
+        >>>     distribution=lambda x: 0.5,
+        >>> )
+        >>> Cf = NumCatRVariable(
+        >>>     node_id="C",
+        >>>     input_data={"outcome-values": [10, 50]},
+        >>>     distribution=lambda x: 0.5,
+        >>> )
+        >>> def phibc(scope_product):
+        >>>     ""
+        >>>     sfs = set(scope_product)
+        >>>     if sfs == set([("B", 10), ("C", 10)]):
+        >>>         return 0.5
+        >>>     elif sfs == set([("B", 10), ("C", 50)]):
+        >>>         return 0.7
+        >>>     elif sfs == set([("B", 50), ("C", 10)]):
+        >>>         return 0.1
+        >>>     elif sfs == set([("B", 50), ("C", 50)]):
+        >>>         return 0.2
+        >>>     else:
+        >>>         raise ValueError("unknown arg")
+
+        >>> bc = Factor(gid="bc", scope_vars=set([Bf, Cf]), factor_fn=phibc)
+        >>> mval = self.bc.max_value()
+        >>> print(mval)
+        >>> {[("B", 10), ("C", 50)]}
+
+        \endcode
+        """
+        mval, mrob = self._max_prob_value()
+        return mval
+
+    def partition_value(self, domains: List[Set[Tuple[str, NumericValue]]]):
         """!
         \brief compute partition value aka normalizing value for the factor
         from Koller, Friedman 2009 p. 105
+        For example given the following factors:
+
+        \f[ P(a,b,c,d) = \frac{1}{Z} \phi_1(a,b) \cdot \phi_2(b,c) \cdot
+        \phi_3(c, d) \cdot \phi_4(d, a) \f]
+
+        The Z constant is the normalizing value also known as *partition
+        function*. It is defined as the following:
+        \f[Z = \sum_{a,b,c,d} \phi_1(a,b) \cdot \phi_2(b,c) \cdot
+        \phi_3(c, d) \cdot \phi_4(d, a) \f]
+
+        We basically sum every possible output for the joint distribution of
+        given random variables.
+
+        \param domains list of domain set of the involved random variables.
+
+        \code{.py}
+
+        >>> input_data = {
+        >>>    "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
+        >>>    "grade": {"outcome-values": [0.2, 0.4, 0.6], "evidence": 0.2},
+        >>>    "dice": {"outcome-values": [i for i in range(1, 7)], "evidence": 1.0 / 6},
+        >>>    "fdice": {"outcome-values": [i for i in range(1, 7)]},
+        >>> }
+        >>> 
+        >>> intelligence = NumCatRVariable(
+        >>>     node_id="int",
+        >>>     input_data=input_data["intelligence"],
+        >>>     distribution=intelligence_dist,
+        >>> )
+        >>> 
+        >>> grade = NumCatRVariable(
+        >>>     node_id=nid2, input_data=input_data["grade"], distribution=grade_dist
+        >>> )
+        >>> 
+        >>> dice = NumCatRVariable(
+        >>>    node_id=nid3, input_data=input_data["dice"], distribution=fair_dice_dist
+        >>> )
+        >>> 
+        >>> f = Factor(
+        >>>    gid="f", scope_vars=set([grade, dice, intelligence])
+        >>> )
+        >>> 
+        >>> pval = f.partition_value(f.vars_domain())
+        >>> print(pval)
+        >>> 1.0
+
+        \endcode
+
         """
-        scope_matches = list(product(*svars))
+        scope_matches = list(product(*domains))
         return sum([self.factor_fn(scope_product=sv) for sv in scope_matches])
 
     def zval(self):
         """!
         \brief compute value of partition function for this factor
+
+        \see Factor.partition_value(domains)
         """
-        svars = self.vars_domain()
-        self.scope_products = list(product(*svars))
+        domains = self.vars_domain()
+        self.scope_products = list(product(*domains))
         return sum([self.factor_fn(scope_product=sv) for sv in self.factor_domain()])
 
     def marginal_joint(self, scope_product: Set[Tuple[str, NumericValue]]) -> float:
