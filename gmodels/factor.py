@@ -126,13 +126,22 @@ class Factor(GraphObject):
         """!
         \brief Make factor from joint variables
 
+        \param svars set of random variables in the scope of the future factor
+
+        We assume that the factor for the given set of random variables would
+        be their marginal product.
+
         \code
 
         >>> A = NumCatRVariable("A",
         >>>                     input_data={"outcome-values": [True, False]},
         >>>                     distribution=lambda x: 0.5)
+        >>> B = NumCatRVariable("B",
+        >>>                     input_data={"outcome-values": [True, False]},
+        >>>                     distribution=lambda x: 0.5)
 
-        >>> fac = Factor.from_joint_vars(svars=set([A]))
+
+        >>> fac = Factor.from_joint_vars(svars=set([A, B]))
 
         \endcode
         """
@@ -147,6 +156,17 @@ class Factor(GraphObject):
     ):
         """!
         \brief Make factor from joint variables
+
+        We assume that given random variables are conditionally related. We
+        simply assume the following factorization between given variables:
+        \f[ P(X_i | Pa_{X_i}) \f] which decomposes as 
+        \f[ P(X_i | (X_1, X_2, X_3, \dots, X_j)\f] where 
+        \f[{X_1, X_2, \dots, X_j} = Pa_{X_i}\f]
+
+        Basically we take the marginal product of parents and use the bayes
+        rule to output the final probability value of the expression. See
+        Koller, Friedman 2009, p. 46 - 47 on conditional parametrization and p.
+        62 for factorization of conditionally parametrized structures.
 
         \param X_i main variable
         \param Pa_Xi parent variables of the main variable
@@ -202,6 +222,30 @@ class Factor(GraphObject):
         \param rvar_filter filtering function for random variables
         \param value_filter filtering values from random variables' codomain
         \param value_transform apply a certain transformation to values from random variables' codomain.
+
+        \return list of codomain of random variables
+
+        \code
+
+        >>> A = NumCatRVariable("A",
+        >>>                     input_data={"outcome-values": [True, False]},
+        >>>                     distribution=lambda x: 0.5)
+
+        >>> B = NumCatRVariable("B",
+        >>>                     input_data={"outcome-values": [True, False]},
+        >>>                     distribution=lambda x: 0.5)
+
+        >>> D = set([A,B])
+
+        >>> fmatches = Factor.fdomain(D=D)
+        >>> print(fmatches)
+
+        >>> [set(("A", True), ("A", True)),
+        >>>  set(("B", True), ("B", False)),
+        >>> ]
+
+        \endcode
+
         """
         return [
             s.value_set(value_filter=value_filter, value_transform=value_transform)
