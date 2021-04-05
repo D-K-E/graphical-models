@@ -21,12 +21,12 @@ class AbstractGraphObj(AbstractInfo):
         raise NotImplementedError
 
 
-class EdgeType:
+class EdgeType(Enum):
     DIRECTED = 1
     UNDIRECTED = 2
 
 
-class NodePosition:
+class NodePosition(Enum):
     START = 1
     END = 2
 
