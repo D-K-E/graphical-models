@@ -96,6 +96,8 @@ OK
 
 ## Guide for Contributors
 
+See [Contributing.md](CONTRIBUTING.md)
+
 As of now, most of the functions are unit tested. The test suit contains
 around 170 tests covering most of the important functionality. However, there
 can never be too much tests, so feel free to create a pull request with some
