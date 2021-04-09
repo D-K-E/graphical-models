@@ -269,7 +269,7 @@ class PGModel(Graph):
             raise ValueError("evidence set contains variables out of vertices of graph")
         E = set([self.V[e[0]] for e in evidences])
         fs = self.factors()
-        factors = set([f.reduced_by_value(context=evidences) for f in fs])
+        factors = set([f.reduced_by_value(assignments=evidences) for f in fs])
         return factors, E
 
     def cond_prod_by_variable_elimination(
