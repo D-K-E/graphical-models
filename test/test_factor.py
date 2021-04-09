@@ -219,6 +219,22 @@ class TestFactor(unittest.TestCase):
         ""
         self.assertEqual(self.f.id(), "f")
 
+    def test_domain_scope(self):
+        ""
+        d = self.AB.domain_scope(
+            domain=[set([("A", 50), ("B", 50)]), set([("A", 10), ("B", 10)])]
+        )
+        self.assertEqual(set(d), set([self.Af, self.Bf]))
+
+    def test_has_var(self):
+        ""
+        intuple = self.f.has_var(ids="dice")
+        nottuple = self.f.has_var(ids="dice22")
+        self.assertTrue(intuple[0])
+        self.assertEqual(intuple[1], self.dice)
+        self.assertFalse(nottuple[0])
+        self.assertEqual(nottuple[1], None)
+
     def test_in_scope_t_num(self):
         self.assertTrue(self.f.in_scope(self.dice))
 
@@ -337,7 +353,7 @@ class TestFactor(unittest.TestCase):
         red = set([("C", 10)])
         aB_c, prod = self.aB.product(self.bc)
         # print(aB_c.scope_products)
-        nf = aB_c.reduced_by_value(context=red)
+        nf = aB_c.reduced_by_value(assignments=red)
         sps = set([frozenset(s) for s in nf.scope_products])
 
         self.assertEqual(

@@ -92,16 +92,23 @@ class Factor(GraphObject):
                 msg += " Negative factors are not allowed"
                 raise ValueError(msg)
 
+        ## random variables belonging to this factor
         self.svars = scope_vars
+
+        ## scope variable hash table
+        self.domain_table = {s.id(): s for s in self.scope_vars()}
+
         if factor_fn is None:
             self.factor_fn = self.marginal_joint
         else:
             self.factor_fn = factor_fn
 
+        ## cartesian product of factor domain
         self.scope_products: List[Set[Tuple[str, NumericValue]]] = list(
             product(*self.vars_domain())
         )
 
+        ## constant normalization value
         self.Z = self.partition_value(self.vars_domain())
 
     def scope_vars(self, f=lambda x: x) -> Set[NumCatRVariable]:
@@ -110,7 +117,7 @@ class Factor(GraphObject):
 
         \param f is a function that transforms the scope of this factor.
 
-        \code
+        \code{.py}
 
         >>> A = NumCatRVariable("A",
         >>>                     input_data={"outcome-values": [True, False]},
@@ -262,10 +269,12 @@ class Factor(GraphObject):
         rvar_filter=lambda x: True,
         value_filter=lambda x: True,
         value_transform=lambda x: x,
-    ):
+    ) -> List[Tuple[Tuple[str, NumericValue]]]:
         """!
-        \brief Compute scope matches for arbitrary domain
-        cartesian product over set of random variables
+        \brief Compute cartesian product over factor domain
+
+        The arguments are there for filtering or manipulating factor domain:
+        \see Factor.fdomain
 
         \code
 
@@ -288,13 +297,16 @@ class Factor(GraphObject):
 
         \endcode
         """
-        svars = cls.fdomain(
-            D=D,
-            rvar_filter=rvar_filter,
-            value_filter=value_filter,
-            value_transform=value_transform,
+        return list(
+            product(
+                *cls.fdomain(
+                    D=D,
+                    rvar_filter=rvar_filter,
+                    value_filter=value_filter,
+                    value_transform=value_transform,
+                )
+            )
         )
-        return list(product(*svars))
 
     def factor_domain(
         self,
@@ -304,6 +316,7 @@ class Factor(GraphObject):
     ) -> list:
         """!
         \brief \see Factor.matches(rvar_filter, value_filter, value_transform)
+
         For a factor phi(A,B) return factor function's domain values, such as:
 
         \f[phi(A,B)\f]
@@ -317,7 +330,12 @@ class Factor(GraphObject):
 
         >>> set(("A", a1), ("B", b2)),...
         """
-        return list(product(*self.vars_domain()))
+        return self.matches(
+            D=self.scope_vars(),
+            rvar_filter=rvar_filter,
+            value_filter=value_filter,
+            value_transform=value_transform,
+        )
 
     def vars_domain(
         self,
@@ -346,22 +364,64 @@ class Factor(GraphObject):
         Each value in domain comes with an identifier of its random variable.
         From these identifiers, we obtain set of random variables attested in
         factor domain.
+
+        \param domain list of arbitrary domain values
+        \exception ValueError We raise value error when the argument domain
+        value array is not a subset of the domain of the factor, since we have
+        no way of obtaining random variable that is not inside the scope of
+        this factor.
+
+        \return set of random variables implied by the given list of domain
+        values
+
+        \code{.py}
+
+        >>> Af = NumCatRVariable(
+        >>>    node_id="A",
+        >>>    input_data={"outcome-values": [10, 50]},
+        >>>    distribution=lambda x: 0.5,
+        >>> )
+        >>> Bf = NumCatRVariable(
+        >>>    node_id="B",
+        >>>    input_data={"outcome-values": [10, 50]},
+        >>>    distribution=lambda x: 0.5,
+        >>> )
+        >>>
+        >>> def phiAB(scope_product):
+        >>>     ""
+        >>>     sfs = set(scope_product)
+        >>>     if sfs == set([("A", 10), ("B", 10)]):
+        >>>         return 30
+        >>>     elif sfs == set([("A", 10), ("B", 50)]):
+        >>>       return 5
+        >>>   elif sfs == set([("A", 50), ("B", 10)]):
+        >>>       return 1
+        >>>   elif sfs == set([("A", 50), ("B", 50)]):
+        >>>       return 10
+        >>>   else:
+        >>>      raise ValueError("unknown arg")
+
+        >>> AB = Factor(gid="AB", scope_vars=set([Af, Bf]), factor_fn=phiAB)
+        >>> d = AB.domain_scope(domain=[set([("A", 50), ("B", 50)]),
+        >>>                             set([("A",10), ("B", 10)])
+        >>>                            ])
+        >>> set(d) == set([Af, Bf])
+        >>> True
+
+        \endcode
         """
-        sids = {}
+        sids = set()
         for vs in domain:
             for vtpl in vs:
-                sids[vtpl[0]] = vtpl[1]
+                sids.add(vtpl[0])
         # check for values out of domain of this factor
         scope_ids = set([s.id() for s in self.scope_vars()])
-        if set(sids.keys()).issubset(scope_ids) is False:
+        if sids.issubset(scope_ids) is False:
             msg = (
                 "Given argument domain include values out of the domain of this factor"
             )
             raise ValueError(msg)
-        svars = set()
-        for s in self.scope_vars():
-            if s.id() in sids:
-                svars.add(s)
+        svars = set([s for s in self.scope_vars() if s.id() in sids])
         return svars
 
     def has_var(self, ids: str) -> Tuple[bool, Optional[NumCatRVariable]]:
@@ -370,20 +430,31 @@ class Factor(GraphObject):
         Check if given random variable id is contained in scope of factor.
 
         \param ids identifier of random variable
+
+        \exception ValueError Value error is raised if there are more than one
+        random variable associated to id string
+
+        \return a tuple whose first element is a boolean flag indicating if
+        there is indeed a variable associated to identifier and whose second
+        element is either None if the operation has failed or the random
+        variable associated to given identifier.
         """
-        vs = [s for s in self.svars if s.id() == ids]
-        if len(vs) == 0:
+        if ids in self.domain_table:
+            return True, self.domain_table[ids]
+        elif ids not in self.domain_table:
             return False, None
-        elif len(vs) == 1:
-            return True, vs[0]
         else:
-            raise ValueError("more than one variable matches the id string")
+            vs = [s for s in self.svars if s.id() == ids]
+            if len(vs) > 1:
+                raise ValueError("more than one variable matches the id string")
 
     def phi(self, scope_product: Set[Tuple[str, NumericValue]]) -> float:
         """!
         \brief obtain a factor value for given scope random variables
 
         Obtain factor value for given argument
+
+        \param scope_product a row in conditional probability table of factor
 
         \code
         >>> A = NumCatRVariable("A",
@@ -414,12 +485,24 @@ class Factor(GraphObject):
         """!
         \brief Normalize a given factorization result by dividing it to the
         value of partition function value Z
+        
+        \param phi_result the preference value to be normalized with partition
+        constant
+
+        \return normalized preference value
         """
         return phi_result / self.Z
 
     def phi_normal(self, scope_product: Set[Tuple[str, NumericValue]]) -> float:
         """!
         \brief normalize a given factor value
+
+        \param scope_product a row in conditional probability table of factor
+
+        \return normalized value preference value
+
+        \see Factor.normalize(phi_result), Factor.phi(scope_product)
+
         """
         return self.normalize(self.phi(scope_product))
 
@@ -583,7 +666,7 @@ class Factor(GraphObject):
         scope_matches = list(product(*domains))
         return sum([self.factor_fn(scope_product=sv) for sv in scope_matches])
 
-    def zval(self):
+    def zval(self) -> float:
         """!
         \brief compute value of partition function for this factor
 
@@ -597,6 +680,13 @@ class Factor(GraphObject):
         """!
         \brief marginal joint function.
         Default factor function when none is provided.
+
+        \param scope_product a row in conditional probability table of factor
+
+        \exception ValueError A value error is raised when there is an unknown
+        random variable with an identifier 
+
+        \return preference value for a given scope_product
         """
         p = 1.0
         for sv in scope_product:
@@ -608,15 +698,23 @@ class Factor(GraphObject):
             p *= var.marginal(var_value)
         return p
 
-    def in_scope(self, v: Union[NumCatRVariable, str]):
+    def in_scope(self, v: Union[NumCatRVariable, str]) -> bool:
         """!
-        Check if given parameter is in scope of this factor
+        \brief Check if given parameter is in scope of this factor
+
+        \param v either an identifier of a random variable or the random
+        variable itself.
+
+        \return a boolean flag which indicates if the argument is in scope or
+        not.
+
+        \exception TypeError type error is raised if the given argument is
+        neither a random variable nor an identifier.
         """
         if isinstance(v, NumCatRVariable):
-            return v in self.svars
+            return v.id() in self.domain_table
         elif isinstance(v, str):
-            isin, val = self.has_var(v)
-            return isin
+            return v in self.domain_table
         else:
             raise TypeError("argument must be NumCatRVariable or its id")
 
@@ -673,11 +771,15 @@ class Factor(GraphObject):
         f = Factor(gid=str(uuid4()), scope_vars=svar.union(ovar), factor_fn=fx)
         return f, prod
 
-    def reduced(self, context: Set[Tuple[str, NumericValue]]):
+    def reduced(self, assignments: Set[Tuple[str, NumericValue]]):
         """!
         \brief reduce factor using given context
 
-        \param context member of factor domain
+        \param assignments values that are assigned to random variables of this
+        factor.
+
+        \return Factor whose conditional probability table rows are shrink to
+        rows that contain assignment values.
 
         Koller, Friedman 2009, p. 111 reduction by value example
 
@@ -700,26 +802,35 @@ class Factor(GraphObject):
         """
         svars = set()
         for sv in self.scope_vars():
-            for kval in context:
+            for kval in assignments:
                 k, value = kval
                 if sv.id() == k:
                     sv.reduce_to_value(value)
             svars.add(sv)
         return Factor(gid=str(uuid4()), scope_vars=svars, factor_fn=self.phi)
 
-    def reduced_by_value(self, context: Set[Tuple[str, NumericValue]]):
+    def reduced_by_value(self, assignments: Set[Tuple[str, NumericValue]]):
         """!
         \brief \see Factor.reduced(context)
 
         \return Factor
         """
-        return self.reduced(context)
+        return self.reduced(assignments)
 
     def filter_assignments(
         self, assignments: Set[Tuple[str, NumericValue]], context: Set[NumCatRVariable]
-    ):
+    ) -> Set[Tuple[str, NumericValue]]:
         """!
-        filter out assignments that do not belong to context domain
+        \brief filter out assignments that do not belong to context domain
+        
+        Scans the given set of assignements/evidences and removes those that do
+        not belong to the context.
+
+        \param context set of random variables that are relevant to current
+        computation
+
+        \param assignments evidences with respect to the value of a certain
+        random variable in scope of the context.
         """
         assignment_d = {a[0]: a[1] for a in assignments}
         context_ids = set([c.id() for c in context])
@@ -743,7 +854,7 @@ class Factor(GraphObject):
 
         \return Factor
         """
-        return self.reduced(context=assignments)
+        return self.reduced(assignments=assignments)
 
     def maxout_var(self, Y: NumCatRVariable):
         """!
