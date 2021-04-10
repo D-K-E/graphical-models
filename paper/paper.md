@@ -120,8 +120,8 @@ specified through an array of values. This has no direct implications on the
 output. However, it has implications on the evaluation order of operations.
 Our implementation is lazier and it conforms to the definition provided by
 Koller and Friedman [see @Koller_Friedman_2009 p. 106-107]. The last aspect is
-also the case for `pgmpy`, however `PyGModels` differs from it with respect to
-the data structure used in the implementation.
+also the case for other packages, however `PyGModels` differs from them with
+respect to the data structure used in the implementation.
 
 The last aspect we deem important, is our capacity of doing inference on LWF
 chain graphs (its theoretical foundations are best explained by S. Lauritzen
