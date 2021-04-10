@@ -104,25 +104,25 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a27dc359a01cb2c768b639de1f9f1c393"><td class="memItemLeft" align="right" valign="top">Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a27dc359a01cb2c768b639de1f9f1c393">scope_vars</a> (self, f=lambda x:x)</td></tr>
 <tr class="memdesc:a27dc359a01cb2c768b639de1f9f1c393"><td class="mdescLeft">&#160;</td><td class="mdescRight">get variables that are inside the scope of this factor  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a27dc359a01cb2c768b639de1f9f1c393">More...</a><br /></td></tr>
 <tr class="separator:a27dc359a01cb2c768b639de1f9f1c393"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a48ced84334f21169113b63953c9d2980"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a48ced84334f21169113b63953c9d2980">from_joint_vars</a> (cls, Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>] svars)</td></tr>
+<tr class="memitem:a48ced84334f21169113b63953c9d2980"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a48ced84334f21169113b63953c9d2980">from_joint_vars</a> (cls, Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>] <a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#ace5bbf86fb98712a090502764a2bb5d6">svars</a>)</td></tr>
 <tr class="memdesc:a48ced84334f21169113b63953c9d2980"><td class="mdescLeft">&#160;</td><td class="mdescRight">Make factor from joint variables.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a48ced84334f21169113b63953c9d2980">More...</a><br /></td></tr>
 <tr class="separator:a48ced84334f21169113b63953c9d2980"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abdcc225f0a6545bd7c263a862ef5fc97"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#abdcc225f0a6545bd7c263a862ef5fc97">from_conditional_vars</a> (cls, <a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a> X_i, Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>] Pa_Xi, Optional[Callable[[Set[Tuple[str, NumericValue]]], float]] fn=None)</td></tr>
 <tr class="memdesc:abdcc225f0a6545bd7c263a862ef5fc97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Make factor from joint variables.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#abdcc225f0a6545bd7c263a862ef5fc97">More...</a><br /></td></tr>
 <tr class="separator:abdcc225f0a6545bd7c263a862ef5fc97"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a886da81e66dd5c9d30436c74022c118d"><td class="memItemLeft" align="right" valign="top">List[Set[Tuple[str, NumericValue]]]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a886da81e66dd5c9d30436c74022c118d">fdomain</a> (cls, Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>] D, rvar_filter=lambda x:True, value_filter=lambda x:True, value_transform=lambda x:x)</td></tr>
-<tr class="memdesc:a886da81e66dd5c9d30436c74022c118d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get factor domain Val(D) D being a set of random variables.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a886da81e66dd5c9d30436c74022c118d">More...</a><br /></td></tr>
-<tr class="separator:a886da81e66dd5c9d30436c74022c118d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af22864a4d9234ac83bbcb1836c986722"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#af22864a4d9234ac83bbcb1836c986722">matches</a> (cls, Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>] D, rvar_filter=lambda x:True, value_filter=lambda x:True, value_transform=lambda x:x)</td></tr>
-<tr class="memdesc:af22864a4d9234ac83bbcb1836c986722"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute scope matches for arbitrary domain cartesian product over set of random variables.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#af22864a4d9234ac83bbcb1836c986722">More...</a><br /></td></tr>
-<tr class="separator:af22864a4d9234ac83bbcb1836c986722"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a37253485aab7995a1fd170587be73b82"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a37253485aab7995a1fd170587be73b82">factor_domain</a> (self, rvar_filter=lambda x:True, value_filter=lambda x:True, value_transform=lambda x:x)</td></tr>
-<tr class="separator:a37253485aab7995a1fd170587be73b82"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2488105f220764895956acd91d6c65c1"><td class="memItemLeft" align="right" valign="top">List[Set[Tuple[str, NumericValue]]]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a2488105f220764895956acd91d6c65c1">vars_domain</a> (self, rvar_filter=lambda x:True, value_filter=lambda x:True, value_transform=lambda x:x)</td></tr>
-<tr class="memdesc:a2488105f220764895956acd91d6c65c1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get factor domain.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a2488105f220764895956acd91d6c65c1">More...</a><br /></td></tr>
-<tr class="separator:a2488105f220764895956acd91d6c65c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2545dafb56c12b759d0d8d69bec029a0"><td class="memItemLeft" align="right" valign="top">List[FrozenSet[Tuple[str, NumericValue]]]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a2545dafb56c12b759d0d8d69bec029a0">fdomain</a> (cls, Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>] D, rvar_filter=lambda x:True, value_filter=lambda x:True, value_transform=lambda x:x)</td></tr>
+<tr class="memdesc:a2545dafb56c12b759d0d8d69bec029a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get factor domain Val(D) D being a set of random variables.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a2545dafb56c12b759d0d8d69bec029a0">More...</a><br /></td></tr>
+<tr class="separator:a2545dafb56c12b759d0d8d69bec029a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a59738ac6994481962ca3b2462082458c"><td class="memItemLeft" align="right" valign="top">List[FrozenSet[Tuple[str, NumericValue]]]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a59738ac6994481962ca3b2462082458c">matches</a> (cls, Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>] D, rvar_filter=lambda x:True, value_filter=lambda x:True, value_transform=lambda x:x)</td></tr>
+<tr class="memdesc:a59738ac6994481962ca3b2462082458c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute cartesian product over factor domain.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a59738ac6994481962ca3b2462082458c">More...</a><br /></td></tr>
+<tr class="separator:a59738ac6994481962ca3b2462082458c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a218f06103a53e653324a61b3ed612082"><td class="memItemLeft" align="right" valign="top">List[FrozenSet[Tuple[str, NumericValue]]]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a218f06103a53e653324a61b3ed612082">factor_domain</a> (self, rvar_filter=lambda x:True, value_filter=lambda x:True, value_transform=lambda x:x)</td></tr>
+<tr class="separator:a218f06103a53e653324a61b3ed612082"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac326cb87a196bcc5db3ce3ff56882317"><td class="memItemLeft" align="right" valign="top">List[FrozenSet[Tuple[str, NumericValue]]]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#ac326cb87a196bcc5db3ce3ff56882317">vars_domain</a> (self, rvar_filter=lambda x:True, value_filter=lambda x:True, value_transform=lambda x:x)</td></tr>
+<tr class="memdesc:ac326cb87a196bcc5db3ce3ff56882317"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get factor domain.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#ac326cb87a196bcc5db3ce3ff56882317">More...</a><br /></td></tr>
+<tr class="separator:ac326cb87a196bcc5db3ce3ff56882317"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8e52bcb35f56e45cd64056ddd1bcdaa2"><td class="memItemLeft" align="right" valign="top">Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a8e52bcb35f56e45cd64056ddd1bcdaa2">domain_scope</a> (self, List[Set[Tuple[str, NumericValue]]] domain)</td></tr>
-<tr class="memdesc:a8e52bcb35f56e45cd64056ddd1bcdaa2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a domain of values obtain scope variables implied Obtain random variables from given factor domain.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a8e52bcb35f56e45cd64056ddd1bcdaa2">More...</a><br /></td></tr>
+<tr class="memdesc:a8e52bcb35f56e45cd64056ddd1bcdaa2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a domain of values obtain scope variables implied.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a8e52bcb35f56e45cd64056ddd1bcdaa2">More...</a><br /></td></tr>
 <tr class="separator:a8e52bcb35f56e45cd64056ddd1bcdaa2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab9f332258fe41ffa364de9cbffbc17da"><td class="memItemLeft" align="right" valign="top">Tuple[bool, Optional[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>]]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#ab9f332258fe41ffa364de9cbffbc17da">has_var</a> (self, str ids)</td></tr>
 <tr class="memdesc:ab9f332258fe41ffa364de9cbffbc17da"><td class="mdescLeft">&#160;</td><td class="mdescRight">check if given id belongs to variable of this scope Check if given random variable id is contained in scope of factor.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#ab9f332258fe41ffa364de9cbffbc17da">More...</a><br /></td></tr>
@@ -133,47 +133,44 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a09873ca1d3a325b55b6d96ea23ea44f7"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a09873ca1d3a325b55b6d96ea23ea44f7">__call__</a> (self, Set[Tuple[str, NumericValue]] scope_product)</td></tr>
 <tr class="memdesc:a09873ca1d3a325b55b6d96ea23ea44f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Make a factor callable to reproduce more function like behavior.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a09873ca1d3a325b55b6d96ea23ea44f7">More...</a><br /></td></tr>
 <tr class="separator:a09873ca1d3a325b55b6d96ea23ea44f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a551761e6454d7b072284ec34c630677f"><td class="memItemLeft" align="right" valign="top"><a id="a551761e6454d7b072284ec34c630677f"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a551761e6454d7b072284ec34c630677f">normalize</a> (self, float phi_result)</td></tr>
-<tr class="memdesc:a551761e6454d7b072284ec34c630677f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Normalize a given factorization result by dividing it to the value of partition function value Z. <br /></td></tr>
+<tr class="memitem:a551761e6454d7b072284ec34c630677f"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a551761e6454d7b072284ec34c630677f">normalize</a> (self, float phi_result)</td></tr>
+<tr class="memdesc:a551761e6454d7b072284ec34c630677f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Normalize a given factorization result by dividing it to the value of partition function value Z.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a551761e6454d7b072284ec34c630677f">More...</a><br /></td></tr>
 <tr class="separator:a551761e6454d7b072284ec34c630677f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36dfe63e91edb2f8adda5b95e2f7e4bc"><td class="memItemLeft" align="right" valign="top"><a id="a36dfe63e91edb2f8adda5b95e2f7e4bc"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a36dfe63e91edb2f8adda5b95e2f7e4bc">phi_normal</a> (self, Set[Tuple[str, NumericValue]] scope_product)</td></tr>
-<tr class="memdesc:a36dfe63e91edb2f8adda5b95e2f7e4bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">normalize a given factor value <br /></td></tr>
+<tr class="memitem:a36dfe63e91edb2f8adda5b95e2f7e4bc"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a36dfe63e91edb2f8adda5b95e2f7e4bc">phi_normal</a> (self, Set[Tuple[str, NumericValue]] scope_product)</td></tr>
+<tr class="memdesc:a36dfe63e91edb2f8adda5b95e2f7e4bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">normalize a given factor value  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a36dfe63e91edb2f8adda5b95e2f7e4bc">More...</a><br /></td></tr>
 <tr class="separator:a36dfe63e91edb2f8adda5b95e2f7e4bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac0dd1fe0b6986b3998a90660195e91d9"><td class="memItemLeft" align="right" valign="top"><a id="ac0dd1fe0b6986b3998a90660195e91d9"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#ac0dd1fe0b6986b3998a90660195e91d9">max_value</a> (self)</td></tr>
-<tr class="memdesc:ac0dd1fe0b6986b3998a90660195e91d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">maximum factor value for this factor <br /></td></tr>
-<tr class="separator:ac0dd1fe0b6986b3998a90660195e91d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1395aab6f3ecea286ee69c953551c163"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a1395aab6f3ecea286ee69c953551c163">partition_value</a> (self, svars)</td></tr>
-<tr class="memdesc:a1395aab6f3ecea286ee69c953551c163"><td class="mdescLeft">&#160;</td><td class="mdescRight">compute partition value aka normalizing value for the factor from Koller, Friedman 2009 p.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a1395aab6f3ecea286ee69c953551c163">More...</a><br /></td></tr>
-<tr class="separator:a1395aab6f3ecea286ee69c953551c163"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54a12f2abc389ce1bc4ed4db3ab685da"><td class="memItemLeft" align="right" valign="top"><a id="a54a12f2abc389ce1bc4ed4db3ab685da"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a54a12f2abc389ce1bc4ed4db3ab685da">zval</a> (self)</td></tr>
-<tr class="memdesc:a54a12f2abc389ce1bc4ed4db3ab685da"><td class="mdescLeft">&#160;</td><td class="mdescRight">compute value of partition function for this factor <br /></td></tr>
-<tr class="separator:a54a12f2abc389ce1bc4ed4db3ab685da"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add6ca152ac92c73083940b2c5af43a57"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#add6ca152ac92c73083940b2c5af43a57">max_probability</a> (self)</td></tr>
+<tr class="memdesc:add6ca152ac92c73083940b2c5af43a57"><td class="mdescLeft">&#160;</td><td class="mdescRight">maximum preference value for this factor  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#add6ca152ac92c73083940b2c5af43a57">More...</a><br /></td></tr>
+<tr class="separator:add6ca152ac92c73083940b2c5af43a57"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ddc8e380b94be28779127e77bfe54e8"><td class="memItemLeft" align="right" valign="top">Set[Tuple[str, NumericValue]]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a6ddc8e380b94be28779127e77bfe54e8">max_value</a> (self)</td></tr>
+<tr class="memdesc:a6ddc8e380b94be28779127e77bfe54e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">maximum factor value for this factor  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a6ddc8e380b94be28779127e77bfe54e8">More...</a><br /></td></tr>
+<tr class="separator:a6ddc8e380b94be28779127e77bfe54e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3fb89453ebc9f31a96a88ba2347b8fdd"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a3fb89453ebc9f31a96a88ba2347b8fdd">partition_value</a> (self, List[FrozenSet[Tuple[str, NumericValue]]] domains)</td></tr>
+<tr class="memdesc:a3fb89453ebc9f31a96a88ba2347b8fdd"><td class="mdescLeft">&#160;</td><td class="mdescRight">compute partition value aka normalizing value for the factor from Koller, Friedman 2009 p.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a3fb89453ebc9f31a96a88ba2347b8fdd">More...</a><br /></td></tr>
+<tr class="separator:a3fb89453ebc9f31a96a88ba2347b8fdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a487a5dff817c4afa4d2e59ff908b8d58"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a487a5dff817c4afa4d2e59ff908b8d58">zval</a> (self)</td></tr>
+<tr class="memdesc:a487a5dff817c4afa4d2e59ff908b8d58"><td class="mdescLeft">&#160;</td><td class="mdescRight">compute value of partition function for this factor  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a487a5dff817c4afa4d2e59ff908b8d58">More...</a><br /></td></tr>
+<tr class="separator:a487a5dff817c4afa4d2e59ff908b8d58"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e125225802a48b8c398bef69ad2c8c9"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a7e125225802a48b8c398bef69ad2c8c9">marginal_joint</a> (self, Set[Tuple[str, NumericValue]] scope_product)</td></tr>
 <tr class="memdesc:a7e125225802a48b8c398bef69ad2c8c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">marginal joint function.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a7e125225802a48b8c398bef69ad2c8c9">More...</a><br /></td></tr>
 <tr class="separator:a7e125225802a48b8c398bef69ad2c8c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af7e99815e0df248137f761121b19fb54"><td class="memItemLeft" align="right" valign="top"><a id="af7e99815e0df248137f761121b19fb54"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#af7e99815e0df248137f761121b19fb54">in_scope</a> (self, Union[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>, str] v)</td></tr>
-<tr class="memdesc:af7e99815e0df248137f761121b19fb54"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if given parameter is in scope of this factor. <br /></td></tr>
-<tr class="separator:af7e99815e0df248137f761121b19fb54"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a43e049fae2707f851b4913efca63ebfb"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a43e049fae2707f851b4913efca63ebfb">product</a> (self, other, product_fn=lambda x, x *y y, accumulator=lambda added, added *accumulated accumulated)</td></tr>
-<tr class="memdesc:a43e049fae2707f851b4913efca63ebfb"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html" title="Factor from Koller and Friedman 2009, p.">Factor</a> product operation from Koller, Friedman 2009, p.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a43e049fae2707f851b4913efca63ebfb">More...</a><br /></td></tr>
-<tr class="separator:a43e049fae2707f851b4913efca63ebfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7eb359f2d9eb0253a13d23abf4328825"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a7eb359f2d9eb0253a13d23abf4328825">reduced</a> (self, Set[Tuple[str, NumericValue]] context)</td></tr>
-<tr class="memdesc:a7eb359f2d9eb0253a13d23abf4328825"><td class="mdescLeft">&#160;</td><td class="mdescRight">reduce factor using given context  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a7eb359f2d9eb0253a13d23abf4328825">More...</a><br /></td></tr>
-<tr class="separator:a7eb359f2d9eb0253a13d23abf4328825"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aabdab90716a5150e82200a74609313db"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#aabdab90716a5150e82200a74609313db">reduced_by_value</a> (self, Set[Tuple[str, NumericValue]] context)</td></tr>
-<tr class="separator:aabdab90716a5150e82200a74609313db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c4b19815f56da8c4c138e8dae751808"><td class="memItemLeft" align="right" valign="top"><a id="a8c4b19815f56da8c4c138e8dae751808"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a8c4b19815f56da8c4c138e8dae751808">filter_assignments</a> (self, Set[Tuple[str, NumericValue]] assignments, Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>] context)</td></tr>
-<tr class="memdesc:a8c4b19815f56da8c4c138e8dae751808"><td class="mdescLeft">&#160;</td><td class="mdescRight">filter out assignments that do not belong to context domain <br /></td></tr>
-<tr class="separator:a8c4b19815f56da8c4c138e8dae751808"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a622fa1e0ea4c944197cdc8bf452b76ec"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a622fa1e0ea4c944197cdc8bf452b76ec">reduced_by_vars</a> (self, Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>] assignment_context, Set[Tuple[str, NumericValue]] assignments)</td></tr>
-<tr class="memdesc:a622fa1e0ea4c944197cdc8bf452b76ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Koller, Friedman 2009, p.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a622fa1e0ea4c944197cdc8bf452b76ec">More...</a><br /></td></tr>
-<tr class="separator:a622fa1e0ea4c944197cdc8bf452b76ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae306357506eda672091568149d77c396"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#ae306357506eda672091568149d77c396">in_scope</a> (self, Union[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>, str] v)</td></tr>
+<tr class="memdesc:ae306357506eda672091568149d77c396"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if given parameter is in scope of this factor.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#ae306357506eda672091568149d77c396">More...</a><br /></td></tr>
+<tr class="separator:ae306357506eda672091568149d77c396"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab04ce084438635ab933f6cb11e941a22"><td class="memItemLeft" align="right" valign="top">Tuple[<a class="el" href="../../dc/de3/classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject.html">GraphObject</a>, float]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#ab04ce084438635ab933f6cb11e941a22">product</a> (self, other, product_fn=lambda x, x *y y, accumulator=lambda added, added *accumulated accumulated)</td></tr>
+<tr class="memdesc:ab04ce084438635ab933f6cb11e941a22"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html" title="Factor from Koller and Friedman 2009, p.">Factor</a> product operation from Koller, Friedman 2009, p.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#ab04ce084438635ab933f6cb11e941a22">More...</a><br /></td></tr>
+<tr class="separator:ab04ce084438635ab933f6cb11e941a22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3406a6a56d123908a780e26f5dd9dea4"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a3406a6a56d123908a780e26f5dd9dea4">reduced</a> (self, Set[Tuple[str, NumericValue]] assignments)</td></tr>
+<tr class="memdesc:a3406a6a56d123908a780e26f5dd9dea4"><td class="mdescLeft">&#160;</td><td class="mdescRight">reduce factor using given context  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a3406a6a56d123908a780e26f5dd9dea4">More...</a><br /></td></tr>
+<tr class="separator:a3406a6a56d123908a780e26f5dd9dea4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaaeffb4bde7dbadfa8559b7e0cd578d3"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#aaaeffb4bde7dbadfa8559b7e0cd578d3">reduced_by_value</a> (self, Set[Tuple[str, NumericValue]] assignments)</td></tr>
+<tr class="separator:aaaeffb4bde7dbadfa8559b7e0cd578d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07342b2544e27d9369ede2e24c6de3d7"><td class="memItemLeft" align="right" valign="top">Set[Tuple[str, NumericValue]]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a07342b2544e27d9369ede2e24c6de3d7">filter_assignments</a> (self, Set[Tuple[str, NumericValue]] assignments, Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>] context)</td></tr>
+<tr class="memdesc:a07342b2544e27d9369ede2e24c6de3d7"><td class="mdescLeft">&#160;</td><td class="mdescRight">filter out assignments that do not belong to context domain  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a07342b2544e27d9369ede2e24c6de3d7">More...</a><br /></td></tr>
+<tr class="separator:a07342b2544e27d9369ede2e24c6de3d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefa21d9b3390ced842017badbab7b33e"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#aefa21d9b3390ced842017badbab7b33e">reduced_by_vars</a> (self, Set[Tuple[str, NumericValue]] assignments)</td></tr>
+<tr class="memdesc:aefa21d9b3390ced842017badbab7b33e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Koller, Friedman 2009, p.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#aefa21d9b3390ced842017badbab7b33e">More...</a><br /></td></tr>
+<tr class="separator:aefa21d9b3390ced842017badbab7b33e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0033893e70ffb483b9502962361fcfbc"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a0033893e70ffb483b9502962361fcfbc">maxout_var</a> (self, <a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a> Y)</td></tr>
 <tr class="memdesc:a0033893e70ffb483b9502962361fcfbc"><td class="mdescLeft">&#160;</td><td class="mdescRight">max the variable out of factor as per Koller, Friedman 2009, p.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a0033893e70ffb483b9502962361fcfbc">More...</a><br /></td></tr>
 <tr class="separator:a0033893e70ffb483b9502962361fcfbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -203,13 +200,18 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>update_data</b> (self,
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:ace5bbf86fb98712a090502764a2bb5d6"><td class="memItemLeft" align="right" valign="top"><a id="ace5bbf86fb98712a090502764a2bb5d6"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>svars</b></td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#ace5bbf86fb98712a090502764a2bb5d6">svars</a></td></tr>
+<tr class="memdesc:ace5bbf86fb98712a090502764a2bb5d6"><td class="mdescLeft">&#160;</td><td class="mdescRight">random variables belonging to this factor <br /></td></tr>
 <tr class="separator:ace5bbf86fb98712a090502764a2bb5d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f8cd3febd40d6f239304fe140f2236f"><td class="memItemLeft" align="right" valign="top"><a id="a8f8cd3febd40d6f239304fe140f2236f"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a8f8cd3febd40d6f239304fe140f2236f">domain_table</a></td></tr>
+<tr class="memdesc:a8f8cd3febd40d6f239304fe140f2236f"><td class="mdescLeft">&#160;</td><td class="mdescRight">scope variable hash table <br /></td></tr>
+<tr class="separator:a8f8cd3febd40d6f239304fe140f2236f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6eb533d17da00fdb04180b610a12f2d8"><td class="memItemLeft" align="right" valign="top"><a id="a6eb533d17da00fdb04180b610a12f2d8"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>factor_fn</b></td></tr>
 <tr class="separator:a6eb533d17da00fdb04180b610a12f2d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e5496bfa7e744735901ee4cdee8b7b8"><td class="memItemLeft" align="right" valign="top"><a id="a6e5496bfa7e744735901ee4cdee8b7b8"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Z</b></td></tr>
+<tr class="memitem:a6e5496bfa7e744735901ee4cdee8b7b8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a6e5496bfa7e744735901ee4cdee8b7b8">Z</a></td></tr>
+<tr class="memdesc:a6e5496bfa7e744735901ee4cdee8b7b8"><td class="mdescLeft">&#160;</td><td class="mdescRight">cartesian product of factor domain  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a6e5496bfa7e744735901ee4cdee8b7b8">More...</a><br /></td></tr>
 <tr class="separator:a6e5496bfa7e744735901ee4cdee8b7b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4093543d1345f0ebcc787e10a3ed3bbd"><td class="memItemLeft" align="right" valign="top"><a id="a4093543d1345f0ebcc787e10a3ed3bbd"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>scope_products</b></td></tr>
@@ -271,11 +273,50 @@ Public Attributes</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">scope_vars</td><td>variables that constitue scope of factor. </td></tr>
-    <tr><td class="paramname">factor_fn</td><td>a real valued function </td></tr>
+    <tr><td class="paramname">factor_fn</td><td>a real valued function</td></tr>
   </table>
   </dd>
 </dl>
-
+<div class="fragment"><div class="line">&gt;&gt;&gt; Af = NumCatRVariable(</div>
+<div class="line">&gt;&gt;&gt;         node_id=<span class="stringliteral">&quot;A&quot;</span>, </div>
+<div class="line">&gt;&gt;&gt;         input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [10, 50]},</div>
+<div class="line">&gt;&gt;&gt;         distribution=<span class="keyword">lambda</span> x: 0.5,</div>
+<div class="line">&gt;&gt;&gt;      )</div>
+<div class="line">&gt;&gt;&gt; Bf = NumCatRVariable(</div>
+<div class="line">&gt;&gt;&gt;         node_id=<span class="stringliteral">&quot;B&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;         input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [10, 50]},</div>
+<div class="line">&gt;&gt;&gt;         distribution=<span class="keyword">lambda</span> x: 0.5,</div>
+<div class="line">&gt;&gt;&gt;     )</div>
+<div class="line">&gt;&gt;&gt; Cf = NumCatRVariable(</div>
+<div class="line">&gt;&gt;&gt;    node_id=<span class="stringliteral">&quot;C&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;    input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [10, 50]},</div>
+<div class="line">&gt;&gt;&gt;    distribution=<span class="keyword">lambda</span> x: 0.5,</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; Df = NumCatRVariable(</div>
+<div class="line">&gt;&gt;&gt;    node_id=<span class="stringliteral">&quot;D&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;    input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [10, 50]},</div>
+<div class="line">&gt;&gt;&gt;    distribution=<span class="keyword">lambda</span> x: 0.5,</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">   </div>
+<div class="line">&gt;&gt;&gt; <span class="keyword">def </span>phiAB(scope_product):</div>
+<div class="line">&gt;&gt;&gt;    <span class="stringliteral">&quot;&quot;</span></div>
+<div class="line">&gt;&gt;&gt;    sfs = set(scope_product)</div>
+<div class="line">&gt;&gt;&gt;    <span class="keywordflow">if</span> sfs == set([(<span class="stringliteral">&quot;A&quot;</span>, 10), (<span class="stringliteral">&quot;B&quot;</span>, 10)]):</div>
+<div class="line">&gt;&gt;&gt;        <span class="keywordflow">return</span> 30</div>
+<div class="line">&gt;&gt;&gt;    <span class="keywordflow">elif</span> sfs == set([(<span class="stringliteral">&quot;A&quot;</span>, 10), (<span class="stringliteral">&quot;B&quot;</span>, 50)]):</div>
+<div class="line">&gt;&gt;&gt;        <span class="keywordflow">return</span> 5</div>
+<div class="line">&gt;&gt;&gt;    <span class="keywordflow">elif</span> sfs == set([(<span class="stringliteral">&quot;A&quot;</span>, 50), (<span class="stringliteral">&quot;B&quot;</span>, 10)]):</div>
+<div class="line">&gt;&gt;&gt;        <span class="keywordflow">return</span> 1</div>
+<div class="line">&gt;&gt;&gt;    <span class="keywordflow">elif</span> sfs == set([(<span class="stringliteral">&quot;A&quot;</span>, 50), (<span class="stringliteral">&quot;B&quot;</span>, 50)]):</div>
+<div class="line">&gt;&gt;&gt;        <span class="keywordflow">return</span> 10</div>
+<div class="line">&gt;&gt;&gt;    <span class="keywordflow">else</span>:</div>
+<div class="line">&gt;&gt;&gt;        <span class="keywordflow">raise</span> ValueError(<span class="stringliteral">&quot;unknown arg&quot;</span>)</div>
+<div class="line">   </div>
+<div class="line">&gt;&gt;&gt; AB = Factor(gid=<span class="stringliteral">&quot;AB&quot;</span>, </div>
+<div class="line">&gt;&gt;&gt;         scope_vars=set([self.Af, self.Bf]), </div>
+<div class="line">&gt;&gt;&gt;         factor_fn=phiAB</div>
+<div class="line">&gt;&gt;&gt;     )</div>
+</div><!-- fragment --> 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
@@ -337,19 +378,66 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Given a domain of values obtain scope variables implied Obtain random variables from given factor domain. </p>
-<p>Each value in domain comes with an identifier of its random variable. From these identifiers, we obtain set of random variables attested in factor domain. </p>
-
+<p>Given a domain of values obtain scope variables implied. </p>
+<p>Obtain random variables from given factor domain. Each value in domain comes with an identifier of its random variable. From these identifiers, we obtain set of random variables attested in factor domain.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">domain</td><td>list of arbitrary domain values</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">ValueError</td><td><p class="starttd"></p>
+<p class="intertd">We raise value error when the argument domain value array is not a subset of the domain of the factor, since we have no way of obtaining random variable that is not inside the scope of this factor.</p>
+<p class="endtd"></p>
+</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>set of random variables implied by the given list of domain values</dd></dl>
+<div class="fragment"><div class="line">&gt;&gt;&gt; Af = NumCatRVariable(</div>
+<div class="line">&gt;&gt;&gt;    node_id=<span class="stringliteral">&quot;A&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;    input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [10, 50]},</div>
+<div class="line">&gt;&gt;&gt;    distribution=<span class="keyword">lambda</span> x: 0.5,</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; Bf = NumCatRVariable(</div>
+<div class="line">&gt;&gt;&gt;    node_id=<span class="stringliteral">&quot;B&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;    input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [10, 50]},</div>
+<div class="line">&gt;&gt;&gt;    distribution=<span class="keyword">lambda</span> x: 0.5,</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt;</div>
+<div class="line">&gt;&gt;&gt; <span class="keyword">def </span>phiAB(scope_product):</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;&quot;</span></div>
+<div class="line">&gt;&gt;&gt;     sfs = set(scope_product)</div>
+<div class="line">&gt;&gt;&gt;     <span class="keywordflow">if</span> sfs == set([(<span class="stringliteral">&quot;A&quot;</span>, 10), (<span class="stringliteral">&quot;B&quot;</span>, 10)]):</div>
+<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 30</div>
+<div class="line">&gt;&gt;&gt;     <span class="keywordflow">elif</span> sfs == set([(<span class="stringliteral">&quot;A&quot;</span>, 10), (<span class="stringliteral">&quot;B&quot;</span>, 50)]):</div>
+<div class="line">&gt;&gt;&gt;       <span class="keywordflow">return</span> 5</div>
+<div class="line">&gt;&gt;&gt;   <span class="keywordflow">elif</span> sfs == set([(<span class="stringliteral">&quot;A&quot;</span>, 50), (<span class="stringliteral">&quot;B&quot;</span>, 10)]):</div>
+<div class="line">&gt;&gt;&gt;       <span class="keywordflow">return</span> 1</div>
+<div class="line">&gt;&gt;&gt;   <span class="keywordflow">elif</span> sfs == set([(<span class="stringliteral">&quot;A&quot;</span>, 50), (<span class="stringliteral">&quot;B&quot;</span>, 50)]):</div>
+<div class="line">&gt;&gt;&gt;       <span class="keywordflow">return</span> 10</div>
+<div class="line">&gt;&gt;&gt;   <span class="keywordflow">else</span>:</div>
+<div class="line">&gt;&gt;&gt;      <span class="keywordflow">raise</span> ValueError(<span class="stringliteral">&quot;unknown arg&quot;</span>)</div>
+<div class="line"> </div>
+<div class="line">&gt;&gt;&gt; AB = Factor(gid=<span class="stringliteral">&quot;AB&quot;</span>, scope_vars=set([Af, Bf]), factor_fn=phiAB)</div>
+<div class="line">&gt;&gt;&gt; d = AB.domain_scope(domain=[set([(<span class="stringliteral">&quot;A&quot;</span>, 50), (<span class="stringliteral">&quot;B&quot;</span>, 50)]),</div>
+<div class="line">&gt;&gt;&gt;                             set([(<span class="stringliteral">&quot;A&quot;</span>,10), (<span class="stringliteral">&quot;B&quot;</span>, 10)])</div>
+<div class="line">&gt;&gt;&gt;                            ])</div>
+<div class="line">&gt;&gt;&gt; set(d) == set([Af, Bf])</div>
+<div class="line">&gt;&gt;&gt; <span class="keyword">True</span></div>
+</div><!-- fragment --> 
 </div>
 </div>
-<a id="a37253485aab7995a1fd170587be73b82"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a37253485aab7995a1fd170587be73b82">&#9670;&nbsp;</a></span>factor_domain()</h2>
+<a id="a218f06103a53e653324a61b3ed612082"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a218f06103a53e653324a61b3ed612082">&#9670;&nbsp;</a></span>factor_domain()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">def gmodels.factor.Factor.factor_domain </td>
+          <td class="memname"> List[FrozenSet[Tuple[str, NumericValue]]] gmodels.factor.Factor.factor_domain </td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname"><em>self</em>, </td>
@@ -379,7 +467,8 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<dl class="section see"><dt>See also</dt><dd>Factor.matches(rvar_filter, value_filter, value_transform) For a factor phi(A,B) return factor function's domain values, such as:</dd></dl>
+<dl class="section see"><dt>See also</dt><dd>Factor.matches(rvar_filter, value_filter, value_transform)</dd></dl>
+<p>For a factor phi(A,B) return factor function's domain values, such as:</p>
 <p class="formulaDsp">
 \[phi(A,B)\]
 </p>
@@ -398,21 +487,21 @@ Public Attributes</h2></td></tr>
 <blockquote class="doxtable">
 <blockquote class="doxtable">
 <blockquote class="doxtable">
-<p>set(("A", a1), ("B", b2)),... </p>
+<p>[frozenset(("A", a1), ("B", b2)), ...] </p>
 </blockquote>
 </blockquote>
 </blockquote>
 
 </div>
 </div>
-<a id="a886da81e66dd5c9d30436c74022c118d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a886da81e66dd5c9d30436c74022c118d">&#9670;&nbsp;</a></span>fdomain()</h2>
+<a id="a2545dafb56c12b759d0d8d69bec029a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2545dafb56c12b759d0d8d69bec029a0">&#9670;&nbsp;</a></span>fdomain()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"> List[Set[Tuple[str, NumericValue]]] gmodels.factor.Factor.fdomain </td>
+          <td class="memname"> List[FrozenSet[Tuple[str, NumericValue]]] gmodels.factor.Factor.fdomain </td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname"><em>cls</em>, </td>
@@ -455,10 +544,73 @@ Public Attributes</h2></td></tr>
     <tr><td class="paramname">D</td><td>set of random variables </td></tr>
     <tr><td class="paramname">rvar_filter</td><td>filtering function for random variables </td></tr>
     <tr><td class="paramname">value_filter</td><td>filtering values from random variables' codomain </td></tr>
-    <tr><td class="paramname">value_transform</td><td>apply a certain transformation to values from random variables' codomain. </td></tr>
+    <tr><td class="paramname">value_transform</td><td>apply a certain transformation to values from random variables' codomain.</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>list of codomain of random variables</dd></dl>
+<div class="fragment"><div class="line">&gt;&gt;&gt; A = NumCatRVariable(<span class="stringliteral">&quot;A&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;                     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
+<div class="line">&gt;&gt;&gt;                     distribution=<span class="keyword">lambda</span> x: 0.5)</div>
+<div class="line"> </div>
+<div class="line">&gt;&gt;&gt; B = NumCatRVariable(<span class="stringliteral">&quot;B&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;                     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
+<div class="line">&gt;&gt;&gt;                     distribution=<span class="keyword">lambda</span> x: 0.5)</div>
+<div class="line"> </div>
+<div class="line">&gt;&gt;&gt; D = set([A,B])</div>
+<div class="line"> </div>
+<div class="line">&gt;&gt;&gt; fmatches = Factor.fdomain(D=D)</div>
+<div class="line">&gt;&gt;&gt; print(fmatches)</div>
+<div class="line"> </div>
+<div class="line">&gt;&gt;&gt; [frozenset((<span class="stringliteral">&quot;A&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;A&quot;</span>, <span class="keyword">True</span>)),</div>
+<div class="line">&gt;&gt;&gt;  frozenset((<span class="stringliteral">&quot;B&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;B&quot;</span>, <span class="keyword">False</span>)),</div>
+<div class="line">&gt;&gt;&gt; ]</div>
+</div><!-- fragment --> 
+</div>
+</div>
+<a id="a07342b2544e27d9369ede2e24c6de3d7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07342b2544e27d9369ede2e24c6de3d7">&#9670;&nbsp;</a></span>filter_assignments()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> Set[Tuple[str, NumericValue]] gmodels.factor.Factor.filter_assignments </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Set[Tuple[str, NumericValue]]&#160;</td>
+          <td class="paramname"><em>assignments</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>]
+    &#160;</td>
+          <td class="paramname"><em>context</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>filter out assignments that do not belong to context domain </p>
+<p>Scans the given set of assignements/evidences and removes those that do not belong to the context.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">context</td><td>set of random variables that are relevant to current computation</td></tr>
+    <tr><td class="paramname">assignments</td><td>evidences with respect to the value of a certain random variable in scope of the context.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>set of valid assignments </dd></dl>
 
 </div>
 </div>
@@ -501,6 +653,16 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Make factor from joint variables. </p>
+<p>We assume that given random variables are conditionally related. We simply assume the following factorization between given variables: </p><p class="formulaDsp">
+\[ P(X_i | Pa_{X_i}) \]
+</p>
+<p> which decomposes as </p><p class="formulaDsp">
+\[ P(X_i | (X_1, X_2, X_3, \dots, X_j)\]
+</p>
+<p> where </p><p class="formulaDsp">
+\[{X_1, X_2, \dots, X_j} = Pa_{X_i}\]
+</p>
+<p>Basically we take the marginal product of parents and use the bayes rule to output the final probability value of the expression. See Koller, Friedman 2009, p. 46 - 47 on conditional parametrization and p. 62 for factorization of conditionally parametrized structures.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">X_i</td><td>main variable </td></tr>
@@ -552,11 +714,22 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Make factor from joint variables. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">svars</td><td>set of random variables in the scope of the future factor</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>We assume that the factor for the given set of random variables would be their marginal product.</p>
 <div class="fragment"><div class="line">&gt;&gt;&gt; A = NumCatRVariable(<span class="stringliteral">&quot;A&quot;</span>,</div>
 <div class="line">&gt;&gt;&gt;                     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
 <div class="line">&gt;&gt;&gt;                     distribution=<span class="keyword">lambda</span> x: 0.5)</div>
+<div class="line">&gt;&gt;&gt; B = NumCatRVariable(<span class="stringliteral">&quot;B&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;                     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
+<div class="line">&gt;&gt;&gt;                     distribution=<span class="keyword">lambda</span> x: 0.5)</div>
 <div class="line"> </div>
-<div class="line">&gt;&gt;&gt; fac = Factor.from_joint_vars(svars=set([A]))</div>
+<div class="line"> </div>
+<div class="line">&gt;&gt;&gt; fac = Factor.from_joint_vars(svars=set([A, B]))</div>
 </div><!-- fragment --> 
 </div>
 </div>
@@ -589,10 +762,63 @@ Public Attributes</h2></td></tr>
 <p>check if given id belongs to variable of this scope Check if given random variable id is contained in scope of factor. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">ids</td><td>identifier of random variable </td></tr>
+    <tr><td class="paramname">ids</td><td>identifier of random variable</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">ValueError</td><td>Value error is raised if there are more than one random variable associated to id string</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Tuple <p class="startdd"></p>
+<p class="interdd">a tuple whose first element is a boolean flag indicating if there is indeed a variable associated to identifier and whose second element is either None if the operation has failed or the random variable associated to given identifier.</p>
+<p class="enddd"></p>
+</dd></dl>
+
+</div>
+</div>
+<a id="ae306357506eda672091568149d77c396"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae306357506eda672091568149d77c396">&#9670;&nbsp;</a></span>in_scope()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> bool gmodels.factor.Factor.in_scope </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Union[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>, str]&#160;</td>
+          <td class="paramname"><em>v</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Check if given parameter is in scope of this factor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td>either an identifier of a random variable or the random variable itself.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">TypeError</td><td>type error is raised if the given argument is neither a random variable nor a string identifier.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>a boolean flag which indicates if the argument is in scope or not. </dd></dl>
 
 </div>
 </div>
@@ -623,18 +849,31 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>marginal joint function. </p>
-<p>Default factor function when none is provided. </p>
+<p>Default factor function when none is provided.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">scope_product</td><td>a row in conditional probability table of factor</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">ValueError</td><td>A value error is raised when there is an unknown random variable with an identifier</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>preference value for a given scope_product </dd></dl>
 
 </div>
 </div>
-<a id="af22864a4d9234ac83bbcb1836c986722"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af22864a4d9234ac83bbcb1836c986722">&#9670;&nbsp;</a></span>matches()</h2>
+<a id="a59738ac6994481962ca3b2462082458c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a59738ac6994481962ca3b2462082458c">&#9670;&nbsp;</a></span>matches()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">def gmodels.factor.Factor.matches </td>
+          <td class="memname"> List[FrozenSet[Tuple[str, NumericValue]]] gmodels.factor.Factor.matches </td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname"><em>cls</em>, </td>
@@ -671,7 +910,8 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Compute scope matches for arbitrary domain cartesian product over set of random variables. </p>
+<p>Compute cartesian product over factor domain. </p>
+<p>The arguments are there for filtering or manipulating factor domain: </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a2545dafb56c12b759d0d8d69bec029a0" title="Get factor domain Val(D) D being a set of random variables.">Factor.fdomain</a></dd></dl>
 <div class="fragment"><div class="line">&gt;&gt;&gt; A = NumCatRVariable(<span class="stringliteral">&quot;A&quot;</span>,</div>
 <div class="line">&gt;&gt;&gt;                     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
 <div class="line">&gt;&gt;&gt;                     distribution=<span class="keyword">lambda</span> x: 0.5)</div>
@@ -685,9 +925,109 @@ Public Attributes</h2></td></tr>
 <div class="line">&gt;&gt;&gt; fmatches = Factor.matches(D=D)</div>
 <div class="line">&gt;&gt;&gt; print(fmatches)</div>
 <div class="line"> </div>
-<div class="line">&gt;&gt;&gt; [((<span class="stringliteral">&quot;A&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;B&quot;</span>, <span class="keyword">True</span>)),</div>
-<div class="line">&gt;&gt;&gt;  ((<span class="stringliteral">&quot;A&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;B&quot;</span>, <span class="keyword">False</span>)),</div>
-<div class="line">&gt;&gt;&gt;  ((<span class="stringliteral">&quot;A&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;B&quot;</span>, <span class="keyword">True</span>)), ((<span class="stringliteral">&quot;A&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;B&quot;</span>, <span class="keyword">False</span>))]</div>
+<div class="line">&gt;&gt;&gt; [frozenset([(<span class="stringliteral">&quot;A&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;B&quot;</span>, <span class="keyword">True</span>)]),</div>
+<div class="line">&gt;&gt;&gt;  frozenset([(<span class="stringliteral">&quot;A&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;B&quot;</span>, <span class="keyword">False</span>)]),</div>
+<div class="line">&gt;&gt;&gt;  frozenset([(<span class="stringliteral">&quot;A&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;B&quot;</span>, <span class="keyword">True</span>)]), </div>
+<div class="line">&gt;&gt;&gt;  frozenset([(<span class="stringliteral">&quot;A&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;B&quot;</span>, <span class="keyword">False</span>)])]</div>
+</div><!-- fragment --> 
+</div>
+</div>
+<a id="add6ca152ac92c73083940b2c5af43a57"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add6ca152ac92c73083940b2c5af43a57">&#9670;&nbsp;</a></span>max_probability()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> float gmodels.factor.Factor.max_probability </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>maximum preference value for this factor </p>
+<div class="fragment"><div class="line">&gt;&gt;&gt; <span class="comment">#</span></div>
+<div class="line">&gt;&gt;&gt; Bf = NumCatRVariable(</div>
+<div class="line">&gt;&gt;&gt;     node_id=<span class="stringliteral">&quot;B&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [10, 50]},</div>
+<div class="line">&gt;&gt;&gt;     distribution=<span class="keyword">lambda</span> x: 0.5,</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; Cf = NumCatRVariable(</div>
+<div class="line">&gt;&gt;&gt;     node_id=<span class="stringliteral">&quot;C&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [10, 50]},</div>
+<div class="line">&gt;&gt;&gt;     distribution=<span class="keyword">lambda</span> x: 0.5,</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; <span class="keyword">def </span>phibc(scope_product):</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;&quot;</span></div>
+<div class="line">&gt;&gt;&gt;     sfs = set(scope_product)</div>
+<div class="line">&gt;&gt;&gt;     <span class="keywordflow">if</span> sfs == set([(<span class="stringliteral">&quot;B&quot;</span>, 10), (<span class="stringliteral">&quot;C&quot;</span>, 10)]):</div>
+<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 0.5</div>
+<div class="line">&gt;&gt;&gt;     <span class="keywordflow">elif</span> sfs == set([(<span class="stringliteral">&quot;B&quot;</span>, 10), (<span class="stringliteral">&quot;C&quot;</span>, 50)]):</div>
+<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 0.7</div>
+<div class="line">&gt;&gt;&gt;     <span class="keywordflow">elif</span> sfs == set([(<span class="stringliteral">&quot;B&quot;</span>, 50), (<span class="stringliteral">&quot;C&quot;</span>, 10)]):</div>
+<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 0.1</div>
+<div class="line">&gt;&gt;&gt;     <span class="keywordflow">elif</span> sfs == set([(<span class="stringliteral">&quot;B&quot;</span>, 50), (<span class="stringliteral">&quot;C&quot;</span>, 50)]):</div>
+<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 0.2</div>
+<div class="line">&gt;&gt;&gt;     <span class="keywordflow">else</span>:</div>
+<div class="line">&gt;&gt;&gt;         <span class="keywordflow">raise</span> ValueError(<span class="stringliteral">&quot;unknown arg&quot;</span>)</div>
+<div class="line"> </div>
+<div class="line">&gt;&gt;&gt; bc = Factor(gid=<span class="stringliteral">&quot;bc&quot;</span>, scope_vars=set([Bf, Cf]), factor_fn=phibc)</div>
+<div class="line">&gt;&gt;&gt; mval = self.bc.max_probability()</div>
+<div class="line">&gt;&gt;&gt; print(mval)</div>
+<div class="line">&gt;&gt;&gt; 0.7</div>
+</div><!-- fragment --> 
+</div>
+</div>
+<a id="a6ddc8e380b94be28779127e77bfe54e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ddc8e380b94be28779127e77bfe54e8">&#9670;&nbsp;</a></span>max_value()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> Set[Tuple[str, NumericValue]] gmodels.factor.Factor.max_value </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>maximum factor value for this factor </p>
+<p>Obtain the highest probability yielding value from the domain of the factor. Notice that it does not give a probability value. It outputs the value which when evaluated yields the highest probability value.</p>
+<div class="fragment"><div class="line">&gt;&gt;&gt; <span class="comment">#</span></div>
+<div class="line">&gt;&gt;&gt; Bf = NumCatRVariable(</div>
+<div class="line">&gt;&gt;&gt;     node_id=<span class="stringliteral">&quot;B&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [10, 50]},</div>
+<div class="line">&gt;&gt;&gt;     distribution=<span class="keyword">lambda</span> x: 0.5,</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; Cf = NumCatRVariable(</div>
+<div class="line">&gt;&gt;&gt;     node_id=<span class="stringliteral">&quot;C&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [10, 50]},</div>
+<div class="line">&gt;&gt;&gt;     distribution=<span class="keyword">lambda</span> x: 0.5,</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; <span class="keyword">def </span>phibc(scope_product):</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;&quot;</span></div>
+<div class="line">&gt;&gt;&gt;     sfs = set(scope_product)</div>
+<div class="line">&gt;&gt;&gt;     <span class="keywordflow">if</span> sfs == set([(<span class="stringliteral">&quot;B&quot;</span>, 10), (<span class="stringliteral">&quot;C&quot;</span>, 10)]):</div>
+<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 0.5</div>
+<div class="line">&gt;&gt;&gt;     <span class="keywordflow">elif</span> sfs == set([(<span class="stringliteral">&quot;B&quot;</span>, 10), (<span class="stringliteral">&quot;C&quot;</span>, 50)]):</div>
+<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 0.7</div>
+<div class="line">&gt;&gt;&gt;     <span class="keywordflow">elif</span> sfs == set([(<span class="stringliteral">&quot;B&quot;</span>, 50), (<span class="stringliteral">&quot;C&quot;</span>, 10)]):</div>
+<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 0.1</div>
+<div class="line">&gt;&gt;&gt;     <span class="keywordflow">elif</span> sfs == set([(<span class="stringliteral">&quot;B&quot;</span>, 50), (<span class="stringliteral">&quot;C&quot;</span>, 50)]):</div>
+<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 0.2</div>
+<div class="line">&gt;&gt;&gt;     <span class="keywordflow">else</span>:</div>
+<div class="line">&gt;&gt;&gt;         <span class="keywordflow">raise</span> ValueError(<span class="stringliteral">&quot;unknown arg&quot;</span>)</div>
+<div class="line"> </div>
+<div class="line">&gt;&gt;&gt; bc = Factor(gid=<span class="stringliteral">&quot;bc&quot;</span>, scope_vars=set([Bf, Cf]), factor_fn=phibc)</div>
+<div class="line">&gt;&gt;&gt; mval = self.bc.max_value()</div>
+<div class="line">&gt;&gt;&gt; print(mval)</div>
+<div class="line">&gt;&gt;&gt; {[(<span class="stringliteral">&quot;B&quot;</span>, 10), (<span class="stringliteral">&quot;C&quot;</span>, 50)]}</div>
 </div><!-- fragment --> 
 </div>
 </div>
@@ -719,12 +1059,78 @@ Public Attributes</h2></td></tr>
 
 <p>max the variable out of factor as per Koller, Friedman 2009, p. </p>
 <p>555</p>
+<p>Maxing out a variable, or factor maximization is defined by Koller, Friedman as: </p><blockquote class="doxtable">
+<p>Let X be a set of variables, and Y </p><p class="formulaDsp">
+\[ \not \in \]
+</p>
+<p> X, a random variable. Let </p><p class="formulaDsp">
+\[ \phi(X, Y) \]
+</p>
+<p> be a factor. We define the factor maximization of Y in </p><p class="formulaDsp">
+\[ \phi \]
+</p>
+<p> to be factor </p><p class="formulaDsp">
+\[ \psi \]
+</p>
+<p> over X such that: </p><p class="formulaDsp">
+\[ \psi(X) = max_{Y}\phi(X, Y) \]
+</p>
+ </blockquote>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">Y</td><td>random variable who is going to be maxed out.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">ValueError</td><td>If the argument is not in scope of this factor, we throw a value error</td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html" title="Factor from Koller and Friedman 2009, p.">Factor</a> </dd></dl>
 
 </div>
 </div>
-<a id="a1395aab6f3ecea286ee69c953551c163"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1395aab6f3ecea286ee69c953551c163">&#9670;&nbsp;</a></span>partition_value()</h2>
+<a id="a551761e6454d7b072284ec34c630677f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a551761e6454d7b072284ec34c630677f">&#9670;&nbsp;</a></span>normalize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> float gmodels.factor.Factor.normalize </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">float&#160;</td>
+          <td class="paramname"><em>phi_result</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Normalize a given factorization result by dividing it to the value of partition function value Z. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">phi_result</td><td>the preference value to be normalized with partition constant</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>normalized preference value </dd></dl>
+
+</div>
+</div>
+<a id="a3fb89453ebc9f31a96a88ba2347b8fdd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3fb89453ebc9f31a96a88ba2347b8fdd">&#9670;&nbsp;</a></span>partition_value()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -738,8 +1144,8 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>svars</em>&#160;</td>
+          <td class="paramtype">List[FrozenSet[Tuple[str, NumericValue]]]&#160;</td>
+          <td class="paramname"><em>domains</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -750,8 +1156,49 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>compute partition value aka normalizing value for the factor from Koller, Friedman 2009 p. </p>
-<p>105 </p>
-
+<p>105 For example given the following factors:</p>
+<p class="formulaDsp">
+\[ P(a,b,c,d) = \frac{1}{Z} \phi_1(a,b) \cdot \phi_2(b,c) \cdot \phi_3(c, d) \cdot \phi_4(d, a) \]
+</p>
+<p>The Z constant is the normalizing value also known as <em>partition function</em>. It is defined as the following: </p><p class="formulaDsp">
+\[Z = \sum_{a,b,c,d} \phi_1(a,b) \cdot \phi_2(b,c) \cdot \phi_3(c, d) \cdot \phi_4(d, a) \]
+</p>
+<p>We basically sum every possible output for the joint distribution of given random variables.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">domains</td><td>list of domain set of the involved random variables.</td></tr>
+  </table>
+  </dd>
+</dl>
+<div class="fragment"><div class="line">&gt;&gt;&gt; input_data = {</div>
+<div class="line">&gt;&gt;&gt;    <span class="stringliteral">&quot;intelligence&quot;</span>: {<span class="stringliteral">&quot;outcome-values&quot;</span>: [0.1, 0.9], <span class="stringliteral">&quot;evidence&quot;</span>: 0.9},</div>
+<div class="line">&gt;&gt;&gt;    <span class="stringliteral">&quot;grade&quot;</span>: {<span class="stringliteral">&quot;outcome-values&quot;</span>: [0.2, 0.4, 0.6], <span class="stringliteral">&quot;evidence&quot;</span>: 0.2},</div>
+<div class="line">&gt;&gt;&gt;    <span class="stringliteral">&quot;dice&quot;</span>: {<span class="stringliteral">&quot;outcome-values&quot;</span>: [i <span class="keywordflow">for</span> i <span class="keywordflow">in</span> range(1, 7)], <span class="stringliteral">&quot;evidence&quot;</span>: 1.0 / 6},</div>
+<div class="line">&gt;&gt;&gt;    <span class="stringliteral">&quot;fdice&quot;</span>: {<span class="stringliteral">&quot;outcome-values&quot;</span>: [i <span class="keywordflow">for</span> i <span class="keywordflow">in</span> range(1, 7)]},</div>
+<div class="line">&gt;&gt;&gt; }</div>
+<div class="line">&gt;&gt;&gt; </div>
+<div class="line">&gt;&gt;&gt; intelligence = NumCatRVariable(</div>
+<div class="line">&gt;&gt;&gt;     node_id=<span class="stringliteral">&quot;int&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;     input_data=input_data[<span class="stringliteral">&quot;intelligence&quot;</span>],</div>
+<div class="line">&gt;&gt;&gt;     distribution=intelligence_dist,</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; </div>
+<div class="line">&gt;&gt;&gt; grade = NumCatRVariable(</div>
+<div class="line">&gt;&gt;&gt;     node_id=nid2, input_data=input_data[<span class="stringliteral">&quot;grade&quot;</span>], distribution=grade_dist</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; </div>
+<div class="line">&gt;&gt;&gt; dice = NumCatRVariable(</div>
+<div class="line">&gt;&gt;&gt;    node_id=nid3, input_data=input_data[<span class="stringliteral">&quot;dice&quot;</span>], distribution=fair_dice_dist</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; </div>
+<div class="line">&gt;&gt;&gt; f = Factor(</div>
+<div class="line">&gt;&gt;&gt;    gid=<span class="stringliteral">&quot;f&quot;</span>, scope_vars=set([grade, dice, intelligence])</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; </div>
+<div class="line">&gt;&gt;&gt; pval = f.partition_value(f.vars_domain())</div>
+<div class="line">&gt;&gt;&gt; print(pval)</div>
+<div class="line">&gt;&gt;&gt; 1.0</div>
+</div><!-- fragment --> 
 </div>
 </div>
 <a id="abb9fc40fc2f4b065c86546119e74fe48"></a>
@@ -782,6 +1229,12 @@ Public Attributes</h2></td></tr>
 
 <p>obtain a factor value for given scope random variables </p>
 <p>Obtain factor value for given argument</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">scope_product</td><td>a row in conditional probability table of factor</td></tr>
+  </table>
+  </dd>
+</dl>
 <div class="fragment"><div class="line">&gt;&gt;&gt; A = NumCatRVariable(<span class="stringliteral">&quot;A&quot;</span>,</div>
 <div class="line">&gt;&gt;&gt;                     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
 <div class="line">&gt;&gt;&gt;                     distribution=<span class="keyword">lambda</span> x: 0.5)</div>
@@ -796,14 +1249,52 @@ Public Attributes</h2></td></tr>
 </div><!-- fragment --> 
 </div>
 </div>
-<a id="a43e049fae2707f851b4913efca63ebfb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a43e049fae2707f851b4913efca63ebfb">&#9670;&nbsp;</a></span>product()</h2>
+<a id="a36dfe63e91edb2f8adda5b95e2f7e4bc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a36dfe63e91edb2f8adda5b95e2f7e4bc">&#9670;&nbsp;</a></span>phi_normal()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">def gmodels.factor.Factor.product </td>
+          <td class="memname"> float gmodels.factor.Factor.phi_normal </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Set[Tuple[str, NumericValue]]&#160;</td>
+          <td class="paramname"><em>scope_product</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>normalize a given factor value </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">scope_product</td><td>a row in conditional probability table of factor</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>normalized value preference value</dd></dl>
+<dl class="section see"><dt>See also</dt><dd>Factor.normalize(phi_result), Factor.phi(scope_product) </dd></dl>
+
+</div>
+</div>
+<a id="ab04ce084438635ab933f6cb11e941a22"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab04ce084438635ab933f6cb11e941a22">&#9670;&nbsp;</a></span>product()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> Tuple[<a class="el" href="../../dc/de3/classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject.html">GraphObject</a>, float] gmodels.factor.Factor.product </td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname"><em>self</em>, </td>
@@ -853,19 +1344,24 @@ Public Attributes</h2></td></tr>
  <p class="formulaDsp">
 \[ \prod_i phi(X_i) \]
 </p>
-<p>Point wise product of two different factor functions. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Point wise product of two different factor functions.</p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">product_fn</td><td>actual function for computing product. This function can be exchanged with another function to compute log-sum for example.</td></tr>
-    <tr><td class="paramname">accumulator</td><td>this function decides how to accumulate resulting product.</td></tr>
+    <tr><td class="paramname">accumulator</td><td>this function decides how to accumulate resulting product. </td></tr>
+    <tr><td class="paramname">product_fn</td><td><p class="starttd"></p>
+<p class="intertd">product function. Default case is that it multiplies its two arguments. In case of a floating precision problem it can be changed into summation.</p>
+<p class="endtd"></p>
+</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html" title="Factor from Koller and Friedman 2009, p.">Factor</a> </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>tuple whose first element is the resulting factor and second element is the accumulated product. </dd></dl>
 
 </div>
 </div>
-<a id="a7eb359f2d9eb0253a13d23abf4328825"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7eb359f2d9eb0253a13d23abf4328825">&#9670;&nbsp;</a></span>reduced()</h2>
+<a id="a3406a6a56d123908a780e26f5dd9dea4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3406a6a56d123908a780e26f5dd9dea4">&#9670;&nbsp;</a></span>reduced()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -880,7 +1376,7 @@ Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">Set[Tuple[str, NumericValue]]&#160;</td>
-          <td class="paramname"><em>context</em>&#160;</td>
+          <td class="paramname"><em>assignments</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -893,10 +1389,11 @@ Public Attributes</h2></td></tr>
 <p>reduce factor using given context </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">context</td><td>member of factor domain</td></tr>
+    <tr><td class="paramname">assignments</td><td>values that are assigned to random variables of this factor.</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html" title="Factor from Koller and Friedman 2009, p.">Factor</a> whose conditional probability table rows are shrink to rows that contain assignment values.</dd></dl>
 <p>Koller, Friedman 2009, p. 111 reduction by value example</p>
 <p class="formulaDsp">
 \[phi(A,B,C)\]
@@ -909,8 +1406,8 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="aabdab90716a5150e82200a74609313db"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aabdab90716a5150e82200a74609313db">&#9670;&nbsp;</a></span>reduced_by_value()</h2>
+<a id="aaaeffb4bde7dbadfa8559b7e0cd578d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaaeffb4bde7dbadfa8559b7e0cd578d3">&#9670;&nbsp;</a></span>reduced_by_value()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -925,7 +1422,7 @@ Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">Set[Tuple[str, NumericValue]]&#160;</td>
-          <td class="paramname"><em>context</em>&#160;</td>
+          <td class="paramname"><em>assignments</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -939,8 +1436,8 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a622fa1e0ea4c944197cdc8bf452b76ec"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a622fa1e0ea4c944197cdc8bf452b76ec">&#9670;&nbsp;</a></span>reduced_by_vars()</h2>
+<a id="aefa21d9b3390ced842017badbab7b33e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aefa21d9b3390ced842017badbab7b33e">&#9670;&nbsp;</a></span>reduced_by_vars()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -950,12 +1447,6 @@ Public Attributes</h2></td></tr>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname"><em>self</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>]&#160;</td>
-          <td class="paramname"><em>assignment_context</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1072,6 +1563,35 @@ Public Attributes</h2></td></tr>
 
 <p>Sum the variable out of factor as per Koller, Friedman 2009, p. </p>
 <p>297</p>
+<p>Summing out, or factor marginalization, is defined as the following by Koller, Friedman:</p>
+<blockquote class="doxtable">
+<p></p>
+<p>Let X be a set of variables and Y </p><p class="formulaDsp">
+\[\not \in \]
+</p>
+<p> X a variable. Let </p><p class="formulaDsp">
+\[\phi(X, Y)\]
+</p>
+<p> be a factor. We define the factor marginalization of Y in phi, denoted </p><p class="formulaDsp">
+\[ \sum_Y \phi \]
+</p>
+<p>, to be a factor psi over X such that: </p><p class="formulaDsp">
+\[ \psi(X) = \sum_Y \phi(X,Y) \]
+</p>
+<p></p>
+</blockquote>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">Y</td><td>the variable that we are going to sum out.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">ValueError</td><td>We raise a value error if the argument is not in the scope of this factor</td></tr>
+  </table>
+  </dd>
+</dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html" title="Factor from Koller and Friedman 2009, p.">Factor</a> </dd></dl>
 
 </div>
@@ -1104,18 +1624,19 @@ Public Attributes</h2></td></tr>
 
 <p>Sum the variable out of factor as per Koller, Friedman 2009, p. </p>
 <p>297</p>
+<dl class="section see"><dt>See also</dt><dd>Factor.sumout_var(Y)</dd></dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html" title="Factor from Koller and Friedman 2009, p.">Factor</a> </dd></dl>
 
 </div>
 </div>
-<a id="a2488105f220764895956acd91d6c65c1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2488105f220764895956acd91d6c65c1">&#9670;&nbsp;</a></span>vars_domain()</h2>
+<a id="ac326cb87a196bcc5db3ce3ff56882317"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac326cb87a196bcc5db3ce3ff56882317">&#9670;&nbsp;</a></span>vars_domain()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"> List[Set[Tuple[str, NumericValue]]] gmodels.factor.Factor.vars_domain </td>
+          <td class="memname"> List[FrozenSet[Tuple[str, NumericValue]]] gmodels.factor.Factor.vars_domain </td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
           <td class="paramname"><em>self</em>, </td>
@@ -1148,6 +1669,45 @@ Public Attributes</h2></td></tr>
 
 <p>Get factor domain. </p>
 <dl class="section see"><dt>See also</dt><dd>Factor.fdomain(D, rvar_filter, value_filter, value_transform) </dd></dl>
+
+</div>
+</div>
+<a id="a487a5dff817c4afa4d2e59ff908b8d58"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a487a5dff817c4afa4d2e59ff908b8d58">&#9670;&nbsp;</a></span>zval()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> float gmodels.factor.Factor.zval </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>compute value of partition function for this factor </p>
+<dl class="section see"><dt>See also</dt><dd>Factor.partition_value(domains) </dd></dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a6e5496bfa7e744735901ee4cdee8b7b8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e5496bfa7e744735901ee4cdee8b7b8">&#9670;&nbsp;</a></span>Z</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">gmodels.factor.Factor.Z</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>cartesian product of factor domain </p>
+<p>constant normalization value </p>
 
 </div>
 </div>

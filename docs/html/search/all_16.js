@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['zval_253',['zval',['../de/d55/classgmodels_1_1factor_1_1Factor.html#a54a12f2abc389ce1bc4ed4db3ab685da',1,'gmodels::factor::Factor']]]
+  ['z_257',['Z',['../de/d55/classgmodels_1_1factor_1_1Factor.html#a6e5496bfa7e744735901ee4cdee8b7b8',1,'gmodels::factor::Factor']]],
+  ['zval_258',['zval',['../de/d55/classgmodels_1_1factor_1_1Factor.html#a487a5dff817c4afa4d2e59ff908b8d58',1,'gmodels::factor::Factor']]]
 ];
