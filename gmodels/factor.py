@@ -27,7 +27,7 @@ class Factor(GraphObject):
         data={},
     ):
         """!
-        \brief Constructor for a factor \f[ \phi(A,B) \f]
+        \brief Constructor for a factor \f$ \phi(A,B) \f$
 
         A factor is defined by a set of random variables which constitutes its
         scope and a real valued function. The canonical definition can be found
@@ -168,9 +168,9 @@ class Factor(GraphObject):
 
         We assume that given random variables are conditionally related. We
         simply assume the following factorization between given variables:
-        \f[ P(X_i | Pa_{X_i}) \f] which decomposes as 
-        \f[ P(X_i | (X_1, X_2, X_3, \dots, X_j)\f] where 
-        \f[{X_1, X_2, \dots, X_j} = Pa_{X_i}\f]
+        \f$ P(X_i | Pa_{X_i}) \f$ which decomposes as 
+        \f$ P(X_i | (X_1, X_2, X_3, \dots, X_j)\f$ where 
+        \f${X_1, X_2, \dots, X_j} = Pa_{X_i}\f$
 
         Basically we take the marginal product of parents and use the bayes
         rule to output the final probability value of the expression. See
@@ -317,7 +317,7 @@ class Factor(GraphObject):
 
         For a factor phi(A,B) return factor function's domain values, such as:
 
-        \f[phi(A,B)\f]
+        \f$phi(A,B)\f$
 
          A   |  B
         ---- | ----
@@ -736,8 +736,8 @@ class Factor(GraphObject):
     ) -> Tuple[GraphObject, float]:
         """!
         \brief Factor product operation from Koller, Friedman 2009, p. 107
-        \f[ \psi(X,Y,Z) =  \phi(X,Y) \cdot \phi(Y,Z) \f]
-        \f[ \prod_i phi(X_i) \f]
+        \f$ \psi(X,Y,Z) =  \phi(X,Y) \cdot \phi(Y,Z) \f$
+        \f$ \prod_i phi(X_i) \f$
 
         Point wise product of two different factor functions.
 
@@ -803,7 +803,7 @@ class Factor(GraphObject):
 
         Koller, Friedman 2009, p. 111 reduction by value example
 
-        \f[phi(A,B,C)\f]
+        \f$phi(A,B,C)\f$
 
          A      B      C
         ---- | ---- | ----
@@ -812,7 +812,7 @@ class Factor(GraphObject):
          a2  |  b1  |  c1
          a2  |  b1  |  c2
 
-        reduction C=c1 \f[\phi(A,B,C=c_1)\f]
+        reduction C=c1 \f$\phi(A,B,C=c_1)\f$
 
            A      B      C
           ---- | ---- | ----
@@ -867,10 +867,10 @@ class Factor(GraphObject):
         """!
         Koller, Friedman 2009, p. 111 follows the definition 4.5
 
-        For \f[ U \not \subset Y \f], we define \f[phi[u]\f] to be
-        \f[phi[U'=u']\f], where \f[ U' = U \cap Y \f] , and \f[u' = u<U>\f],
-        where \f[u<U>\f] denotes the assignment in \f[u\f] to the variables in
-        \f[U'\f].
+        For \f$ U \not \subset Y \f$, we define \f$phi[u]\f$ to be
+        \f$phi[U'=u']\f$, where \f$ U' = U \cap Y \f$ , and \f$u' = u<U>\f$,
+        where \f$u<U>\f$ denotes the assignment in \f$u\f$ to the variables in
+        \f$U'\f$.
 
         \return Factor
         """
@@ -883,10 +883,10 @@ class Factor(GraphObject):
         Maxing out a variable, or factor maximization is defined by Koller,
         Friedman as:
         <blockquote>
-        Let X be a set of variables, and Y \f[ \not \in \f] X, a random
-        variable. Let \f[ \phi(X, Y) \f] be a factor. We define the factor
-        maximization of Y in \f[ \phi \f] to be factor \f[ \psi \f] over X such
-        that: \f[ \psi(X) = max_{Y}\phi(X, Y) \f]
+        Let X be a set of variables, and Y \f$ \not \in \f$ X, a random
+        variable. Let \f$ \phi(X, Y) \f$ be a factor. We define the factor
+        maximization of Y in \f$ \phi \f$ to be factor \f$ \psi \f$ over X such
+        that: \f$ \psi(X) = max_{Y}\phi(X, Y) \f$
         </blockquote>
 
         \param Y random variable who is going to be maxed out.
@@ -924,10 +924,10 @@ class Factor(GraphObject):
 
         <blockquote>
 
-        Let X be a set of variables and Y \f[\not \in \f] X a variable. Let
-        \f[\phi(X, Y)\f] be a factor. We define the factor marginalization of Y
-        in phi, denoted \f[ \sum_Y \phi \f], to be a factor psi over X such
-        that: \f[ \psi(X) = \sum_Y \phi(X,Y) \f]
+        Let X be a set of variables and Y \f$\not \in \f$ X a variable. Let
+        \f$\phi(X, Y)\f] be a factor. We define the factor marginalization of Y
+        in phi, denoted \f$ \sum_Y \phi \f$, to be a factor psi over X such
+        that: \f$ \psi(X) = \sum_Y \phi(X,Y) \f$
 
         </blockquote>
 
