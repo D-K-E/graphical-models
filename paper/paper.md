@@ -26,7 +26,8 @@ libraries implement PGMs in a way that ignores their graphical nature.
 nature of PGMs, thereby giving `PyGModels`' instantiated objects both
 graph-theoretical and statistical properties, which allows users to explore
 and test inference algorithms that are rooted in both graph theory or
-statistics.
+statistics. `PyGModels` also implements several algorithms of interest on a
+LWF chain graphs, also known as mixed graphs.
 
 # Statement of Need
 
@@ -40,14 +41,24 @@ Let us try to demonstrate the need for `PyGModels` by a use case.
 One has a set of categorical random variables in the form of a function
 specified by a probability distribution. One has a set of edges that encode a
 certain independence assumption over her random variables, and one has a set
-of factors, factorizes a certain probability distribution over her entire
+of factors, that factorizes a certain probability distribution over her entire
 graph. Given these, `PyGModels` might solve two major issues for the
 researcher or the student alike:
 
-- Compute posterior probability distribution or most probable explanation
+1. Compute posterior probability distribution or most probable explanation
   given certain evidence.
 
-- Provide a basis for creating new algorithms of inference.
+2. Provide a basis for creating new algorithms of inference.
+
+If the independence assumptions over the random variables requires the graph
+to be a LWF chain graph where the graph can have both directed and undirected
+edges, `PyGModels` can also solve:
+
+3. Decomposing the chain graph into chain components
+
+4. Moralizing the chain graph into a Markov Network.
+
+5. Decomposing the chain graph into Conditional Random Fields.
 
 Though the first issue is not irrelevant, the forte of `PyGModels` is the
 second issue due to its lightweight nature and its direct embodiment of
@@ -57,14 +68,14 @@ graph theoretic (we follow mostly Diestel [see @Diestel_2017] for graph
 theoretic conventions and definitions; most of the graph algorithms come
 from K. Erciyes [see @Erciyes_2018] and S. Even [see @Even_Guy_Even_2012];
 exact pages are cited in doc strings of related functions inside the
-source code) considerations in the same base class. The entire library
-depends only on python standard library which makes it very extendible and
-easy to integrate and adapt to other projects as well. Through its
-rigorous adoption of mathematical definitions of involved concepts, it
-becomes feasible to extend arbitrary factors through their point wise
-product, or apply common graph analysis algorithms such as finding
-articulation points or bridges, or finding an optimal path defined by a
-cost function.
+source code) considerations in the same base class. 
+
+The entire library depends only on python standard library which makes it very
+extendible and easy to integrate and adapt to other projects as well. Through
+its rigorous adoption of mathematical definitions of involved concepts, it
+becomes feasible to extend arbitrary factors through their point wise product,
+or apply common graph analysis algorithms such as finding articulation points
+or bridges, or finding an optimal path defined by a cost function.
 
 # Applications and Similar Works
 
@@ -84,12 +95,13 @@ Other open sourced python libraries about PGMs include the following:
 
 - `pyfac` [see @Lester_2016]
 
-The most popular and goto library is `pgmpy`. It has also been used in several
-publications [see @Ankan_Panda_2015a; also @Ankan_Panda_2015b]. Its
-functionality is covered with a nice test suite as well. Overall it is a
-reliable library for using PGMs in production. It comes with several
-dependencies that can be heavy handed (`pytorch` for example) for exploratory
-use though.
+- `pomegranate` [see @Schreiber_2018]
+
+The most popular and goto libraries are `pgmpy` and `pomegranate`. Both of
+them have also been used in several publications [see @Ankan_Panda_2015a; also
+@Ankan_Panda_2015b; and @Schreiber_2018]. Their functionalities are covered
+with nice test suites as well. Overall both of them are reliable libraries for
+using PGMs in production.
 
 `pyGM` and `pgm` are particularly well organized alternatives to `PyGModels`,
 with `pyGM` being slightly more reliable than `pgm` due to its test suite.
@@ -104,10 +116,12 @@ for most of the compared values inside doc string of functions for key
 functions like inference over graphs. Factors are specified by a set of
 random variables and a function whose domain is the cartesian product of
 codomains of random variables. In all of the libraries above, a factor is
-specified through an array of values. This has no direct implications on
-the output. However, it has implications on the evaluation order of
-operations. Our implementation is lazier and it conforms to the definition
-provided by Koller and Friedman [see @Koller_Friedman_2009 p. 106-107].
+specified through an array of values. This has no direct implications on the
+output. However, it has implications on the evaluation order of operations.
+Our implementation is lazier and it conforms to the definition provided by
+Koller and Friedman [see @Koller_Friedman_2009 p. 106-107]. The last aspect is
+also the case for `pgmpy`, however `PyGModels` differs from it with respect to
+the data structure used in the implementation.
 
 The last aspect we deem important, is our capacity of doing inference on LWF
 chain graphs (its theoretical foundations are best explained by S. Lauritzen
@@ -126,7 +140,7 @@ graphs.
 # Acknowledgement
 
 We acknowledge contributions from Nihan Özcan on her help with documentation
-process. We also acknowledge CHart Laboratory of EPHE, PSL University for
+process. We also acknowledge AOROC Laboratory of EPHE, PSL University for
 providing us the necessary tooling support during the development phase of
 this library.
 
