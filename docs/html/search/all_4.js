@@ -6,5 +6,6 @@ var searchData=
   ['digraph_2epy_34',['digraph.py',['../dd/d89/digraph_8py.html',1,'']]],
   ['distribution_35',['Distribution',['../d8/d7c/classgmodels_1_1legacy_1_1bayesutils_1_1Distribution.html',1,'gmodels::legacy::bayesutils']]],
   ['domain_5fscope_36',['domain_scope',['../de/d55/classgmodels_1_1factor_1_1Factor.html#a8e52bcb35f56e45cd64056ddd1bcdaa2',1,'gmodels::factor::Factor']]],
-  ['downset_5fof_37',['downset_of',['../d7/db3/classgmodels_1_1gtypes_1_1tree_1_1Tree.html#ad559cef4b6b88554bb036ba415903c8a',1,'gmodels::gtypes::tree::Tree']]]
+  ['domain_5ftable_37',['domain_table',['../de/d55/classgmodels_1_1factor_1_1Factor.html#a8f8cd3febd40d6f239304fe140f2236f',1,'gmodels::factor::Factor']]],
+  ['downset_5fof_38',['downset_of',['../d7/db3/classgmodels_1_1gtypes_1_1tree_1_1Tree.html#ad559cef4b6b88554bb036ba415903c8a',1,'gmodels::gtypes::tree::Tree']]]
 ];

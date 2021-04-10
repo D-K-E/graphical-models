@@ -107,8 +107,8 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a59b4193e000f285857ab2dc0b2c6af68"><td class="memItemLeft" align="right" valign="top"><a id="a59b4193e000f285857ab2dc0b2c6af68"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self, str gid, Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>] <a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a14ea9c8ea2ee1f0dd204b21d42308783">nodes</a>, Set[<a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a>] <a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#aa146aec295e76b05da4f247e4e4c5895">edges</a>, Set[<a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html">Factor</a>] <a class="el" href="../../df/da1/classgmodels_1_1pgmodel_1_1PGModel.html#a40f9cc8df0ae844faa404a680b51f7e9">factors</a>, data={})</td></tr>
 <tr class="separator:a59b4193e000f285857ab2dc0b2c6af68"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a60c397721400533e40a0bf2411c9d9b9"><td class="memItemLeft" align="right" valign="top"><a id="a60c397721400533e40a0bf2411c9d9b9"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>from_digraph</b> (cls, <a class="el" href="../../dd/d00/classgmodels_1_1gtypes_1_1digraph_1_1DiGraph.html">DiGraph</a> dig)</td></tr>
+<tr class="memitem:a60c397721400533e40a0bf2411c9d9b9"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/d4f/classgmodels_1_1bayesian_1_1BayesianNetwork.html#a60c397721400533e40a0bf2411c9d9b9">from_digraph</a> (cls, <a class="el" href="../../dd/d00/classgmodels_1_1gtypes_1_1digraph_1_1DiGraph.html">DiGraph</a> dig)</td></tr>
+<tr class="memdesc:a60c397721400533e40a0bf2411c9d9b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a <a class="el" href="../../d2/d4f/classgmodels_1_1bayesian_1_1BayesianNetwork.html" title="bayesian network implementation">BayesianNetwork</a> from a directed graph.  <a href="../../d2/d4f/classgmodels_1_1bayesian_1_1BayesianNetwork.html#a60c397721400533e40a0bf2411c9d9b9">More...</a><br /></td></tr>
 <tr class="separator:a60c397721400533e40a0bf2411c9d9b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classgmodels_1_1pgmodel_1_1PGModel"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classgmodels_1_1pgmodel_1_1PGModel')"><img src="../../closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="../../df/da1/classgmodels_1_1pgmodel_1_1PGModel.html">gmodels.pgmodel.PGModel</a></td></tr>
 <tr class="memitem:a5b64b7493cedd1d7bb8940caec933fba inherit pub_methods_classgmodels_1_1pgmodel_1_1PGModel"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/da1/classgmodels_1_1pgmodel_1_1PGModel.html#a5b64b7493cedd1d7bb8940caec933fba">__init__</a> (self, str gid, Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>] <a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a14ea9c8ea2ee1f0dd204b21d42308783">nodes</a>, Set[<a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a>] <a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#aa146aec295e76b05da4f247e4e4c5895">edges</a>, Optional[Set[<a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html">Factor</a>]] <a class="el" href="../../df/da1/classgmodels_1_1pgmodel_1_1PGModel.html#a40f9cc8df0ae844faa404a680b51f7e9">factors</a>=None, data={})</td></tr>
@@ -577,7 +577,47 @@ Additional Inherited Members</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>bayesian network implementation </p>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a60c397721400533e40a0bf2411c9d9b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a60c397721400533e40a0bf2411c9d9b9">&#9670;&nbsp;</a></span>from_digraph()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def gmodels.bayesian.BayesianNetwork.from_digraph </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>cls</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../dd/d00/classgmodels_1_1gtypes_1_1digraph_1_1DiGraph.html">DiGraph</a>&#160;</td>
+          <td class="paramname"><em>dig</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Construct a <a class="el" href="../../d2/d4f/classgmodels_1_1bayesian_1_1BayesianNetwork.html" title="bayesian network implementation">BayesianNetwork</a> from a directed graph. </p>
+<p>We assume that edges encode an independence structure of the system. Hence we deduce factors from them. If there is any evidence associated with a random variable, we apply them to reduce factors.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dig</td><td>A Directed Graph whose nodes are random variables</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd><a class="el" href="../../d2/d4f/classgmodels_1_1bayesian_1_1BayesianNetwork.html" title="bayesian network implementation">BayesianNetwork</a></dd></dl>
+<div class="fragment"><div class="line">&gt;&gt;&gt; myDiGraph = DiGraph()</div>
+</div><!-- fragment --> 
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>graphical-models/gmodels/bayesian.py</li>
 </ul>
 </div><!-- contents -->
