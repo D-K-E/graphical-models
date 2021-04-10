@@ -3,7 +3,7 @@ Implementation of a random variable
 """
 
 from gmodels.gtypes.node import Node
-from typing import Callable, Set, Any, List, Dict
+from typing import Callable, Set, Any, List, Dict, FrozenSet, Tuple
 import math
 from uuid import uuid4
 from random import choice
@@ -69,9 +69,9 @@ class CatRandomVariable(RandomVariable):
 
     def value_set(
         self, value_filter=lambda x: True, value_transform=lambda x: x,
-    ):
+    ) -> FrozenSet[Tuple[str, NumericValue]]:
         sid = self.id()
-        return set(
+        return frozenset(
             [
                 (sid, value_transform(v))
                 for v in self.values()

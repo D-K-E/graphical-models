@@ -7,7 +7,7 @@ Defining a factor from Koller and Friedman 2009, p. 106-107
 from gmodels.gtypes.graphobj import GraphObject
 from gmodels.randomvariable import NumCatRVariable, NumericValue
 
-from typing import Set, Callable, Optional, List, Union, Tuple
+from typing import Set, Callable, Optional, List, Union, Tuple, FrozenSet
 from itertools import product, combinations
 from uuid import uuid4
 from pprint import pprint
@@ -223,7 +223,7 @@ class Factor(GraphObject):
         rvar_filter=lambda x: True,
         value_filter=lambda x: True,
         value_transform=lambda x: x,
-    ) -> List[Set[Tuple[str, NumericValue]]]:
+    ) -> List[FrozenSet[Tuple[str, NumericValue]]]:
         """!
         \brief Get factor domain Val(D) D being a set of random variables
 
@@ -249,8 +249,8 @@ class Factor(GraphObject):
         >>> fmatches = Factor.fdomain(D=D)
         >>> print(fmatches)
 
-        >>> [set(("A", True), ("A", True)),
-        >>>  set(("B", True), ("B", False)),
+        >>> [frozenset(("A", True), ("A", True)),
+        >>>  frozenset(("B", True), ("B", False)),
         >>> ]
 
         \endcode
@@ -259,7 +259,7 @@ class Factor(GraphObject):
         return [
             s.value_set(value_filter=value_filter, value_transform=value_transform)
             for s in D
-            if rvar_filter(s) is True
+            if rvar_filter(s)
         ]
 
     @classmethod
@@ -269,14 +269,14 @@ class Factor(GraphObject):
         rvar_filter=lambda x: True,
         value_filter=lambda x: True,
         value_transform=lambda x: x,
-    ) -> List[Tuple[Tuple[str, NumericValue]]]:
+    ) -> List[FrozenSet[Tuple[str, NumericValue]]]:
         """!
         \brief Compute cartesian product over factor domain
 
         The arguments are there for filtering or manipulating factor domain:
         \see Factor.fdomain
 
-        \code
+        \code{.py}
 
         >>> A = NumCatRVariable("A",
         >>>                     input_data={"outcome-values": [True, False]},
@@ -291,29 +291,27 @@ class Factor(GraphObject):
         >>> fmatches = Factor.matches(D=D)
         >>> print(fmatches)
 
-        >>> [(("A", True), ("B", True)),
-        >>>  (("A", True), ("B", False)),
-        >>>  (("A", False), ("B", True)), (("A", False), ("B", False))]
+        >>> [frozenset([("A", True), ("B", True)]),
+        >>>  frozenset([("A", True), ("B", False)]),
+        >>>  frozenset([("A", False), ("B", True)]), 
+        >>>  frozenset([("A", False), ("B", False)])]
 
         \endcode
         """
-        return list(
-            product(
-                *cls.fdomain(
-                    D=D,
-                    rvar_filter=rvar_filter,
-                    value_filter=value_filter,
-                    value_transform=value_transform,
-                )
-            )
+        domain_values = cls.fdomain(
+            D=D,
+            rvar_filter=rvar_filter,
+            value_filter=value_filter,
+            value_transform=value_transform,
         )
+        return [frozenset(s) for s in list(product(*domain_values))]
 
     def factor_domain(
         self,
         rvar_filter=lambda x: True,
         value_filter=lambda x: True,
         value_transform=lambda x: x,
-    ) -> list:
+    ) -> List[FrozenSet[Tuple[str, NumericValue]]]:
         """!
         \brief \see Factor.matches(rvar_filter, value_filter, value_transform)
 
@@ -328,7 +326,7 @@ class Factor(GraphObject):
          a2  |  b1
          a2  |  b2
 
-        >>> set(("A", a1), ("B", b2)),...
+        >>> [frozenset(("A", a1), ("B", b2)), ...]
         """
         return self.matches(
             D=self.scope_vars(),
@@ -342,7 +340,7 @@ class Factor(GraphObject):
         rvar_filter=lambda x: True,
         value_filter=lambda x: True,
         value_transform=lambda x: x,
-    ) -> List[Set[Tuple[str, NumericValue]]]:
+    ) -> List[FrozenSet[Tuple[str, NumericValue]]]:
         """!
         \brief Get factor domain
         \see Factor.fdomain(D, rvar_filter, value_filter, value_transform)
@@ -366,10 +364,16 @@ class Factor(GraphObject):
         factor domain.
 
         \param domain list of arbitrary domain values
-        \exception ValueError We raise value error when the argument domain
+
+        \throw ValueError 
+        \parblock
+
+        We raise value error when the argument domain
         value array is not a subset of the domain of the factor, since we have
         no way of obtaining random variable that is not inside the scope of
         this factor.
+
+        \endparblock
 
         \return set of random variables implied by the given list of domain
         values
@@ -431,13 +435,19 @@ class Factor(GraphObject):
 
         \param ids identifier of random variable
 
-        \exception ValueError Value error is raised if there are more than one
+        \throw ValueError Value error is raised if there are more than one
         random variable associated to id string
 
-        \return a tuple whose first element is a boolean flag indicating if
+        \return Tuple 
+        \parblock
+
+        a tuple whose first element is a boolean flag indicating if
         there is indeed a variable associated to identifier and whose second
         element is either None if the operation has failed or the random
         variable associated to given identifier.
+
+        \endparblock
+
         """
         if ids in self.domain_table:
             return True, self.domain_table[ids]
@@ -610,7 +620,7 @@ class Factor(GraphObject):
         mval, mrob = self._max_prob_value()
         return mval
 
-    def partition_value(self, domains: List[Set[Tuple[str, NumericValue]]]):
+    def partition_value(self, domains: List[FrozenSet[Tuple[str, NumericValue]]]):
         """!
         \brief compute partition value aka normalizing value for the factor
         from Koller, Friedman 2009 p. 105
@@ -683,7 +693,7 @@ class Factor(GraphObject):
 
         \param scope_product a row in conditional probability table of factor
 
-        \exception ValueError A value error is raised when there is an unknown
+        \throw ValueError A value error is raised when there is an unknown
         random variable with an identifier 
 
         \return preference value for a given scope_product
@@ -705,11 +715,11 @@ class Factor(GraphObject):
         \param v either an identifier of a random variable or the random
         variable itself.
 
+        \throw TypeError type error is raised if the given argument is
+        neither a random variable nor a string identifier.
+
         \return a boolean flag which indicates if the argument is in scope or
         not.
-
-        \exception TypeError type error is raised if the given argument is
-        neither a random variable nor an identifier.
         """
         if isinstance(v, NumCatRVariable):
             return v.id() in self.domain_table
@@ -723,19 +733,29 @@ class Factor(GraphObject):
         other,
         product_fn=lambda x, y: x * y,
         accumulator=lambda added, accumulated: added * accumulated,
-    ):
+    ) -> Tuple[GraphObject, float]:
         """!
         \brief Factor product operation from Koller, Friedman 2009, p. 107
         \f[ \psi(X,Y,Z) =  \phi(X,Y) \cdot \phi(Y,Z) \f]
         \f[ \prod_i phi(X_i) \f]
 
         Point wise product of two different factor functions.
+
         \param product_fn actual function for computing product. This function
         can be exchanged with another function to compute log-sum for example.
 
         \param accumulator this function decides how to accumulate resulting product.
+        \param product_fn
+        \parblock
 
-        \return Factor
+        product function. Default case is that it multiplies
+        its two arguments. In case of a floating precision problem it can be
+        changed into summation.
+
+        \endparblock
+
+        \return tuple whose first element is the resulting factor and second
+        element is the accumulated product.
         """
         if not isinstance(other, Factor):
             raise TypeError("other needs to be a factor")
@@ -831,6 +851,8 @@ class Factor(GraphObject):
 
         \param assignments evidences with respect to the value of a certain
         random variable in scope of the context.
+
+        \return set of valid assignments
         """
         assignment_d = {a[0]: a[1] for a in assignments}
         context_ids = set([c.id() for c in context])
@@ -840,9 +862,7 @@ class Factor(GraphObject):
         return set([(k, v) for k, v in assignment_d.items()])
 
     def reduced_by_vars(
-        self,
-        assignment_context: Set[NumCatRVariable],
-        assignments: Set[Tuple[str, NumericValue]],
+        self, assignments: Set[Tuple[str, NumericValue]],
     ):
         """!
         Koller, Friedman 2009, p. 111 follows the definition 4.5
@@ -858,11 +878,25 @@ class Factor(GraphObject):
 
     def maxout_var(self, Y: NumCatRVariable):
         """!
-        max the variable out of factor as per Koller, Friedman 2009, p. 555
+        \brief max the variable out of factor as per Koller, Friedman 2009, p. 555
+
+        Maxing out a variable, or factor maximization is defined by Koller,
+        Friedman as:
+        <blockquote>
+        Let X be a set of variables, and Y \f[ \not \in \f] X, a random
+        variable. Let \f[ \phi(X, Y) \f] be a factor. We define the factor
+        maximization of Y in \f[ \phi \f] to be factor \f[ \psi \f] over X such
+        that: \f[ \psi(X) = max_{Y}\phi(X, Y) \f]
+        </blockquote>
+
+        \param Y random variable who is going to be maxed out.
+
+        \throw ValueError If the argument is not in scope of this factor, we
+        throw a value error
 
         \return Factor
         """
-        if Y not in self.scope_vars():
+        if not self.in_scope(Y):
             raise ValueError("argument is not in scope of this factor")
 
         Y_vals = Y.value_set()
@@ -885,9 +919,27 @@ class Factor(GraphObject):
         """!
         \brief Sum the variable out of factor as per Koller, Friedman 2009, p. 297
 
+        Summing out, or factor marginalization, is defined as the following by
+        Koller, Friedman:
+
+        <blockquote>
+
+        Let X be a set of variables and Y \f[\not \in \f] X a variable. Let
+        \f[\phi(X, Y)\f] be a factor. We define the factor marginalization of Y
+        in phi, denoted \f[ \sum_Y \phi \f], to be a factor psi over X such
+        that: \f[ \psi(X) = \sum_Y \phi(X,Y) \f]
+
+        </blockquote>
+
+
+        \param Y the variable that we are going to sum out.
+
+        \throw ValueError We raise a value error if the argument is not in
+        the scope of this factor
+
         \return Factor
         """
-        if Y not in self.scope_vars():
+        if not self.in_scope(Y):
             msg = "Argument " + str(Y)
             msg += " is not in scope of this factor: "
             msg += " ".join(self.scope_vars())
@@ -912,6 +964,8 @@ class Factor(GraphObject):
     def sumout_vars(self, Ys: Set[NumCatRVariable]):
         """!
         \brief Sum the variable out of factor as per Koller, Friedman 2009, p. 297
+
+        \see Factor.sumout_var(Y)
 
         \return Factor
         """

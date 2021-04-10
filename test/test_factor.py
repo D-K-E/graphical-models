@@ -390,9 +390,7 @@ class TestFactor(unittest.TestCase):
         evidence = set([("C", 10), ("D", 50)])
         aB_c, prod = self.aB.product(self.bc)
         # print(aB_c.scope_products)
-        nf = aB_c.reduced_by_vars(
-            assignments=evidence, assignment_context=set([self.Cf, self.Df])
-        )
+        nf = aB_c.reduced_by_vars(assignments=evidence)
         sps = set([frozenset(s) for s in nf.scope_products])
 
         self.assertEqual(
