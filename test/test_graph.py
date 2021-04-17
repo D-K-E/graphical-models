@@ -273,7 +273,7 @@ class GraphTest(unittest.TestCase):
 
     def test_is_connected_true(self):
         ""
-        self.assertEqual(self.graph_2.is_connected(), True)
+        self.assertTrue(self.graph_2.is_connected())
 
     def test_is_adjacent_of(self):
         self.assertTrue(self.graph_2.is_adjacent_of(self.e2, self.e3))
@@ -289,14 +289,32 @@ class GraphTest(unittest.TestCase):
     def test_is_node_independant_of(self):
         self.assertTrue(self.graph_2.is_node_independent_of(self.n1, self.n3))
 
-    def test_is_neighbours_of(self):
+    def test_neighbours_of(self):
         ndes = set([n.id() for n in self.graph_2.neighbours_of(self.n2)])
         self.assertEqual(ndes, set([self.n1.id(), self.n3.id()]))
+
+    def test_nb_neighbours_of(self):
+        ndes = self.graph_2.nb_neighbours_of(self.n2)
+        self.assertEqual(ndes, 2)
+
+    def test_is_stable(self):
+        ""
+        self.assertTrue(self.ugraph4.is_stable(set([self.a, self.n3, self.n1])))
 
     def test_edges_of(self):
         ""
         edges = self.graph.edges_of(self.n2)
         self.assertEqual(edges, set([self.e1, self.e2]))
+
+    def test_outgoing_edges_of(self):
+        ""
+        edges = self.graph.outgoing_edges_of(self.n2)
+        self.assertEqual(edges, set([self.e2]))
+
+    def test_incoming_edges_of(self):
+        ""
+        edges = self.graph.incoming_edges_of(self.n2)
+        self.assertEqual(edges, set([self.e1]))
 
     def test_is_in_true(self):
         ""

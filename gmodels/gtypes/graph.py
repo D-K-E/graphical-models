@@ -18,7 +18,7 @@ import math
 class Graph(GraphObject):
     """!
     Simple finite graph
-    \f[ G = (V, E) \f] where \f[ V \f] is the vertex set and \f[ E \f] is the edge set.
+    \f$ G = (V, E) \f$ where \f$ V \f$ is the vertex set and \f$ E \f$ is the edge set.
     """
 
     def __init__(
@@ -35,10 +35,34 @@ class Graph(GraphObject):
         \param nodes a node/vertex set.
         \param edges an edge set.
 
+        \throws ValueError If the graph is trivial, we raise a value error, as
+        most algorithms don't work with trivial graphs.
+
         We construct the graph from given node and edge set. For quick look up
         we store them in hash tables. The gdata member also stores an edge list
         representation, in order to facilitate some of the basic look up
         functionality concerning neighbours of vertices.
+
+        \code{.py}
+
+        >>> a = Node("a", {})  # b
+        >>> b = Node("b", {})  # c
+        >>> f = Node("f", {})  # d
+        >>> e = Node("e", {})  # e
+        >>> ab = Edge(
+        >>>    "ab", start_node=a, end_node=b, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> be = Edge(
+        >>>    "be", start_node=b, end_node=e, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> graph = Graph(
+        >>>     "graph",
+        >>>     data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>     nodes=set([a, b, e, f]),
+        >>>     edges=set([ab, be]),
+        >>> )
+
+        \endcode
         """
         super().__init__(oid=gid, odata=data)
         self._nodes: Optional[Dict[str, Node]] = None
@@ -73,6 +97,8 @@ class Graph(GraphObject):
         \brief We construct the graph from given edge set using a random id.
 
         See \see Graph for more information
+
+        We obtain nodes from edges then pass them to graph constructor.
         """
         nodes: Set[Node] = set()
         for e in edges:
@@ -85,6 +111,12 @@ class Graph(GraphObject):
         """!
         \brief We construct the graph from given node, and edge sets using a random id.
         \see Graph for more information
+
+        \param edges set of edges
+        \param nodes set of nodes
+
+        We iterate over set of edges and add the nodes that are not inside the
+        node set. We pass both parameters to Graph constructor afterwards.
         """
         nodes = set(nodes)
         for e in edges:
@@ -100,7 +132,7 @@ class Graph(GraphObject):
         \param es set of edges
 
         We assume that node set and edge set might contain different nodes,
-        that is \f[ V[G] = V[ns] \cup V[es] \f]
+        that is \f$ V[G] = V[ns] \cup V[es] \f$
         We combine nodes given in both sets to create a final set of nodes
         for the graph
         """
@@ -118,9 +150,61 @@ class Graph(GraphObject):
         #
         self._nodes = {n.id(): n for n in nodes}
 
-    def to_adjmat(self, vtype=int):
+    def to_adjmat(self, vtype=int) -> Dict[Tuple[str, str], int]:
         """!
         \brief Transform adjacency list to adjacency matrix representation
+
+        \param vtype the cast type for the entry of adjacency matrix.
+
+        \return adjacency matrix whose keys are identifiers of nodes and values
+        are flags whether there is an edge between them.
+
+        \code{.py}
+
+        >>> a = Node("a", {})  # b
+        >>> b = Node("b", {})  # c
+        >>> f = Node("f", {})  # d
+        >>> e = Node("e", {})  # e
+        >>> ae = Edge(
+        >>>    "ae", start_node=a, end_node=e, edge_type=EdgeType.UNDIRECTED
+        >>> )
+
+        >>> af = Edge(
+        >>>     "af", start_node=a, end_node=f, edge_type=EdgeType.UNDIRECTED
+        >>> )
+
+        >>> ef = Edge(
+        >>>     "ef", start_node=e, end_node=f, edge_type=EdgeType.UNDIRECTED
+        >>> )
+
+        >>> ugraph1 = Graph(
+        >>>     "graph",
+        >>>     data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>   nodes=set([a, b, e, f]),
+        >>>   edges=set([ae, af, ef]),
+        >>> )
+        >>> mat = ugraph1.to_adjmat(vtype=bool)
+        >>> mat == {
+        >>>     ("b", "b"): False,
+        >>>     ("b", "e"): False,
+        >>>     ("b", "f"): False,
+        >>>     ("b", "a"): False,
+        >>>     ("e", "b"): False,
+        >>>     ("e", "e"): False,
+        >>>     ("e", "f"): True,
+        >>>     ("e", "a"): True,
+        >>>     ("f", "b"): False,
+        >>>     ("f", "e"): True,
+        >>>     ("f", "f"): False,
+        >>>     ("f", "a"): True,
+        >>>     ("a", "b"): False,
+        >>>     ("a", "e"): True,
+        >>>     ("a", "f"): True,
+        >>>     ("a", "a"): False
+        >>> }
+        >>> True
+
+        \endcode
         """
         gmat = {}
         for v in self.V:
@@ -151,8 +235,62 @@ class Graph(GraphObject):
         """!
         \brief Obtain transitive closure matrix of a given graph
 
-        We apply the algorithm from algorithmic graph theory Joyner, Phillips,
-        Nguyen, 2013, p.134
+        Transitive closure is defined by Joyner, et. al. as:
+
+        - Consider a digraph \f$G = (V, E)\f$ of order \f$n = |V |\f$. The
+          transitive closure of G is defined as the digraph \f$G^{∗} = (V,
+          E^{∗}) \f$ having the same vertex set as G. However, the edge set
+          \f$E^{∗}\f$ of \f$G^{∗}\f$ consists of all edges uv such that there
+          is a u-v path in G and \f$uv \not \in E\f$. The transitive closure
+          \f$G^{*}\f$ answers an important question about G: If u and v are two
+          distinct vertices of G, are they connected by a path with length ≥ 1?
+
+        Variant of the Floyd-Roy-Warshall algorithm taken from Joyner,
+        Phillips, Nguyen, Algorithmic Graph Theory, 2013, p.134
+
+        \throws ValueError we raise a value error if the graph has a self loop.
+
+        \code{.py}
+
+        >>> a = Node("a", {})  # b
+        >>> b = Node("b", {})  # c
+        >>> f = Node("f", {})  # d
+        >>> e = Node("e", {})  # e
+        >>> ae = Edge(
+        >>>    "ae", start_node=a, end_node=e, edge_type=EdgeType.UNDIRECTED
+        >>> )
+
+        >>> af = Edge(
+        >>>     "af", start_node=a, end_node=f, edge_type=EdgeType.UNDIRECTED
+        >>> )
+
+        >>> ef = Edge(
+        >>>     "ef", start_node=e, end_node=f, edge_type=EdgeType.UNDIRECTED
+        >>> )
+
+        >>> ugraph1 = Graph(
+        >>>     "graph",
+        >>>     data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>   nodes=set([a, b, e, f]),
+        >>>   edges=set([ae, af, ef]),
+        >>> )
+        >>> mat == {
+        >>>     ("a", "b"): True,
+        >>>     ("a", "e"): True,
+        >>>     ("a", "f"): True,
+        >>>     ("b", "a"): False,
+        >>>     ("b", "e"): False,
+        >>>     ("b", "f"): False,
+        >>>     ("e", "a"): True,
+        >>>     ("e", "b"): True,
+        >>>     ("e", "f"): True,
+        >>>     ("f", "a"): True,
+        >>>     ("f", "b"): True,
+        >>>     ("f", "e"): True
+        >>>   }
+        >>> True
+
+        \endcode
         """
         if self.has_self_loop():
             raise ValueError("Graph has a self loop")
@@ -194,12 +332,42 @@ class Graph(GraphObject):
         This is not a strict check for equality of graphs. We simply check
         for ids. There is nothing mathematical about it. Should not be
         used in the context of graph algebra.
+        \code{.py}
+
+        >>> a = Node("a", {})  # a
+        >>> e = Node("e", {})  # e
+        >>> b = Node("b", {})  # e
+        >>> ae = Edge(
+        >>>    "ae", start_node=a, end_node=e, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> g1 = Graph("graph", 
+        >>>     data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>     nodes=set([a, e]),
+        >>>     edges=set([ae])
+        >>> )
+        >>> g2 = Graph("other", 
+        >>>     data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>     nodes=set([a, e]),
+        >>>     edges=set([ae])
+        >>> )
+        >>> g3 = Graph("graph", 
+        >>>     data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>     nodes=set([a, e, b]),
+        >>>     edges=set([ae])
+        >>> )
+
+        >>> g1 == g2
+        >>> False
+        >>> g1 == g3
+        >>> True
+
+        \endcode
         """
         if isinstance(n, Graph):
             return self.id() == n.id()
         return False
 
-    def __str__(self):
+    def __str__(self) -> str:
         """!
         \brief Obtain string representation of the graph.
         """
@@ -250,18 +418,75 @@ class Graph(GraphObject):
         \brief Check if graph is connected
         If a graph has a single component, then we assume that it is connected
         graph
+
+        \code{.py}
+
+        >>> n1 = Node("n1", {})
+        >>> n2 = Node("n2", {})
+        >>> n3 = Node("n3", {})
+        >>> n4 = Node("n4", {})
+        >>> e1 = Edge(
+        >>>     "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e2 = Edge(
+        >>>     "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e3 = Edge(
+        >>>     "e3", start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> graph_2 = Graph(
+        >>>   "g2",
+        >>>   data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>   nodes=set([n1, n2, n3, n4]),
+        >>>   edges=set([e1, e2, e3]),
+        >>> )
+        >>> graph_2.is_connected()
+        >>> True
+
+        \endcode
         """
         return self.nb_components() == 1
 
-    def is_adjacent_of(self, e1: Edge, e2: Edge) -> bool:
+    @classmethod
+    def is_adjacent_of(cls, e1: Edge, e2: Edge) -> bool:
         """!
         \brief Check if two edges are adjacent
+
+        \param e1 an edge
+        \param e2 an edge
+
+        \code{.py}
+
+        >>> n1 = Node("n1", {})
+        >>> n2 = Node("n2", {})
+        >>> n3 = Node("n3", {})
+        >>> n4 = Node("n4", {})
+        >>> e1 = Edge(
+        >>>     "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e2 = Edge(
+        >>>     "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e3 = Edge(
+        >>>     "e3", start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> graph_2 = Graph(
+        >>>   "g2",
+        >>>   data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>   nodes=set([n1, n2, n3, n4]),
+        >>>   edges=set([e1, e2, e3]),
+        >>> )
+        >>> graph_2.is_adjacent_of(e2, e3)
+        >>> True
+
+        \endcode
         """
         n1_ids = e1.node_ids()
         n2_ids = e2.node_ids()
         return len(n1_ids.intersection(n2_ids)) > 0
 
-    def is_node_incident(self, n: Node, e: Edge) -> bool:
+    @classmethod
+    def is_node_incident(cls, n: Node, e: Edge) -> bool:
         """!
         \brief Check if a node is incident of an edge
 
@@ -298,7 +523,36 @@ class Graph(GraphObject):
     def is_neighbour_of(self, n1: Node, n2: Node) -> bool:
         """!
         \brief check if two nodes are neighbours
-        We define the condition of neighborhood as having a common edge.
+        We define the condition of neighborhood as having a common edge, not
+        being the same
+
+        \code{.py}
+
+        >>> n1 = Node("n1", {})
+        >>> n2 = Node("n2", {})
+        >>> n3 = Node("n3", {})
+        >>> n4 = Node("n4", {})
+        >>> e1 = Edge(
+        >>>     "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e2 = Edge(
+        >>>     "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e3 = Edge(
+        >>>     "e3", start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> graph_2 = Graph(
+        >>>   "g2",
+        >>>   data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>   nodes=set([n1, n2, n3, n4]),
+        >>>   edges=set([e1, e2, e3]),
+        >>> )
+        >>> graph_2.is_neighbour_of(n2, n3)
+        >>> True
+        >>> graph_2.is_neighbour_of(n2, n2)
+        >>> False
+
+        \endcode
         """
 
         def cond(n_1: Node, n_2: Node, e: Edge) -> bool:
@@ -323,6 +577,32 @@ class Graph(GraphObject):
         \brief check if two nodes are independent
         We consider two nodes independent if they are not the same, and they
         are not neighbours.
+
+        \code{.py}
+
+        >>> n1 = Node("n1", {})
+        >>> n2 = Node("n2", {})
+        >>> n3 = Node("n3", {})
+        >>> n4 = Node("n4", {})
+        >>> e1 = Edge(
+        >>>     "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e2 = Edge(
+        >>>     "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e3 = Edge(
+        >>>     "e3", start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> graph_2 = Graph(
+        >>>   "g2",
+        >>>   data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>   nodes=set([n1, n2, n3, n4]),
+        >>>   edges=set([e1, e2, e3]),
+        >>> )
+        >>> graph_2.is_node_independent_of(n1, n3)
+        >>> True
+
+        \endcode
         """
         if n1 == n2:
             return False
@@ -337,6 +617,32 @@ class Graph(GraphObject):
 
         \throws ValueError if argument node set is not a subset of vertices of
         the graph
+        \code{.py}
+
+        >>> n1 = Node("n1", {})
+        >>> n2 = Node("n2", {})
+        >>> n3 = Node("n3", {})
+        >>> n4 = Node("n4", {})
+        >>> n5 = Node("n5", {})
+        >>> e1 = Edge(
+        >>>     "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e2 = Edge(
+        >>>     "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e3 = Edge(
+        >>>     "e3", start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> graph_2 = Graph(
+        >>>   "g2",
+        >>>   data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>   nodes=set([n1, n2, n3, n4, n5]),
+        >>>   edges=set([e1, e2, e3]),
+        >>> )
+        >>> graph_2.is_stable(set([n1, n3, n5]))
+        >>> True
+
+        \endcode
         """
         if ns.issubset(self.nodes()) is False:
             raise ValueError("node set is not contained in graph")
@@ -351,7 +657,37 @@ class Graph(GraphObject):
     def neighbours_of(self, n1: Node) -> Set[Node]:
         """!
         \brief obtain neighbour set of a given node.
+
+        \param n1 the node whose neighbour set we are searching for
+
         \throws ValueError if node is not inside the graph
+
+        \code{.py}
+
+        >>> n1 = Node("n1", {})
+        >>> n2 = Node("n2", {})
+        >>> n3 = Node("n3", {})
+        >>> n4 = Node("n4", {})
+        >>> e1 = Edge(
+        >>>     "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e2 = Edge(
+        >>>     "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e3 = Edge(
+        >>>     "e3", start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> graph_2 = Graph(
+        >>>   "g2",
+        >>>   data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>   nodes=set([n1, n2, n3, n4]),
+        >>>   edges=set([e1, e2, e3]),
+        >>> )
+        >>> neighbours = graph_2.neighbours_of(n2)
+        >>> [n.id() for n in neighbours]
+        >>> ["n1", "n3"]
+
+        \endcode
         """
         if not self.is_in(n1):
             raise ValueError("node is not in graph")
@@ -364,13 +700,76 @@ class Graph(GraphObject):
     def nb_neighbours_of(self, n: Node) -> int:
         """!
         \brief obtain number of neighbours of a given node.
+
+        \param n node whose neighbour set we are interested in.
+
+        \see Graph.neighbours_of
+
+        Number of nodes in the neighbour set of n.
+
+        \code{.py}
+        >>> n1 = Node("n1", {})
+        >>> n2 = Node("n2", {})
+        >>> n3 = Node("n3", {})
+        >>> n4 = Node("n4", {})
+        >>> e1 = Edge(
+        >>>     "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e2 = Edge(
+        >>>     "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e3 = Edge(
+        >>>     "e3", start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> graph_2 = Graph(
+        >>>   "g2",
+        >>>   data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>   nodes=set([n1, n2, n3, n4]),
+        >>>   edges=set([e1, e2, e3]),
+        >>> )
+        >>> graph_2.nb_neighbours_of(n2)
+        >>> 2
+
+        \endcode
         """
         return len(self.neighbours_of(n))
 
     def edges_of(self, n: Node) -> Set[Edge]:
         """!
         \brief obtain the edge set of a given node.
+
+        \param n node whose adjacent edges we are interested in
+
+        \return edge set of node.
+
+        \throw ValueError if node is not in graph we raise a value error
+
+        \code{.py}
+
+        >>> n1 = Node("n1", {})
+        >>> n2 = Node("n2", {})
+        >>> n3 = Node("n3", {})
+        >>> n4 = Node("n4", {})
+        >>> e1 = Edge(
+        >>>     "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e2 = Edge(
+        >>>     "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> graph = Graph(
+        >>>     "g1",
+        >>>     data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>     nodes=set([n1, n2, n3, n4]),
+        >>>     edges=set([e1, e2]),
+        >>> )
+        >>> edges = graph.edges_of(n2)
+        >>> edges == set([e1, e2])
+        >>> True
+
+        \endcode
         """
+        if not self.is_in(n):
+            raise ValueError("node not in Graph")
         edge_ids = self.gdata[n.id()]
         return set([self.E[eid] for eid in edge_ids])
 
@@ -382,8 +781,45 @@ class Graph(GraphObject):
         and end in another node. This information is mostly trivial for 
         undirected graphs but becomes important for distinguishing 
         parents from children in directed graphs.
+
+        \param n node whose adjacent edges we are interested in
+
+        \return edge set of node.
+
+        \throw ValueError if node is not in graph we raise a value error
+        \code{.py}
+
+        >>> n1 = Node("n1", {})
+        >>> n2 = Node("n2", {})
+        >>> n3 = Node("n3", {})
+        >>> n4 = Node("n4", {})
+        >>> e1 = Edge(
+        >>>     "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e2 = Edge(
+        >>>     "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> graph = Graph(
+        >>>     "g1",
+        >>>     data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>     nodes=set([n1, n2, n3, n4]),
+        >>>     edges=set([e1, e2]),
+        >>> )
+        >>> edges = graph.outgoing_edges_of(n2)
+        >>> edges == set([e2])
+        >>> True
+
+        \endcode
         """
-        return set([e for e in self.edges() if e.start() == n])
+        if not self.is_in(n):
+            raise ValueError("node not in Graph")
+
+        eset = set()
+        for eid in self.gdata[n.id()]:
+            e = self.E[eid]
+            if e.start() == n:
+                eset.add(e)
+        return eset
 
     def incoming_edges_of(self, n: Node) -> Set[Edge]:
         """!
@@ -392,8 +828,39 @@ class Graph(GraphObject):
         Incoming edges are defined as edges that end with the given node.
         We only check for the position and do not consider the type of the edge
         For its use case see \see outgoing_edges_of()
+        \code{.py}
+
+        >>> n1 = Node("n1", {})
+        >>> n2 = Node("n2", {})
+        >>> n3 = Node("n3", {})
+        >>> n4 = Node("n4", {})
+        >>> e1 = Edge(
+        >>>     "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e2 = Edge(
+        >>>     "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> graph = Graph(
+        >>>     "g1",
+        >>>     data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>     nodes=set([n1, n2, n3, n4]),
+        >>>     edges=set([e1, e2]),
+        >>> )
+        >>> edges = graph.incoming_edges_of(n2)
+        >>> edges == set([e1])
+        >>> True
+
+        \endcode
         """
-        return set([e for e in self.edges() if e.end() == n])
+        if not self.is_in(n):
+            raise ValueError("node not in Graph")
+
+        eset = set()
+        for eid in self.gdata[n.id()]:
+            e = self.E[eid]
+            if e.end() == n:
+                eset.add(e)
+        return eset
 
     def edges_by_end(self, n: Node) -> Set[Edge]:
         """!
@@ -446,7 +913,7 @@ class Graph(GraphObject):
         """!
         \brief obtain the number of vertices in the graph.
 
-        It corresponds to \f[ |G| \f].
+        It corresponds to \f$ |G| \f$.
         This interpretation of order is taken from Diestel 2017, p. 2.
         """
         return len(self.V)
@@ -454,7 +921,7 @@ class Graph(GraphObject):
     def nb_edges(self) -> int:
         """!
         \brief obtain number of edges in the graph
-        It corresponds to \f[ ||G|| \f].
+        It corresponds to \f$ ||G|| \f$.
         This interpretation is taken from Diestel 2017, p. 2.
         """
         return len(self.E)
