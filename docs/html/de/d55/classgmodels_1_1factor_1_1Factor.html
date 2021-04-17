@@ -99,7 +99,7 @@ Inheritance diagram for gmodels.factor.Factor:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a85b98173c3e4a7161268ab41b51dc4f3"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a85b98173c3e4a7161268ab41b51dc4f3">__init__</a> (self, str gid, Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>] <a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a27dc359a01cb2c768b639de1f9f1c393">scope_vars</a>, Optional[Callable[[Set[Tuple[str, <a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>]]], float]] factor_fn=None, data={})</td></tr>
-<tr class="memdesc:a85b98173c3e4a7161268ab41b51dc4f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for a factor.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a85b98173c3e4a7161268ab41b51dc4f3">More...</a><br /></td></tr>
+<tr class="memdesc:a85b98173c3e4a7161268ab41b51dc4f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for a factor \( \phi(A,B) \).  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a85b98173c3e4a7161268ab41b51dc4f3">More...</a><br /></td></tr>
 <tr class="separator:a85b98173c3e4a7161268ab41b51dc4f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a27dc359a01cb2c768b639de1f9f1c393"><td class="memItemLeft" align="right" valign="top">Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a27dc359a01cb2c768b639de1f9f1c393">scope_vars</a> (self, f=lambda x:x)</td></tr>
 <tr class="memdesc:a27dc359a01cb2c768b639de1f9f1c393"><td class="mdescLeft">&#160;</td><td class="mdescRight">get variables that are inside the scope of this factor  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a27dc359a01cb2c768b639de1f9f1c393">More...</a><br /></td></tr>
@@ -216,6 +216,13 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a4093543d1345f0ebcc787e10a3ed3bbd"><td class="memItemLeft" align="right" valign="top"><a id="a4093543d1345f0ebcc787e10a3ed3bbd"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>scope_products</b></td></tr>
 <tr class="separator:a4093543d1345f0ebcc787e10a3ed3bbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_attribs_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject')"><img src="../../closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="../../dc/de3/classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject.html">gmodels.gtypes.graphobj.GraphObject</a></td></tr>
+<tr class="memitem:ae9c5dabd5b681b0ab3027b187f911299 inherit pub_attribs_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject"><td class="memItemLeft" align="right" valign="top"><a id="ae9c5dabd5b681b0ab3027b187f911299"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>object_id</b></td></tr>
+<tr class="separator:ae9c5dabd5b681b0ab3027b187f911299 inherit pub_attribs_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63f17bfb396aa9d69ecdd77a9cd1536f inherit pub_attribs_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject"><td class="memItemLeft" align="right" valign="top"><a id="a63f17bfb396aa9d69ecdd77a9cd1536f"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>object_data</b></td></tr>
+<tr class="separator:a63f17bfb396aa9d69ecdd77a9cd1536f inherit pub_attribs_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html" title="Factor from Koller and Friedman 2009, p.">Factor</a> from Koller and Friedman 2009, p. </p>
@@ -265,10 +272,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Constructor for a factor. </p>
-<p class="formulaDsp">
-\[ \phi(A,B) \]
-</p>
+<p>Constructor for a factor \( \phi(A,B) \). </p>
 <p>A factor is defined by a set of random variables which constitutes its scope and a real valued function. The canonical definition can be found in Koller and Friedman 2009, p. 106-107. During construction, we check so that all random variables are positive valued. If no function is provided, we instantiate the factor with a marginal joint function.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -469,9 +473,7 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section see"><dt>See also</dt><dd>Factor.matches(rvar_filter, value_filter, value_transform)</dd></dl>
 <p>For a factor phi(A,B) return factor function's domain values, such as:</p>
-<p class="formulaDsp">
-\[phi(A,B)\]
-</p>
+<p>\(phi(A,B)\)</p>
 <table class="markdownTable">
 <tr class="markdownTableHead">
 <th class="markdownTableHeadNone">A </th><th class="markdownTableHeadNone">B  </th></tr>
@@ -653,15 +655,7 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Make factor from joint variables. </p>
-<p>We assume that given random variables are conditionally related. We simply assume the following factorization between given variables: </p><p class="formulaDsp">
-\[ P(X_i | Pa_{X_i}) \]
-</p>
-<p> which decomposes as </p><p class="formulaDsp">
-\[ P(X_i | (X_1, X_2, X_3, \dots, X_j)\]
-</p>
-<p> where </p><p class="formulaDsp">
-\[{X_1, X_2, \dots, X_j} = Pa_{X_i}\]
-</p>
+<p>We assume that given random variables are conditionally related. We simply assume the following factorization between given variables: \( P(X_i | Pa_{X_i}) \) which decomposes as \( P(X_i | (X_1, X_2, X_3, \dots, X_j)\) where \({X_1, X_2, \dots, X_j} = Pa_{X_i}\)</p>
 <p>Basically we take the marginal product of parents and use the bayes rule to output the final probability value of the expression. See Koller, Friedman 2009, p. 46 - 47 on conditional parametrization and p. 62 for factorization of conditionally parametrized structures.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -1060,22 +1054,8 @@ Public Attributes</h2></td></tr>
 <p>max the variable out of factor as per Koller, Friedman 2009, p. </p>
 <p>555</p>
 <p>Maxing out a variable, or factor maximization is defined by Koller, Friedman as: </p><blockquote class="doxtable">
-<p>Let X be a set of variables, and Y </p><p class="formulaDsp">
-\[ \not \in \]
-</p>
-<p> X, a random variable. Let </p><p class="formulaDsp">
-\[ \phi(X, Y) \]
-</p>
-<p> be a factor. We define the factor maximization of Y in </p><p class="formulaDsp">
-\[ \phi \]
-</p>
-<p> to be factor </p><p class="formulaDsp">
-\[ \psi \]
-</p>
-<p> over X such that: </p><p class="formulaDsp">
-\[ \psi(X) = max_{Y}\phi(X, Y) \]
-</p>
- </blockquote>
+<p>Let X be a set of variables, and Y \( \not \in \) X, a random variable. Let \( \phi(X, Y) \) be a factor. We define the factor maximization of Y in \( \phi \) to be factor \( \psi \) over X such that: \( \psi(X) = max_{Y}\phi(X, Y) \) </p>
+</blockquote>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">Y</td><td>random variable who is going to be maxed out.</td></tr>
@@ -1338,12 +1318,7 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html" title="Factor from Koller and Friedman 2009, p.">Factor</a> product operation from Koller, Friedman 2009, p. </p>
-<p>107 </p><p class="formulaDsp">
-\[ \psi(X,Y,Z) = \phi(X,Y) \cdot \phi(Y,Z) \]
-</p>
- <p class="formulaDsp">
-\[ \prod_i phi(X_i) \]
-</p>
+<p>107 \( \psi(X,Y,Z) = \phi(X,Y) \cdot \phi(Y,Z) \) \( \prod_i phi(X_i) \)</p>
 <p>Point wise product of two different factor functions.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -1395,13 +1370,9 @@ Public Attributes</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html" title="Factor from Koller and Friedman 2009, p.">Factor</a> whose conditional probability table rows are shrink to rows that contain assignment values.</dd></dl>
 <p>Koller, Friedman 2009, p. 111 reduction by value example</p>
-<p class="formulaDsp">
-\[phi(A,B,C)\]
-</p>
+<p>\(phi(A,B,C)\)</p>
 <p>A B C -&mdash; | -&mdash; | -&mdash; a1 | b1 | c1 a1 | b1 | c2 a2 | b1 | c1 a2 | b1 | c2</p>
-<p>reduction C=c1 </p><p class="formulaDsp">
-\[\phi(A,B,C=c_1)\]
-</p>
+<p>reduction C=c1 \(\phi(A,B,C=c_1)\)</p>
 <p>A B C -&mdash; | -&mdash; | -&mdash; a1 | b1 | c1 a2 | b1 | c1 </p>
 
 </div>
@@ -1464,31 +1435,7 @@ Public Attributes</h2></td></tr>
 
 <p>Koller, Friedman 2009, p. </p>
 <p>111 follows the definition 4.5</p>
-<p>For </p><p class="formulaDsp">
-\[ U \not \subset Y \]
-</p>
-<p>, we define </p><p class="formulaDsp">
-\[phi[u]\]
-</p>
-<p> to be </p><p class="formulaDsp">
-\[phi[U&#39;=u&#39;]\]
-</p>
-<p>, where </p><p class="formulaDsp">
-\[ U&#39; = U \cap Y \]
-</p>
-<p> , and </p><p class="formulaDsp">
-\[u&#39; = u&lt;U&gt;\]
-</p>
-<p>, where </p><p class="formulaDsp">
-\[u&lt;U&gt;\]
-</p>
-<p> denotes the assignment in </p><p class="formulaDsp">
-\[u\]
-</p>
-<p> to the variables in </p><p class="formulaDsp">
-\[U&#39;\]
-</p>
-<p>.</p>
+<p>For \( U \not \subset Y \), we define \(phi[u]\) to be \(phi[U&#39;=u&#39;]\), where \( U&#39; = U \cap Y \) , and \(u&#39; = u&lt;U&gt;\), where \(u&lt;U&gt;\) denotes the assignment in \(u\) to the variables in \(U&#39;\).</p>
 <dl class="section return"><dt>Returns</dt><dd><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html" title="Factor from Koller and Friedman 2009, p.">Factor</a> </dd></dl>
 
 </div>
@@ -1566,33 +1513,8 @@ Public Attributes</h2></td></tr>
 <p>Summing out, or factor marginalization, is defined as the following by Koller, Friedman:</p>
 <blockquote class="doxtable">
 <p></p>
-<p>Let X be a set of variables and Y </p><p class="formulaDsp">
-\[\not \in \]
-</p>
-<p> X a variable. Let </p><p class="formulaDsp">
-\[\phi(X, Y)\]
-</p>
-<p> be a factor. We define the factor marginalization of Y in phi, denoted </p><p class="formulaDsp">
-\[ \sum_Y \phi \]
-</p>
-<p>, to be a factor psi over X such that: </p><p class="formulaDsp">
-\[ \psi(X) = \sum_Y \phi(X,Y) \]
-</p>
-<p></p>
+<p>Let X be a set of variables and Y \(\not \in \) X a variable. Let \(\phi(X, Y)\f] be a factor. We define the factor marginalization of Y in phi, denoted \) \sum_Y \phi \(, to be a factor psi over X such that: \) \psi(X) = \sum_Y \phi(X,Y) </p>
 </blockquote>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">Y</td><td>the variable that we are going to sum out.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">ValueError</td><td>We raise a value error if the argument is not in the scope of this factor</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html" title="Factor from Koller and Friedman 2009, p.">Factor</a> </dd></dl>
 
 </div>
 </div>

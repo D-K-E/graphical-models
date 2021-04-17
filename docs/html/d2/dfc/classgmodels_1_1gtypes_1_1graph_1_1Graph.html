@@ -82,7 +82,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Simple finite graph.  
+<p>Simple finite graph \( G = (V, E) \) where \( V \) is the vertex set and \( E \) is the edge set.  
  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#details">More...</a></p>
 <div class="dynheader">
 Inheritance diagram for gmodels.gtypes.graph.Graph:</div>
@@ -112,7 +112,7 @@ Inheritance diagram for gmodels.gtypes.graph.Graph:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a619405f96d213c996fab6e9c261e3180"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a619405f96d213c996fab6e9c261e3180">__init__</a> (self, str gid, data={}, Set[<a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a>] <a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a14ea9c8ea2ee1f0dd204b21d42308783">nodes</a>=None, Set[<a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a>] <a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#aa146aec295e76b05da4f247e4e4c5895">edges</a>=None)</td></tr>
-<tr class="memdesc:a619405f96d213c996fab6e9c261e3180"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html" title="Simple finite graph.">Graph</a> Constructor.  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a619405f96d213c996fab6e9c261e3180">More...</a><br /></td></tr>
+<tr class="memdesc:a619405f96d213c996fab6e9c261e3180"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html" title="Simple finite graph  where  is the vertex set and  is the edge set.">Graph</a> Constructor.  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a619405f96d213c996fab6e9c261e3180">More...</a><br /></td></tr>
 <tr class="separator:a619405f96d213c996fab6e9c261e3180"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a58a3fbfba7326849ce6d0dcc9fa46848"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a58a3fbfba7326849ce6d0dcc9fa46848">from_edgeset</a> (cls, Set[<a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a>] <a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#aa146aec295e76b05da4f247e4e4c5895">edges</a>)</td></tr>
 <tr class="memdesc:a58a3fbfba7326849ce6d0dcc9fa46848"><td class="mdescLeft">&#160;</td><td class="mdescRight">We construct the graph from given edge set using a random id.  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a58a3fbfba7326849ce6d0dcc9fa46848">More...</a><br /></td></tr>
@@ -123,10 +123,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af5e394b4d834a0b4d6cc3fbd193a2eff"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#af5e394b4d834a0b4d6cc3fbd193a2eff">mk_nodes</a> (self, Optional[Set[<a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a>]] ns, Optional[Set[<a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a>]] es)</td></tr>
 <tr class="memdesc:af5e394b4d834a0b4d6cc3fbd193a2eff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Obtain all nodes in a single set.  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#af5e394b4d834a0b4d6cc3fbd193a2eff">More...</a><br /></td></tr>
 <tr class="separator:af5e394b4d834a0b4d6cc3fbd193a2eff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2f8e97d5aa9e6b770b3bb2ce97e67eb6"><td class="memItemLeft" align="right" valign="top"><a id="a2f8e97d5aa9e6b770b3bb2ce97e67eb6"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a2f8e97d5aa9e6b770b3bb2ce97e67eb6">to_adjmat</a> (self, vtype=int)</td></tr>
-<tr class="memdesc:a2f8e97d5aa9e6b770b3bb2ce97e67eb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transform adjacency list to adjacency matrix representation. <br /></td></tr>
-<tr class="separator:a2f8e97d5aa9e6b770b3bb2ce97e67eb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a995842afcea5e62b7fb96394a4b4c606"><td class="memItemLeft" align="right" valign="top">Dict[Tuple[str, str], int]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a995842afcea5e62b7fb96394a4b4c606">to_adjmat</a> (self, vtype=int)</td></tr>
+<tr class="memdesc:a995842afcea5e62b7fb96394a4b4c606"><td class="mdescLeft">&#160;</td><td class="mdescRight">Transform adjacency list to adjacency matrix representation.  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a995842afcea5e62b7fb96394a4b4c606">More...</a><br /></td></tr>
+<tr class="separator:a995842afcea5e62b7fb96394a4b4c606"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acaffd49ffe08709f88da8eb947d1912f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#acaffd49ffe08709f88da8eb947d1912f">has_self_loop</a> (self)</td></tr>
 <tr class="memdesc:acaffd49ffe08709f88da8eb947d1912f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if graph has a self loop.  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#acaffd49ffe08709f88da8eb947d1912f">More...</a><br /></td></tr>
 <tr class="separator:acaffd49ffe08709f88da8eb947d1912f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -139,10 +138,10 @@ def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../..
 <tr class="memitem:a6afd52aa1fb62820d2c2ffe2ef7a765d"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a6afd52aa1fb62820d2c2ffe2ef7a765d">__eq__</a> (self, n)</td></tr>
 <tr class="memdesc:a6afd52aa1fb62820d2c2ffe2ef7a765d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check for equality.  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a6afd52aa1fb62820d2c2ffe2ef7a765d">More...</a><br /></td></tr>
 <tr class="separator:a6afd52aa1fb62820d2c2ffe2ef7a765d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aca2fc3454abf49e8948fffa95c0970fc"><td class="memItemLeft" align="right" valign="top"><a id="aca2fc3454abf49e8948fffa95c0970fc"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#aca2fc3454abf49e8948fffa95c0970fc">__str__</a> (self)</td></tr>
-<tr class="memdesc:aca2fc3454abf49e8948fffa95c0970fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Obtain string representation of the graph. <br /></td></tr>
-<tr class="separator:aca2fc3454abf49e8948fffa95c0970fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15f5b35c8807312b39c649bb1896a9ff"><td class="memItemLeft" align="right" valign="top"><a id="a15f5b35c8807312b39c649bb1896a9ff"></a>
+str&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a15f5b35c8807312b39c649bb1896a9ff">__str__</a> (self)</td></tr>
+<tr class="memdesc:a15f5b35c8807312b39c649bb1896a9ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Obtain string representation of the graph. <br /></td></tr>
+<tr class="separator:a15f5b35c8807312b39c649bb1896a9ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5dffd094b7265d2de9ada8fe01357568"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a5dffd094b7265d2de9ada8fe01357568">__hash__</a> (self)</td></tr>
 <tr class="memdesc:a5dffd094b7265d2de9ada8fe01357568"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a hash value for the graph.  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a5dffd094b7265d2de9ada8fe01357568">More...</a><br /></td></tr>
 <tr class="separator:a5dffd094b7265d2de9ada8fe01357568"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -152,27 +151,23 @@ def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../..
 <tr class="memitem:abd30c18d09e09fbdc18cc47d903aa5bc"><td class="memItemLeft" align="right" valign="top">Dict[str, <a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a>]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#abd30c18d09e09fbdc18cc47d903aa5bc">E</a> (self)</td></tr>
 <tr class="memdesc:abd30c18d09e09fbdc18cc47d903aa5bc"><td class="mdescLeft">&#160;</td><td class="mdescRight">obtain edges of the graph  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#abd30c18d09e09fbdc18cc47d903aa5bc">More...</a><br /></td></tr>
 <tr class="separator:abd30c18d09e09fbdc18cc47d903aa5bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8626da05db0727085154c07ab16a913c"><td class="memItemLeft" align="right" valign="top"><a id="a8626da05db0727085154c07ab16a913c"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a8626da05db0727085154c07ab16a913c">is_connected</a> (self)</td></tr>
-<tr class="memdesc:a8626da05db0727085154c07ab16a913c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if graph is connected If a graph has a single component, then we assume that it is connected graph. <br /></td></tr>
+<tr class="memitem:a8626da05db0727085154c07ab16a913c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a8626da05db0727085154c07ab16a913c">is_connected</a> (self)</td></tr>
+<tr class="memdesc:a8626da05db0727085154c07ab16a913c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if graph is connected If a graph has a single component, then we assume that it is connected graph.  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a8626da05db0727085154c07ab16a913c">More...</a><br /></td></tr>
 <tr class="separator:a8626da05db0727085154c07ab16a913c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a27f89556a3c57cf0ecaa81c14e62e3cc"><td class="memItemLeft" align="right" valign="top"><a id="a27f89556a3c57cf0ecaa81c14e62e3cc"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a27f89556a3c57cf0ecaa81c14e62e3cc">is_adjacent_of</a> (self, <a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a> e1, <a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a> e2)</td></tr>
-<tr class="memdesc:a27f89556a3c57cf0ecaa81c14e62e3cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if two edges are adjacent. <br /></td></tr>
-<tr class="separator:a27f89556a3c57cf0ecaa81c14e62e3cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5687435c4aa96b61972fd200c0cd0cce"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a5687435c4aa96b61972fd200c0cd0cce">is_node_incident</a> (self, <a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a> n, <a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a> e)</td></tr>
-<tr class="memdesc:a5687435c4aa96b61972fd200c0cd0cce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if a node is incident of an edge.  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a5687435c4aa96b61972fd200c0cd0cce">More...</a><br /></td></tr>
-<tr class="separator:a5687435c4aa96b61972fd200c0cd0cce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8373887504460cfe5ffa3bcfef11ee78"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a8373887504460cfe5ffa3bcfef11ee78">is_adjacent_of</a> (cls, <a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a> e1, <a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a> e2)</td></tr>
+<tr class="memdesc:a8373887504460cfe5ffa3bcfef11ee78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if two edges are adjacent.  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a8373887504460cfe5ffa3bcfef11ee78">More...</a><br /></td></tr>
+<tr class="separator:a8373887504460cfe5ffa3bcfef11ee78"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a16c90f0b9ca76018de496f31f05ca67a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a16c90f0b9ca76018de496f31f05ca67a">is_node_incident</a> (cls, <a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a> n, <a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a> e)</td></tr>
+<tr class="memdesc:a16c90f0b9ca76018de496f31f05ca67a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if a node is incident of an edge.  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a16c90f0b9ca76018de496f31f05ca67a">More...</a><br /></td></tr>
+<tr class="separator:a16c90f0b9ca76018de496f31f05ca67a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05ca0965a51bd7e57467f990f8c3c394"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a05ca0965a51bd7e57467f990f8c3c394">is_related_to</a> (self, <a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a> n1, <a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a> n2, Callable[[<a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a>, <a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a>, <a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a>], bool] condition, Set[<a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a>] es=None)</td></tr>
 <tr class="memdesc:a05ca0965a51bd7e57467f990f8c3c394"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generic function for applying proximity conditions on a node pair.  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a05ca0965a51bd7e57467f990f8c3c394">More...</a><br /></td></tr>
 <tr class="separator:a05ca0965a51bd7e57467f990f8c3c394"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adbd2985d817ab00400503592f373729c"><td class="memItemLeft" align="right" valign="top"><a id="adbd2985d817ab00400503592f373729c"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#adbd2985d817ab00400503592f373729c">is_neighbour_of</a> (self, <a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a> n1, <a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a> n2)</td></tr>
-<tr class="memdesc:adbd2985d817ab00400503592f373729c"><td class="mdescLeft">&#160;</td><td class="mdescRight">check if two nodes are neighbours We define the condition of neighborhood as having a common edge. <br /></td></tr>
+<tr class="memitem:adbd2985d817ab00400503592f373729c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#adbd2985d817ab00400503592f373729c">is_neighbour_of</a> (self, <a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a> n1, <a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a> n2)</td></tr>
+<tr class="memdesc:adbd2985d817ab00400503592f373729c"><td class="mdescLeft">&#160;</td><td class="mdescRight">check if two nodes are neighbours We define the condition of neighborhood as having a common edge, not being the same  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#adbd2985d817ab00400503592f373729c">More...</a><br /></td></tr>
 <tr class="separator:adbd2985d817ab00400503592f373729c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5480b99977e709c077ee2fb49a004d9b"><td class="memItemLeft" align="right" valign="top"><a id="a5480b99977e709c077ee2fb49a004d9b"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a5480b99977e709c077ee2fb49a004d9b">is_node_independent_of</a> (self, <a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a> n1, <a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a> n2)</td></tr>
-<tr class="memdesc:a5480b99977e709c077ee2fb49a004d9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">check if two nodes are independent We consider two nodes independent if they are not the same, and they are not neighbours. <br /></td></tr>
+<tr class="memitem:a5480b99977e709c077ee2fb49a004d9b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a5480b99977e709c077ee2fb49a004d9b">is_node_independent_of</a> (self, <a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a> n1, <a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a> n2)</td></tr>
+<tr class="memdesc:a5480b99977e709c077ee2fb49a004d9b"><td class="mdescLeft">&#160;</td><td class="mdescRight">check if two nodes are independent We consider two nodes independent if they are not the same, and they are not neighbours.  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a5480b99977e709c077ee2fb49a004d9b">More...</a><br /></td></tr>
 <tr class="separator:a5480b99977e709c077ee2fb49a004d9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c9948757fcbea8280d1bc1a4744e12d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a2c9948757fcbea8280d1bc1a4744e12d">is_stable</a> (self, Set[<a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a>] ns)</td></tr>
 <tr class="memdesc:a2c9948757fcbea8280d1bc1a4744e12d"><td class="mdescLeft">&#160;</td><td class="mdescRight">check if given node set is stable  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a2c9948757fcbea8280d1bc1a4744e12d">More...</a><br /></td></tr>
@@ -180,13 +175,11 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../.
 <tr class="memitem:aa7931cbb1cd0bc28a03ef114c3efbc9d"><td class="memItemLeft" align="right" valign="top">Set[<a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a>]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#aa7931cbb1cd0bc28a03ef114c3efbc9d">neighbours_of</a> (self, <a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a> n1)</td></tr>
 <tr class="memdesc:aa7931cbb1cd0bc28a03ef114c3efbc9d"><td class="mdescLeft">&#160;</td><td class="mdescRight">obtain neighbour set of a given node.  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#aa7931cbb1cd0bc28a03ef114c3efbc9d">More...</a><br /></td></tr>
 <tr class="separator:aa7931cbb1cd0bc28a03ef114c3efbc9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afd022b8f1fb077dbc7b7dc9dc6974162"><td class="memItemLeft" align="right" valign="top"><a id="afd022b8f1fb077dbc7b7dc9dc6974162"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#afd022b8f1fb077dbc7b7dc9dc6974162">nb_neighbours_of</a> (self, <a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a> n)</td></tr>
-<tr class="memdesc:afd022b8f1fb077dbc7b7dc9dc6974162"><td class="mdescLeft">&#160;</td><td class="mdescRight">obtain number of neighbours of a given node. <br /></td></tr>
+<tr class="memitem:afd022b8f1fb077dbc7b7dc9dc6974162"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#afd022b8f1fb077dbc7b7dc9dc6974162">nb_neighbours_of</a> (self, <a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a> n)</td></tr>
+<tr class="memdesc:afd022b8f1fb077dbc7b7dc9dc6974162"><td class="mdescLeft">&#160;</td><td class="mdescRight">obtain number of neighbours of a given node.  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#afd022b8f1fb077dbc7b7dc9dc6974162">More...</a><br /></td></tr>
 <tr class="separator:afd022b8f1fb077dbc7b7dc9dc6974162"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a519a91523a14681c92ba021746bb70f7"><td class="memItemLeft" align="right" valign="top"><a id="a519a91523a14681c92ba021746bb70f7"></a>
-Set[<a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a>]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a519a91523a14681c92ba021746bb70f7">edges_of</a> (self, <a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a> n)</td></tr>
-<tr class="memdesc:a519a91523a14681c92ba021746bb70f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">obtain the edge set of a given node. <br /></td></tr>
+<tr class="memitem:a519a91523a14681c92ba021746bb70f7"><td class="memItemLeft" align="right" valign="top">Set[<a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a>]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a519a91523a14681c92ba021746bb70f7">edges_of</a> (self, <a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a> n)</td></tr>
+<tr class="memdesc:a519a91523a14681c92ba021746bb70f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">obtain the edge set of a given node.  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a519a91523a14681c92ba021746bb70f7">More...</a><br /></td></tr>
 <tr class="separator:a519a91523a14681c92ba021746bb70f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8c19d8a8716b563f8f6579c3678ac379"><td class="memItemLeft" align="right" valign="top">Set[<a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a>]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a8c19d8a8716b563f8f6579c3678ac379">outgoing_edges_of</a> (self, <a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a> n)</td></tr>
 <tr class="memdesc:a8c19d8a8716b563f8f6579c3678ac379"><td class="mdescLeft">&#160;</td><td class="mdescRight">obtain the outgoing edge set of a given node.  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a8c19d8a8716b563f8f6579c3678ac379">More...</a><br /></td></tr>
@@ -216,7 +209,7 @@ Set[<a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html
 <tr class="memdesc:a1c7ac2968860a4d55c0f45f328dd43ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">obtain the number of vertices in the graph.  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a1c7ac2968860a4d55c0f45f328dd43ed">More...</a><br /></td></tr>
 <tr class="separator:a1c7ac2968860a4d55c0f45f328dd43ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab8ad6e200e8efac7a5d420e14b6952a9"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#ab8ad6e200e8efac7a5d420e14b6952a9">nb_edges</a> (self)</td></tr>
-<tr class="memdesc:ab8ad6e200e8efac7a5d420e14b6952a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">obtain number of edges in the graph It corresponds to  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#ab8ad6e200e8efac7a5d420e14b6952a9">More...</a><br /></td></tr>
+<tr class="memdesc:ab8ad6e200e8efac7a5d420e14b6952a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">obtain number of edges in the graph It corresponds to \( ||G|| \).  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#ab8ad6e200e8efac7a5d420e14b6952a9">More...</a><br /></td></tr>
 <tr class="separator:ab8ad6e200e8efac7a5d420e14b6952a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af0534a9c6c82464cc40a89608398a921"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#af0534a9c6c82464cc40a89608398a921">is_trivial</a> (self)</td></tr>
 <tr class="memdesc:af0534a9c6c82464cc40a89608398a921"><td class="mdescLeft">&#160;</td><td class="mdescRight">check if graph is trivial.  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#af0534a9c6c82464cc40a89608398a921">More...</a><br /></td></tr>
@@ -367,7 +360,7 @@ Dict[str, Set[<a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_
 <tr class="memdesc:aee7564c1b21abbaef27bb1809b473d0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">obtain the edge set implied by the predecessor array. <br /></td></tr>
 <tr class="separator:aee7564c1b21abbaef27bb1809b473d0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0d0e8d39b5c3e805ff0a8f935963c95a"><td class="memItemLeft" align="right" valign="top">Optional[Tuple[str, str]]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a0d0e8d39b5c3e805ff0a8f935963c95a">dfs_forest</a> (self, str u, Dict[str, str] pred, Dict[str, int] marked, Dict[str, int] d, Dict[str, int] f, Set[str] T, Dict[str, List[Dict[str, Union[str, int]]]] cycles, int time, Callable[[<a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a>], Set[<a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a>]] edge_generator, bool check_cycle=False)</td></tr>
-<tr class="memdesc:a0d0e8d39b5c3e805ff0a8f935963c95a"><td class="mdescLeft">&#160;</td><td class="mdescRight">adapted for cycle detection dfs recursive forest from Erciyes 2018, Guide <a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html" title="Simple finite graph.">Graph</a> ..., p.152 alg.  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a0d0e8d39b5c3e805ff0a8f935963c95a">More...</a><br /></td></tr>
+<tr class="memdesc:a0d0e8d39b5c3e805ff0a8f935963c95a"><td class="mdescLeft">&#160;</td><td class="mdescRight">adapted for cycle detection dfs recursive forest from Erciyes 2018, Guide <a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html" title="Simple finite graph  where  is the vertex set and  is the edge set.">Graph</a> ..., p.152 alg.  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a0d0e8d39b5c3e805ff0a8f935963c95a">More...</a><br /></td></tr>
 <tr class="separator:a0d0e8d39b5c3e805ff0a8f935963c95a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a60e7d0083348977abb6329bc1ef323eb"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a60e7d0083348977abb6329bc1ef323eb">has_cycles</a> (self)</td></tr>
 <tr class="memdesc:a60e7d0083348977abb6329bc1ef323eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if graph instance contains cycles.  <a href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a60e7d0083348977abb6329bc1ef323eb">More...</a><br /></td></tr>
@@ -441,19 +434,16 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:ac4a659369ae5c1dce16aad9d0182e6c2"><td class="memItemLeft" align="right" valign="top"><a id="ac4a659369ae5c1dce16aad9d0182e6c2"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>props</b></td></tr>
 <tr class="separator:ac4a659369ae5c1dce16aad9d0182e6c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_attribs_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject')"><img src="../../closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="../../dc/de3/classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject.html">gmodels.gtypes.graphobj.GraphObject</a></td></tr>
+<tr class="memitem:ae9c5dabd5b681b0ab3027b187f911299 inherit pub_attribs_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject"><td class="memItemLeft" align="right" valign="top"><a id="ae9c5dabd5b681b0ab3027b187f911299"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>object_id</b></td></tr>
+<tr class="separator:ae9c5dabd5b681b0ab3027b187f911299 inherit pub_attribs_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63f17bfb396aa9d69ecdd77a9cd1536f inherit pub_attribs_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject"><td class="memItemLeft" align="right" valign="top"><a id="a63f17bfb396aa9d69ecdd77a9cd1536f"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>object_data</b></td></tr>
+<tr class="separator:a63f17bfb396aa9d69ecdd77a9cd1536f inherit pub_attribs_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Simple finite graph. </p>
-<p class="formulaDsp">
-\[ G = (V, E) \]
-</p>
-<p> where </p><p class="formulaDsp">
-\[ V \]
-</p>
-<p> is the vertex set and </p><p class="formulaDsp">
-\[ E \]
-</p>
-<p> is the edge set. </p>
+<div class="textblock"><p>Simple finite graph \( G = (V, E) \) where \( V \) is the vertex set and \( E \) is the edge set. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a619405f96d213c996fab6e9c261e3180"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a619405f96d213c996fab6e9c261e3180">&#9670;&nbsp;</a></span>__init__()</h2>
@@ -499,7 +489,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html" title="Simple finite graph.">Graph</a> Constructor. </p>
+<p><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html" title="Simple finite graph  where  is the vertex set and  is the edge set.">Graph</a> Constructor. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">gid</td><td>unique graph id. In most cases we generate a random id with uuid4</td></tr>
@@ -509,8 +499,30 @@ Public Attributes</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>We construct the graph from given node and edge set. For quick look up we store them in hash tables. The gdata member also stores an edge list representation, in order to facilitate some of the basic look up functionality concerning neighbours of vertices. </p>
-
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">ValueError</td><td>If the graph is trivial, we raise a value error, as most algorithms don't work with trivial graphs.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>We construct the graph from given node and edge set. For quick look up we store them in hash tables. The gdata member also stores an edge list representation, in order to facilitate some of the basic look up functionality concerning neighbours of vertices.</p>
+<div class="fragment"><div class="line">&gt;&gt;&gt; a = Node(<span class="stringliteral">&quot;a&quot;</span>, {})  <span class="comment"># b</span></div>
+<div class="line">&gt;&gt;&gt; b = Node(<span class="stringliteral">&quot;b&quot;</span>, {})  <span class="comment"># c</span></div>
+<div class="line">&gt;&gt;&gt; f = Node(<span class="stringliteral">&quot;f&quot;</span>, {})  <span class="comment"># d</span></div>
+<div class="line">&gt;&gt;&gt; e = Node(<span class="stringliteral">&quot;e&quot;</span>, {})  <span class="comment"># e</span></div>
+<div class="line">&gt;&gt;&gt; ab = Edge(</div>
+<div class="line">&gt;&gt;&gt;    <span class="stringliteral">&quot;ab&quot;</span>, start_node=a, end_node=b, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; be = Edge(</div>
+<div class="line">&gt;&gt;&gt;    <span class="stringliteral">&quot;be&quot;</span>, start_node=b, end_node=e, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; graph = Graph(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;graph&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;     data={<span class="stringliteral">&quot;my&quot;</span>: <span class="stringliteral">&quot;graph&quot;</span>, <span class="stringliteral">&quot;data&quot;</span>: <span class="stringliteral">&quot;is&quot;</span>, <span class="stringliteral">&quot;very&quot;</span>: <span class="stringliteral">&quot;awesome&quot;</span>},</div>
+<div class="line">&gt;&gt;&gt;     nodes=set([a, b, e, f]),</div>
+<div class="line">&gt;&gt;&gt;     edges=set([ab, be]),</div>
+<div class="line">&gt;&gt;&gt; )</div>
+</div><!-- fragment --> 
 <p>Reimplemented in <a class="el" href="../../d8/d73/classgmodels_1_1gtypes_1_1undigraph_1_1UndiGraph.html#a4a63245f18c2341777ad7ee83e733925">gmodels.gtypes.undigraph.UndiGraph</a>, and <a class="el" href="../../dd/d00/classgmodels_1_1gtypes_1_1digraph_1_1DiGraph.html#a8f384e53641d72e7898ce5afc643ff2c">gmodels.gtypes.digraph.DiGraph</a>.</p>
 
 </div>
@@ -543,8 +555,33 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Check for equality. </p>
-<p>This is not a strict check for equality of graphs. We simply check for ids. There is nothing mathematical about it. Should not be used in the context of graph algebra. </p>
-
+<p>This is not a strict check for equality of graphs. We simply check for ids. There is nothing mathematical about it. Should not be used in the context of graph algebra. </p><div class="fragment"><div class="line">&gt;&gt;&gt; a = Node(<span class="stringliteral">&quot;a&quot;</span>, {})  <span class="comment"># a</span></div>
+<div class="line">&gt;&gt;&gt; e = Node(<span class="stringliteral">&quot;e&quot;</span>, {})  <span class="comment"># e</span></div>
+<div class="line">&gt;&gt;&gt; b = Node(<span class="stringliteral">&quot;b&quot;</span>, {})  <span class="comment"># e</span></div>
+<div class="line">&gt;&gt;&gt; ae = Edge(</div>
+<div class="line">&gt;&gt;&gt;    <span class="stringliteral">&quot;ae&quot;</span>, start_node=a, end_node=e, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; g1 = Graph(<span class="stringliteral">&quot;graph&quot;</span>, </div>
+<div class="line">&gt;&gt;&gt;     data={<span class="stringliteral">&quot;my&quot;</span>: <span class="stringliteral">&quot;graph&quot;</span>, <span class="stringliteral">&quot;data&quot;</span>: <span class="stringliteral">&quot;is&quot;</span>, <span class="stringliteral">&quot;very&quot;</span>: <span class="stringliteral">&quot;awesome&quot;</span>},</div>
+<div class="line">&gt;&gt;&gt;     nodes=set([a, e]),</div>
+<div class="line">&gt;&gt;&gt;     edges=set([ae])</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; g2 = Graph(<span class="stringliteral">&quot;other&quot;</span>, </div>
+<div class="line">&gt;&gt;&gt;     data={<span class="stringliteral">&quot;my&quot;</span>: <span class="stringliteral">&quot;graph&quot;</span>, <span class="stringliteral">&quot;data&quot;</span>: <span class="stringliteral">&quot;is&quot;</span>, <span class="stringliteral">&quot;very&quot;</span>: <span class="stringliteral">&quot;awesome&quot;</span>},</div>
+<div class="line">&gt;&gt;&gt;     nodes=set([a, e]),</div>
+<div class="line">&gt;&gt;&gt;     edges=set([ae])</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; g3 = Graph(<span class="stringliteral">&quot;graph&quot;</span>, </div>
+<div class="line">&gt;&gt;&gt;     data={<span class="stringliteral">&quot;my&quot;</span>: <span class="stringliteral">&quot;graph&quot;</span>, <span class="stringliteral">&quot;data&quot;</span>: <span class="stringliteral">&quot;is&quot;</span>, <span class="stringliteral">&quot;very&quot;</span>: <span class="stringliteral">&quot;awesome&quot;</span>},</div>
+<div class="line">&gt;&gt;&gt;     nodes=set([a, e, b]),</div>
+<div class="line">&gt;&gt;&gt;     edges=set([ae])</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line"> </div>
+<div class="line">&gt;&gt;&gt; g1 == g2</div>
+<div class="line">&gt;&gt;&gt; <span class="keyword">False</span></div>
+<div class="line">&gt;&gt;&gt; g1 == g3</div>
+<div class="line">&gt;&gt;&gt; <span class="keyword">True</span></div>
+</div><!-- fragment --> 
 </div>
 </div>
 <a id="a5dffd094b7265d2de9ada8fe01357568"></a>
@@ -709,7 +746,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>adapted for cycle detection dfs recursive forest from Erciyes 2018, Guide <a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html" title="Simple finite graph.">Graph</a> ..., p.152 alg. </p>
+<p>adapted for cycle detection dfs recursive forest from Erciyes 2018, Guide <a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html" title="Simple finite graph  where  is the vertex set and  is the edge set.">Graph</a> ..., p.152 alg. </p>
 <p>6.7</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -894,6 +931,68 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a519a91523a14681c92ba021746bb70f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a519a91523a14681c92ba021746bb70f7">&#9670;&nbsp;</a></span>edges_of()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> Set[<a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a>] gmodels.gtypes.graph.Graph.edges_of </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a>&#160;</td>
+          <td class="paramname"><em>n</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>obtain the edge set of a given node. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">n</td><td>node whose adjacent edges we are interested in</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>edge set of node.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">ValueError</td><td>if node is not in graph we raise a value error</td></tr>
+  </table>
+  </dd>
+</dl>
+<div class="fragment"><div class="line">&gt;&gt;&gt; n1 = Node(<span class="stringliteral">&quot;n1&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n2 = Node(<span class="stringliteral">&quot;n2&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n3 = Node(<span class="stringliteral">&quot;n3&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n4 = Node(<span class="stringliteral">&quot;n4&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; e1 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e1&quot;</span>, start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; e2 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e2&quot;</span>, start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; graph = Graph(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;g1&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;     data={<span class="stringliteral">&quot;my&quot;</span>: <span class="stringliteral">&quot;graph&quot;</span>, <span class="stringliteral">&quot;data&quot;</span>: <span class="stringliteral">&quot;is&quot;</span>, <span class="stringliteral">&quot;very&quot;</span>: <span class="stringliteral">&quot;awesome&quot;</span>},</div>
+<div class="line">&gt;&gt;&gt;     nodes=set([n1, n2, n3, n4]),</div>
+<div class="line">&gt;&gt;&gt;     edges=set([e1, e2]),</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; edges = graph.edges_of(n2)</div>
+<div class="line">&gt;&gt;&gt; edges == set([e1, e2])</div>
+<div class="line">&gt;&gt;&gt; <span class="keyword">True</span></div>
+</div><!-- fragment --> 
+</div>
+</div>
 <a id="a84d447c5d64a7b522283048ed416b8c2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a84d447c5d64a7b522283048ed416b8c2">&#9670;&nbsp;</a></span>ev_ratio_from_average_degree()</h2>
 
@@ -1069,7 +1168,15 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>We construct the graph from given node, and edge sets using a random id. </p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html" title="Simple finite graph.">Graph</a> for more information </dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html" title="Simple finite graph  where  is the vertex set and  is the edge set.">Graph</a> for more information</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">edges</td><td>set of edges </td></tr>
+    <tr><td class="paramname">nodes</td><td>set of nodes</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>We iterate over set of edges and add the nodes that are not inside the node set. We pass both parameters to <a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html" title="Simple finite graph  where  is the vertex set and  is the edge set.">Graph</a> constructor afterwards. </p>
 
 </div>
 </div>
@@ -1100,7 +1207,8 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>We construct the graph from given edge set using a random id. </p>
-<p>See </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html" title="Simple finite graph.">Graph</a> for more information </dd></dl>
+<p>See </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html" title="Simple finite graph  where  is the vertex set and  is the edge set.">Graph</a> for more information</dd></dl>
+<p>We obtain nodes from edges then pass them to graph constructor. </p>
 
 <p>Reimplemented in <a class="el" href="../../d7/db3/classgmodels_1_1gtypes_1_1tree_1_1Tree.html#a8414ba13d097591a7e41ceb254916dbe">gmodels.gtypes.tree.Tree</a>.</p>
 
@@ -1424,8 +1532,134 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>obtain incoming edges of a given graph </p>
-<p>Incoming edges are defined as edges that end with the given node. We only check for the position and do not consider the type of the edge For its use case see </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a8c19d8a8716b563f8f6579c3678ac379" title="obtain the outgoing edge set of a given node.">outgoing_edges_of()</a> </dd></dl>
+<p>Incoming edges are defined as edges that end with the given node. We only check for the position and do not consider the type of the edge For its use case see </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a8c19d8a8716b563f8f6579c3678ac379" title="obtain the outgoing edge set of a given node.">outgoing_edges_of()</a> <div class="fragment"><div class="line">&gt;&gt;&gt; n1 = Node(<span class="stringliteral">&quot;n1&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n2 = Node(<span class="stringliteral">&quot;n2&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n3 = Node(<span class="stringliteral">&quot;n3&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n4 = Node(<span class="stringliteral">&quot;n4&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; e1 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e1&quot;</span>, start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; e2 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e2&quot;</span>, start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; graph = Graph(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;g1&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;     data={<span class="stringliteral">&quot;my&quot;</span>: <span class="stringliteral">&quot;graph&quot;</span>, <span class="stringliteral">&quot;data&quot;</span>: <span class="stringliteral">&quot;is&quot;</span>, <span class="stringliteral">&quot;very&quot;</span>: <span class="stringliteral">&quot;awesome&quot;</span>},</div>
+<div class="line">&gt;&gt;&gt;     nodes=set([n1, n2, n3, n4]),</div>
+<div class="line">&gt;&gt;&gt;     edges=set([e1, e2]),</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; edges = graph.incoming_edges_of(n2)</div>
+<div class="line">&gt;&gt;&gt; edges == set([e1])</div>
+<div class="line">&gt;&gt;&gt; <span class="keyword">True</span></div>
+</div><!-- fragment --> </dd></dl>
 
+</div>
+</div>
+<a id="a8373887504460cfe5ffa3bcfef11ee78"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8373887504460cfe5ffa3bcfef11ee78">&#9670;&nbsp;</a></span>is_adjacent_of()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> bool gmodels.gtypes.graph.Graph.is_adjacent_of </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>cls</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a>&#160;</td>
+          <td class="paramname"><em>e1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a>&#160;</td>
+          <td class="paramname"><em>e2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Check if two edges are adjacent. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">e1</td><td>an edge </td></tr>
+    <tr><td class="paramname">e2</td><td>an edge</td></tr>
+  </table>
+  </dd>
+</dl>
+<div class="fragment"><div class="line">&gt;&gt;&gt; n1 = Node(<span class="stringliteral">&quot;n1&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n2 = Node(<span class="stringliteral">&quot;n2&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n3 = Node(<span class="stringliteral">&quot;n3&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n4 = Node(<span class="stringliteral">&quot;n4&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; e1 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e1&quot;</span>, start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; e2 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e2&quot;</span>, start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; e3 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e3&quot;</span>, start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; graph_2 = Graph(</div>
+<div class="line">&gt;&gt;&gt;   <span class="stringliteral">&quot;g2&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;   data={<span class="stringliteral">&quot;my&quot;</span>: <span class="stringliteral">&quot;graph&quot;</span>, <span class="stringliteral">&quot;data&quot;</span>: <span class="stringliteral">&quot;is&quot;</span>, <span class="stringliteral">&quot;very&quot;</span>: <span class="stringliteral">&quot;awesome&quot;</span>},</div>
+<div class="line">&gt;&gt;&gt;   nodes=set([n1, n2, n3, n4]),</div>
+<div class="line">&gt;&gt;&gt;   edges=set([e1, e2, e3]),</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; graph_2.is_adjacent_of(e2, e3)</div>
+<div class="line">&gt;&gt;&gt; <span class="keyword">True</span></div>
+</div><!-- fragment --> 
+<p>Reimplemented in <a class="el" href="../../dd/d00/classgmodels_1_1gtypes_1_1digraph_1_1DiGraph.html#a06c7ada3ceec60ef04a42b8f6c73dd6e">gmodels.gtypes.digraph.DiGraph</a>.</p>
+
+</div>
+</div>
+<a id="a8626da05db0727085154c07ab16a913c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8626da05db0727085154c07ab16a913c">&#9670;&nbsp;</a></span>is_connected()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> bool gmodels.gtypes.graph.Graph.is_connected </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Check if graph is connected If a graph has a single component, then we assume that it is connected graph. </p>
+<div class="fragment"><div class="line">&gt;&gt;&gt; n1 = Node(<span class="stringliteral">&quot;n1&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n2 = Node(<span class="stringliteral">&quot;n2&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n3 = Node(<span class="stringliteral">&quot;n3&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n4 = Node(<span class="stringliteral">&quot;n4&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; e1 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e1&quot;</span>, start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; e2 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e2&quot;</span>, start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; e3 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e3&quot;</span>, start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; graph_2 = Graph(</div>
+<div class="line">&gt;&gt;&gt;   <span class="stringliteral">&quot;g2&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;   data={<span class="stringliteral">&quot;my&quot;</span>: <span class="stringliteral">&quot;graph&quot;</span>, <span class="stringliteral">&quot;data&quot;</span>: <span class="stringliteral">&quot;is&quot;</span>, <span class="stringliteral">&quot;very&quot;</span>: <span class="stringliteral">&quot;awesome&quot;</span>},</div>
+<div class="line">&gt;&gt;&gt;   nodes=set([n1, n2, n3, n4]),</div>
+<div class="line">&gt;&gt;&gt;   edges=set([e1, e2, e3]),</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; graph_2.is_connected()</div>
+<div class="line">&gt;&gt;&gt; <span class="keyword">True</span></div>
+</div><!-- fragment --> 
 </div>
 </div>
 <a id="a41d8b99fc125cad2935bb3d1723a1de0"></a>
@@ -1501,8 +1735,67 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a5687435c4aa96b61972fd200c0cd0cce"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5687435c4aa96b61972fd200c0cd0cce">&#9670;&nbsp;</a></span>is_node_incident()</h2>
+<a id="adbd2985d817ab00400503592f373729c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adbd2985d817ab00400503592f373729c">&#9670;&nbsp;</a></span>is_neighbour_of()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> bool gmodels.gtypes.graph.Graph.is_neighbour_of </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a>&#160;</td>
+          <td class="paramname"><em>n1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a>&#160;</td>
+          <td class="paramname"><em>n2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>check if two nodes are neighbours We define the condition of neighborhood as having a common edge, not being the same </p>
+<div class="fragment"><div class="line">&gt;&gt;&gt; n1 = Node(<span class="stringliteral">&quot;n1&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n2 = Node(<span class="stringliteral">&quot;n2&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n3 = Node(<span class="stringliteral">&quot;n3&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n4 = Node(<span class="stringliteral">&quot;n4&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; e1 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e1&quot;</span>, start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; e2 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e2&quot;</span>, start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; e3 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e3&quot;</span>, start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; graph_2 = Graph(</div>
+<div class="line">&gt;&gt;&gt;   <span class="stringliteral">&quot;g2&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;   data={<span class="stringliteral">&quot;my&quot;</span>: <span class="stringliteral">&quot;graph&quot;</span>, <span class="stringliteral">&quot;data&quot;</span>: <span class="stringliteral">&quot;is&quot;</span>, <span class="stringliteral">&quot;very&quot;</span>: <span class="stringliteral">&quot;awesome&quot;</span>},</div>
+<div class="line">&gt;&gt;&gt;   nodes=set([n1, n2, n3, n4]),</div>
+<div class="line">&gt;&gt;&gt;   edges=set([e1, e2, e3]),</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; graph_2.is_neighbour_of(n2, n3)</div>
+<div class="line">&gt;&gt;&gt; <span class="keyword">True</span></div>
+<div class="line">&gt;&gt;&gt; graph_2.is_neighbour_of(n2, n2)</div>
+<div class="line">&gt;&gt;&gt; <span class="keyword">False</span></div>
+</div><!-- fragment --> 
+</div>
+</div>
+<a id="a16c90f0b9ca76018de496f31f05ca67a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a16c90f0b9ca76018de496f31f05ca67a">&#9670;&nbsp;</a></span>is_node_incident()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1511,7 +1804,7 @@ Public Attributes</h2></td></tr>
           <td class="memname"> bool gmodels.gtypes.graph.Graph.is_node_incident </td>
           <td>(</td>
           <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>self</em>, </td>
+          <td class="paramname"><em>cls</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1542,6 +1835,63 @@ Public Attributes</h2></td></tr>
   </dd>
 </dl>
 
+</div>
+</div>
+<a id="a5480b99977e709c077ee2fb49a004d9b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5480b99977e709c077ee2fb49a004d9b">&#9670;&nbsp;</a></span>is_node_independent_of()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> bool gmodels.gtypes.graph.Graph.is_node_independent_of </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a>&#160;</td>
+          <td class="paramname"><em>n1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a>&#160;</td>
+          <td class="paramname"><em>n2</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>check if two nodes are independent We consider two nodes independent if they are not the same, and they are not neighbours. </p>
+<div class="fragment"><div class="line">&gt;&gt;&gt; n1 = Node(<span class="stringliteral">&quot;n1&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n2 = Node(<span class="stringliteral">&quot;n2&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n3 = Node(<span class="stringliteral">&quot;n3&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n4 = Node(<span class="stringliteral">&quot;n4&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; e1 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e1&quot;</span>, start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; e2 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e2&quot;</span>, start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; e3 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e3&quot;</span>, start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; graph_2 = Graph(</div>
+<div class="line">&gt;&gt;&gt;   <span class="stringliteral">&quot;g2&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;   data={<span class="stringliteral">&quot;my&quot;</span>: <span class="stringliteral">&quot;graph&quot;</span>, <span class="stringliteral">&quot;data&quot;</span>: <span class="stringliteral">&quot;is&quot;</span>, <span class="stringliteral">&quot;very&quot;</span>: <span class="stringliteral">&quot;awesome&quot;</span>},</div>
+<div class="line">&gt;&gt;&gt;   nodes=set([n1, n2, n3, n4]),</div>
+<div class="line">&gt;&gt;&gt;   edges=set([e1, e2, e3]),</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; graph_2.is_node_independent_of(n1, n3)</div>
+<div class="line">&gt;&gt;&gt; <span class="keyword">True</span></div>
+</div><!-- fragment --> 
 </div>
 </div>
 <a id="a05ca0965a51bd7e57467f990f8c3c394"></a>
@@ -1632,7 +1982,29 @@ Public Attributes</h2></td></tr>
 <p>We ensure that no nodes in the given node set is a neighbour of one another as per the definition of Diestel 2017, p. 3.</p>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">ValueError</td><td>if argument node set is not a subset of vertices of the graph </td></tr>
+    <tr><td class="paramname">ValueError</td><td>if argument node set is not a subset of vertices of the graph <div class="fragment"><div class="line">&gt;&gt;&gt; n1 = Node(<span class="stringliteral">&quot;n1&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n2 = Node(<span class="stringliteral">&quot;n2&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n3 = Node(<span class="stringliteral">&quot;n3&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n4 = Node(<span class="stringliteral">&quot;n4&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n5 = Node(<span class="stringliteral">&quot;n5&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; e1 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e1&quot;</span>, start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; e2 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e2&quot;</span>, start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; e3 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e3&quot;</span>, start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; graph_2 = Graph(</div>
+<div class="line">&gt;&gt;&gt;   <span class="stringliteral">&quot;g2&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;   data={<span class="stringliteral">&quot;my&quot;</span>: <span class="stringliteral">&quot;graph&quot;</span>, <span class="stringliteral">&quot;data&quot;</span>: <span class="stringliteral">&quot;is&quot;</span>, <span class="stringliteral">&quot;very&quot;</span>: <span class="stringliteral">&quot;awesome&quot;</span>},</div>
+<div class="line">&gt;&gt;&gt;   nodes=set([n1, n2, n3, n4, n5]),</div>
+<div class="line">&gt;&gt;&gt;   edges=set([e1, e2, e3]),</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; graph_2.is_stable(set([n1, n3, n5]))</div>
+<div class="line">&gt;&gt;&gt; <span class="keyword">True</span></div>
+</div><!-- fragment --> </td></tr>
   </table>
   </dd>
 </dl>
@@ -1742,10 +2114,7 @@ Public Attributes</h2></td></tr>
   </table>
   </dd>
 </dl>
-<p>We assume that node set and edge set might contain different nodes, that is </p><p class="formulaDsp">
-\[ V[G] = V[ns] \cup V[es] \]
-</p>
-<p> We combine nodes given in both sets to create a final set of nodes for the graph </p>
+<p>We assume that node set and edge set might contain different nodes, that is \( V[G] = V[ns] \cup V[es] \) We combine nodes given in both sets to create a final set of nodes for the graph </p>
 
 </div>
 </div>
@@ -1786,12 +2155,68 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>obtain number of edges in the graph It corresponds to </p>
-<p class="formulaDsp">
-\[ ||G|| \]
-</p>
-<p>. This interpretation is taken from Diestel 2017, p. 2. </p>
+<p>obtain number of edges in the graph It corresponds to \( ||G|| \). </p>
+<p>This interpretation is taken from Diestel 2017, p. 2. </p>
 
+</div>
+</div>
+<a id="afd022b8f1fb077dbc7b7dc9dc6974162"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afd022b8f1fb077dbc7b7dc9dc6974162">&#9670;&nbsp;</a></span>nb_neighbours_of()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> int gmodels.gtypes.graph.Graph.nb_neighbours_of </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a>&#160;</td>
+          <td class="paramname"><em>n</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>obtain number of neighbours of a given node. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">n</td><td>node whose neighbour set we are interested in.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#aa7931cbb1cd0bc28a03ef114c3efbc9d" title="obtain neighbour set of a given node.">Graph.neighbours_of</a></dd></dl>
+<p>Number of nodes in the neighbour set of n.</p>
+<div class="fragment"><div class="line">&gt;&gt;&gt; n1 = Node(<span class="stringliteral">&quot;n1&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n2 = Node(<span class="stringliteral">&quot;n2&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n3 = Node(<span class="stringliteral">&quot;n3&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n4 = Node(<span class="stringliteral">&quot;n4&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; e1 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e1&quot;</span>, start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; e2 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e2&quot;</span>, start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; e3 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e3&quot;</span>, start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; graph_2 = Graph(</div>
+<div class="line">&gt;&gt;&gt;   <span class="stringliteral">&quot;g2&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;   data={<span class="stringliteral">&quot;my&quot;</span>: <span class="stringliteral">&quot;graph&quot;</span>, <span class="stringliteral">&quot;data&quot;</span>: <span class="stringliteral">&quot;is&quot;</span>, <span class="stringliteral">&quot;very&quot;</span>: <span class="stringliteral">&quot;awesome&quot;</span>},</div>
+<div class="line">&gt;&gt;&gt;   nodes=set([n1, n2, n3, n4]),</div>
+<div class="line">&gt;&gt;&gt;   edges=set([e1, e2, e3]),</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; graph_2.nb_neighbours_of(n2)</div>
+<div class="line">&gt;&gt;&gt; 2</div>
+</div><!-- fragment --> 
 </div>
 </div>
 <a id="aa7931cbb1cd0bc28a03ef114c3efbc9d"></a>
@@ -1821,13 +2246,41 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>obtain neighbour set of a given node. </p>
-<dl class="exception"><dt>Exceptions</dt><dd>
-  <table class="exception">
-    <tr><td class="paramname">ValueError</td><td>if node is not inside the graph </td></tr>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">n1</td><td>the node whose neighbour set we are searching for</td></tr>
   </table>
   </dd>
 </dl>
-
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">ValueError</td><td>if node is not inside the graph</td></tr>
+  </table>
+  </dd>
+</dl>
+<div class="fragment"><div class="line">&gt;&gt;&gt; n1 = Node(<span class="stringliteral">&quot;n1&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n2 = Node(<span class="stringliteral">&quot;n2&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n3 = Node(<span class="stringliteral">&quot;n3&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n4 = Node(<span class="stringliteral">&quot;n4&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; e1 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e1&quot;</span>, start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; e2 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e2&quot;</span>, start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; e3 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e3&quot;</span>, start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; graph_2 = Graph(</div>
+<div class="line">&gt;&gt;&gt;   <span class="stringliteral">&quot;g2&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;   data={<span class="stringliteral">&quot;my&quot;</span>: <span class="stringliteral">&quot;graph&quot;</span>, <span class="stringliteral">&quot;data&quot;</span>: <span class="stringliteral">&quot;is&quot;</span>, <span class="stringliteral">&quot;very&quot;</span>: <span class="stringliteral">&quot;awesome&quot;</span>},</div>
+<div class="line">&gt;&gt;&gt;   nodes=set([n1, n2, n3, n4]),</div>
+<div class="line">&gt;&gt;&gt;   edges=set([e1, e2, e3]),</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; neighbours = graph_2.neighbours_of(n2)</div>
+<div class="line">&gt;&gt;&gt; [n.id() <span class="keywordflow">for</span> n <span class="keywordflow">in</span> neighbours]</div>
+<div class="line">&gt;&gt;&gt; [<span class="stringliteral">&quot;n1&quot;</span>, <span class="stringliteral">&quot;n3&quot;</span>]</div>
+</div><!-- fragment --> 
 </div>
 </div>
 <a id="a1c7ac2968860a4d55c0f45f328dd43ed"></a>
@@ -1847,10 +2300,7 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>obtain the number of vertices in the graph. </p>
-<p>It corresponds to </p><p class="formulaDsp">
-\[ |G| \]
-</p>
-<p>. This interpretation of order is taken from Diestel 2017, p. 2. </p>
+<p>It corresponds to \( |G| \). This interpretation of order is taken from Diestel 2017, p. 2. </p>
 
 </div>
 </div>
@@ -1881,7 +2331,39 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>obtain the outgoing edge set of a given node. </p>
-<p>Outgoing edge set means all edges that start with the given node and end in another node. This information is mostly trivial for undirected graphs but becomes important for distinguishing parents from children in directed graphs. </p>
+<p>Outgoing edge set means all edges that start with the given node and end in another node. This information is mostly trivial for undirected graphs but becomes important for distinguishing parents from children in directed graphs.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">n</td><td>node whose adjacent edges we are interested in</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>edge set of node.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">ValueError</td><td>if node is not in graph we raise a value error <div class="fragment"><div class="line">&gt;&gt;&gt; n1 = Node(<span class="stringliteral">&quot;n1&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n2 = Node(<span class="stringliteral">&quot;n2&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n3 = Node(<span class="stringliteral">&quot;n3&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; n4 = Node(<span class="stringliteral">&quot;n4&quot;</span>, {})</div>
+<div class="line">&gt;&gt;&gt; e1 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e1&quot;</span>, start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; e2 = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;e2&quot;</span>, start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; graph = Graph(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;g1&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;     data={<span class="stringliteral">&quot;my&quot;</span>: <span class="stringliteral">&quot;graph&quot;</span>, <span class="stringliteral">&quot;data&quot;</span>: <span class="stringliteral">&quot;is&quot;</span>, <span class="stringliteral">&quot;very&quot;</span>: <span class="stringliteral">&quot;awesome&quot;</span>},</div>
+<div class="line">&gt;&gt;&gt;     nodes=set([n1, n2, n3, n4]),</div>
+<div class="line">&gt;&gt;&gt;     edges=set([e1, e2]),</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; edges = graph.outgoing_edges_of(n2)</div>
+<div class="line">&gt;&gt;&gt; edges == set([e2])</div>
+<div class="line">&gt;&gt;&gt; <span class="keyword">True</span></div>
+</div><!-- fragment --> </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -2002,6 +2484,85 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
+<a id="a995842afcea5e62b7fb96394a4b4c606"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a995842afcea5e62b7fb96394a4b4c606">&#9670;&nbsp;</a></span>to_adjmat()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> Dict[Tuple[str, str], int] gmodels.gtypes.graph.Graph.to_adjmat </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>vtype</em> = <code>int</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Transform adjacency list to adjacency matrix representation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">vtype</td><td>the cast type for the entry of adjacency matrix.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>adjacency matrix whose keys are identifiers of nodes and values are flags whether there is an edge between them.</dd></dl>
+<div class="fragment"><div class="line">&gt;&gt;&gt; a = Node(<span class="stringliteral">&quot;a&quot;</span>, {})  <span class="comment"># b</span></div>
+<div class="line">&gt;&gt;&gt; b = Node(<span class="stringliteral">&quot;b&quot;</span>, {})  <span class="comment"># c</span></div>
+<div class="line">&gt;&gt;&gt; f = Node(<span class="stringliteral">&quot;f&quot;</span>, {})  <span class="comment"># d</span></div>
+<div class="line">&gt;&gt;&gt; e = Node(<span class="stringliteral">&quot;e&quot;</span>, {})  <span class="comment"># e</span></div>
+<div class="line">&gt;&gt;&gt; ae = Edge(</div>
+<div class="line">&gt;&gt;&gt;    <span class="stringliteral">&quot;ae&quot;</span>, start_node=a, end_node=e, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line"> </div>
+<div class="line">&gt;&gt;&gt; af = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;af&quot;</span>, start_node=a, end_node=f, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line"> </div>
+<div class="line">&gt;&gt;&gt; ef = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;ef&quot;</span>, start_node=e, end_node=f, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line"> </div>
+<div class="line">&gt;&gt;&gt; ugraph1 = Graph(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;graph&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;     data={<span class="stringliteral">&quot;my&quot;</span>: <span class="stringliteral">&quot;graph&quot;</span>, <span class="stringliteral">&quot;data&quot;</span>: <span class="stringliteral">&quot;is&quot;</span>, <span class="stringliteral">&quot;very&quot;</span>: <span class="stringliteral">&quot;awesome&quot;</span>},</div>
+<div class="line">&gt;&gt;&gt;   nodes=set([a, b, e, f]),</div>
+<div class="line">&gt;&gt;&gt;   edges=set([ae, af, ef]),</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; mat = ugraph1.to_adjmat(vtype=bool)</div>
+<div class="line">&gt;&gt;&gt; mat == {</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;b&quot;</span>, <span class="stringliteral">&quot;b&quot;</span>): <span class="keyword">False</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;b&quot;</span>, <span class="stringliteral">&quot;e&quot;</span>): <span class="keyword">False</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;b&quot;</span>, <span class="stringliteral">&quot;f&quot;</span>): <span class="keyword">False</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;b&quot;</span>, <span class="stringliteral">&quot;a&quot;</span>): <span class="keyword">False</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;e&quot;</span>, <span class="stringliteral">&quot;b&quot;</span>): <span class="keyword">False</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;e&quot;</span>, <span class="stringliteral">&quot;e&quot;</span>): <span class="keyword">False</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;e&quot;</span>, <span class="stringliteral">&quot;f&quot;</span>): <span class="keyword">True</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;e&quot;</span>, <span class="stringliteral">&quot;a&quot;</span>): <span class="keyword">True</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;f&quot;</span>, <span class="stringliteral">&quot;b&quot;</span>): <span class="keyword">False</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;f&quot;</span>, <span class="stringliteral">&quot;e&quot;</span>): <span class="keyword">True</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;f&quot;</span>, <span class="stringliteral">&quot;f&quot;</span>): <span class="keyword">False</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;f&quot;</span>, <span class="stringliteral">&quot;a&quot;</span>): <span class="keyword">True</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;a&quot;</span>, <span class="stringliteral">&quot;b&quot;</span>): <span class="keyword">False</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;a&quot;</span>, <span class="stringliteral">&quot;e&quot;</span>): <span class="keyword">True</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;a&quot;</span>, <span class="stringliteral">&quot;f&quot;</span>): <span class="keyword">True</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;a&quot;</span>, <span class="stringliteral">&quot;a&quot;</span>): <span class="keyword">False</span></div>
+<div class="line">&gt;&gt;&gt; }</div>
+<div class="line">&gt;&gt;&gt; <span class="keyword">True</span></div>
+</div><!-- fragment --> 
+</div>
+</div>
 <a id="ad0d0fc95e76ba3e1684901d07da832be"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad0d0fc95e76ba3e1684901d07da832be">&#9670;&nbsp;</a></span>transitive_closure_matrix()</h2>
 
@@ -2019,8 +2580,55 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Obtain transitive closure matrix of a given graph. </p>
-<p>We apply the algorithm from algorithmic graph theory Joyner, Phillips, Nguyen, 2013, p.134 </p>
-
+<p>Transitive closure is defined by Joyner, et. al. as:</p>
+<ul>
+<li>Consider a digraph \(G = (V, E)\) of order \(n = |V |\). The transitive closure of G is defined as the digraph \(G^{∗} = (V, E^{∗}) \) having the same vertex set as G. However, the edge set \(E^{∗}\) of \(G^{∗}\) consists of all edges uv such that there is a u-v path in G and \(uv \not \in E\). The transitive closure \(G^{*}\) answers an important question about G: If u and v are two distinct vertices of G, are they connected by a path with length ≥ 1?</li>
+</ul>
+<p>Variant of the Floyd-Roy-Warshall algorithm taken from Joyner, Phillips, Nguyen, Algorithmic <a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html" title="Simple finite graph  where  is the vertex set and  is the edge set.">Graph</a> Theory, 2013, p.134</p>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">ValueError</td><td>we raise a value error if the graph has a self loop.</td></tr>
+  </table>
+  </dd>
+</dl>
+<div class="fragment"><div class="line">&gt;&gt;&gt; a = Node(<span class="stringliteral">&quot;a&quot;</span>, {})  <span class="comment"># b</span></div>
+<div class="line">&gt;&gt;&gt; b = Node(<span class="stringliteral">&quot;b&quot;</span>, {})  <span class="comment"># c</span></div>
+<div class="line">&gt;&gt;&gt; f = Node(<span class="stringliteral">&quot;f&quot;</span>, {})  <span class="comment"># d</span></div>
+<div class="line">&gt;&gt;&gt; e = Node(<span class="stringliteral">&quot;e&quot;</span>, {})  <span class="comment"># e</span></div>
+<div class="line">&gt;&gt;&gt; ae = Edge(</div>
+<div class="line">&gt;&gt;&gt;    <span class="stringliteral">&quot;ae&quot;</span>, start_node=a, end_node=e, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line"> </div>
+<div class="line">&gt;&gt;&gt; af = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;af&quot;</span>, start_node=a, end_node=f, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line"> </div>
+<div class="line">&gt;&gt;&gt; ef = Edge(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;ef&quot;</span>, start_node=e, end_node=f, edge_type=EdgeType.UNDIRECTED</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line"> </div>
+<div class="line">&gt;&gt;&gt; ugraph1 = Graph(</div>
+<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;graph&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;     data={<span class="stringliteral">&quot;my&quot;</span>: <span class="stringliteral">&quot;graph&quot;</span>, <span class="stringliteral">&quot;data&quot;</span>: <span class="stringliteral">&quot;is&quot;</span>, <span class="stringliteral">&quot;very&quot;</span>: <span class="stringliteral">&quot;awesome&quot;</span>},</div>
+<div class="line">&gt;&gt;&gt;   nodes=set([a, b, e, f]),</div>
+<div class="line">&gt;&gt;&gt;   edges=set([ae, af, ef]),</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; mat == {</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;a&quot;</span>, <span class="stringliteral">&quot;b&quot;</span>): <span class="keyword">True</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;a&quot;</span>, <span class="stringliteral">&quot;e&quot;</span>): <span class="keyword">True</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;a&quot;</span>, <span class="stringliteral">&quot;f&quot;</span>): <span class="keyword">True</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;b&quot;</span>, <span class="stringliteral">&quot;a&quot;</span>): <span class="keyword">False</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;b&quot;</span>, <span class="stringliteral">&quot;e&quot;</span>): <span class="keyword">False</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;b&quot;</span>, <span class="stringliteral">&quot;f&quot;</span>): <span class="keyword">False</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;e&quot;</span>, <span class="stringliteral">&quot;a&quot;</span>): <span class="keyword">True</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;e&quot;</span>, <span class="stringliteral">&quot;b&quot;</span>): <span class="keyword">True</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;e&quot;</span>, <span class="stringliteral">&quot;f&quot;</span>): <span class="keyword">True</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;f&quot;</span>, <span class="stringliteral">&quot;a&quot;</span>): <span class="keyword">True</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;f&quot;</span>, <span class="stringliteral">&quot;b&quot;</span>): <span class="keyword">True</span>,</div>
+<div class="line">&gt;&gt;&gt;     (<span class="stringliteral">&quot;f&quot;</span>, <span class="stringliteral">&quot;e&quot;</span>): <span class="keyword">True</span></div>
+<div class="line">&gt;&gt;&gt;   }</div>
+<div class="line">&gt;&gt;&gt; <span class="keyword">True</span></div>
+</div><!-- fragment --> 
 </div>
 </div>
 <a id="aa3a7bfb128185fbd175af7b2b96ca1dc"></a>
