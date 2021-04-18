@@ -10,10 +10,30 @@ from random import choice
 
 
 class RandomVariable(Node):
+    """!
+    \brief a Random Variable as defined by Koller, Friedman 2009, p. 20
+
+    Citing from Koller, Friedman:
+    <blockquote>
+    Formally, a random variable, such as Grade, is defined by a function that
+    associates with each outcome in \f$\Omega\f$ a value.
+    </blockquote>
+
+    It is important to note that domain and co domain of random variables are
+    quite ambiguous.
+    """
+
     def __init__(
         self, node_id: str, data: Any, f: Callable[[Any], Any] = lambda x: x,
     ):
-        ""
+        """!
+        \brief Constructor of a random variable
+
+        \param data The data associated to random variable can be anything
+        \param node_id identifier of random variable. Same identifier is used
+        as node identifier in a graph.
+        \param f a function who takes data or from data, and outputs anything.
+        """
         super().__init__(node_id=node_id, data=data)
 
     def p_x(self, value: Any):
