@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['p_5fx_192',['p_x',['../d8/d99/classgmodels_1_1randomvariable_1_1CatRandomVariable.html#a360fbda75f19f1b11e2bdf1b3bc7e169',1,'gmodels.randomvariable.CatRandomVariable.p_x()'],['../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html#aa9af27cdd243da394e0dd23e9d6d547a',1,'gmodels.randomvariable.NumCatRVariable.P_X()']]],
+  ['p_5fx_192',['P_X',['../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html#aa9af27cdd243da394e0dd23e9d6d547a',1,'gmodels.randomvariable.NumCatRVariable.P_X()'],['../d8/d99/classgmodels_1_1randomvariable_1_1CatRandomVariable.html#a360fbda75f19f1b11e2bdf1b3bc7e169',1,'gmodels.randomvariable.CatRandomVariable.p_x()']]],
   ['p_5fx_5fe_193',['P_X_e',['../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html#a97c4c24961435a0bafd6045e95d8384a',1,'gmodels::randomvariable::NumCatRVariable']]],
   ['p_5fx_5ffn_194',['p_x_fn',['../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html#aba904b276f33b7a6011196aeb5519369',1,'gmodels::randomvariable::NumCatRVariable']]],
   ['parents_5fof_195',['parents_of',['../dd/d00/classgmodels_1_1gtypes_1_1digraph_1_1DiGraph.html#aca7b6e6edb83c5143cc7d3fb111d93dd',1,'gmodels::gtypes::digraph::DiGraph']]],
