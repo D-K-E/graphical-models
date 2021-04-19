@@ -8,6 +8,19 @@ import math
 from uuid import uuid4
 from random import choice
 
+Outcome = Any
+Value = Any
+NumericValue = float
+
+
+class PossibleOutcomes:
+    """!
+    \brief set of possible outcomes from Koller, Friedman 2009, p. 15, 20
+    """
+
+    def __init__(self, omega: FrozenSet[Outcome]):
+        self.data = omega
+
 
 class RandomVariable(Node):
     """!
@@ -24,7 +37,7 @@ class RandomVariable(Node):
     """
 
     def __init__(
-        self, node_id: str, data: Any, f: Callable[[Any], Any] = lambda x: x,
+        self, node_id: str, data: Any, f: Callable[[Outcome], Value] = lambda x: x,
     ):
         """!
         \brief Constructor of a random variable
@@ -40,11 +53,6 @@ class RandomVariable(Node):
         raise NotImplementedError
 
 
-Outcome = Any
-Value = Any
-NumericValue = float
-
-
 class CatRandomVariable(RandomVariable):
     """!
     a discrete random variable
@@ -53,17 +61,57 @@ class CatRandomVariable(RandomVariable):
     def __init__(
         self,
         node_id: str,
-        input_data: Dict[str, Outcome],
+        input_data: Dict[str, Any],
         f: Callable[[Outcome], Value] = lambda x: x,
         distribution: Callable[[Value], float] = lambda x: 1.0,
     ):
-        ""
+        """!
+        \brief Constructor for categorical/discrete random variable
+
+        \param distribution a function that takes in a value from codomain of
+        the random variable and outputs a value in the range [0,1].
+
+        \throws ValueError We raise a value error if the probability values
+        associated to outcomes add up to a value bigger than one.
+
+        For other parameters and the definition of a random variable \see
+        RandomVariable .
+
+        A simple data specification is provided for passing evidences and
+        input.
+        The possible outcomes key holds a set of values belonging to space of
+        possible outcomes. If the input data just contains a key as
+        'possible-outcomes', we suppose that it contains a PossibleOutcomes
+        object which represents the space of all possible outcomes of the
+        measurable event set associated to random variable.
+
+        The function associated to our random variable transforms the set of
+        possible outcomes to values as per its definition in Koller, Friedman,
+        2009, p. 20. Lastly we check whether obtained, or associated
+        outcome-values satisfy the probability rule by checking if the
+        probabilities associated to these values add up to one.
+
+        \code{.py}
+
+        >>> students = PossibleOutcomes(frozenset(["student_1", "student_2"]))
+        >>> grade_f = lambda x: "F" if x == "student_1" else "A"
+        >>> grade_distribution = lambda x: 0.1 if x == "F" else 0.9
+        >>> indata = {"possible-outcomes": students}
+        >>> rvar = CatRandomVariable(
+        >>>    input_data=indata, 
+        >>>    node_id="myrandomvar", 
+        >>>    f=grade_f,
+        >>>    distribution=grade_distribution
+        >>> )
+
+        \endcode
+        """
         data = {}
         data.update(input_data)
-        if "outcomes" in input_data:
-            data["outcome-values"] = {
-                (i, v): f(v) for i, v in enumerate(input_data["outcomes"])
-            }
+        if "possible-outcomes" in input_data:
+            data["outcome-values"] = frozenset(
+                [f(v) for v in input_data["possible-outcomes"].data]
+            )
         super().__init__(node_id=node_id, data=data, f=f)
         if "outcome-values" in data:
             psum = sum(list(map(distribution, data["outcome-values"])))
@@ -71,10 +119,14 @@ class CatRandomVariable(RandomVariable):
                 raise ValueError("probability sum bigger than 1 or smaller than 0")
         self.dist = distribution
 
-    def p_x(self, value: Any) -> float:
+    def p_x(self, value: Value) -> float:
+        """!
+        \brief probability of given outcome value as per the associated
+        distribution
+        """
         return self.dist(value)
 
-    def marginal(self, value: float) -> float:
+    def marginal(self, value: Value) -> float:
         """!
         marginal distribution
         from Biagini, Campanino, 2016, p. 35
@@ -82,6 +134,13 @@ class CatRandomVariable(RandomVariable):
         return self.p_x(value)
 
     def values(self):
+        """!
+        \brief outcome values of the random variable
+        \see CatRandomVariable constructor for more.
+
+        \throws KeyError We raise a key error if there are no values associated
+        to this random variable.
+        """
         vdata = self.data()
         if "outcome-values" not in vdata:
             raise KeyError("This random variable has no associated set of values")
@@ -90,6 +149,24 @@ class CatRandomVariable(RandomVariable):
     def value_set(
         self, value_filter=lambda x: True, value_transform=lambda x: x,
     ) -> FrozenSet[Tuple[str, NumericValue]]:
+        """!
+        \brief the outcome value set of the random variable.
+
+        \param value_filter function for filtering out values during the
+        retrieval.
+
+        \param value_transfom function for transforming values during the
+        retrieval
+
+        \returns codomain of random variable
+
+        This is basically the codomain of the function associated to random
+        variable. Notice that this is completely different from probabilities
+        and other statistical discussion.
+        We also brand each value with the identifier of this random variable.
+        When we are dealing with categorical random variables, this function
+        should work, however for continuous codomains it would not really work. 
+        """
         sid = self.id()
         return frozenset(
             [
@@ -102,7 +179,7 @@ class CatRandomVariable(RandomVariable):
 
 class NumCatRVariable(CatRandomVariable):
     """!
-    Numerical categorical random variable object
+    \brief Numerical categorical random variable object
     """
 
     def __init__(
@@ -112,14 +189,30 @@ class NumCatRVariable(CatRandomVariable):
         f: Callable[[Outcome], NumericValue] = lambda x: x,
         distribution: Callable[[NumericValue], float] = lambda x: 1.0,
     ):
-        ""
+        """!
+        \brief constructor for Numeric Categorical Random Variable
+        
+        \see CatRandomVariable for explanation of parameters.
+        The numeric categorical random variable is just as it says, a numeric
+        categorical random variable. The outcome values of this random variable
+        is numeric, that is it can be integer or float. For facilitating
+        operations we treat everything as float.
+
+        """
         super().__init__(
             node_id=node_id, input_data=input_data, f=f, distribution=distribution
         )
 
     @staticmethod
-    def type_check(other):
+    def type_check(other: Any) -> bool:
         """!
+        \brief simple function for checking whether the other is also a
+        NumCatRVariable
+
+        \param other it can be anything
+
+        \throws TypeError if the other is not a NumCatRVariable, we raise a type
+        error
         """
         if isinstance(other, NumCatRVariable) is False:
             raise TypeError(
@@ -127,9 +220,9 @@ class NumCatRVariable(CatRandomVariable):
             )
         return True
 
-    def evidence_key_check(self):
+    def evidence_check(self) -> bool:
         """!
-        check if given evidence key is associated with this random variable
+        \brief Check if any evidence is associated with this random variable
         """
         data = self.data()
         if "evidence" not in data:
@@ -140,6 +233,7 @@ class NumCatRVariable(CatRandomVariable):
 
     def max(self):
         """!
+        \brief maximum marginal value
         """
         return max([self.marginal(v) for v in self.values()])
 
@@ -166,7 +260,7 @@ class NumCatRVariable(CatRandomVariable):
         evidence with respect to current random variable.
         from Biagini and Campanino 2016, p. 35
 
-        \f \sum_{j=1}^n p(x_i) p(y_j) = p(x_i) \sum_{j=1}^n p(y_j) \f
+        \f$ \sum_{j=1}^n p(x_i) p(y_j) = p(x_i) \sum_{j=1}^n p(y_j) \f$
         """
         self.type_check(other)
         marginal = self.marginal(evidence_value)
@@ -178,7 +272,7 @@ class NumCatRVariable(CatRandomVariable):
         This means that the evidence is encoded to data associated to
         random variable
         """
-        self.evidence_key_check()
+        self.evidence_check()
         data = self.data()
         evidence_value = data["evidence"]
         return self.marginal_over(evidence_value, other)
@@ -188,7 +282,7 @@ class NumCatRVariable(CatRandomVariable):
         Expected value of random variable
         from Koller, Friedman 2009, p. 31
 
-        \f \sum_{i=1}^n x_i p(x_i) \f
+        \f$ \sum_{i=1}^n x_i p(x_i) \f$
         """
         return sum([value * self.p_x(value) for value in self.values()])
 
@@ -243,7 +337,7 @@ class NumCatRVariable(CatRandomVariable):
         probability of a function applied to random variable
         from Biagini, Campanino, 2016, p. 11
         implements:
-        \f \sum_{i=1}^n \phi(x_i) p(x_i) \f
+        \f$\sum_{i=1}^n \phi(x_i) p(x_i) \f$
         """
         return sum([phi(value) * self.p_x(value) for value in self.values()])
 
