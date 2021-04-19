@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['markovnetwork_277',['MarkovNetwork',['../df/dd7/classgmodels_1_1markov_1_1MarkovNetwork.html',1,'gmodels::markov']]],
-  ['multinaivebayesmle_278',['MultiNaiveBayesMLE',['../dd/dda/classgmodels_1_1legacy_1_1NaiveBayes_1_1MultiNaiveBayesMLE.html',1,'gmodels::legacy::NaiveBayes']]]
+  ['markovnetwork_282',['MarkovNetwork',['../df/dd7/classgmodels_1_1markov_1_1MarkovNetwork.html',1,'gmodels::markov']]],
+  ['multinaivebayesmle_283',['MultiNaiveBayesMLE',['../dd/dda/classgmodels_1_1legacy_1_1NaiveBayes_1_1MultiNaiveBayesMLE.html',1,'gmodels::legacy::NaiveBayes']]]
 ];
