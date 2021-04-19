@@ -24,6 +24,8 @@ Note that there are other alternatives on the subject:
 
 - [pgmpy](https://github.com/pgmpy/pgmpy)
 
+- [pomegranate](https://github.com/jmschrei/pomegranate)
+
 We distinguish from these by the following traits:
 
 - Though not an entirely graph library like [NetworkX](https://networkx.org/),
