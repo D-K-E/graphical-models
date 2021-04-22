@@ -2,7 +2,8 @@
 
 
 import unittest
-from gmodels.randomvariable import NumCatRVariable
+from gmodels.randomvariable import NumCatRVariable, CatRandomVariable
+from gmodels.randomvariable import PossibleOutcomes
 import math
 
 
@@ -54,10 +55,32 @@ class NumCatRVariableTest(unittest.TestCase):
         self.dice = NumCatRVariable(
             node_id=nid3, input_data=input_data["dice"], distribution=fair_dice_dist
         )
+        #
+        students = PossibleOutcomes(frozenset(["student_1", "student_2"]))
+        grade_f = lambda x: "F" if x == "student_1" else "A"
+        grade_distribution = lambda x: 0.1 if x == "F" else 0.9
+        indata = {"possible-outcomes": students}
+        self.rvar = CatRandomVariable(
+            input_data=indata,
+            node_id="myrandomvar",
+            f=grade_f,
+            distribution=grade_distribution,
+        )
 
     def test_id(self):
         ""
         self.assertEqual(self.grade.id(), "rvar2")
+
+    def test_values(self):
+        self.assertEqual(self.rvar.values(), frozenset(["A", "F"]))
+
+    def test_value_set(self):
+        self.assertEqual(
+            self.rvar.value_set(
+                value_transform=lambda x: x.lower(), value_filter=lambda x: x != "A"
+            ),
+            frozenset([("myrandomvar", "f")]),
+        )
 
     def test_expected_value(self):
         ""
