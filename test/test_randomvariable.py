@@ -22,7 +22,9 @@ class NumCatRVariableTest(unittest.TestCase):
             elif intelligence_value == 0.9:
                 return 0.3
             else:
-                return 0
+                raise ValueError(
+                    "intelligence_value does not belong to possible outcomes"
+                )
 
         def grade_dist(grade_value: float):
             if grade_value == 0.2:
@@ -32,13 +34,13 @@ class NumCatRVariableTest(unittest.TestCase):
             elif grade_value == 0.6:
                 return 0.38
             else:
-                return 0
+                raise ValueError("unknown grade value")
 
         def fair_dice_dist(dice_value: float):
             if dice_value in [i for i in range(1, 7)]:
                 return 1.0 / 6.0
             else:
-                return 0
+                raise ValueError("dice value")
 
         # intelligence
         # grade
@@ -82,6 +84,18 @@ class NumCatRVariableTest(unittest.TestCase):
             frozenset([("myrandomvar", "f")]),
         )
 
+    def test_max_marginal_value(self):
+        self.assertEqual(self.intelligence.max_marginal_value(), 0.1)
+
+    def test_max(self):
+        self.assertEqual(self.intelligence.max(), 0.7)
+
+    def test_min(self):
+        self.assertEqual(self.intelligence.min(), 0.3)
+
+    def test_min_marginal_value(self):
+        self.assertEqual(self.intelligence.min_marginal_value(), 0.9)
+
     def test_expected_value(self):
         ""
         self.assertEqual(self.dice.expected_value(), 3.5)
@@ -90,21 +104,21 @@ class NumCatRVariableTest(unittest.TestCase):
         ""
         self.assertEqual(self.grade.marginal(0.4), 0.37)
 
-    def test_marginal_with_unknown_value(self):
-        ""
-        self.assertEqual(self.grade.marginal(0.8), 0.0)
-
-    def test_P_X(self):
-        ""
-        self.assertEqual(self.dice.P_X(), 3.5)
-
     def test_p_x_known_value(self):
         ""
         self.assertEqual(self.grade.p_x(0.4), 0.37)
 
-    def test_p_x_unknown_value(self):
+    def test_P_X_e(self):
         ""
-        self.assertEqual(self.grade.p_x(0.8), 0.0)
+        self.assertEqual(self.grade.P_X_e(), 0.25)
+
+    def test_max_marginal_e(self):
+        ""
+        self.assertEqual(self.grade.max_marginal_e(), 0.25)
+
+    def test_min_marginal_e(self):
+        ""
+        self.assertEqual(self.grade.min_marginal_e(), 0.25)
 
     def test_marginal_over(self):
         ""

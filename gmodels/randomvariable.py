@@ -245,6 +245,10 @@ class CatRandomVariable(RandomVariable):
 class NumCatRVariable(CatRandomVariable):
     """!
     \brief Numerical categorical random variable object
+
+    This is mostly the same as CatRandomVariable. The main difference is that
+    the function associated to random variable produces a numeric value as an
+    outcome
     """
 
     def __init__(
@@ -263,13 +267,37 @@ class NumCatRVariable(CatRandomVariable):
         is numeric, that is it can be integer or float. For facilitating
         operations we treat everything as float.
 
+        \code{.py}
+        >>> nid1 = "rvar1"
+        >>> input_data = {
+        >>>    "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
+        >>>    "grade": {"outcome-values": [0.2, 0.4, 0.6], "evidence": 0.2},
+        >>>    "dice": {"outcome-values": [i for i in range(1, 7)], "evidence": 1.0 / 6},
+        >>> }
+
+        >>> def intelligence_dist(intelligence_value: float) -> float:
+        >>>    if intelligence_value == 0.1:
+        >>>        return 0.7
+        >>>    elif intelligence_value == 0.9:
+        >>>        return 0.3
+        >>>    else:
+        >>>        return 0.0
+
+        >>> # intelligence
+        >>> intelligence = NumCatRVariable(
+        >>>    node_id=nid1,
+        >>>    input_data=input_data["intelligence"],
+        >>>    distribution=intelligence_dist,
+        >>> )
+        \endcode
+
         """
         super().__init__(
             node_id=node_id, input_data=input_data, f=f, distribution=distribution
         )
 
     @staticmethod
-    def type_check(other: Any) -> bool:
+    def type_check(other: Any) -> None:
         """!
         \brief simple function for checking whether the other is also a
         NumCatRVariable
@@ -283,49 +311,227 @@ class NumCatRVariable(CatRandomVariable):
             raise TypeError(
                 "other arg must be of type NumCatRVariable, it is " + type(other)
             )
-        return True
 
-    def evidence_check(self) -> bool:
+    def has_evidence(self) -> None:
         """!
         \brief Check if any evidence is associated with this random variable
+
+        \throws ValueError We raise a value error if there is no evidence
+        associated to random variable.
         """
         data = self.data()
         if "evidence" not in data:
             msg = "Evidence " + " could not be found with in"
             msg += " attributed data of this random variable"
             raise ValueError(msg)
-        return True
 
-    def max(self):
+    def max(self) -> float:
         """!
         \brief maximum marginal value
+
+        We return the highest marginal/probability.
+
+        \code{.py}
+        >>> nid1 = "rvar1"
+        >>> input_data = {
+        >>>    "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
+        >>>    "grade": {"outcome-values": [0.2, 0.4, 0.6], "evidence": 0.2},
+        >>>    "dice": {"outcome-values": [i for i in range(1, 7)], "evidence": 1.0 / 6},
+        >>> }
+
+        >>> def intelligence_dist(intelligence_value: float) -> float:
+        >>>    if intelligence_value == 0.1:
+        >>>        return 0.7
+        >>>    elif intelligence_value == 0.9:
+        >>>        return 0.3
+        >>>    else:
+        >>>        raise ValueError(
+        >>>            "intelligence_value does not belong to possible outcomes"
+        >>>        )
+
+        >>> # intelligence
+        >>> intelligence = NumCatRVariable(
+        >>>    node_id=nid1,
+        >>>    input_data=input_data["intelligence"],
+        >>>    distribution=intelligence_dist,
+        >>> )
+        >>> intelligence.max()
+        >>> 0.7
+       
+        \endcode
         """
-        return max([self.marginal(v) for v in self.values()])
+        mx, mxv = self.min_max_marginal_with_outcome(is_min=False)
+        return mx
 
-    def max_marginal_value(self):
-        if "evidence" in self.data():
-            return self.marginal(self.data()["evidence"])
+    def min(self) -> float:
+        """!
+        \brief minimum marginal value
 
-        mx = self.max_marginal_e()
-        vs = []
+        We return the lowest marginal/probability.
+
+        \code{.py}
+        >>> nid1 = "rvar1"
+        >>> input_data = {
+        >>>    "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
+        >>>    "grade": {"outcome-values": [0.2, 0.4, 0.6], "evidence": 0.2},
+        >>>    "dice": {"outcome-values": [i for i in range(1, 7)], "evidence": 1.0 / 6},
+        >>> }
+
+        >>> def intelligence_dist(intelligence_value: float) -> float:
+        >>>    if intelligence_value == 0.1:
+        >>>        return 0.7
+        >>>    elif intelligence_value == 0.9:
+        >>>        return 0.3
+        >>>    else:
+        >>>        raise ValueError("unknown intelligence event/possible outcome")
+
+        >>> # intelligence
+        >>> intelligence = NumCatRVariable(
+        >>>    node_id=nid1,
+        >>>    input_data=input_data["intelligence"],
+        >>>    distribution=intelligence_dist,
+        >>> )
+        >>> intelligence.min()
+        >>> 0.3
+       
+        \endcode
+
+        """
+        mx, mxv = self.min_max_marginal_with_outcome(is_min=True)
+        return mx
+
+    def min_max_marginal_with_outcome(self, is_min: bool) -> Tuple[float, NumericValue]:
+        """!
+        \brief returns highest/lowest probability with its outcome
+
+        \param is_min flag for specifying whether to return lowest or highest
+        probability-outcome pair
+        """
+        mx = float("inf") if is_min else float("-inf")
+        mxv = None
         for v in self.values():
             marginal = self.marginal(v)
-            if marginal == mx:
-                vs.append((v, marginal))
-        # break ties
-        v, marginal = choice(vs)
-        return v
+            cond = mx > marginal if is_min else mx < marginal
+            if cond:
+                mx = marginal
+                mxv = v
+        return mx, mxv
 
-    def min(self):
-        return min([self.marginal(v) for v in self.values()])
+    def max_marginal_value(self) -> NumericValue:
+        """!
+        \brief highest probability outcome
+
+        Notice that this gives the outcome not the probability
+
+        \code{.py}
+        >>> nid1 = "rvar1"
+        >>> input_data = {
+        >>>    "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
+        >>>    "grade": {"outcome-values": [0.2, 0.4, 0.6], "evidence": 0.2},
+        >>>    "dice": {"outcome-values": [i for i in range(1, 7)], "evidence": 1.0 / 6},
+        >>> }
+        >>> def intelligence_dist(intelligence_value: float) -> float:
+        >>>    if intelligence_value == 0.1:
+        >>>        return 0.7
+        >>>    elif intelligence_value == 0.9:
+        >>>        return 0.3
+        >>>    else:
+        >>>        raise ValueError("unknown intelligence event/possible outcome")
+
+        >>> # intelligence
+        >>> intelligence = NumCatRVariable(
+        >>>    node_id=nid1,
+        >>>    input_data=input_data["intelligence"],
+        >>>    distribution=intelligence_dist,
+        >>> )
+        >>> intelligence.max_marginal_value()
+        >>> 0.1
+
+        \endcode
+        """
+        mx, mxv = self.min_max_marginal_with_outcome(is_min=False)
+        return mxv
+
+    def min_marginal_value(self) -> NumericValue:
+        """!
+        \brief highest probability outcome
+
+        Notice that this gives the outcome not the probability
+
+        \code{.py}
+        >>> nid1 = "rvar1"
+        >>> input_data = {
+        >>>    "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
+        >>>    "grade": {"outcome-values": [0.2, 0.4, 0.6], "evidence": 0.2},
+        >>>    "dice": {"outcome-values": [i for i in range(1, 7)], "evidence": 1.0 / 6},
+        >>> }
+
+        >>> def intelligence_dist(intelligence_value: float) -> float:
+        >>>    if intelligence_value == 0.1:
+        >>>        return 0.7
+        >>>    elif intelligence_value == 0.9:
+        >>>        return 0.3
+        >>>    else:
+        >>>        raise ValueError("unknown intelligence event/possible outcome")
+
+        >>> # intelligence
+        >>> intelligence = NumCatRVariable(
+        >>>    node_id=nid1,
+        >>>    input_data=input_data["intelligence"],
+        >>>    distribution=intelligence_dist,
+        >>> )
+        >>> intelligence.max_marginal_value()
+        >>> 0.1
+
+        \endcode
+        """
+        mx, mxv = self.min_max_marginal_with_outcome(is_min=True)
+        return mxv
 
     def marginal_over(self, evidence_value: float, other) -> float:
         """!
-        Compute marginal distribution over other random variable given
+        \brief Compute marginal distribution over other random variable given
         evidence with respect to current random variable.
-        from Biagini and Campanino 2016, p. 35
-
+        
+        Implements the following from Biagini and Campanino 2016, p. 35:
         \f$ \sum_{j=1}^n p(x_i) p(y_j) = p(x_i) \sum_{j=1}^n p(y_j) \f$
+
+        \code{.py}
+        >>> input_data = {
+        >>>    "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
+        >>>    "grade": {"outcome-values": [0.2, 0.4, 0.6], "evidence": 0.2},
+        >>>    "dice": {"outcome-values": [i for i in range(1, 7)], "evidence": 1.0 / 6},
+        >>> }
+
+        >>> def grade_dist(grade_value: float):
+        >>>     if grade_value == 0.2:
+        >>>         return 0.25
+        >>>     elif grade_value == 0.4:
+        >>>         return 0.37
+        >>>     elif grade_value == 0.6:
+        >>>         return 0.38
+        >>>     else:
+        >>>         raise ValueError("unknown grade value")
+
+        >>> def fair_dice_dist(dice_value: float):
+        >>>     if dice_value in [i for i in range(1, 7)]:
+        >>>         return 1.0 / 6.0
+        >>>     else:
+        >>>         raise ValueError("dice value")
+
+
+        >>> nid2 = "rvar2"
+        >>> grade = NumCatRVariable(
+        >>>    node_id=nid2, input_data=input_data["grade"], distribution=grade_dist
+        >>> )
+        >>> nid3 = "rvar3"
+        >>> dice = NumCatRVariable(
+        >>>    node_id=nid3, input_data=input_data["dice"], distribution=fair_dice_dist
+        >>> )
+        >>> grade.marginal_over(0.2, dice)
+        >>> 0.875
+
+        \endcode
         """
         self.type_check(other)
         marginal = self.marginal(evidence_value)
@@ -336,29 +542,105 @@ class NumCatRVariable(CatRandomVariable):
         Compute marginal using evidence key.
         This means that the evidence is encoded to data associated to
         random variable
+
+        \code{.py}
+        >>> input_data = {
+        >>>    "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
+        >>>    "grade": {"outcome-values": [0.2, 0.4, 0.6], "evidence": 0.2},
+        >>>    "dice": {"outcome-values": [i for i in range(1, 7)], "evidence": 1.0 / 6},
+        >>> }
+
+        >>> def grade_dist(grade_value: float):
+        >>>     if grade_value == 0.2:
+        >>>         return 0.25
+        >>>     elif grade_value == 0.4:
+        >>>         return 0.37
+        >>>     elif grade_value == 0.6:
+        >>>         return 0.38
+        >>>     else:
+        >>>         raise ValueError("unknown grade value")
+
+        >>> def fair_dice_dist(dice_value: float):
+        >>>     if dice_value in [i for i in range(1, 7)]:
+        >>>         return 1.0 / 6.0
+        >>>     else:
+        >>>         raise ValueError("dice value")
+
+
+        >>> nid2 = "rvar2"
+        >>> grade = NumCatRVariable(
+        >>>    node_id=nid2, input_data=input_data["grade"], distribution=grade_dist
+        >>> )
+        >>> nid3 = "rvar3"
+        >>> dice = NumCatRVariable(
+        >>>    node_id=nid3, input_data=input_data["dice"], distribution=fair_dice_dist
+        >>> )
+        >>> grade.marginal_over_evidence_key(dice)
+        >>> 0.875
+
+        \endcode
         """
-        self.evidence_check()
+        self.has_evidence()
         data = self.data()
         evidence_value = data["evidence"]
         return self.marginal_over(evidence_value, other)
 
     def expected_value(self) -> float:
         """!
-        Expected value of random variable
+        \brief Expected value of random variable
         from Koller, Friedman 2009, p. 31
 
+        Implements the following formula:
         \f$ \sum_{i=1}^n x_i p(x_i) \f$
+
+        \code{.py}
+        >>> input_data = {
+        >>>    "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
+        >>>    "grade": {"outcome-values": [0.2, 0.4, 0.6], "evidence": 0.2},
+        >>>    "dice": {"outcome-values": [i for i in range(1, 7)], "evidence": 1.0 / 6},
+        >>> }
+
+        >>> def fair_dice_dist(dice_value: float):
+        >>>     if dice_value in [i for i in range(1, 7)]:
+        >>>         return 1.0 / 6.0
+        >>>     else:
+        >>>         raise ValueError("dice value unknown")
+
+        >>> nid3 = "rvar3"
+        >>> dice = NumCatRVariable(
+        >>>    node_id=nid3, input_data=input_data["dice"], distribution=fair_dice_dist
+        >>> )
+        >>> dice.expected_value()
+        >>> 3.5
+
+        \endcode
         """
         return sum([value * self.p_x(value) for value in self.values()])
 
+    def is_numeric(self, v: Any) -> bool:
+        """!
+        \brief check if v is whether float or int
+
+        \param v any value.
+        """
+        return True if isinstance(v, (float, int)) else False
+
     def add_evidence(self, evidence_value: float):
         """!
+        \brief add evidence to random variable
+        
+        \throws TypeError if the evidence is not a numeric value
         """
+        if isinstance(evidence_value, int):
+            evidence_value = float(evidence_value)
+        if not self.is_numeric(evidence_value):
+            raise TypeError("evidence must be a numeric (int, float) value")
         e = {"evidence": evidence_value}
         self.update_data(e)
 
     def pop_evidence(self):
         """!
+        \brief remove evidence from this random variable
         """
         data = self.data()
         if "evidence" in data:
@@ -366,23 +648,54 @@ class NumCatRVariable(CatRandomVariable):
         self.update_data(data)
 
     def reduce_to_value(self, val: NumericValue):
-        ""
-        vs = [v for v in self.values() if v == val]
+        """!
+        \brief reduce outcomes of this random variable to val
+
+        \param val reduction value. The final value to which random variable is
+        reduced
+
+        \throws TypeError if the val is not numeric we raise a type error.
+        """
+        if not self.is_numeric(val):
+            raise TypeError("Reduction value must be numeric (int, float)")
+        vs = frozenset([v for v in self.values() if v == val])
         vdata = self.data()
         vdata["outcome-values"] = vs
         self.update_data(vdata)
 
-    def P_X(self):
-        """!
-        Biagini, Campanino, 2016, p.11
-        it is also the marginal over all values
-        """
-        return self.expected_value()
-
     def P_X_e(self):
         """!
-        evaluate probability with given random variable's evidence if it is
+        \brief evaluate probability with given random variable's evidence if it is
         given.
+
+        We output the expected value if there is no evidence associated to
+        random variable
+
+        \code{.py}
+        >>> input_data = {
+        >>>    "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
+        >>>    "grade": {"outcome-values": [0.2, 0.4, 0.6], "evidence": 0.2},
+        >>>    "dice": {"outcome-values": [i for i in range(1, 7)], "evidence": 1.0 / 6},
+        >>> }
+
+        >>> def grade_dist(grade_value: float):
+        >>>     if grade_value == 0.2:
+        >>>         return 0.25
+        >>>     elif grade_value == 0.4:
+        >>>         return 0.37
+        >>>     elif grade_value == 0.6:
+        >>>         return 0.38
+        >>>     else:
+        >>>         raise ValueError("unknown grade value")
+
+        >>> nid2 = "rvar2"
+        >>> grade = NumCatRVariable(
+        >>>    node_id=nid2, input_data=input_data["grade"], distribution=grade_dist
+        >>> )
+        >>> grade.P_X_e()
+        >>> 0.25
+
+        \endcode
         """
         if "evidence" in self.data():
             return self.marginal(self.data()["evidence"])
@@ -392,10 +705,72 @@ class NumCatRVariable(CatRandomVariable):
         """!
         evaluate max probability with given random variable's evidence if it is
         present.
+
+        \code{.py}
+        >>> input_data = {
+        >>>    "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
+        >>>    "grade": {"outcome-values": [0.2, 0.4, 0.6], "evidence": 0.2},
+        >>>    "dice": {"outcome-values": [i for i in range(1, 7)], "evidence": 1.0 / 6},
+        >>> }
+
+        >>> def grade_dist(grade_value: float):
+        >>>     if grade_value == 0.2:
+        >>>         return 0.25
+        >>>     elif grade_value == 0.4:
+        >>>         return 0.37
+        >>>     elif grade_value == 0.6:
+        >>>         return 0.38
+        >>>     else:
+        >>>         raise ValueError("unknown grade value")
+
+        >>> nid2 = "rvar2"
+        >>> grade = NumCatRVariable(
+        >>>    node_id=nid2, input_data=input_data["grade"], distribution=grade_dist
+        >>> )
+        >>> grade.max_marginal_e()
+        >>> 0.25
+
+        \endcode
         """
         if "evidence" in self.data():
             return self.marginal(self.data()["evidence"])
         return self.max()
+
+    def min_marginal_e(self):
+        """!
+        \brief evaluate min probability with given random variable's evidence
+        if it is present.
+
+        \code{.py}
+        >>> input_data = {
+        >>>    "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
+        >>>    "grade": {"outcome-values": [0.2, 0.4, 0.6], "evidence": 0.2},
+        >>>    "dice": {"outcome-values": [i for i in range(1, 7)], "evidence": 1.0 / 6},
+        >>> }
+
+        >>> def grade_dist(grade_value: float):
+        >>>     if grade_value == 0.2:
+        >>>         return 0.25
+        >>>     elif grade_value == 0.4:
+        >>>         return 0.37
+        >>>     elif grade_value == 0.6:
+        >>>         return 0.38
+        >>>     else:
+        >>>         raise ValueError("unknown grade value")
+
+        >>> nid2 = "rvar2"
+        >>> grade = NumCatRVariable(
+        >>>    node_id=nid2, input_data=input_data["grade"], distribution=grade_dist
+        >>> )
+        >>> grade.min_marginal_e()
+        >>> 0.25
+
+        \endcode
+
+        """
+        if "evidence" in self.data():
+            return self.marginal(self.data()["evidence"])
+        return self.min()
 
     def p_x_fn(self, phi: Callable[[float], float]):
         """!
@@ -404,17 +779,19 @@ class NumCatRVariable(CatRandomVariable):
         implements:
         \f$\sum_{i=1}^n \phi(x_i) p(x_i) \f$
         """
-        return sum([phi(value) * self.p_x(value) for value in self.values()])
+        return sum(self.apply(lambda x: phi(x) * self.p_x(x)))
 
     def apply(self, phi: Callable[[NumericValue], NumericValue]):
         """!
+        \brief apply function phi to possible outcomes of the random variable
         """
         return [phi(v) for v in self.values()]
 
     def apply_to_marginals(self, phi: Callable[[float], float]) -> List[float]:
         """!
+        \brief apply function phi to marginals of the random variable
         """
-        return [phi(self.marginal(v)) for v in self.values()]
+        return self.apply(lambda x: phi(self.marginal(x)))
 
     def expected_apply(self, phi: Callable[[NumericValue], NumericValue]):
         """!
@@ -424,7 +801,7 @@ class NumCatRVariable(CatRandomVariable):
     def variance(self):
         """!
         Koller, Friedman 2009, p. 33
-        \f E[X^2] - (E[X])^2 \f
+        \f$ E[X^2] - (E[X])^2 \f$
         """
         E_X2 = self.expected_apply(phi=lambda x: x * x)
         return E_X2 - (self.expected_value() ** 2)
