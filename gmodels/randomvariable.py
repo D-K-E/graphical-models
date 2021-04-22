@@ -16,6 +16,9 @@ NumericValue = float
 class PossibleOutcomes:
     """!
     \brief set of possible outcomes from Koller, Friedman 2009, p. 15, 20
+
+    This is simply a frozenset. We assume that possible outcomes contained in
+    this object are measurable.
     """
 
     def __init__(self, omega: FrozenSet[Outcome]):
@@ -32,8 +35,13 @@ class RandomVariable(Node):
     associates with each outcome in \f$\Omega\f$ a value.
     </blockquote>
 
-    It is important to note that domain and co domain of random variables are
-    quite ambiguous.
+    It is important to note that domain and codomain of random variables are
+    quite ambiguous. The \f$\Omega\f$ in the definition is set of possible
+    outcomes, \see PossibleOutcomes object. In the context of probabilistic
+    graphical models each random variable is also considered as a \see Node of
+    a \see Graph. This object is meant to be a base class for further needs.
+    It lacks quite a bit of methods. Hence it can not be used directly in a
+    \see PGModel.
     """
 
     def __init__(
@@ -46,6 +54,8 @@ class RandomVariable(Node):
         \param node_id identifier of random variable. Same identifier is used
         as node identifier in a graph.
         \param f a function who takes data or from data, and outputs anything.
+
+        \returns a random variable instance
         """
         super().__init__(node_id=node_id, data=data)
 
@@ -123,23 +133,58 @@ class CatRandomVariable(RandomVariable):
         """!
         \brief probability of given outcome value as per the associated
         distribution
+
+        \param value a member of \f$\Omega\f$ set of possible outcomes.
+
+        \returns probability value associated to the outcome
         """
         return self.dist(value)
 
     def marginal(self, value: Value) -> float:
         """!
-        marginal distribution
+        \brief marginal distribution that is the probability of an outcome
+
         from Biagini, Campanino, 2016, p. 35
+        <blockquote>
+        Marginal distribution of X is the function: \f$p_1(x_i) = P(X=x_i)\f$
+        </blockquote>
+
+        \see CatRandomVariable.p_x
+
+        \returns probability value associated to value
         """
         return self.p_x(value)
 
     def values(self):
         """!
         \brief outcome values of the random variable
-        \see CatRandomVariable constructor for more.
+
+        \see CatRandomVariable constructor for more explanation about outcome
+        values and their relation to random variables. \see
+        CatRandomVariable.value_set for a more functional version of this
+        function which let's you associate several transformations and filters
+        before obtaining outcomes.
 
         \throws KeyError We raise a key error if there are no values associated
         to this random variable.
+
+        \returns possible outcomes associated to this random variable.
+
+        \code{.py}
+        >>> students = PossibleOutcomes(frozenset(["student_1", "student_2"]))
+        >>> grade_f = lambda x: "F" if x == "student_1" else "A"
+        >>> grade_distribution = lambda x: 0.1 if x == "F" else 0.9
+        >>> indata = {"possible-outcomes": students}
+        >>> rvar = CatRandomVariable(
+        >>>    input_data=indata, 
+        >>>    node_id="myrandomvar", 
+        >>>    f=grade_f,
+        >>>    distribution=grade_distribution
+        >>> )
+        >>> rvar.values()
+        >>> frozenset(["A", "F"])
+
+        \endcode
         """
         vdata = self.data()
         if "outcome-values" not in vdata:
@@ -158,7 +203,8 @@ class CatRandomVariable(RandomVariable):
         \param value_transfom function for transforming values during the
         retrieval
 
-        \returns codomain of random variable
+        \returns codomain of random variable, that is possible outcomes
+        associated to random variable
 
         This is basically the codomain of the function associated to random
         variable. Notice that this is completely different from probabilities
@@ -166,6 +212,25 @@ class CatRandomVariable(RandomVariable):
         We also brand each value with the identifier of this random variable.
         When we are dealing with categorical random variables, this function
         should work, however for continuous codomains it would not really work. 
+
+        \code{.py}
+        >>> students = PossibleOutcomes(frozenset(["student_1", "student_2"]))
+        >>> grade_f = lambda x: "F" if x == "student_1" else "A"
+        >>> grade_distribution = lambda x: 0.1 if x == "F" else 0.9
+        >>> indata = {"possible-outcomes": students}
+        >>> rvar = CatRandomVariable(
+        >>>    input_data=indata, 
+        >>>    node_id="myrandomvar", 
+        >>>    f=grade_f,
+        >>>    distribution=grade_distribution
+        >>> )
+        >>> rvar.value_set(
+        >>>         value_transform=lambda x: x.lower(),
+        >>>         value_filter=lambda x: x != "A"
+        >>> )
+        >>> frozenset([("myrandomvar","f")])
+
+        \endcode
         """
         sid = self.id()
         return frozenset(
