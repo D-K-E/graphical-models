@@ -104,12 +104,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af2bc7f60f078e57fe686b66d3be33930"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d99/classgmodels_1_1randomvariable_1_1CatRandomVariable.html#af2bc7f60f078e57fe686b66d3be33930">__init__</a> (self, str node_id, Dict[str, Any] input_data, Callable[[Outcome], Value] f=lambda x:x, Callable[[Value], float] distribution=lambda x:1.0)</td></tr>
 <tr class="memdesc:af2bc7f60f078e57fe686b66d3be33930"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for categorical/discrete random variable.  <a href="../../d8/d99/classgmodels_1_1randomvariable_1_1CatRandomVariable.html#af2bc7f60f078e57fe686b66d3be33930">More...</a><br /></td></tr>
 <tr class="separator:af2bc7f60f078e57fe686b66d3be33930"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a360fbda75f19f1b11e2bdf1b3bc7e169"><td class="memItemLeft" align="right" valign="top"><a id="a360fbda75f19f1b11e2bdf1b3bc7e169"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d99/classgmodels_1_1randomvariable_1_1CatRandomVariable.html#a360fbda75f19f1b11e2bdf1b3bc7e169">p_x</a> (self, Value value)</td></tr>
-<tr class="memdesc:a360fbda75f19f1b11e2bdf1b3bc7e169"><td class="mdescLeft">&#160;</td><td class="mdescRight">probability of given outcome value as per the associated distribution <br /></td></tr>
+<tr class="memitem:a360fbda75f19f1b11e2bdf1b3bc7e169"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d99/classgmodels_1_1randomvariable_1_1CatRandomVariable.html#a360fbda75f19f1b11e2bdf1b3bc7e169">p_x</a> (self, Value value)</td></tr>
+<tr class="memdesc:a360fbda75f19f1b11e2bdf1b3bc7e169"><td class="mdescLeft">&#160;</td><td class="mdescRight">probability of given outcome value as per the associated distribution  <a href="../../d8/d99/classgmodels_1_1randomvariable_1_1CatRandomVariable.html#a360fbda75f19f1b11e2bdf1b3bc7e169">More...</a><br /></td></tr>
 <tr class="separator:a360fbda75f19f1b11e2bdf1b3bc7e169"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1cd64a45eda00def667949a7f3106d37"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d99/classgmodels_1_1randomvariable_1_1CatRandomVariable.html#a1cd64a45eda00def667949a7f3106d37">marginal</a> (self, Value value)</td></tr>
-<tr class="memdesc:a1cd64a45eda00def667949a7f3106d37"><td class="mdescLeft">&#160;</td><td class="mdescRight">marginal distribution from Biagini, Campanino, 2016, p.  <a href="../../d8/d99/classgmodels_1_1randomvariable_1_1CatRandomVariable.html#a1cd64a45eda00def667949a7f3106d37">More...</a><br /></td></tr>
+<tr class="memdesc:a1cd64a45eda00def667949a7f3106d37"><td class="mdescLeft">&#160;</td><td class="mdescRight">marginal distribution that is the probability of an outcome  <a href="../../d8/d99/classgmodels_1_1randomvariable_1_1CatRandomVariable.html#a1cd64a45eda00def667949a7f3106d37">More...</a><br /></td></tr>
 <tr class="separator:a1cd64a45eda00def667949a7f3106d37"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a70c6a29e38438ff662b8f31190dc5ee2"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d99/classgmodels_1_1randomvariable_1_1CatRandomVariable.html#a70c6a29e38438ff662b8f31190dc5ee2">values</a> (self)</td></tr>
 <tr class="memdesc:a70c6a29e38438ff662b8f31190dc5ee2"><td class="mdescLeft">&#160;</td><td class="mdescRight">outcome values of the random variable  <a href="../../d8/d99/classgmodels_1_1randomvariable_1_1CatRandomVariable.html#a70c6a29e38438ff662b8f31190dc5ee2">More...</a><br /></td></tr>
@@ -267,8 +266,49 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>marginal distribution from Biagini, Campanino, 2016, p. </p>
-<p>35 </p>
+<p>marginal distribution that is the probability of an outcome </p>
+<p>from Biagini, Campanino, 2016, p. 35 </p><blockquote class="doxtable">
+<p>Marginal distribution of X is the function: \(p_1(x_i) = P(X=x_i)\) </p>
+</blockquote>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="../../d8/d99/classgmodels_1_1randomvariable_1_1CatRandomVariable.html#a360fbda75f19f1b11e2bdf1b3bc7e169" title="probability of given outcome value as per the associated distribution">CatRandomVariable.p_x</a></dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>probability value associated to value </dd></dl>
+
+</div>
+</div>
+<a id="a360fbda75f19f1b11e2bdf1b3bc7e169"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a360fbda75f19f1b11e2bdf1b3bc7e169">&#9670;&nbsp;</a></span>p_x()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"> float gmodels.randomvariable.CatRandomVariable.p_x </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Value&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>probability of given outcome value as per the associated distribution </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">value</td><td>a member of \(\Omega\) set of possible outcomes.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>probability value associated to the outcome </dd></dl>
 
 </div>
 </div>
@@ -312,9 +352,24 @@ Public Attributes</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>codomain of random variable</dd></dl>
-<p>This is basically the codomain of the function associated to random variable. Notice that this is completely different from probabilities and other statistical discussion. We also brand each value with the identifier of this random variable. When we are dealing with categorical random variables, this function should work, however for continuous codomains it would not really work. </p>
-
+<dl class="section return"><dt>Returns</dt><dd>codomain of random variable, that is possible outcomes associated to random variable</dd></dl>
+<p>This is basically the codomain of the function associated to random variable. Notice that this is completely different from probabilities and other statistical discussion. We also brand each value with the identifier of this random variable. When we are dealing with categorical random variables, this function should work, however for continuous codomains it would not really work.</p>
+<div class="fragment"><div class="line">&gt;&gt;&gt; students = PossibleOutcomes(frozenset([<span class="stringliteral">&quot;student_1&quot;</span>, <span class="stringliteral">&quot;student_2&quot;</span>]))</div>
+<div class="line">&gt;&gt;&gt; grade_f = <span class="keyword">lambda</span> x: <span class="stringliteral">&quot;F&quot;</span> <span class="keywordflow">if</span> x == <span class="stringliteral">&quot;student_1&quot;</span> <span class="keywordflow">else</span> <span class="stringliteral">&quot;A&quot;</span></div>
+<div class="line">&gt;&gt;&gt; grade_distribution = <span class="keyword">lambda</span> x: 0.1 <span class="keywordflow">if</span> x == <span class="stringliteral">&quot;F&quot;</span> <span class="keywordflow">else</span> 0.9</div>
+<div class="line">&gt;&gt;&gt; indata = {<span class="stringliteral">&quot;possible-outcomes&quot;</span>: students}</div>
+<div class="line">&gt;&gt;&gt; rvar = CatRandomVariable(</div>
+<div class="line">&gt;&gt;&gt;    input_data=indata, </div>
+<div class="line">&gt;&gt;&gt;    node_id=<span class="stringliteral">&quot;myrandomvar&quot;</span>, </div>
+<div class="line">&gt;&gt;&gt;    f=grade_f,</div>
+<div class="line">&gt;&gt;&gt;    distribution=grade_distribution</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; rvar.value_set(</div>
+<div class="line">&gt;&gt;&gt;         value_transform=<span class="keyword">lambda</span> x: x.lower(),</div>
+<div class="line">&gt;&gt;&gt;         value_filter=<span class="keyword">lambda</span> x: x != <span class="stringliteral">&quot;A&quot;</span></div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; frozenset([(<span class="stringliteral">&quot;myrandomvar&quot;</span>,<span class="stringliteral">&quot;f&quot;</span>)])</div>
+</div><!-- fragment --> 
 </div>
 </div>
 <a id="a70c6a29e38438ff662b8f31190dc5ee2"></a>
@@ -334,14 +389,29 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>outcome values of the random variable </p>
-<dl class="section see"><dt>See also</dt><dd><a class="el" href="../../d8/d99/classgmodels_1_1randomvariable_1_1CatRandomVariable.html" title="a discrete random variable">CatRandomVariable</a> constructor for more.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="../../d8/d99/classgmodels_1_1randomvariable_1_1CatRandomVariable.html" title="a discrete random variable">CatRandomVariable</a> constructor for more explanation about outcome <a class="el" href="../../d8/d99/classgmodels_1_1randomvariable_1_1CatRandomVariable.html#a70c6a29e38438ff662b8f31190dc5ee2" title="outcome values of the random variable">values</a> and their relation to random variables. </dd>
+<dd>
+<a class="el" href="../../d8/d99/classgmodels_1_1randomvariable_1_1CatRandomVariable.html#a295634090cb501412759cbc36f6ae1f2" title="the outcome value set of the random variable.">CatRandomVariable.value_set</a> for a more functional version of this function which let's you associate several transformations and filters before obtaining outcomes.</dd></dl>
 <dl class="exception"><dt>Exceptions</dt><dd>
   <table class="exception">
-    <tr><td class="paramname">KeyError</td><td>We raise a key error if there are no values associated to this random variable. </td></tr>
+    <tr><td class="paramname">KeyError</td><td>We raise a key error if there are no values associated to this random variable.</td></tr>
   </table>
   </dd>
 </dl>
-
+<dl class="section return"><dt>Returns</dt><dd>possible outcomes associated to this random variable.</dd></dl>
+<div class="fragment"><div class="line">&gt;&gt;&gt; students = PossibleOutcomes(frozenset([<span class="stringliteral">&quot;student_1&quot;</span>, <span class="stringliteral">&quot;student_2&quot;</span>]))</div>
+<div class="line">&gt;&gt;&gt; grade_f = <span class="keyword">lambda</span> x: <span class="stringliteral">&quot;F&quot;</span> <span class="keywordflow">if</span> x == <span class="stringliteral">&quot;student_1&quot;</span> <span class="keywordflow">else</span> <span class="stringliteral">&quot;A&quot;</span></div>
+<div class="line">&gt;&gt;&gt; grade_distribution = <span class="keyword">lambda</span> x: 0.1 <span class="keywordflow">if</span> x == <span class="stringliteral">&quot;F&quot;</span> <span class="keywordflow">else</span> 0.9</div>
+<div class="line">&gt;&gt;&gt; indata = {<span class="stringliteral">&quot;possible-outcomes&quot;</span>: students}</div>
+<div class="line">&gt;&gt;&gt; rvar = CatRandomVariable(</div>
+<div class="line">&gt;&gt;&gt;    input_data=indata, </div>
+<div class="line">&gt;&gt;&gt;    node_id=<span class="stringliteral">&quot;myrandomvar&quot;</span>, </div>
+<div class="line">&gt;&gt;&gt;    f=grade_f,</div>
+<div class="line">&gt;&gt;&gt;    distribution=grade_distribution</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; rvar.values()</div>
+<div class="line">&gt;&gt;&gt; frozenset([<span class="stringliteral">&quot;A&quot;</span>, <span class="stringliteral">&quot;F&quot;</span>])</div>
+</div><!-- fragment --> 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
