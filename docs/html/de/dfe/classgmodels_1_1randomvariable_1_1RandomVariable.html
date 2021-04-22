@@ -149,7 +149,13 @@ Additional Inherited Members</h2></td></tr>
 <p>Citing from Koller, Friedman: </p><blockquote class="doxtable">
 <p>Formally, a random variable, such as Grade, is defined by a function that associates with each outcome in \(\Omega\) a value. </p>
 </blockquote>
-<p>It is important to note that domain and co domain of random variables are quite ambiguous. </p>
+<p>It is important to note that domain and codomain of random variables are quite ambiguous. The \(\Omega\) in the definition is set of possible outcomes, </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="../../d8/dbf/classgmodels_1_1randomvariable_1_1PossibleOutcomes.html" title="set of possible outcomes from Koller, Friedman 2009, p.">PossibleOutcomes</a> object. In the context of probabilistic graphical models each random variable is also considered as a </dd>
+<dd>
+Node of a </dd>
+<dd>
+Graph. This object is meant to be a base class for further needs. It lacks quite a bit of methods. Hence it can not be used directly in a </dd>
+<dd>
+PGModel. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a3b6a995482210d2d8e46485f4e910d1f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a3b6a995482210d2d8e46485f4e910d1f">&#9670;&nbsp;</a></span>__init__()</h2>
@@ -194,10 +200,11 @@ Additional Inherited Members</h2></td></tr>
   <table class="params">
     <tr><td class="paramname">data</td><td>The data associated to random variable can be anything </td></tr>
     <tr><td class="paramname">node_id</td><td>identifier of random variable. Same identifier is used as node identifier in a graph. </td></tr>
-    <tr><td class="paramname">f</td><td>a function who takes data or from data, and outputs anything. </td></tr>
+    <tr><td class="paramname">f</td><td>a function who takes data or from data, and outputs anything.</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>a random variable instance </dd></dl>
 
 </div>
 </div>
