@@ -17,85 +17,88 @@ Usage:
 
 \code{.py}
 
-from gmodels.pgmodel import PGModel
-from gmodels.gtypes.edge import Edge, EdgeType
-from gmodels.factor import Factor
-from gmodels.randomvariable import NumCatRVariable
-# Example adapted from Darwiche 2009, p. 140
-idata = {
-            "a": {"outcome-values": [True, False]},
-            "b": {"outcome-values": [True, False]},
-            "c": {"outcome-values": [True, False]},
-        }
-a = NumCatRVariable(
-            node_id="a", input_data=idata["a"], distribution=lambda x: 0.6 if x else 0.4
-        )
-b = NumCatRVariable(
-    node_id="b", input_data=idata["b"], distribution=lambda x: 0.5 if x else 0.5
-)
-c = NumCatRVariable(
-    node_id="c", input_data=idata["c"], distribution=lambda x: 0.5 if x else 0.5
-)
-ab = Edge(
-    edge_id="ab",
-    edge_type=EdgeType.UNDIRECTED,
-    start_node=a,
-    end_node=b,
-)
-bc = Edge(
-    edge_id="bc",
-    edge_type=EdgeType.UNDIRECTED,
-    start_node=b,
-    end_node=c,
-)
-def phi_ba(scope_product):
-    ""
-    ss = set(scope_product)
-    if ss == set([("a", True), ("b", True)]):
-        return 0.9
-    elif ss == set([("a", True), ("b", False)]):
-        return 0.1
-    elif ss == set([("a", False), ("b", True)]):
-        return 0.2
-    elif ss == set([("a", False), ("b", False)]):
-        return 0.8
-    else:
-        raise ValueError("product error")
-def phi_cb(scope_product):
-    ""
-    ss = set(scope_product)
-    if ss == set([("c", True), ("b", True)]):
-        return 0.3
-    elif ss == set([("c", True), ("b", False)]):
-        return 0.5
-    elif ss == set([("c", False), ("b", True)]):
-        return 0.7
-    elif ss == set([("c", False), ("b", False)]):
-        return 0.5
-    else:
-        raise ValueError("product error")
-def phi_a(scope_product):
-    s = set(scope_product)
-    if s == set([("a", True)]):
-        return 0.6
-    elif s == set([("a", False)]):
-        return 0.4
-    else:
-        raise ValueError("product error")
-ba_f = Factor(gid="ba", scope_vars=set([b, a]), factor_fn=phi_ba)
-cb_f = Factor(gid="cb", scope_vars=set([c, b]), factor_fn=phi_cb)
-a_f = Factor(gid="a", scope_vars=set([a]), factor_fn=phi_a)
-pgm = PGModel(
-    gid="pgm",
-    nodes=set([a, b, c]),
-    edges=set([ab, bc]),
-    factors=set([ba_f, cb_f, a_f]),
-)
-evidences = set([("a", True)])
-queries = set([c])
-product_factor, a = pgm.cond_prod_by_variable_elimination(queries, evidences)
-print(round( product_factor.phi_normal(set([("c", True)])), 4))
-# should give you 0.32
+>>> from gmodels.pgmodel import PGModel
+>>> from gmodels.gtypes.edge import Edge, EdgeType
+>>> from gmodels.factor import Factor
+>>> from gmodels.randomvariable import NumCatRVariable
+>>> # Example adapted from Darwiche 2009, p. 140
+>>> idata = {
+>>>             "a": {"outcome-values": [True, False]},
+>>>             "b": {"outcome-values": [True, False]},
+>>>             "c": {"outcome-values": [True, False]},
+>>>         }
+>>> a = NumCatRVariable(
+>>>             node_id="a", input_data=idata["a"], distribution=lambda x: 0.6 if x else 0.4
+>>>         )
+>>> b = NumCatRVariable(
+>>>     node_id="b", input_data=idata["b"], distribution=lambda x: 0.5 if x else 0.5
+>>> )
+>>> c = NumCatRVariable(
+>>>     node_id="c", input_data=idata["c"], distribution=lambda x: 0.5 if x else 0.5
+>>> )
+>>> ab = Edge(
+>>>     edge_id="ab",
+>>>     edge_type=EdgeType.UNDIRECTED,
+>>>     start_node=a,
+>>>     end_node=b,
+>>> )
+>>> bc = Edge(
+>>>     edge_id="bc",
+>>>     edge_type=EdgeType.UNDIRECTED,
+>>>     start_node=b,
+>>>     end_node=c,
+>>> )
+>>> def phi_ba(scope_product):
+>>>     ""
+>>>     ss = set(scope_product)
+>>>     if ss == set([("a", True), ("b", True)]):
+>>>         return 0.9
+>>>     elif ss == set([("a", True), ("b", False)]):
+>>>         return 0.1
+>>>     elif ss == set([("a", False), ("b", True)]):
+>>>         return 0.2
+>>>     elif ss == set([("a", False), ("b", False)]):
+>>>         return 0.8
+>>>     else:
+>>>         raise ValueError("product error")
+
+>>> def phi_cb(scope_product):
+>>>     ""
+>>>     ss = set(scope_product)
+>>>     if ss == set([("c", True), ("b", True)]):
+>>>         return 0.3
+>>>     elif ss == set([("c", True), ("b", False)]):
+>>>         return 0.5
+>>>     elif ss == set([("c", False), ("b", True)]):
+>>>         return 0.7
+>>>     elif ss == set([("c", False), ("b", False)]):
+>>>         return 0.5
+>>>     else:
+>>>         raise ValueError("product error")
+
+>>> def phi_a(scope_product):
+>>>     s = set(scope_product)
+>>>     if s == set([("a", True)]):
+>>>         return 0.6
+>>>     elif s == set([("a", False)]):
+>>>         return 0.4
+>>>     else:
+>>>         raise ValueError("product error")
+>>> ba_f = Factor(gid="ba", scope_vars=set([b, a]), factor_fn=phi_ba)
+>>> cb_f = Factor(gid="cb", scope_vars=set([c, b]), factor_fn=phi_cb)
+>>> a_f = Factor(gid="a", scope_vars=set([a]), factor_fn=phi_a)
+>>> pgm = PGModel(
+>>>     gid="pgm",
+>>>     nodes=set([a, b, c]),
+>>>     edges=set([ab, bc]),
+>>>     factors=set([ba_f, cb_f, a_f]),
+>>> )
+>>> evidences = set([("a", True)])
+>>> queries = set([c])
+>>> product_factor, a = pgm.cond_prod_by_variable_elimination(queries, evidences)
+>>> print(round( product_factor.phi_normal(set([("c", True)])), 4))
+>>> # should give you 0.32
+
 \endcode
 
 ## Markov Network Usage
