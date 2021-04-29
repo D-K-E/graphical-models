@@ -95,6 +95,11 @@ Ran 179 tests in 0.666s
 OK
 ```
 
+## Usage Examples
+
+See Related Pages section under the [docs](https://d-k-e.github.io/graphical-models/)
+
+
 ## Guide for Contributors
 
 See [Contributing.md](https://github.com/D-K-E/graphical-models/blob/master/CONTRIBUTING.md)
