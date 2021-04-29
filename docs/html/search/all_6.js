@@ -25,5 +25,6 @@ var searchData=
   ['from_5fgraph_80',['from_graph',['../dd/d00/classgmodels_1_1gtypes_1_1digraph_1_1DiGraph.html#ae7292e6cc7e374faf017666a2d373418',1,'gmodels.gtypes.digraph.DiGraph.from_graph()'],['../d8/d73/classgmodels_1_1gtypes_1_1undigraph_1_1UndiGraph.html#aaf191bd3ea8b934584b8dbf3eef1e6a3',1,'gmodels.gtypes.undigraph.UndiGraph.from_graph()']]],
   ['from_5fjoint_5fvars_81',['from_joint_vars',['../de/d55/classgmodels_1_1factor_1_1Factor.html#a48ced84334f21169113b63953c9d2980',1,'gmodels::factor::Factor']]],
   ['from_5fpreds_5fto_5fedgeset_82',['from_preds_to_edgeset',['../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#aee7564c1b21abbaef27bb1809b473d0d',1,'gmodels::gtypes::graph::Graph']]],
-  ['from_5fucs_5fresult_83',['from_ucs_result',['../d0/d1c/classgmodels_1_1gtypes_1_1path_1_1Path.html#a37026912459532c156435f9b02e1a770',1,'gmodels::gtypes::path::Path']]]
+  ['from_5fucs_5fresult_83',['from_ucs_result',['../d0/d1c/classgmodels_1_1gtypes_1_1path_1_1Path.html#a37026912459532c156435f9b02e1a770',1,'gmodels::gtypes::path::Path']]],
+  ['from_5fundigraph_84',['from_undigraph',['../df/dd7/classgmodels_1_1markov_1_1MarkovNetwork.html#afd84127a3d00650623a422e276fcadff',1,'gmodels::markov::MarkovNetwork']]]
 ];
