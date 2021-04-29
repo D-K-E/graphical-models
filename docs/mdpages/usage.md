@@ -15,7 +15,7 @@ queries. `Marginal Map` queries are not yet supported.
 
 Usage:
 
-```python
+\code{.py}
 
 from gmodels.pgmodel import PGModel
 from gmodels.gtypes.edge import Edge, EdgeType
@@ -96,7 +96,7 @@ queries = set([c])
 product_factor, a = pgm.cond_prod_by_variable_elimination(queries, evidences)
 print(round( product_factor.phi_normal(set([("c", True)])), 4))
 # should give you 0.32
-```
+\endcode
 
 ## Markov Network Usage
 
@@ -110,7 +110,7 @@ mediated by any other variable in the network.
 
 Usage:
 
-```python
+\code{.py}
 
 idata = {
     "A": {"outcome-values": [True, False]},
@@ -233,7 +233,7 @@ mnetwork = MarkovNetwork(
     factors=set([DA_f, CD_f, BC_f, AB_f]),
 )
 
-```
+\endcode
 
 ## LWF Chain Graph Usage
 
@@ -254,7 +254,7 @@ The standard inference strategies on chain graphs are best explained in Cowell
 
 Usage:
 
-```python
+\code{.py}
 
 idata = {"outcome-values": [True, False]}
 A = NumCatRVariable(
@@ -567,5 +567,5 @@ cowell = LWFChainGraph(
         BD_cf])
 )
 
-```
+\endcode
 
