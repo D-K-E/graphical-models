@@ -77,94 +77,100 @@ $(function() {
 PGModel Usage</h1>
 <p><code>PGModel</code>, a graph with defined as <code>G=(V,E,F)</code> where <code>V</code> is vertex set composed of <code>NumCatRVariable</code>s which are numeric categorical random variables, <code>E</code> is edge set, and <code>F</code> is factor set. If <code>F</code> is none the factor set is deduced from edge set where each edge is considered as a factor whose scope is the set of incident nodes to edge. Sum-Product and Max-Product variable elimination are supported by <code>PGModel</code>. Evidence encoded in nodes are directly used for reducing factors during the instantiation of <code>PGModel</code>. Additional evidence can be provided at query time as well for conditional and most probable explanation queries. <code>Marginal Map</code> queries are not yet supported.</p>
 <p>Usage:</p>
-<div class="fragment"><div class="line">&gt;&gt;&gt; <span class="keyword">from</span> <a class="code" href="../../de/d0f/namespacegmodels_1_1pgmodel.html">gmodels.pgmodel</a> <span class="keyword">import</span> PGModel</div>
-<div class="line">&gt;&gt;&gt; <span class="keyword">from</span> <a class="code" href="../../d9/dc8/namespacegmodels_1_1gtypes_1_1edge.html">gmodels.gtypes.edge</a> <span class="keyword">import</span> Edge, EdgeType</div>
-<div class="line">&gt;&gt;&gt; <span class="keyword">from</span> <a class="code" href="../../d8/d34/namespacegmodels_1_1factor.html">gmodels.factor</a> <span class="keyword">import</span> Factor</div>
-<div class="line">&gt;&gt;&gt; <span class="keyword">from</span> <a class="code" href="../../da/d3d/namespacegmodels_1_1randomvariable.html">gmodels.randomvariable</a> <span class="keyword">import</span> NumCatRVariable</div>
-<div class="line">&gt;&gt;&gt; <span class="comment"># Example adapted from Darwiche 2009, p. 140</span></div>
-<div class="line">&gt;&gt;&gt; idata = {</div>
-<div class="line">&gt;&gt;&gt;             <span class="stringliteral">&quot;a&quot;</span>: {<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
-<div class="line">&gt;&gt;&gt;             <span class="stringliteral">&quot;b&quot;</span>: {<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
-<div class="line">&gt;&gt;&gt;             <span class="stringliteral">&quot;c&quot;</span>: {<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
-<div class="line">&gt;&gt;&gt;         }</div>
-<div class="line">&gt;&gt;&gt; a = NumCatRVariable(</div>
-<div class="line">&gt;&gt;&gt;             node_id=<span class="stringliteral">&quot;a&quot;</span>, input_data=idata[<span class="stringliteral">&quot;a&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.6 <span class="keywordflow">if</span> x <span class="keywordflow">else</span> 0.4</div>
-<div class="line">&gt;&gt;&gt;         )</div>
-<div class="line">&gt;&gt;&gt; b = NumCatRVariable(</div>
-<div class="line">&gt;&gt;&gt;     node_id=<span class="stringliteral">&quot;b&quot;</span>, input_data=idata[<span class="stringliteral">&quot;b&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.5 <span class="keywordflow">if</span> x <span class="keywordflow">else</span> 0.5</div>
-<div class="line">&gt;&gt;&gt; )</div>
-<div class="line">&gt;&gt;&gt; c = NumCatRVariable(</div>
-<div class="line">&gt;&gt;&gt;     node_id=<span class="stringliteral">&quot;c&quot;</span>, input_data=idata[<span class="stringliteral">&quot;c&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.5 <span class="keywordflow">if</span> x <span class="keywordflow">else</span> 0.5</div>
-<div class="line">&gt;&gt;&gt; )</div>
-<div class="line">&gt;&gt;&gt; ab = Edge(</div>
-<div class="line">&gt;&gt;&gt;     edge_id=<span class="stringliteral">&quot;ab&quot;</span>,</div>
-<div class="line">&gt;&gt;&gt;     edge_type=EdgeType.UNDIRECTED,</div>
-<div class="line">&gt;&gt;&gt;     start_node=a,</div>
-<div class="line">&gt;&gt;&gt;     end_node=b,</div>
-<div class="line">&gt;&gt;&gt; )</div>
-<div class="line">&gt;&gt;&gt; bc = Edge(</div>
-<div class="line">&gt;&gt;&gt;     edge_id=<span class="stringliteral">&quot;bc&quot;</span>,</div>
-<div class="line">&gt;&gt;&gt;     edge_type=EdgeType.UNDIRECTED,</div>
-<div class="line">&gt;&gt;&gt;     start_node=b,</div>
-<div class="line">&gt;&gt;&gt;     end_node=c,</div>
-<div class="line">&gt;&gt;&gt; )</div>
-<div class="line">&gt;&gt;&gt; <span class="keyword">def </span>phi_ba(scope_product):</div>
-<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;&quot;</span></div>
-<div class="line">&gt;&gt;&gt;     ss = set(scope_product)</div>
-<div class="line">&gt;&gt;&gt;     <span class="keywordflow">if</span> ss == set([(<span class="stringliteral">&quot;a&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">True</span>)]):</div>
-<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 0.9</div>
-<div class="line">&gt;&gt;&gt;     <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;a&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">False</span>)]):</div>
-<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 0.1</div>
-<div class="line">&gt;&gt;&gt;     <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;a&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">True</span>)]):</div>
-<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 0.2</div>
-<div class="line">&gt;&gt;&gt;     <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;a&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">False</span>)]):</div>
-<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 0.8</div>
-<div class="line">&gt;&gt;&gt;     <span class="keywordflow">else</span>:</div>
-<div class="line">&gt;&gt;&gt;         <span class="keywordflow">raise</span> ValueError(<span class="stringliteral">&quot;product error&quot;</span>)</div>
+<div class="fragment"><div class="line">from <a class="code" href="../../de/d0f/namespacegmodels_1_1pgmodel.html">gmodels.pgmodel</a> <span class="keyword">import</span> PGModel</div>
+<div class="line"><span class="keyword">from</span> <a class="code" href="../../d9/dc8/namespacegmodels_1_1gtypes_1_1edge.html">gmodels.gtypes.edge</a> <span class="keyword">import</span> Edge, EdgeType</div>
+<div class="line"><span class="keyword">from</span> <a class="code" href="../../d8/d34/namespacegmodels_1_1factor.html">gmodels.factor</a> <span class="keyword">import</span> Factor</div>
+<div class="line"><span class="keyword">from</span> <a class="code" href="../../da/d3d/namespacegmodels_1_1randomvariable.html">gmodels.randomvariable</a> <span class="keyword">import</span> NumCatRVariable</div>
+<div class="line"><span class="comment"># Example adapted from Darwiche 2009, p. 140</span></div>
+<div class="line">idata = {</div>
+<div class="line">            <span class="stringliteral">&quot;a&quot;</span>: {<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
+<div class="line">            <span class="stringliteral">&quot;b&quot;</span>: {<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
+<div class="line">            <span class="stringliteral">&quot;c&quot;</span>: {<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
+<div class="line">        }</div>
+<div class="line">a = NumCatRVariable(</div>
+<div class="line">            node_id=<span class="stringliteral">&quot;a&quot;</span>, input_data=idata[<span class="stringliteral">&quot;a&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.6 <span class="keywordflow">if</span> x <span class="keywordflow">else</span> 0.4</div>
+<div class="line">        )</div>
+<div class="line">b = NumCatRVariable(</div>
+<div class="line">    node_id=<span class="stringliteral">&quot;b&quot;</span>, input_data=idata[<span class="stringliteral">&quot;b&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.5 <span class="keywordflow">if</span> x <span class="keywordflow">else</span> 0.5</div>
+<div class="line">)</div>
+<div class="line">c = NumCatRVariable(</div>
+<div class="line">    node_id=<span class="stringliteral">&quot;c&quot;</span>, input_data=idata[<span class="stringliteral">&quot;c&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.5 <span class="keywordflow">if</span> x <span class="keywordflow">else</span> 0.5</div>
+<div class="line">)</div>
+<div class="line">ab = Edge(</div>
+<div class="line">    edge_id=<span class="stringliteral">&quot;ab&quot;</span>,</div>
+<div class="line">    edge_type=EdgeType.UNDIRECTED,</div>
+<div class="line">    start_node=a,</div>
+<div class="line">    end_node=b,</div>
+<div class="line">)</div>
+<div class="line">bc = Edge(</div>
+<div class="line">    edge_id=<span class="stringliteral">&quot;bc&quot;</span>,</div>
+<div class="line">    edge_type=EdgeType.UNDIRECTED,</div>
+<div class="line">    start_node=b,</div>
+<div class="line">    end_node=c,</div>
+<div class="line">)</div>
+<div class="line"><span class="keyword">def </span>phi_ba(scope_product):</div>
+<div class="line">    <span class="stringliteral">&quot;&quot;</span></div>
+<div class="line">    ss = set(scope_product)</div>
+<div class="line">    <span class="keywordflow">if</span> ss == set([(<span class="stringliteral">&quot;a&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.9</div>
+<div class="line">    <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;a&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.1</div>
+<div class="line">    <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;a&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.2</div>
+<div class="line">    <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;a&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.8</div>
+<div class="line">    <span class="keywordflow">else</span>:</div>
+<div class="line">        <span class="keywordflow">raise</span> ValueError(<span class="stringliteral">&quot;product error&quot;</span>)</div>
 <div class="line"> </div>
-<div class="line">&gt;&gt;&gt; <span class="keyword">def </span>phi_cb(scope_product):</div>
-<div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;&quot;</span></div>
-<div class="line">&gt;&gt;&gt;     ss = set(scope_product)</div>
-<div class="line">&gt;&gt;&gt;     <span class="keywordflow">if</span> ss == set([(<span class="stringliteral">&quot;c&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">True</span>)]):</div>
-<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 0.3</div>
-<div class="line">&gt;&gt;&gt;     <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;c&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">False</span>)]):</div>
-<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 0.5</div>
-<div class="line">&gt;&gt;&gt;     <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;c&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">True</span>)]):</div>
-<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 0.7</div>
-<div class="line">&gt;&gt;&gt;     <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;c&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">False</span>)]):</div>
-<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 0.5</div>
-<div class="line">&gt;&gt;&gt;     <span class="keywordflow">else</span>:</div>
-<div class="line">&gt;&gt;&gt;         <span class="keywordflow">raise</span> ValueError(<span class="stringliteral">&quot;product error&quot;</span>)</div>
+<div class="line"><span class="keyword">def </span>phi_cb(scope_product):</div>
+<div class="line">    <span class="stringliteral">&quot;&quot;</span></div>
+<div class="line">    ss = set(scope_product)</div>
+<div class="line">    <span class="keywordflow">if</span> ss == set([(<span class="stringliteral">&quot;c&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.3</div>
+<div class="line">    <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;c&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.5</div>
+<div class="line">    <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;c&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.7</div>
+<div class="line">    <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;c&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;b&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.5</div>
+<div class="line">    <span class="keywordflow">else</span>:</div>
+<div class="line">        <span class="keywordflow">raise</span> ValueError(<span class="stringliteral">&quot;product error&quot;</span>)</div>
 <div class="line"> </div>
-<div class="line">&gt;&gt;&gt; <span class="keyword">def </span>phi_a(scope_product):</div>
-<div class="line">&gt;&gt;&gt;     s = set(scope_product)</div>
-<div class="line">&gt;&gt;&gt;     <span class="keywordflow">if</span> s == set([(<span class="stringliteral">&quot;a&quot;</span>, <span class="keyword">True</span>)]):</div>
-<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 0.6</div>
-<div class="line">&gt;&gt;&gt;     <span class="keywordflow">elif</span> s == set([(<span class="stringliteral">&quot;a&quot;</span>, <span class="keyword">False</span>)]):</div>
-<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 0.4</div>
-<div class="line">&gt;&gt;&gt;     <span class="keywordflow">else</span>:</div>
-<div class="line">&gt;&gt;&gt;         <span class="keywordflow">raise</span> ValueError(<span class="stringliteral">&quot;product error&quot;</span>)</div>
-<div class="line">&gt;&gt;&gt; ba_f = Factor(gid=<span class="stringliteral">&quot;ba&quot;</span>, scope_vars=set([b, a]), factor_fn=phi_ba)</div>
-<div class="line">&gt;&gt;&gt; cb_f = Factor(gid=<span class="stringliteral">&quot;cb&quot;</span>, scope_vars=set([c, b]), factor_fn=phi_cb)</div>
-<div class="line">&gt;&gt;&gt; a_f = Factor(gid=<span class="stringliteral">&quot;a&quot;</span>, scope_vars=set([a]), factor_fn=phi_a)</div>
-<div class="line">&gt;&gt;&gt; pgm = PGModel(</div>
-<div class="line">&gt;&gt;&gt;     gid=<span class="stringliteral">&quot;pgm&quot;</span>,</div>
-<div class="line">&gt;&gt;&gt;     nodes=set([a, b, c]),</div>
-<div class="line">&gt;&gt;&gt;     edges=set([ab, bc]),</div>
-<div class="line">&gt;&gt;&gt;     factors=set([ba_f, cb_f, a_f]),</div>
-<div class="line">&gt;&gt;&gt; )</div>
-<div class="line">&gt;&gt;&gt; evidences = set([(<span class="stringliteral">&quot;a&quot;</span>, <span class="keyword">True</span>)])</div>
-<div class="line">&gt;&gt;&gt; queries = set([c])</div>
-<div class="line">&gt;&gt;&gt; product_factor, a = pgm.cond_prod_by_variable_elimination(queries, evidences)</div>
-<div class="line">&gt;&gt;&gt; print(round( product_factor.phi_normal(set([(<span class="stringliteral">&quot;c&quot;</span>, <span class="keyword">True</span>)])), 4))</div>
-<div class="line">&gt;&gt;&gt; <span class="comment"># should give you 0.32</span></div>
+<div class="line"><span class="keyword">def </span>phi_a(scope_product):</div>
+<div class="line">    s = set(scope_product)</div>
+<div class="line">    <span class="keywordflow">if</span> s == set([(<span class="stringliteral">&quot;a&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.6</div>
+<div class="line">    <span class="keywordflow">elif</span> s == set([(<span class="stringliteral">&quot;a&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.4</div>
+<div class="line">    <span class="keywordflow">else</span>:</div>
+<div class="line">        <span class="keywordflow">raise</span> ValueError(<span class="stringliteral">&quot;product error&quot;</span>)</div>
+<div class="line">ba_f = Factor(gid=<span class="stringliteral">&quot;ba&quot;</span>, scope_vars=set([b, a]), factor_fn=phi_ba)</div>
+<div class="line">cb_f = Factor(gid=<span class="stringliteral">&quot;cb&quot;</span>, scope_vars=set([c, b]), factor_fn=phi_cb)</div>
+<div class="line">a_f = Factor(gid=<span class="stringliteral">&quot;a&quot;</span>, scope_vars=set([a]), factor_fn=phi_a)</div>
+<div class="line">pgm = PGModel(</div>
+<div class="line">    gid=<span class="stringliteral">&quot;pgm&quot;</span>,</div>
+<div class="line">    nodes=set([a, b, c]),</div>
+<div class="line">    edges=set([ab, bc]),</div>
+<div class="line">    factors=set([ba_f, cb_f, a_f]),</div>
+<div class="line">)</div>
+<div class="line">evidences = set([(<span class="stringliteral">&quot;a&quot;</span>, <span class="keyword">True</span>)])</div>
+<div class="line">queries = set([c])</div>
+<div class="line">product_factor, a = pgm.cond_prod_by_variable_elimination(queries, evidences)</div>
+<div class="line">print(round( product_factor.phi_normal(set([(<span class="stringliteral">&quot;c&quot;</span>, <span class="keyword">True</span>)])), 4))</div>
+<div class="line"><span class="comment"># should give you 0.32</span></div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md22"></a>
 Markov Network Usage</h1>
 <p>Markov Network is defined by Koller, Friedman 2009, p. 103 is </p><blockquote class="doxtable">
 <p>As in a Bayesian network, the nodes in the graph of a Markov network represent the variables, and the edges correspond to a notion of direct probabilistic interaction between the neighboring variables — an interaction that is not mediated by any other variable in the network. </p>
 </blockquote>
 <p>Usage:</p>
-<div class="fragment"><div class="line">idata = {</div>
+<div class="fragment"><div class="line"><span class="keyword">from</span> <a class="code" href="../../da/d54/namespacegmodels_1_1markov.html">gmodels.markov</a> <span class="keyword">import</span> MarkovNetwork</div>
+<div class="line"><span class="keyword">from</span> <a class="code" href="../../d9/dc8/namespacegmodels_1_1gtypes_1_1edge.html">gmodels.gtypes.edge</a> <span class="keyword">import</span> Edge, EdgeType</div>
+<div class="line"><span class="keyword">from</span> <a class="code" href="../../d8/d34/namespacegmodels_1_1factor.html">gmodels.factor</a> <span class="keyword">import</span> Factor</div>
+<div class="line"><span class="keyword">from</span> <a class="code" href="../../da/d3d/namespacegmodels_1_1randomvariable.html">gmodels.randomvariable</a> <span class="keyword">import</span> NumCatRVariable</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line">idata = {</div>
 <div class="line">    <span class="stringliteral">&quot;A&quot;</span>: {<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
 <div class="line">    <span class="stringliteral">&quot;B&quot;</span>: {<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
 <div class="line">    <span class="stringliteral">&quot;C&quot;</span>: {<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
@@ -291,7 +297,13 @@ LWF Chain Graph Usage</h1>
 </blockquote>
 <p>S. Lauritzen, one of the main contributors (the L in LWF) of the subject, had written extensively on the subject. However probably the most through treatment of the subject is Lauritzen 1996, p. 158 - 220. He had also provided the causal interpretation of LWF chain graphs in <a href="http://doi.wiley.com/10.1111/1467-9868.00340">Lauritzen 2002</a>. The standard inference strategies on chain graphs are best explained in Cowell 2005 and more recently in Dechter 2019.</p>
 <p>Usage:</p>
-<div class="fragment"><div class="line">idata = {<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]}</div>
+<div class="fragment"><div class="line"><span class="keyword">from</span> <a class="code" href="../../de/d41/namespacegmodels_1_1lwfchain.html">gmodels.lwfchain</a> <span class="keyword">import</span> LWFChainGraph</div>
+<div class="line"><span class="keyword">from</span> <a class="code" href="../../d9/dc8/namespacegmodels_1_1gtypes_1_1edge.html">gmodels.gtypes.edge</a> <span class="keyword">import</span> Edge, EdgeType</div>
+<div class="line"><span class="keyword">from</span> <a class="code" href="../../d8/d34/namespacegmodels_1_1factor.html">gmodels.factor</a> <span class="keyword">import</span> Factor</div>
+<div class="line"><span class="keyword">from</span> <a class="code" href="../../da/d3d/namespacegmodels_1_1randomvariable.html">gmodels.randomvariable</a> <span class="keyword">import</span> NumCatRVariable</div>
+<div class="line"> </div>
+<div class="line"> </div>
+<div class="line">idata = {<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]}</div>
 <div class="line">A = NumCatRVariable(</div>
 <div class="line">       node_id=<span class="stringliteral">&quot;A&quot;</span>, input_data=idata, distribution=<span class="keyword">lambda</span> x: 0.5</div>
 <div class="line">)</div>
@@ -607,6 +619,8 @@ LWF Chain Graph Usage</h1>
 <div class="ttc" id="anamespacegmodels_1_1gtypes_1_1edge_html"><div class="ttname"><a href="../../d9/dc8/namespacegmodels_1_1gtypes_1_1edge.html">gmodels.gtypes.edge</a></div><div class="ttdef"><b>Definition:</b> edge.py:1</div></div>
 <div class="ttc" id="anamespacegmodels_1_1pgmodel_html"><div class="ttname"><a href="../../de/d0f/namespacegmodels_1_1pgmodel.html">gmodels.pgmodel</a></div><div class="ttdef"><b>Definition:</b> pgmodel.py:1</div></div>
 <div class="ttc" id="anamespacegmodels_1_1factor_html"><div class="ttname"><a href="../../d8/d34/namespacegmodels_1_1factor.html">gmodels.factor</a></div><div class="ttdef"><b>Definition:</b> factor.py:1</div></div>
+<div class="ttc" id="anamespacegmodels_1_1markov_html"><div class="ttname"><a href="../../da/d54/namespacegmodels_1_1markov.html">gmodels.markov</a></div><div class="ttdef"><b>Definition:</b> markov.py:1</div></div>
+<div class="ttc" id="anamespacegmodels_1_1lwfchain_html"><div class="ttname"><a href="../../de/d41/namespacegmodels_1_1lwfchain.html">gmodels.lwfchain</a></div><div class="ttdef"><b>Definition:</b> lwfchain.py:1</div></div>
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by &#160;<a href="http://www.doxygen.org/index.html">
