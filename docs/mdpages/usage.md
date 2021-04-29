@@ -1,4 +1,4 @@
-# Usage Examples {#usage}
+# Usage Examples
 
 ## PGModel Usage
 
