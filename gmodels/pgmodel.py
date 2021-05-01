@@ -300,7 +300,7 @@ class PGModel(Graph):
         Zs: Set[NumCatRVariable],
         factors: Set[Factor],
         ordering_fn=min_unmarked_neighbours,
-    ):
+    ) -> Tuple[Factor, Factor]:
         """!
         Main conditional product by variable elimination function
         """

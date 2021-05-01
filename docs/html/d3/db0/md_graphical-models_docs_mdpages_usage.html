@@ -291,6 +291,120 @@ Markov Network Usage</h1>
 <div class="line">    factors=set([DA_f, CD_f, BC_f, AB_f]),</div>
 <div class="line">)</div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md23"></a>
+Conditional Random Fields (CRFs) Usage</h1>
+<p>Conditional random fields are defined by Koller, Friedman 2009 p. 143 as: </p><blockquote class="doxtable">
+<p>an undirected graph whose nodes correspond to a union of a set of observed random variables X, and a set of target random variables Y; the network is annotated with a set of factors \(\phi_1(D_1), \dots, \phi_i(D_i), \dots, \phi_m(D_m)\) such that \(D_i \not \subset X\). </p>
+</blockquote>
+<p>The network encodes a conditional distribution between target and observed variables.</p>
+<p>Usage: </p><div class="fragment"><div class="line"><span class="keyword">from</span> <a class="code" href="../../da/d3d/namespacegmodels_1_1randomvariable.html">gmodels.randomvariable</a> <span class="keyword">import</span> NumCatRVariable</div>
+<div class="line"><span class="keyword">from</span> <a class="code" href="../../da/d54/namespacegmodels_1_1markov.html">gmodels.markov</a> <span class="keyword">import</span> ConditionalRandomField</div>
+<div class="line"><span class="keyword">from</span> <a class="code" href="../../d9/dc8/namespacegmodels_1_1gtypes_1_1edge.html">gmodels.gtypes.edge</a> <span class="keyword">import</span> Edge, EdgeType</div>
+<div class="line"><span class="keyword">from</span> <a class="code" href="../../d8/d34/namespacegmodels_1_1factor.html">gmodels.factor</a> <span class="keyword">import</span> Factor</div>
+<div class="line"><span class="keyword">import</span> math</div>
+<div class="line"><span class="keyword">from</span> random <span class="keyword">import</span> choice</div>
+<div class="line"> </div>
+<div class="line">idata = {<span class="stringliteral">&quot;A&quot;</span>: {<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]}}</div>
+<div class="line"> </div>
+<div class="line"><span class="comment"># from Koller, Friedman 2009, p. 144-145, example 4.20</span></div>
+<div class="line">X_1 = NumCatRVariable(</div>
+<div class="line">    node_id=<span class="stringliteral">&quot;X_1&quot;</span>, input_data=idata[<span class="stringliteral">&quot;A&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">)</div>
+<div class="line">X_2 = NumCatRVariable(</div>
+<div class="line">    node_id=<span class="stringliteral">&quot;X_2&quot;</span>, input_data=idata[<span class="stringliteral">&quot;A&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">)</div>
+<div class="line">X_3 = NumCatRVariable(</div>
+<div class="line">    node_id=<span class="stringliteral">&quot;X_3&quot;</span>, input_data=idata[<span class="stringliteral">&quot;A&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">)</div>
+<div class="line">Y_1 = NumCatRVariable(</div>
+<div class="line">    node_id=<span class="stringliteral">&quot;Y_1&quot;</span>, input_data=idata[<span class="stringliteral">&quot;A&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">)</div>
+<div class="line">X1_Y1 = Edge(</div>
+<div class="line">   edge_id=<span class="stringliteral">&quot;X1_Y1&quot;</span>,</div>
+<div class="line">   edge_type=EdgeType.UNDIRECTED,</div>
+<div class="line">   start_node=X_1,</div>
+<div class="line">   end_node=Y_1,</div>
+<div class="line">)</div>
+<div class="line">X2_Y1 = Edge(</div>
+<div class="line">  edge_id=<span class="stringliteral">&quot;X2_Y1&quot;</span>,</div>
+<div class="line">  edge_type=EdgeType.UNDIRECTED,</div>
+<div class="line">  start_node=X_2,</div>
+<div class="line">  end_node=Y_1,</div>
+<div class="line">)</div>
+<div class="line">X3_Y1 = Edge(</div>
+<div class="line">  edge_id=<span class="stringliteral">&quot;X3_Y1&quot;</span>,</div>
+<div class="line">  edge_type=EdgeType.UNDIRECTED,</div>
+<div class="line">  start_node=X_3,</div>
+<div class="line">  end_node=Y_1,</div>
+<div class="line">)</div>
+<div class="line">                                                                     </div>
+<div class="line"><span class="keyword">def </span>phi_X1_Y1(scope_product):</div>
+<div class="line">  <span class="stringliteral">&quot;&quot;</span></div>
+<div class="line">  w = 0.5</div>
+<div class="line">  ss = frozenset(scope_product)</div>
+<div class="line">  <span class="keywordflow">if</span> ss == frozenset([(<span class="stringliteral">&quot;X_1&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;Y_1&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">      <span class="keywordflow">return</span> math.exp(1.0 * w)</div>
+<div class="line">  <span class="keywordflow">else</span>:</div>
+<div class="line">      <span class="keywordflow">return</span> math.exp(0.0)</div>
+<div class="line">                                                                     </div>
+<div class="line"><span class="keyword">def </span>phi_X2_Y1(scope_product):</div>
+<div class="line">  <span class="stringliteral">&quot;&quot;</span></div>
+<div class="line">  w = 5.0</div>
+<div class="line">  ss = frozenset(scope_product)</div>
+<div class="line">  <span class="keywordflow">if</span> ss == frozenset([(<span class="stringliteral">&quot;X_2&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;Y_1&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">      <span class="keywordflow">return</span> math.exp(1.0 * w)</div>
+<div class="line">  <span class="keywordflow">else</span>:</div>
+<div class="line">      <span class="keywordflow">return</span> math.exp(0.0)</div>
+<div class="line">                                                                     </div>
+<div class="line"><span class="keyword">def </span>phi_X3_Y1(scope_product):</div>
+<div class="line">  <span class="stringliteral">&quot;&quot;</span></div>
+<div class="line">  w = 9.4</div>
+<div class="line">  ss = frozenset(scope_product)</div>
+<div class="line">  <span class="keywordflow">if</span> ss == frozenset([(<span class="stringliteral">&quot;X_3&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;Y_1&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">      <span class="keywordflow">return</span> math.exp(1.0 * w)</div>
+<div class="line">  <span class="keywordflow">else</span>:</div>
+<div class="line">      <span class="keywordflow">return</span> math.exp(0.0)</div>
+<div class="line">                                                                     </div>
+<div class="line"><span class="keyword">def </span>phi_Y1(scope_product):</div>
+<div class="line">  <span class="stringliteral">&quot;&quot;</span></div>
+<div class="line">  w = 0.6</div>
+<div class="line">  ss = frozenset(scope_product)</div>
+<div class="line">  <span class="keywordflow">if</span> ss == frozenset([(<span class="stringliteral">&quot;Y_1&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">      <span class="keywordflow">return</span> math.exp(1.0 * w)</div>
+<div class="line">  <span class="keywordflow">else</span>:</div>
+<div class="line">      <span class="keywordflow">return</span> math.exp(0.0)</div>
+<div class="line">                                                                     </div>
+<div class="line">X1_Y1_f = Factor(</div>
+<div class="line">    gid=<span class="stringliteral">&quot;x1_y1_f&quot;</span>, scope_vars=set([X_1, Y_1]), factor_fn=phi_X1_Y1</div>
+<div class="line">)</div>
+<div class="line">X2_Y1_f = Factor(</div>
+<div class="line">    gid=<span class="stringliteral">&quot;x2_y1_f&quot;</span>, scope_vars=set([X_2, Y_1]), factor_fn=phi_X2_Y1</div>
+<div class="line">)</div>
+<div class="line">X3_Y1_f = Factor(</div>
+<div class="line">    gid=<span class="stringliteral">&quot;x3_y1_f&quot;</span>, scope_vars=set([X_3, Y_1]), factor_fn=phi_X3_Y1</div>
+<div class="line">)</div>
+<div class="line">Y1_f = Factor(gid=<span class="stringliteral">&quot;y1_f&quot;</span>, scope_vars=set([Y_1]), factor_fn=phi_Y1)</div>
+<div class="line">                                                                     </div>
+<div class="line">crf_koller = ConditionalRandomField(</div>
+<div class="line">    <span class="stringliteral">&quot;crf&quot;</span>,</div>
+<div class="line">    observed_vars=set([X_1, X_2, X_3]),</div>
+<div class="line">    target_vars=set([Y_1]),</div>
+<div class="line">    edges=set([X1_Y1, X2_Y1, X3_Y1]),</div>
+<div class="line">    factors=set([X1_Y1_f, X2_Y1_f, X3_Y1_f, Y1_f]),</div>
+<div class="line">)</div>
+<div class="line">evidence = set([(<span class="stringliteral">&quot;Y_1&quot;</span>, <span class="keyword">False</span>)])</div>
+<div class="line">query = set(</div>
+<div class="line">    [</div>
+<div class="line">        (<span class="stringliteral">&quot;X_1&quot;</span>, choice([<span class="keyword">False</span>, <span class="keyword">True</span>])),</div>
+<div class="line">        (<span class="stringliteral">&quot;X_2&quot;</span>, choice([<span class="keyword">False</span>, <span class="keyword">True</span>])),</div>
+<div class="line">        (<span class="stringliteral">&quot;X_3&quot;</span>, choice([<span class="keyword">False</span>, <span class="keyword">True</span>])),</div>
+<div class="line">    ]</div>
+<div class="line">)</div>
+<div class="line">foo1, a1 = crf_koller.cond_prod_by_variable_elimination(</div>
+<div class="line">    queries=query, evidences=evidence</div>
+<div class="line">)</div>
+<div class="line">print(foo1.phi(query) == 1.0)</div>
+<div class="line"><span class="comment"># True</span></div>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md24"></a>
 LWF Chain Graph Usage</h1>
 <p>LWF Chain Graph, also known as Partially Directed Model, is a probabilistic graphical model. It's distinctive nature is best explained by Koller, Friedman 2009, p. 148: </p><blockquote class="doxtable">
 <p>An edge between two nodes in the same chain component must be undirected, while an edge between two nodes in different chain components must be directed. </p>

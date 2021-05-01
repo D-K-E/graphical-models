@@ -244,6 +244,133 @@ mnetwork = MarkovNetwork(
 
 \endcode
 
+## Conditional Random Fields (CRFs) Usage
+
+Conditional random fields are defined by Koller, Friedman 2009 p. 143 as:
+<blockquote>
+an undirected graph whose nodes correspond to a union of a set of observed
+random variables X, and a set of target random variables Y; the network is
+annotated with a set of factors \f$\phi_1(D_1), \dots, \phi_i(D_i), \dots,
+\phi_m(D_m)\f$ such that \f$D_i \not \subset X\f$.
+</blockquote>
+The network encodes a conditional distribution between target and observed
+variables.
+
+Usage:
+\code{.py}
+
+from gmodels.randomvariable import NumCatRVariable
+from gmodels.markov import ConditionalRandomField
+from gmodels.gtypes.edge import Edge, EdgeType
+from gmodels.factor import Factor
+import math
+from random import choice
+
+idata = {"A": {"outcome-values": [True, False]}}
+
+# from Koller, Friedman 2009, p. 144-145, example 4.20
+X_1 = NumCatRVariable(
+    node_id="X_1", input_data=idata["A"], distribution=lambda x: 0.5
+)
+X_2 = NumCatRVariable(
+    node_id="X_2", input_data=idata["A"], distribution=lambda x: 0.5
+)
+X_3 = NumCatRVariable(
+    node_id="X_3", input_data=idata["A"], distribution=lambda x: 0.5
+)
+Y_1 = NumCatRVariable(
+    node_id="Y_1", input_data=idata["A"], distribution=lambda x: 0.5
+)
+X1_Y1 = Edge(
+   edge_id="X1_Y1",
+   edge_type=EdgeType.UNDIRECTED,
+   start_node=X_1,
+   end_node=Y_1,
+)
+X2_Y1 = Edge(
+  edge_id="X2_Y1",
+  edge_type=EdgeType.UNDIRECTED,
+  start_node=X_2,
+  end_node=Y_1,
+)
+X3_Y1 = Edge(
+  edge_id="X3_Y1",
+  edge_type=EdgeType.UNDIRECTED,
+  start_node=X_3,
+  end_node=Y_1,
+)
+                                                                     
+def phi_X1_Y1(scope_product):
+  ""
+  w = 0.5
+  ss = frozenset(scope_product)
+  if ss == frozenset([("X_1", True), ("Y_1", True)]):
+      return math.exp(1.0 * w)
+  else:
+      return math.exp(0.0)
+                                                                     
+def phi_X2_Y1(scope_product):
+  ""
+  w = 5.0
+  ss = frozenset(scope_product)
+  if ss == frozenset([("X_2", True), ("Y_1", True)]):
+      return math.exp(1.0 * w)
+  else:
+      return math.exp(0.0)
+                                                                     
+def phi_X3_Y1(scope_product):
+  ""
+  w = 9.4
+  ss = frozenset(scope_product)
+  if ss == frozenset([("X_3", True), ("Y_1", True)]):
+      return math.exp(1.0 * w)
+  else:
+      return math.exp(0.0)
+                                                                     
+def phi_Y1(scope_product):
+  ""
+  w = 0.6
+  ss = frozenset(scope_product)
+  if ss == frozenset([("Y_1", True)]):
+      return math.exp(1.0 * w)
+  else:
+      return math.exp(0.0)
+                                                                     
+X1_Y1_f = Factor(
+    gid="x1_y1_f", scope_vars=set([X_1, Y_1]), factor_fn=phi_X1_Y1
+)
+X2_Y1_f = Factor(
+    gid="x2_y1_f", scope_vars=set([X_2, Y_1]), factor_fn=phi_X2_Y1
+)
+X3_Y1_f = Factor(
+    gid="x3_y1_f", scope_vars=set([X_3, Y_1]), factor_fn=phi_X3_Y1
+)
+Y1_f = Factor(gid="y1_f", scope_vars=set([Y_1]), factor_fn=phi_Y1)
+                                                                     
+crf_koller = ConditionalRandomField(
+    "crf",
+    observed_vars=set([X_1, X_2, X_3]),
+    target_vars=set([Y_1]),
+    edges=set([X1_Y1, X2_Y1, X3_Y1]),
+    factors=set([X1_Y1_f, X2_Y1_f, X3_Y1_f, Y1_f]),
+)
+evidence = set([("Y_1", False)])
+query = set(
+    [
+        ("X_1", choice([False, True])),
+        ("X_2", choice([False, True])),
+        ("X_3", choice([False, True])),
+    ]
+)
+foo1, a1 = crf_koller.cond_prod_by_variable_elimination(
+    queries=query, evidences=evidence
+)
+print(foo1.phi(query) == 1.0)
+# True
+
+\endcode
+
+
 ## LWF Chain Graph Usage
 
 LWF Chain Graph, also known as Partially Directed Model, is a probabilistic

@@ -9,6 +9,8 @@ from gmodels.gtypes.undigraph import UndiGraph
 from gmodels.factor import Factor
 from uuid import uuid4
 import pdb
+import math
+from random import choice
 
 import unittest
 
@@ -176,6 +178,94 @@ class MarkovTest(unittest.TestCase):
             nodes=set([self.a, self.b, self.c, self.d]),
             edges=set([self.ab, self.ad, self.bc, self.dc]),
         )
+        #
+        # Conditional Random Field test
+        # from Koller, Friedman 2009, p. 144-145, example 4.20
+        self.X_1 = NumCatRVariable(
+            node_id="X_1", input_data=idata["A"], distribution=lambda x: 0.5
+        )
+        self.X_2 = NumCatRVariable(
+            node_id="X_2", input_data=idata["A"], distribution=lambda x: 0.5
+        )
+        self.X_3 = NumCatRVariable(
+            node_id="X_3", input_data=idata["A"], distribution=lambda x: 0.5
+        )
+        self.Y_1 = NumCatRVariable(
+            node_id="Y_1", input_data=idata["A"], distribution=lambda x: 0.5
+        )
+        self.X1_Y1 = Edge(
+            edge_id="X1_Y1",
+            edge_type=EdgeType.UNDIRECTED,
+            start_node=self.X_1,
+            end_node=self.Y_1,
+        )
+        self.X2_Y1 = Edge(
+            edge_id="X2_Y1",
+            edge_type=EdgeType.UNDIRECTED,
+            start_node=self.X_2,
+            end_node=self.Y_1,
+        )
+        self.X3_Y1 = Edge(
+            edge_id="X3_Y1",
+            edge_type=EdgeType.UNDIRECTED,
+            start_node=self.X_3,
+            end_node=self.Y_1,
+        )
+
+        def phi_X1_Y1(scope_product):
+            ""
+            w = 0.5
+            ss = frozenset(scope_product)
+            if ss == frozenset([("X_1", True), ("Y_1", True)]):
+                return math.exp(1.0 * w)
+            else:
+                return math.exp(0.0)
+
+        def phi_X2_Y1(scope_product):
+            ""
+            w = 5.0
+            ss = frozenset(scope_product)
+            if ss == frozenset([("X_2", True), ("Y_1", True)]):
+                return math.exp(1.0 * w)
+            else:
+                return math.exp(0.0)
+
+        def phi_X3_Y1(scope_product):
+            ""
+            w = 9.4
+            ss = frozenset(scope_product)
+            if ss == frozenset([("X_3", True), ("Y_1", True)]):
+                return math.exp(1.0 * w)
+            else:
+                return math.exp(0.0)
+
+        def phi_Y1(scope_product):
+            ""
+            w = 0.6
+            ss = frozenset(scope_product)
+            if ss == frozenset([("Y_1", True)]):
+                return math.exp(1.0 * w)
+            else:
+                return math.exp(0.0)
+
+        self.X1_Y1_f = Factor(
+            gid="x1_y1_f", scope_vars=set([self.X_1, self.Y_1]), factor_fn=phi_X1_Y1
+        )
+        self.X2_Y1_f = Factor(
+            gid="x2_y1_f", scope_vars=set([self.X_2, self.Y_1]), factor_fn=phi_X2_Y1
+        )
+        self.X3_Y1_f = Factor(
+            gid="x3_y1_f", scope_vars=set([self.X_3, self.Y_1]), factor_fn=phi_X3_Y1
+        )
+        self.Y1_f = Factor(gid="y1_f", scope_vars=set([self.Y_1]), factor_fn=phi_Y1)
+
+        self.crf_koller = ConditionalRandomField(
+            "crf",
+            observed_vars=set([self.X_1, self.X_2, self.X_3]),
+            target_vars=set([self.Y_1]),
+            edges=set([self.X1_Y1, self.X2_Y1, self.X3_Y1]),
+            factors=set([self.X1_Y1_f, self.X2_Y1_f, self.X3_Y1_f, self.Y1_f]),
+        )
 
     def test_id(self):
         ""
@@ -217,4 +307,27 @@ class MarkovTest(unittest.TestCase):
                 self.assertEqual(c_d_max, fmax_prob)
 
             self.assertEqual(round(f.zval(), 3), 1.0)
-            #
+
+    def test_crf_target_zero(self):
+        """!
+        Koller, Friedman 2009, p. 145, example 4.20
+        """
+        ev = set([("Y_1", False)])
+        ev2 = set([("Y_1", True)])
+        qs = set([self.X_1, self.X_2, self.X_3])
+        qqs = set(
+            [
+                ("X_1", choice([False, True])),
+                ("X_2", choice([False, True])),
+                ("X_3", choice([False, True])),
+            ]
+        )
+        foo1, a1 = self.crf_koller.cond_prod_by_variable_elimination(
+            queries=qs, evidences=ev
+        )
+        foo2, a2 = self.crf_koller.cond_prod_by_variable_elimination(
+            queries=qs, evidences=ev
+        )
+
+        self.assertEqual(foo1.phi(qqs), 1.0)
+        self.assertTrue(foo2.phi(qqs) != 1.0)
