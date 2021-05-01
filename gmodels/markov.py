@@ -3,11 +3,12 @@ Markov network
 """
 from gmodels.gtypes.undigraph import UndiGraph
 from gmodels.gtypes.edge import Edge
-from gmodels.randomvariable import NumCatRVariable
+from gmodels.randomvariable import NumCatRVariable, RandomVariable, NumericValue
 from gmodels.factor import Factor
 from gmodels.pgmodel import PGModel
 from typing import Set, Optional, Tuple
 from uuid import uuid4
+import pdb
 
 
 class MarkovNetwork(PGModel, UndiGraph):
@@ -20,7 +21,9 @@ class MarkovNetwork(PGModel, UndiGraph):
         data={},
     ):
         """!
-        Markov Random Field
+        \brief Markov Random Field implementation
+
+        For parameters \see PGModel
 
         \code{.py}
 
@@ -154,6 +157,9 @@ class MarkovNetwork(PGModel, UndiGraph):
         """!
         \brief Make a markov network from undirected graph
 
+        \throws ValueError If nodes are not an instance of a random variable,
+        we raise a value error.
+
         Unless it is specified we assume that edges indicate a joint
         distribution
 
@@ -201,6 +207,9 @@ class MarkovNetwork(PGModel, UndiGraph):
 
         \endcode
         """
+        for n in udi.nodes():
+            if not isinstance(n, RandomVariable):
+                raise ValueError("Nodes are not an instance of random variable")
         fs: Set[Factor] = set()
         maximal_cliques = udi.find_maximal_cliques()
         for clique in maximal_cliques:
@@ -233,13 +242,158 @@ class ConditionalRandomField(MarkovNetwork):
         data={},
     ):
         """!
-        CRF constructor
+        \brief Conditional Random Field
+
+
+        Several traits distinguish Conditional Random Fields (CRFs) from Markov
+        Networks.
+        Formally Conditional random fields are defined by Koller, Friedman 2009 p. 143
+        as: <blockquote> an undirected graph whose nodes correspond to a union of a set
+        of observed random variables X, and a set of target random variables Y; the
+        network is annotated with a set of factors \f$\phi_1(D_1), \dots, \phi_i(D_i),
+        \dots, \phi_m(D_m)\f$ such that \f$D_i \not \subset X\f$.
+        </blockquote>
+        The network encodes a conditional distribution between target and observed
+        variables.
+
+        The purpose of CRFs is best described by Sucar 2015, p. 92:
+        <blockquote>
+        Conditional models are used to label an observation sequence X by
+        selecting the label sequence Y that maximizes the conditional
+        probability P(Y|X). The conditional nature of such models means that no
+        effort is wasted on modeling observations, and one is free from having
+        to make unnecessary independence assumptions.
+        </blockquote>
+
+        \throws ValueError We raise a value error if a factor's scope is a
+        subset of observed variables
+
+        \param observed_vars observed random variables. These variables must be
+        different than target variables. They are allowed to have edges between
+        them. The model is conditioned on these variables
+
+        \param target_vars target random variables.
+
+        \param factors factors that encode the conditional distribution of the
+        model
+
+        \code{.py}
+
+        >>> idata = {"A": {"outcome-values": [True, False]}}
+
+        >>> # from Koller, Friedman 2009, p. 144-145, example 4.20
+        >>> X_1 = NumCatRVariable(
+        >>>     node_id="X_1", input_data=idata["A"], distribution=lambda x: 0.5
+        >>> )
+        >>> X_2 = NumCatRVariable(
+        >>>     node_id="X_2", input_data=idata["A"], distribution=lambda x: 0.5
+        >>> )
+        >>> X_3 = NumCatRVariable(
+        >>>     node_id="X_3", input_data=idata["A"], distribution=lambda x: 0.5
+        >>> )
+        >>> Y_1 = NumCatRVariable(
+        >>>     node_id="Y_1", input_data=idata["A"], distribution=lambda x: 0.5
+        >>> )
+        >>> X1_Y1 = Edge(
+        >>>    edge_id="X1_Y1",
+        >>>    edge_type=EdgeType.UNDIRECTED,
+        >>>    start_node=X_1,
+        >>>    end_node=Y_1,
+        >>> )
+        >>> X2_Y1 = Edge(
+        >>>   edge_id="X2_Y1",
+        >>>   edge_type=EdgeType.UNDIRECTED,
+        >>>   start_node=X_2,
+        >>>   end_node=Y_1,
+        >>> )
+        >>> X3_Y1 = Edge(
+        >>>   edge_id="X3_Y1",
+        >>>   edge_type=EdgeType.UNDIRECTED,
+        >>>   start_node=X_3,
+        >>>   end_node=Y_1,
+        >>> )
+
+        >>> def phi_X1_Y1(scope_product):
+        >>>   ""
+        >>>   w = 0.5
+        >>>   ss = frozenset(scope_product)
+        >>>   if ss == frozenset([("X_1", True), ("Y_1", True)]):
+        >>>       return math.exp(1.0 * w)
+        >>>   else:
+        >>>       return math.exp(0.0)
+
+        >>> def phi_X2_Y1(scope_product):
+        >>>   ""
+        >>>   w = 5.0
+        >>>   ss = frozenset(scope_product)
+        >>>   if ss == frozenset([("X_2", True), ("Y_1", True)]):
+        >>>       return math.exp(1.0 * w)
+        >>>   else:
+        >>>       return math.exp(0.0)
+
+        >>> def phi_X3_Y1(scope_product):
+        >>>   ""
+        >>>   w = 9.4
+        >>>   ss = frozenset(scope_product)
+        >>>   if ss == frozenset([("X_3", True), ("Y_1", True)]):
+        >>>       return math.exp(1.0 * w)
+        >>>   else:
+        >>>       return math.exp(0.0)
+
+        >>> def phi_Y1(scope_product):
+        >>>   ""
+        >>>   w = 0.6
+        >>>   ss = frozenset(scope_product)
+        >>>   if ss == frozenset([("Y_1", True)]):
+        >>>       return math.exp(1.0 * w)
+        >>>   else:
+        >>>       return math.exp(0.0)
+
+        >>> X1_Y1_f = Factor(
+        >>>     gid="x1_y1_f", scope_vars=set([X_1, Y_1]), factor_fn=phi_X1_Y1
+        >>> )
+        >>> X2_Y1_f = Factor(
+        >>>     gid="x2_y1_f", scope_vars=set([X_2, Y_1]), factor_fn=phi_X2_Y1
+        >>> )
+        >>> X3_Y1_f = Factor(
+        >>>     gid="x3_y1_f", scope_vars=set([X_3, Y_1]), factor_fn=phi_X3_Y1
+        >>> )
+        >>> Y1_f = Factor(gid="y1_f", scope_vars=set([Y_1]), factor_fn=phi_Y1)
+
+        >>> crf_koller = ConditionalRandomField(
+        >>>     "crf",
+        >>>     observed_vars=set([X_1, X_2, X_3]),
+        >>>     target_vars=set([Y_1]),
+        >>>     edges=set([X1_Y1, X2_Y1, X3_Y1]),
+        >>>     factors=set([X1_Y1_f, X2_Y1_f, X3_Y1_f, Y1_f]),
+        >>> )
+        >>> evidence = set([("Y_1", False)])
+        >>> query = set(
+        >>>     [
+        >>>         ("X_1", choice([False, True])),
+        >>>         ("X_2", choice([False, True])),
+        >>>         ("X_3", choice([False, True])),
+        >>>     ]
+        >>> )
+        >>> foo1, a1 = crf_koller.cond_prod_by_variable_elimination(
+        >>>     queries=query, evidences=evidence
+        >>> )
+        >>> foo1.phi(query) == 1.0
+        >>> True
+
+        \endcode
         """
         if len(observed_vars.intersection(target_vars)) > 0:
             raise ValueError("Observed and target variables intersect")
         for f in factors:
-            if f.scope_vars().issubset(target_vars) is True:
-                raise ValueError("Scope of some factors are subset of target variables")
+            if f.scope_vars().issubset(observed_vars) is True:
+                raise ValueError(
+                    "Scope of some factors are subset of observed variables"
+                    + "\ntarget vars: "
+                    + "".join([t.id() for t in target_vars])
+                    + "\n scope vars: "
+                    + "".join([s.id() for s in f.scope_vars()])
+                )
         super().__init__(
             gid=gid,
             nodes=observed_vars.union(target_vars),
@@ -259,11 +413,11 @@ class ConditionalRandomField(MarkovNetwork):
         return self.ovars
 
     @property
-    def target_vars(self):
+    def target_variables(self):
         return self.tvars
 
     @property
-    def observed_vars(self):
+    def observed_variables(self):
         return self.ovars
 
     @classmethod
@@ -283,34 +437,3 @@ class ConditionalRandomField(MarkovNetwork):
             edges=mn.edges(),
             factors=crf_factors,
         )
-
-    def joint_target_observed(self) -> Tuple[Factor, float]:
-        """!
-        Implements the procedure in definition 4.18
-        from Koller, Friedman 2009, p. 143
-        """
-        return self.get_factor_product(self.factors())
-
-    def Z(self) -> Factor:
-        """!
-        """
-        prod, v = self.joint_target_observed()
-        zfac = prod.sumout_vars(self.tvars)
-        return zfac
-
-    def conditinal_probability(self):
-        """!
-        Implements the procedure in definition 4.18
-        from Koller, Friedman 2009, p. 143
-        """
-        Zfac = self.Z()
-        P_yx = self.joint_target_observed()
-
-        def phi_cond(scope_product):
-            ""
-            ss = set(scope_product)
-            z_i = Zfac.phi(ss)
-            p_yx_i = P_yx.phi(ss)
-            return p_yx_i / z_i
-
-        return Factor(gid=str(uuid4()), factor_fn=phi_cond, scope_vars=self.X)
