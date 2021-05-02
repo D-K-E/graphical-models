@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 from typing import Dict, List, Tuple, Optional
 from enum import Enum
 from collections import namedtuple
+from copy import deepcopy
 
 
 class AbstractInfo(ABC):
@@ -19,6 +20,13 @@ class AbstractGraphObj(AbstractInfo):
     @abstractmethod
     def data(self) -> Dict:
         raise NotImplementedError
+
+    @classmethod
+    def _copy(cls, f):
+        return deepcopy(f)
+
+    def copy(self):
+        return AbstractGraphObj._copy(self)
 
 
 class EdgeType(Enum):

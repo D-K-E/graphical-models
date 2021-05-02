@@ -57,19 +57,25 @@ class TestFactor(unittest.TestCase):
         self.intelligence = NumCatRVariable(
             node_id="int",
             input_data=input_data["intelligence"],
-            distribution=intelligence_dist,
+            marginal_distribution=intelligence_dist,
         )
         nid2 = "grade"
         self.grade = NumCatRVariable(
-            node_id=nid2, input_data=input_data["grade"], distribution=grade_dist
+            node_id=nid2,
+            input_data=input_data["grade"],
+            marginal_distribution=grade_dist,
         )
         nid3 = "dice"
         self.dice = NumCatRVariable(
-            node_id=nid3, input_data=input_data["dice"], distribution=fair_dice_dist
+            node_id=nid3,
+            input_data=input_data["dice"],
+            marginal_distribution=fair_dice_dist,
         )
         nid4 = "fdice"
         self.fdice = NumCatRVariable(
-            node_id=nid4, input_data=input_data["fdice"], distribution=f_dice_dist
+            node_id=nid4,
+            input_data=input_data["fdice"],
+            marginal_distribution=f_dice_dist,
         )
         self.f = Factor(
             gid="f", scope_vars=set([self.grade, self.dice, self.intelligence])
@@ -80,22 +86,22 @@ class TestFactor(unittest.TestCase):
         self.Af = NumCatRVariable(
             node_id="A",
             input_data={"outcome-values": [10, 50]},
-            distribution=lambda x: 0.5,
+            marginal_distribution=lambda x: 0.5,
         )
         self.Bf = NumCatRVariable(
             node_id="B",
             input_data={"outcome-values": [10, 50]},
-            distribution=lambda x: 0.5,
+            marginal_distribution=lambda x: 0.5,
         )
         self.Cf = NumCatRVariable(
             node_id="C",
             input_data={"outcome-values": [10, 50]},
-            distribution=lambda x: 0.5,
+            marginal_distribution=lambda x: 0.5,
         )
         self.Df = NumCatRVariable(
             node_id="D",
             input_data={"outcome-values": [10, 50]},
-            distribution=lambda x: 0.5,
+            marginal_distribution=lambda x: 0.5,
         )
 
         def phiAB(scope_product):
@@ -166,7 +172,7 @@ class TestFactor(unittest.TestCase):
         self.af = NumCatRVariable(
             node_id="A",
             input_data={"outcome-values": [10, 50, 20]},
-            distribution=lambda x: 0.4 if x != 20 else 0.2,
+            marginal_distribution=lambda x: 0.4 if x != 20 else 0.2,
         )
 
         def phiaB(scope_product):
@@ -347,6 +353,69 @@ class TestFactor(unittest.TestCase):
             elif sms == set([("B", 10), ("C", 10), ("A", 10), ("D", 50)]):
                 self.assertEqual(f, 300000)
                 self.assertEqual(ff, 0.041656)
+
+    def test_from_scope_variables_with_fn(self):
+        ""
+        A = NumCatRVariable(
+            "A",
+            input_data={"outcome-values": [True, False]},
+            marginal_distribution=lambda x: 0.6 if x else 0.4,
+        )
+        B = NumCatRVariable(
+            "B",
+            input_data={"outcome-values": [True, False]},
+            marginal_distribution=lambda x: 0.62 if x else 0.38,
+        )
+
+        def phi_ab(scope_product):
+            ss = set(scope_product)
+            if ss == set([("A", True), ("B", True)]):
+                return 0.9
+            elif ss == set([("A", True), ("B", False)]):
+                return 0.1
+            elif ss == set([("A", False), ("B", True)]):
+                return 0.2
+            elif ss == set([("A", False), ("B", False)]):
+                return 0.8
+            else:
+                raise ValueError("unknown argument")
+
+        f = Factor.from_scope_variables_with_fn(svars=set([A, B]), fn=phi_ab)
+        query = set([("A", True), ("B", True)])
+        ff = f.phi(query)
+        self.assertEqual(round(ff, 2), 0.9)
+
+    @unittest.skip("Factor.from_conditional_vars not yet implemented")
+    def test_from_conditional_vars(self):
+        ""
+        A = NumCatRVariable(
+            "A",
+            input_data={"outcome-values": [True, False]},
+            marginal_distribution=lambda x: 0.6 if x else 0.4,
+        )
+        B = NumCatRVariable(
+            "B",
+            input_data={"outcome-values": [True, False]},
+            marginal_distribution=lambda x: 0.62 if x else 0.38,
+        )
+
+        def phi_ab(scope_product):
+            ss = set(scope_product)
+            if ss == set([("A", True), ("B", True)]):
+                return 0.9
+            elif ss == set([("A", True), ("B", False)]):
+                return 0.1
+            elif ss == set([("A", False), ("B", True)]):
+                return 0.2
+            elif ss == set([("A", False), ("B", False)]):
+                return 0.8
+            else:
+                raise ValueError("unknown argument")
+
+        f = Factor.from_conditional_vars(X_i=B, Pa_Xi=set([A]))
+        query = set([("A", True), ("B", True)])
+        ff = f.phi(query)
+        # self.assertEqual(round(ff, 2), 0.9)
 
     def test_reduced_by_value(self):
         "from Koller, Friedman 2009, p. 111 figure 4.5"

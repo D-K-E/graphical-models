@@ -21,37 +21,37 @@ class LWFChainGraphTest(unittest.TestCase):
         ""
         idata = {"outcome-values": [True, False]}
         self.A = NumCatRVariable(
-            node_id="A", input_data=idata, distribution=lambda x: 0.5
+            node_id="A", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.B = NumCatRVariable(
-            node_id="B", input_data=idata, distribution=lambda x: 0.5
+            node_id="B", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.C = NumCatRVariable(
-            node_id="C", input_data=idata, distribution=lambda x: 0.5
+            node_id="C", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.D = NumCatRVariable(
-            node_id="D", input_data=idata, distribution=lambda x: 0.5
+            node_id="D", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.E = NumCatRVariable(
-            node_id="E", input_data=idata, distribution=lambda x: 0.5
+            node_id="E", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.F = NumCatRVariable(
-            node_id="F", input_data=idata, distribution=lambda x: 0.5
+            node_id="F", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.G = NumCatRVariable(
-            node_id="G", input_data=idata, distribution=lambda x: 0.5
+            node_id="G", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.H = NumCatRVariable(
-            node_id="H", input_data=idata, distribution=lambda x: 0.5
+            node_id="H", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.I = NumCatRVariable(
-            node_id="I", input_data=idata, distribution=lambda x: 0.5
+            node_id="I", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.K = NumCatRVariable(
-            node_id="K", input_data=idata, distribution=lambda x: 0.5
+            node_id="K", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.L = NumCatRVariable(
-            node_id="L", input_data=idata, distribution=lambda x: 0.5
+            node_id="L", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         #
         #  Cowell 2005, p. 110

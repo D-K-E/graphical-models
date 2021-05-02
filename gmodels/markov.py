@@ -406,18 +406,30 @@ class ConditionalRandomField(MarkovNetwork):
 
     @property
     def Y(self):
+        """!
+        \brief target variables \see ConditionalRandomField constructor
+        """
         return self.tvars
 
     @property
     def X(self):
+        """!
+        \brief observed variables \see ConditionalRandomField constructor
+        """
         return self.ovars
 
     @property
     def target_variables(self):
+        """!
+        \brief target variables \see ConditionalRandomField constructor
+        """
         return self.tvars
 
     @property
     def observed_variables(self):
+        """!
+        \brief observed variables \see ConditionalRandomField constructor
+        """
         return self.ovars
 
     @classmethod

@@ -47,15 +47,15 @@ class NumCatRVariableTest(unittest.TestCase):
         self.intelligence = NumCatRVariable(
             node_id=nid1,
             input_data=input_data["intelligence"],
-            distribution=intelligence_dist,
+            marginal_distribution=intelligence_dist,
         )
         nid2 = "rvar2"
         self.grade = NumCatRVariable(
-            node_id=nid2, input_data=input_data["grade"], distribution=grade_dist
+            node_id=nid2, input_data=input_data["grade"], marginal_distribution=grade_dist
         )
         nid3 = "rvar3"
         self.dice = NumCatRVariable(
-            node_id=nid3, input_data=input_data["dice"], distribution=fair_dice_dist
+            node_id=nid3, input_data=input_data["dice"], marginal_distribution=fair_dice_dist
         )
         #
         students = PossibleOutcomes(frozenset(["student_1", "student_2"]))
@@ -66,7 +66,7 @@ class NumCatRVariableTest(unittest.TestCase):
             input_data=indata,
             node_id="myrandomvar",
             f=grade_f,
-            distribution=grade_distribution,
+            marginal_distribution=grade_distribution,
         )
 
     def test_id(self):

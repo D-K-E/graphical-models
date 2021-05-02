@@ -26,13 +26,19 @@ class PGModelTest(unittest.TestCase):
             "c": {"outcome-values": [True, False]},
         }
         self.a = NumCatRVariable(
-            node_id="a", input_data=idata["a"], distribution=lambda x: 0.6 if x else 0.4
+            node_id="a",
+            input_data=idata["a"],
+            marginal_distribution=lambda x: 0.6 if x else 0.4,
         )
         self.b = NumCatRVariable(
-            node_id="b", input_data=idata["b"], distribution=lambda x: 0.5 if x else 0.5
+            node_id="b",
+            input_data=idata["b"],
+            marginal_distribution=lambda x: 0.5 if x else 0.5,
         )
         self.c = NumCatRVariable(
-            node_id="c", input_data=idata["c"], distribution=lambda x: 0.5 if x else 0.5
+            node_id="c",
+            input_data=idata["c"],
+            marginal_distribution=lambda x: 0.5 if x else 0.5,
         )
         self.ab = Edge(
             edge_id="ab",
@@ -99,19 +105,19 @@ class PGModelTest(unittest.TestCase):
         # graph
         odata = {"outcome-values": [True, False]}
         self.J = NumCatRVariable(
-            node_id="J", input_data=odata, distribution=lambda x: 0.5
+            node_id="J", input_data=odata, marginal_distribution=lambda x: 0.5
         )
         self.I = NumCatRVariable(
-            node_id="I", input_data=odata, distribution=lambda x: 0.5
+            node_id="I", input_data=odata, marginal_distribution=lambda x: 0.5
         )
         self.X = NumCatRVariable(
-            node_id="X", input_data=odata, distribution=lambda x: 0.5
+            node_id="X", input_data=odata, marginal_distribution=lambda x: 0.5
         )
         self.Y = NumCatRVariable(
-            node_id="Y", input_data=odata, distribution=lambda x: 0.5
+            node_id="Y", input_data=odata, marginal_distribution=lambda x: 0.5
         )
         self.O = NumCatRVariable(
-            node_id="O", input_data=odata, distribution=lambda x: 0.5
+            node_id="O", input_data=odata, marginal_distribution=lambda x: 0.5
         )
         self.JX = Edge(
             edge_id="JX",
@@ -383,7 +389,7 @@ class PGModelTest(unittest.TestCase):
         ev = set([("a", True)])
         qs = set([self.c])
         p, a = self.pgm.cond_prod_by_variable_elimination(qs, ev)
-        # check if it is a valid distribution
+        # check if it is a valid marginal_distribution
         s = 0
         for ps in p.factor_domain():
             pss = set(ps)
