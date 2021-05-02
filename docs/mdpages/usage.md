@@ -101,6 +101,141 @@ print(round( product_factor.phi_normal(set([("c", True)])), 4))
 
 \endcode
 
+## Bayesian Network Usage
+
+Bayesian Network is defined by Koller, Friedman 2009, p. 57 as:
+<blockquote>
+Bayesian network structure G is a directed acyclic graph whose nodes represent
+random variables \f$X1, \dots, Xn \f$ . Let \f$PaG(Xi)\f$ denote the parents
+of \f$Xi\f$ in G, and `NonDescendants(Xi)` denote the variables in the graph
+that are not descendants of Xi. Then G encodes the following set of
+conditional independence assumptions, called the local independencies, and
+denoted by `I(G): For each variable Xi : (Xi ⊥ NonDescendants(Xi) | PaG(Xi))`.
+</blockquote>
+
+Bayesian Network is defined by Koller, Friedman 2009, p. 62 as:
+<blockquote>
+Bayesian Network is a pair `B=(G, P)` where P factorizes over G, and where P
+is specified as a set of CPDs associated with G’s nodes. The distribution P is
+often annotated Pb. Let G be a BN structure over a set of random variables X ,
+and let P be a joint distribution over the same space. If G is an I-map for P
+, then P factorizes according to G:
+`P(X1, \dots, Xn) = \prods_{i=0}^{n}P(Xi | PaG(Xi) )`
+</blockquote>
+
+Usage:
+
+\code{.py}
+
+idata = {"outcome-values": [True, False]}
+                                                              
+C = NumCatRVariable(
+    node_id="C", input_data=idata, distribution=lambda x: 0.5
+)
+E = NumCatRVariable(
+    node_id="E", input_data=idata, distribution=lambda x: 0.5
+)
+F = NumCatRVariable(
+    node_id="F", input_data=idata, distribution=lambda x: 0.5
+)
+D = NumCatRVariable(
+    node_id="D", input_data=idata, distribution=lambda x: 0.5
+)
+CE = Edge(
+  edge_id="CE",
+  start_node=C,
+  end_node=E,
+  edge_type=EdgeType.DIRECTED,
+)
+ED = Edge(
+    edge_id="ED",
+    start_node=E,
+    end_node=D,
+    edge_type=EdgeType.DIRECTED,
+)
+EF = Edge(
+    edge_id="EF",
+    start_node=E,
+    end_node=F,
+    edge_type=EdgeType.DIRECTED,
+)
+                                                              
+def phi_c(scope_product):
+    ss = set(scope_product)
+   if ss == set([("C", True)]):
+       return 0.8
+    elif ss == set([("C", False)]):
+        return 0.2
+    else:
+        raise ValueError("scope product unknown")
+                                                              
+def phi_ec(scope_product):
+    ss = set(scope_product)
+    if ss == set([("C", True), ("E", True)]):
+        return 0.9
+    elif ss == set([("C", True), ("E", False)]):
+        return 0.1
+  elif ss == set([("C", False), ("E", True)]):
+      return 0.7
+  elif ss == set([("C", False), ("E", False)]):
+      return 0.3
+  else:
+       raise ValueError("scope product unknown")
+                                                              
+def phi_fe(scope_product):
+  ss = set(scope_product)
+  if ss == set([("E", True), ("F", True)]):
+      return 0.9
+  elif ss == set([("E", True), ("F", False)]):
+      return 0.1
+  elif ss == set([("E", False), ("F", True)]):
+        return 0.5
+    elif ss == set([("E", False), ("F", False)]):
+        return 0.5
+    else:
+        raise ValueError("scope product unknown")
+                                                              
+def phi_de(scope_product):
+    ss = set(scope_product)
+  if ss == set([("E", True), ("D", True)]):
+      return 0.7
+  elif ss == set([("E", True), ("D", False)]):
+      return 0.3
+  elif ss == set([("E", False), ("D", True)]):
+      return 0.4
+  elif ss == set([("E", False), ("D", False)]):
+      return 0.6
+   else:
+       raise ValueError("scope product unknown")
+                                                              
+CE_f = Factor(
+    gid="CE_f", scope_vars=set([C, E]), factor_fn=phi_ec
+)
+C_f = Factor(gid="C_f", scope_vars=set([C]), factor_fn=phi_c)
+FE_f = Factor(
+    gid="FE_f", scope_vars=set([F, E]), factor_fn=phi_fe
+)
+DE_f = Factor(
+    gid="DE_f", scope_vars=set([D, E]), factor_fn=phi_de
+)
+bayes_n = BayesianNetwork(
+    gid="ba",
+    nodes=set([C, E, D, F]),
+    edges=set([EF, CE, ED]),
+    factors=set([C_f, DE_f, CE_f, FE_f]),
+)
+query_vars = set([self.E])
+evidences = set([("F", True)])
+probs, alpha = self.bayes_n.cond_prod_by_variable_elimination(
+    query_vars, evidences=evidences
+)
+query_value = set([("E", True)])
+round(probs.phi(pss), 4)
+# 0.774
+
+\endcode
+
+
 ## Markov Network Usage
 
 Markov Network is defined by Koller, Friedman 2009, p. 103 is
