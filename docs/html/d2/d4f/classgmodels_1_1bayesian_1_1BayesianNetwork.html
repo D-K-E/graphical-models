@@ -104,12 +104,14 @@ Inheritance diagram for gmodels.bayesian.BayesianNetwork:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a59b4193e000f285857ab2dc0b2c6af68"><td class="memItemLeft" align="right" valign="top"><a id="a59b4193e000f285857ab2dc0b2c6af68"></a>
-def&#160;</td><td class="memItemRight" valign="bottom"><b>__init__</b> (self, str gid, Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>] <a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a14ea9c8ea2ee1f0dd204b21d42308783">nodes</a>, Set[<a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a>] <a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#aa146aec295e76b05da4f247e4e4c5895">edges</a>, Set[<a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html">Factor</a>] <a class="el" href="../../df/da1/classgmodels_1_1pgmodel_1_1PGModel.html#a40f9cc8df0ae844faa404a680b51f7e9">factors</a>, data={})</td></tr>
+<tr class="memitem:a59b4193e000f285857ab2dc0b2c6af68"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/d4f/classgmodels_1_1bayesian_1_1BayesianNetwork.html#a59b4193e000f285857ab2dc0b2c6af68">__init__</a> (self, str gid, Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>] <a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a14ea9c8ea2ee1f0dd204b21d42308783">nodes</a>, Set[<a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a>] <a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#aa146aec295e76b05da4f247e4e4c5895">edges</a>, Set[<a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html">Factor</a>] <a class="el" href="../../df/da1/classgmodels_1_1pgmodel_1_1PGModel.html#a40f9cc8df0ae844faa404a680b51f7e9">factors</a>, data={})</td></tr>
 <tr class="separator:a59b4193e000f285857ab2dc0b2c6af68"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a60c397721400533e40a0bf2411c9d9b9"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/d4f/classgmodels_1_1bayesian_1_1BayesianNetwork.html#a60c397721400533e40a0bf2411c9d9b9">from_digraph</a> (cls, <a class="el" href="../../dd/d00/classgmodels_1_1gtypes_1_1digraph_1_1DiGraph.html">DiGraph</a> dig)</td></tr>
-<tr class="memdesc:a60c397721400533e40a0bf2411c9d9b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a <a class="el" href="../../d2/d4f/classgmodels_1_1bayesian_1_1BayesianNetwork.html" title="bayesian network implementation">BayesianNetwork</a> from a directed graph.  <a href="../../d2/d4f/classgmodels_1_1bayesian_1_1BayesianNetwork.html#a60c397721400533e40a0bf2411c9d9b9">More...</a><br /></td></tr>
-<tr class="separator:a60c397721400533e40a0bf2411c9d9b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a603fe3f82dd2d9c6e8dad7ab32d5b5ca"><td class="memItemLeft" align="right" valign="top"><a id="a603fe3f82dd2d9c6e8dad7ab32d5b5ca"></a>
+Set[<a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html">Factor</a>]&#160;</td><td class="memItemRight" valign="bottom"><b>deduce_factors_from_digraph</b> (cls, <a class="el" href="../../dd/d00/classgmodels_1_1gtypes_1_1digraph_1_1DiGraph.html">DiGraph</a> dig, Optional[Callable[[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>, Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>]], <a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html">Factor</a>]] fn=None)</td></tr>
+<tr class="separator:a603fe3f82dd2d9c6e8dad7ab32d5b5ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55e2fa6da9002b757ca15d5370db9c9c"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d2/d4f/classgmodels_1_1bayesian_1_1BayesianNetwork.html#a55e2fa6da9002b757ca15d5370db9c9c">from_digraph</a> (cls, <a class="el" href="../../dd/d00/classgmodels_1_1gtypes_1_1digraph_1_1DiGraph.html">DiGraph</a> dig, Optional[Set[<a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html">Factor</a>]] fs)</td></tr>
+<tr class="memdesc:a55e2fa6da9002b757ca15d5370db9c9c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a <a class="el" href="../../d2/d4f/classgmodels_1_1bayesian_1_1BayesianNetwork.html" title="bayesian network implementation">BayesianNetwork</a> from a directed graph.  <a href="../../d2/d4f/classgmodels_1_1bayesian_1_1BayesianNetwork.html#a55e2fa6da9002b757ca15d5370db9c9c">More...</a><br /></td></tr>
+<tr class="separator:a55e2fa6da9002b757ca15d5370db9c9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classgmodels_1_1pgmodel_1_1PGModel"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classgmodels_1_1pgmodel_1_1PGModel')"><img src="../../closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="../../df/da1/classgmodels_1_1pgmodel_1_1PGModel.html">gmodels.pgmodel.PGModel</a></td></tr>
 <tr class="memitem:a5b64b7493cedd1d7bb8940caec933fba inherit pub_methods_classgmodels_1_1pgmodel_1_1PGModel"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../df/da1/classgmodels_1_1pgmodel_1_1PGModel.html#a5b64b7493cedd1d7bb8940caec933fba">__init__</a> (self, str gid, Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>] <a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a14ea9c8ea2ee1f0dd204b21d42308783">nodes</a>, Set[<a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a>] <a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#aa146aec295e76b05da4f247e4e4c5895">edges</a>, Optional[Set[<a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html">Factor</a>]] <a class="el" href="../../df/da1/classgmodels_1_1pgmodel_1_1PGModel.html#a40f9cc8df0ae844faa404a680b51f7e9">factors</a>=None, data={})</td></tr>
 <tr class="memdesc:a5b64b7493cedd1d7bb8940caec933fba inherit pub_methods_classgmodels_1_1pgmodel_1_1PGModel"><td class="mdescLeft">&#160;</td><td class="mdescRight">constructor for a generic Probabilistic Graphical Model  <a href="../../df/da1/classgmodels_1_1pgmodel_1_1PGModel.html#a5b64b7493cedd1d7bb8940caec933fba">More...</a><br /></td></tr>
@@ -495,6 +497,10 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>clear_data</b> (self)<
 <tr class="memitem:a2e3101125ff35b95e13c85b31ae38d76 inherit pub_methods_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject"><td class="memItemLeft" align="right" valign="top"><a id="a2e3101125ff35b95e13c85b31ae38d76"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>update_data</b> (self, dict ndata)</td></tr>
 <tr class="separator:a2e3101125ff35b95e13c85b31ae38d76 inherit pub_methods_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classgmodels_1_1gtypes_1_1abstractobj_1_1AbstractGraphObj"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classgmodels_1_1gtypes_1_1abstractobj_1_1AbstractGraphObj')"><img src="../../closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="../../d3/dc4/classgmodels_1_1gtypes_1_1abstractobj_1_1AbstractGraphObj.html">gmodels.gtypes.abstractobj.AbstractGraphObj</a></td></tr>
+<tr class="memitem:a65c4b516581bf98c7582af86dbba0375 inherit pub_methods_classgmodels_1_1gtypes_1_1abstractobj_1_1AbstractGraphObj"><td class="memItemLeft" align="right" valign="top"><a id="a65c4b516581bf98c7582af86dbba0375"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>copy</b> (self)</td></tr>
+<tr class="separator:a65c4b516581bf98c7582af86dbba0375 inherit pub_methods_classgmodels_1_1gtypes_1_1abstractobj_1_1AbstractGraphObj"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classgmodels_1_1gtypes_1_1digraph_1_1DiGraph"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classgmodels_1_1gtypes_1_1digraph_1_1DiGraph')"><img src="../../closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="../../dd/d00/classgmodels_1_1gtypes_1_1digraph_1_1DiGraph.html">gmodels.gtypes.digraph.DiGraph</a></td></tr>
 <tr class="memitem:a8f384e53641d72e7898ce5afc643ff2c inherit pub_methods_classgmodels_1_1gtypes_1_1digraph_1_1DiGraph"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../dd/d00/classgmodels_1_1gtypes_1_1digraph_1_1DiGraph.html#a8f384e53641d72e7898ce5afc643ff2c">__init__</a> (self, str gid, data={}, Set[<a class="el" href="../../db/d8b/classgmodels_1_1gtypes_1_1node_1_1Node.html">Node</a>] <a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a14ea9c8ea2ee1f0dd204b21d42308783">nodes</a>=None, Set[<a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a>] <a class="el" href="../../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#aa146aec295e76b05da4f247e4e4c5895">edges</a>=None)</td></tr>
 <tr class="memdesc:a8f384e53641d72e7898ce5afc643ff2c inherit pub_methods_classgmodels_1_1gtypes_1_1digraph_1_1DiGraph"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for <a class="el" href="../../dd/d00/classgmodels_1_1gtypes_1_1digraph_1_1DiGraph.html" title="Directed graph implementation.">DiGraph</a>.  <a href="../../dd/d00/classgmodels_1_1gtypes_1_1digraph_1_1DiGraph.html#a8f384e53641d72e7898ce5afc643ff2c">More...</a><br /></td></tr>
@@ -578,9 +584,161 @@ Additional Inherited Members</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>bayesian network implementation </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a60c397721400533e40a0bf2411c9d9b9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a60c397721400533e40a0bf2411c9d9b9">&#9670;&nbsp;</a></span>from_digraph()</h2>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a59b4193e000f285857ab2dc0b2c6af68"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a59b4193e000f285857ab2dc0b2c6af68">&#9670;&nbsp;</a></span>__init__()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">def gmodels.bayesian.BayesianNetwork.__init__ </td>
+          <td>(</td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>self</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">str&#160;</td>
+          <td class="paramname"><em>gid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>]&#160;</td>
+          <td class="paramname"><em>nodes</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Set[<a class="el" href="../../d0/d93/classgmodels_1_1gtypes_1_1edge_1_1Edge.html">Edge</a>]&#160;</td>
+          <td class="paramname"><em>edges</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Set[<a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html">Factor</a>]&#160;</td>
+          <td class="paramname"><em>factors</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">&#160;</td>
+          <td class="paramname"><em>data</em> = <code>{}</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="section see"><dt>See also</dt><dd>PGModel for parameters</dd></dl>
+<p>Simple bayesian network implementation where edges are checked for being directed</p>
+<div class="fragment"><div class="line">&gt;&gt;&gt; idata = {<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]}</div>
+<div class="line"> </div>
+<div class="line">&gt;&gt;&gt; C = NumCatRVariable(</div>
+<div class="line">&gt;&gt;&gt;     node_id=<span class="stringliteral">&quot;C&quot;</span>, input_data=idata, distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; E = NumCatRVariable(</div>
+<div class="line">&gt;&gt;&gt;     node_id=<span class="stringliteral">&quot;E&quot;</span>, input_data=idata, distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; F = NumCatRVariable(</div>
+<div class="line">&gt;&gt;&gt;     node_id=<span class="stringliteral">&quot;F&quot;</span>, input_data=idata, distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; D = NumCatRVariable(</div>
+<div class="line">&gt;&gt;&gt;     node_id=<span class="stringliteral">&quot;D&quot;</span>, input_data=idata, distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; CE = Edge(</div>
+<div class="line">&gt;&gt;&gt;   edge_id=<span class="stringliteral">&quot;CE&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;   start_node=C,</div>
+<div class="line">&gt;&gt;&gt;   end_node=E,</div>
+<div class="line">&gt;&gt;&gt;   edge_type=EdgeType.DIRECTED,</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; ED = Edge(</div>
+<div class="line">&gt;&gt;&gt;     edge_id=<span class="stringliteral">&quot;ED&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;     start_node=E,</div>
+<div class="line">&gt;&gt;&gt;     end_node=D,</div>
+<div class="line">&gt;&gt;&gt;     edge_type=EdgeType.DIRECTED,</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; EF = Edge(</div>
+<div class="line">&gt;&gt;&gt;     edge_id=<span class="stringliteral">&quot;EF&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;     start_node=E,</div>
+<div class="line">&gt;&gt;&gt;     end_node=F,</div>
+<div class="line">&gt;&gt;&gt;     edge_type=EdgeType.DIRECTED,</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line"> </div>
+<div class="line">&gt;&gt;&gt; <span class="keyword">def </span>phi_c(scope_product):</div>
+<div class="line">&gt;&gt;&gt;     ss = set(scope_product)</div>
+<div class="line">&gt;&gt;&gt;    <span class="keywordflow">if</span> ss == set([(<span class="stringliteral">&quot;C&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">&gt;&gt;&gt;        <span class="keywordflow">return</span> 0.8</div>
+<div class="line">&gt;&gt;&gt;     <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;C&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 0.2</div>
+<div class="line">&gt;&gt;&gt;     <span class="keywordflow">else</span>:</div>
+<div class="line">&gt;&gt;&gt;         <span class="keywordflow">raise</span> ValueError(<span class="stringliteral">&quot;scope product unknown&quot;</span>)</div>
+<div class="line"> </div>
+<div class="line">&gt;&gt;&gt; <span class="keyword">def </span>phi_ec(scope_product):</div>
+<div class="line">&gt;&gt;&gt;     ss = set(scope_product)</div>
+<div class="line">&gt;&gt;&gt;     <span class="keywordflow">if</span> ss == set([(<span class="stringliteral">&quot;C&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 0.9</div>
+<div class="line">&gt;&gt;&gt;     <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;C&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 0.1</div>
+<div class="line">&gt;&gt;&gt;   <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;C&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">&gt;&gt;&gt;       <span class="keywordflow">return</span> 0.7</div>
+<div class="line">&gt;&gt;&gt;   <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;C&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">&gt;&gt;&gt;       <span class="keywordflow">return</span> 0.3</div>
+<div class="line">&gt;&gt;&gt;   <span class="keywordflow">else</span>:</div>
+<div class="line">&gt;&gt;&gt;        <span class="keywordflow">raise</span> ValueError(<span class="stringliteral">&quot;scope product unknown&quot;</span>)</div>
+<div class="line"> </div>
+<div class="line">&gt;&gt;&gt; <span class="keyword">def </span>phi_fe(scope_product):</div>
+<div class="line">&gt;&gt;&gt;   ss = set(scope_product)</div>
+<div class="line">&gt;&gt;&gt;   <span class="keywordflow">if</span> ss == set([(<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;F&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">&gt;&gt;&gt;       <span class="keywordflow">return</span> 0.9</div>
+<div class="line">&gt;&gt;&gt;   <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;F&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">&gt;&gt;&gt;       <span class="keywordflow">return</span> 0.1</div>
+<div class="line">&gt;&gt;&gt;   <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;F&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 0.5</div>
+<div class="line">&gt;&gt;&gt;     <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;F&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">&gt;&gt;&gt;         <span class="keywordflow">return</span> 0.5</div>
+<div class="line">&gt;&gt;&gt;     <span class="keywordflow">else</span>:</div>
+<div class="line">&gt;&gt;&gt;         <span class="keywordflow">raise</span> ValueError(<span class="stringliteral">&quot;scope product unknown&quot;</span>)</div>
+<div class="line"> </div>
+<div class="line">&gt;&gt;&gt; <span class="keyword">def </span>phi_de(scope_product):</div>
+<div class="line">&gt;&gt;&gt;     ss = set(scope_product)</div>
+<div class="line">&gt;&gt;&gt;   <span class="keywordflow">if</span> ss == set([(<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;D&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">&gt;&gt;&gt;       <span class="keywordflow">return</span> 0.7</div>
+<div class="line">&gt;&gt;&gt;   <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;D&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">&gt;&gt;&gt;       <span class="keywordflow">return</span> 0.3</div>
+<div class="line">&gt;&gt;&gt;   <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;D&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">&gt;&gt;&gt;       <span class="keywordflow">return</span> 0.4</div>
+<div class="line">&gt;&gt;&gt;   <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;D&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">&gt;&gt;&gt;       <span class="keywordflow">return</span> 0.6</div>
+<div class="line">&gt;&gt;&gt;    <span class="keywordflow">else</span>:</div>
+<div class="line">&gt;&gt;&gt;        <span class="keywordflow">raise</span> ValueError(<span class="stringliteral">&quot;scope product unknown&quot;</span>)</div>
+<div class="line"> </div>
+<div class="line">&gt;&gt;&gt; CE_f = Factor(</div>
+<div class="line">&gt;&gt;&gt;     gid=<span class="stringliteral">&quot;CE_f&quot;</span>, scope_vars=set([C, E]), factor_fn=phi_ec</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; C_f = Factor(gid=<span class="stringliteral">&quot;C_f&quot;</span>, scope_vars=set([C]), factor_fn=phi_c)</div>
+<div class="line">&gt;&gt;&gt; FE_f = Factor(</div>
+<div class="line">&gt;&gt;&gt;     gid=<span class="stringliteral">&quot;FE_f&quot;</span>, scope_vars=set([F, E]), factor_fn=phi_fe</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; DE_f = Factor(</div>
+<div class="line">&gt;&gt;&gt;     gid=<span class="stringliteral">&quot;DE_f&quot;</span>, scope_vars=set([D, E]), factor_fn=phi_de</div>
+<div class="line">&gt;&gt;&gt; )</div>
+<div class="line">&gt;&gt;&gt; bayes_n = BayesianNetwork(</div>
+<div class="line">&gt;&gt;&gt;     gid=<span class="stringliteral">&quot;ba&quot;</span>,</div>
+<div class="line">&gt;&gt;&gt;     nodes=set([C, E, D, F]),</div>
+<div class="line">&gt;&gt;&gt;     edges=set([EF, CE, ED]),</div>
+<div class="line">&gt;&gt;&gt;     factors=set([C_f, DE_f, CE_f, FE_f]),</div>
+<div class="line">&gt;&gt;&gt; )</div>
+</div><!-- fragment --> 
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a55e2fa6da9002b757ca15d5370db9c9c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55e2fa6da9002b757ca15d5370db9c9c">&#9670;&nbsp;</a></span>from_digraph()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -595,7 +753,13 @@ Additional Inherited Members</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype"><a class="el" href="../../dd/d00/classgmodels_1_1gtypes_1_1digraph_1_1DiGraph.html">DiGraph</a>&#160;</td>
-          <td class="paramname"><em>dig</em>&#160;</td>
+          <td class="paramname"><em>dig</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Optional[Set[<a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html">Factor</a>]]&#160;</td>
+          <td class="paramname"><em>fs</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

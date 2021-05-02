@@ -107,9 +107,10 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a48ced84334f21169113b63953c9d2980"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a48ced84334f21169113b63953c9d2980">from_joint_vars</a> (cls, Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>] <a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#ace5bbf86fb98712a090502764a2bb5d6">svars</a>)</td></tr>
 <tr class="memdesc:a48ced84334f21169113b63953c9d2980"><td class="mdescLeft">&#160;</td><td class="mdescRight">Make factor from joint variables.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a48ced84334f21169113b63953c9d2980">More...</a><br /></td></tr>
 <tr class="separator:a48ced84334f21169113b63953c9d2980"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abdcc225f0a6545bd7c263a862ef5fc97"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#abdcc225f0a6545bd7c263a862ef5fc97">from_conditional_vars</a> (cls, <a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a> X_i, Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>] Pa_Xi, Optional[Callable[[Set[Tuple[str, NumericValue]]], float]] fn=None)</td></tr>
-<tr class="memdesc:abdcc225f0a6545bd7c263a862ef5fc97"><td class="mdescLeft">&#160;</td><td class="mdescRight">Make factor from joint variables.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#abdcc225f0a6545bd7c263a862ef5fc97">More...</a><br /></td></tr>
-<tr class="separator:abdcc225f0a6545bd7c263a862ef5fc97"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0d93b8401f764700fa0fd1b1b825de8e"><td class="memItemLeft" align="right" valign="top"><a id="a0d93b8401f764700fa0fd1b1b825de8e"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a0d93b8401f764700fa0fd1b1b825de8e">from_scope_variables_with_fn</a> (cls, Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>] <a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#ace5bbf86fb98712a090502764a2bb5d6">svars</a>, Callable[[Set[Tuple[str, NumericValue]]], float] fn)</td></tr>
+<tr class="memdesc:a0d93b8401f764700fa0fd1b1b825de8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Make a factor from scope variables and a preference function. <br /></td></tr>
+<tr class="separator:a0d93b8401f764700fa0fd1b1b825de8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2545dafb56c12b759d0d8d69bec029a0"><td class="memItemLeft" align="right" valign="top">List[FrozenSet[Tuple[str, NumericValue]]]&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a2545dafb56c12b759d0d8d69bec029a0">fdomain</a> (cls, Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>] D, rvar_filter=lambda x:True, value_filter=lambda x:True, value_transform=lambda x:x)</td></tr>
 <tr class="memdesc:a2545dafb56c12b759d0d8d69bec029a0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get factor domain Val(D) D being a set of random variables.  <a href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a2545dafb56c12b759d0d8d69bec029a0">More...</a><br /></td></tr>
 <tr class="separator:a2545dafb56c12b759d0d8d69bec029a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -196,6 +197,10 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>clear_data</b> (self)<
 <tr class="memitem:a2e3101125ff35b95e13c85b31ae38d76 inherit pub_methods_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject"><td class="memItemLeft" align="right" valign="top"><a id="a2e3101125ff35b95e13c85b31ae38d76"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>update_data</b> (self, dict ndata)</td></tr>
 <tr class="separator:a2e3101125ff35b95e13c85b31ae38d76 inherit pub_methods_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classgmodels_1_1gtypes_1_1abstractobj_1_1AbstractGraphObj"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classgmodels_1_1gtypes_1_1abstractobj_1_1AbstractGraphObj')"><img src="../../closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="../../d3/dc4/classgmodels_1_1gtypes_1_1abstractobj_1_1AbstractGraphObj.html">gmodels.gtypes.abstractobj.AbstractGraphObj</a></td></tr>
+<tr class="memitem:a65c4b516581bf98c7582af86dbba0375 inherit pub_methods_classgmodels_1_1gtypes_1_1abstractobj_1_1AbstractGraphObj"><td class="memItemLeft" align="right" valign="top"><a id="a65c4b516581bf98c7582af86dbba0375"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>copy</b> (self)</td></tr>
+<tr class="separator:a65c4b516581bf98c7582af86dbba0375 inherit pub_methods_classgmodels_1_1gtypes_1_1abstractobj_1_1AbstractGraphObj"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -284,22 +289,22 @@ Public Attributes</h2></td></tr>
 <div class="fragment"><div class="line">&gt;&gt;&gt; Af = NumCatRVariable(</div>
 <div class="line">&gt;&gt;&gt;         node_id=<span class="stringliteral">&quot;A&quot;</span>, </div>
 <div class="line">&gt;&gt;&gt;         input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [10, 50]},</div>
-<div class="line">&gt;&gt;&gt;         distribution=<span class="keyword">lambda</span> x: 0.5,</div>
+<div class="line">&gt;&gt;&gt;         marginal_distribution=<span class="keyword">lambda</span> x: 0.5,</div>
 <div class="line">&gt;&gt;&gt;      )</div>
 <div class="line">&gt;&gt;&gt; Bf = NumCatRVariable(</div>
 <div class="line">&gt;&gt;&gt;         node_id=<span class="stringliteral">&quot;B&quot;</span>,</div>
 <div class="line">&gt;&gt;&gt;         input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [10, 50]},</div>
-<div class="line">&gt;&gt;&gt;         distribution=<span class="keyword">lambda</span> x: 0.5,</div>
+<div class="line">&gt;&gt;&gt;         marginal_distribution=<span class="keyword">lambda</span> x: 0.5,</div>
 <div class="line">&gt;&gt;&gt;     )</div>
 <div class="line">&gt;&gt;&gt; Cf = NumCatRVariable(</div>
 <div class="line">&gt;&gt;&gt;    node_id=<span class="stringliteral">&quot;C&quot;</span>,</div>
 <div class="line">&gt;&gt;&gt;    input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [10, 50]},</div>
-<div class="line">&gt;&gt;&gt;    distribution=<span class="keyword">lambda</span> x: 0.5,</div>
+<div class="line">&gt;&gt;&gt;    marginal_distribution=<span class="keyword">lambda</span> x: 0.5,</div>
 <div class="line">&gt;&gt;&gt; )</div>
 <div class="line">&gt;&gt;&gt; Df = NumCatRVariable(</div>
 <div class="line">&gt;&gt;&gt;    node_id=<span class="stringliteral">&quot;D&quot;</span>,</div>
 <div class="line">&gt;&gt;&gt;    input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [10, 50]},</div>
-<div class="line">&gt;&gt;&gt;    distribution=<span class="keyword">lambda</span> x: 0.5,</div>
+<div class="line">&gt;&gt;&gt;    marginal_distribution=<span class="keyword">lambda</span> x: 0.5,</div>
 <div class="line">&gt;&gt;&gt; )</div>
 <div class="line">   </div>
 <div class="line">&gt;&gt;&gt; <span class="keyword">def </span>phiAB(scope_product):</div>
@@ -403,12 +408,12 @@ Public Attributes</h2></td></tr>
 <div class="fragment"><div class="line">&gt;&gt;&gt; Af = NumCatRVariable(</div>
 <div class="line">&gt;&gt;&gt;    node_id=<span class="stringliteral">&quot;A&quot;</span>,</div>
 <div class="line">&gt;&gt;&gt;    input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [10, 50]},</div>
-<div class="line">&gt;&gt;&gt;    distribution=<span class="keyword">lambda</span> x: 0.5,</div>
+<div class="line">&gt;&gt;&gt;    marginal_distribution=<span class="keyword">lambda</span> x: 0.5,</div>
 <div class="line">&gt;&gt;&gt; )</div>
 <div class="line">&gt;&gt;&gt; Bf = NumCatRVariable(</div>
 <div class="line">&gt;&gt;&gt;    node_id=<span class="stringliteral">&quot;B&quot;</span>,</div>
 <div class="line">&gt;&gt;&gt;    input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [10, 50]},</div>
-<div class="line">&gt;&gt;&gt;    distribution=<span class="keyword">lambda</span> x: 0.5,</div>
+<div class="line">&gt;&gt;&gt;    marginal_distribution=<span class="keyword">lambda</span> x: 0.5,</div>
 <div class="line">&gt;&gt;&gt; )</div>
 <div class="line">&gt;&gt;&gt;</div>
 <div class="line">&gt;&gt;&gt; <span class="keyword">def </span>phiAB(scope_product):</div>
@@ -553,11 +558,11 @@ Public Attributes</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>list of codomain of random variables</dd></dl>
 <div class="fragment"><div class="line">&gt;&gt;&gt; A = NumCatRVariable(<span class="stringliteral">&quot;A&quot;</span>,</div>
 <div class="line">&gt;&gt;&gt;                     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
-<div class="line">&gt;&gt;&gt;                     distribution=<span class="keyword">lambda</span> x: 0.5)</div>
+<div class="line">&gt;&gt;&gt;                     marginal_distribution=<span class="keyword">lambda</span> x: 0.5)</div>
 <div class="line"> </div>
 <div class="line">&gt;&gt;&gt; B = NumCatRVariable(<span class="stringliteral">&quot;B&quot;</span>,</div>
 <div class="line">&gt;&gt;&gt;                     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
-<div class="line">&gt;&gt;&gt;                     distribution=<span class="keyword">lambda</span> x: 0.5)</div>
+<div class="line">&gt;&gt;&gt;                     marginal_distribution=<span class="keyword">lambda</span> x: 0.5)</div>
 <div class="line"> </div>
 <div class="line">&gt;&gt;&gt; D = set([A,B])</div>
 <div class="line"> </div>
@@ -616,71 +621,6 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="abdcc225f0a6545bd7c263a862ef5fc97"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abdcc225f0a6545bd7c263a862ef5fc97">&#9670;&nbsp;</a></span>from_conditional_vars()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">def gmodels.factor.Factor.from_conditional_vars </td>
-          <td>(</td>
-          <td class="paramtype">&#160;</td>
-          <td class="paramname"><em>cls</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>&#160;</td>
-          <td class="paramname"><em>X_i</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Set[<a class="el" href="../../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html">NumCatRVariable</a>]&#160;</td>
-          <td class="paramname"><em>Pa_Xi</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Optional[Callable[[Set[Tuple[str, NumericValue]]], float]] &#160;</td>
-          <td class="paramname"><em>fn</em> = <code>None</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Make factor from joint variables. </p>
-<p>We assume that given random variables are conditionally related. We simply assume the following factorization between given variables: \( P(X_i | Pa_{X_i}) \) which decomposes as \( P(X_i | (X_1, X_2, X_3, \dots, X_j)\) where \({X_1, X_2, \dots, X_j} = Pa_{X_i}\)</p>
-<p>Basically we take the marginal product of parents and use the bayes rule to output the final probability value of the expression. See Koller, Friedman 2009, p. 46 - 47 on conditional parametrization and p. 62 for factorization of conditionally parametrized structures.</p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">X_i</td><td>main variable </td></tr>
-    <tr><td class="paramname">Pa_Xi</td><td>parent variables of the main variable </td></tr>
-    <tr><td class="paramname">fn</td><td>factor function that defines the factor between parent and child</td></tr>
-  </table>
-  </dd>
-</dl>
-<div class="fragment"><div class="line">&gt;&gt;&gt; A = NumCatRVariable(<span class="stringliteral">&quot;A&quot;</span>,</div>
-<div class="line">&gt;&gt;&gt;                     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
-<div class="line">&gt;&gt;&gt;                     distribution=<span class="keyword">lambda</span> x: 0.5)</div>
-<div class="line"> </div>
-<div class="line">&gt;&gt;&gt; B = NumCatRVariable(<span class="stringliteral">&quot;B&quot;</span>,</div>
-<div class="line">&gt;&gt;&gt;                     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
-<div class="line">&gt;&gt;&gt;                     distribution=<span class="keyword">lambda</span> x: 0.5)</div>
-<div class="line"> </div>
-<div class="line">&gt;&gt;&gt; C = NumCatRVariable(<span class="stringliteral">&quot;C&quot;</span>,</div>
-<div class="line">&gt;&gt;&gt;                     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
-<div class="line">&gt;&gt;&gt;                     distribution=<span class="keyword">lambda</span> x: 0.5)</div>
-<div class="line"> </div>
-<div class="line">&gt;&gt;&gt; fac = Factor.from_conditional_vars(X_i=A, Pa_Xi=set([B,C]))</div>
-</div><!-- fragment --> 
-</div>
-</div>
 <a id="a48ced84334f21169113b63953c9d2980"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a48ced84334f21169113b63953c9d2980">&#9670;&nbsp;</a></span>from_joint_vars()</h2>
 
@@ -717,10 +657,10 @@ Public Attributes</h2></td></tr>
 <p>We assume that the factor for the given set of random variables would be their marginal product.</p>
 <div class="fragment"><div class="line">&gt;&gt;&gt; A = NumCatRVariable(<span class="stringliteral">&quot;A&quot;</span>,</div>
 <div class="line">&gt;&gt;&gt;                     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
-<div class="line">&gt;&gt;&gt;                     distribution=<span class="keyword">lambda</span> x: 0.5)</div>
+<div class="line">&gt;&gt;&gt;                     marginal_distribution=<span class="keyword">lambda</span> x: 0.5)</div>
 <div class="line">&gt;&gt;&gt; B = NumCatRVariable(<span class="stringliteral">&quot;B&quot;</span>,</div>
 <div class="line">&gt;&gt;&gt;                     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
-<div class="line">&gt;&gt;&gt;                     distribution=<span class="keyword">lambda</span> x: 0.5)</div>
+<div class="line">&gt;&gt;&gt;                     marginal_distribution=<span class="keyword">lambda</span> x: 0.5)</div>
 <div class="line"> </div>
 <div class="line"> </div>
 <div class="line">&gt;&gt;&gt; fac = Factor.from_joint_vars(svars=set([A, B]))</div>
@@ -908,11 +848,11 @@ Public Attributes</h2></td></tr>
 <p>The arguments are there for filtering or manipulating factor domain: </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="../../de/d55/classgmodels_1_1factor_1_1Factor.html#a2545dafb56c12b759d0d8d69bec029a0" title="Get factor domain Val(D) D being a set of random variables.">Factor.fdomain</a></dd></dl>
 <div class="fragment"><div class="line">&gt;&gt;&gt; A = NumCatRVariable(<span class="stringliteral">&quot;A&quot;</span>,</div>
 <div class="line">&gt;&gt;&gt;                     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
-<div class="line">&gt;&gt;&gt;                     distribution=<span class="keyword">lambda</span> x: 0.5)</div>
+<div class="line">&gt;&gt;&gt;                     marginal_distribution=<span class="keyword">lambda</span> x: 0.5)</div>
 <div class="line"> </div>
 <div class="line">&gt;&gt;&gt; B = NumCatRVariable(<span class="stringliteral">&quot;B&quot;</span>,</div>
 <div class="line">&gt;&gt;&gt;                     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
-<div class="line">&gt;&gt;&gt;                     distribution=<span class="keyword">lambda</span> x: 0.5)</div>
+<div class="line">&gt;&gt;&gt;                     marginal_distribution=<span class="keyword">lambda</span> x: 0.5)</div>
 <div class="line"> </div>
 <div class="line">&gt;&gt;&gt; D = set([A,B])</div>
 <div class="line"> </div>
@@ -947,12 +887,12 @@ Public Attributes</h2></td></tr>
 <div class="line">&gt;&gt;&gt; Bf = NumCatRVariable(</div>
 <div class="line">&gt;&gt;&gt;     node_id=<span class="stringliteral">&quot;B&quot;</span>,</div>
 <div class="line">&gt;&gt;&gt;     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [10, 50]},</div>
-<div class="line">&gt;&gt;&gt;     distribution=<span class="keyword">lambda</span> x: 0.5,</div>
+<div class="line">&gt;&gt;&gt;     marginal_distribution=<span class="keyword">lambda</span> x: 0.5,</div>
 <div class="line">&gt;&gt;&gt; )</div>
 <div class="line">&gt;&gt;&gt; Cf = NumCatRVariable(</div>
 <div class="line">&gt;&gt;&gt;     node_id=<span class="stringliteral">&quot;C&quot;</span>,</div>
 <div class="line">&gt;&gt;&gt;     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [10, 50]},</div>
-<div class="line">&gt;&gt;&gt;     distribution=<span class="keyword">lambda</span> x: 0.5,</div>
+<div class="line">&gt;&gt;&gt;     marginal_distribution=<span class="keyword">lambda</span> x: 0.5,</div>
 <div class="line">&gt;&gt;&gt; )</div>
 <div class="line">&gt;&gt;&gt; <span class="keyword">def </span>phibc(scope_product):</div>
 <div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;&quot;</span></div>
@@ -997,12 +937,12 @@ Public Attributes</h2></td></tr>
 <div class="line">&gt;&gt;&gt; Bf = NumCatRVariable(</div>
 <div class="line">&gt;&gt;&gt;     node_id=<span class="stringliteral">&quot;B&quot;</span>,</div>
 <div class="line">&gt;&gt;&gt;     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [10, 50]},</div>
-<div class="line">&gt;&gt;&gt;     distribution=<span class="keyword">lambda</span> x: 0.5,</div>
+<div class="line">&gt;&gt;&gt;     marginal_distribution=<span class="keyword">lambda</span> x: 0.5,</div>
 <div class="line">&gt;&gt;&gt; )</div>
 <div class="line">&gt;&gt;&gt; Cf = NumCatRVariable(</div>
 <div class="line">&gt;&gt;&gt;     node_id=<span class="stringliteral">&quot;C&quot;</span>,</div>
 <div class="line">&gt;&gt;&gt;     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [10, 50]},</div>
-<div class="line">&gt;&gt;&gt;     distribution=<span class="keyword">lambda</span> x: 0.5,</div>
+<div class="line">&gt;&gt;&gt;     marginal_distribution=<span class="keyword">lambda</span> x: 0.5,</div>
 <div class="line">&gt;&gt;&gt; )</div>
 <div class="line">&gt;&gt;&gt; <span class="keyword">def </span>phibc(scope_product):</div>
 <div class="line">&gt;&gt;&gt;     <span class="stringliteral">&quot;&quot;</span></div>
@@ -1160,15 +1100,17 @@ Public Attributes</h2></td></tr>
 <div class="line">&gt;&gt;&gt; intelligence = NumCatRVariable(</div>
 <div class="line">&gt;&gt;&gt;     node_id=<span class="stringliteral">&quot;int&quot;</span>,</div>
 <div class="line">&gt;&gt;&gt;     input_data=input_data[<span class="stringliteral">&quot;intelligence&quot;</span>],</div>
-<div class="line">&gt;&gt;&gt;     distribution=intelligence_dist,</div>
+<div class="line">&gt;&gt;&gt;     marginal_distribution=intelligence_dist,</div>
 <div class="line">&gt;&gt;&gt; )</div>
 <div class="line">&gt;&gt;&gt; </div>
 <div class="line">&gt;&gt;&gt; grade = NumCatRVariable(</div>
-<div class="line">&gt;&gt;&gt;     node_id=nid2, input_data=input_data[<span class="stringliteral">&quot;grade&quot;</span>], distribution=grade_dist</div>
+<div class="line">&gt;&gt;&gt;     node_id=nid2, input_data=input_data[<span class="stringliteral">&quot;grade&quot;</span>],</div>
+<div class="line">&gt;&gt;&gt;     marginal_distribution=grade_dist</div>
 <div class="line">&gt;&gt;&gt; )</div>
 <div class="line">&gt;&gt;&gt; </div>
 <div class="line">&gt;&gt;&gt; dice = NumCatRVariable(</div>
-<div class="line">&gt;&gt;&gt;    node_id=nid3, input_data=input_data[<span class="stringliteral">&quot;dice&quot;</span>], distribution=fair_dice_dist</div>
+<div class="line">&gt;&gt;&gt;    node_id=nid3, input_data=input_data[<span class="stringliteral">&quot;dice&quot;</span>],</div>
+<div class="line">&gt;&gt;&gt;    marginal_distribution=fair_dice_dist</div>
 <div class="line">&gt;&gt;&gt; )</div>
 <div class="line">&gt;&gt;&gt; </div>
 <div class="line">&gt;&gt;&gt; f = Factor(</div>
@@ -1217,11 +1159,11 @@ Public Attributes</h2></td></tr>
 </dl>
 <div class="fragment"><div class="line">&gt;&gt;&gt; A = NumCatRVariable(<span class="stringliteral">&quot;A&quot;</span>,</div>
 <div class="line">&gt;&gt;&gt;                     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
-<div class="line">&gt;&gt;&gt;                     distribution=<span class="keyword">lambda</span> x: 0.5)</div>
+<div class="line">&gt;&gt;&gt;                     marginal_distribution=<span class="keyword">lambda</span> x: 0.5)</div>
 <div class="line"> </div>
 <div class="line">&gt;&gt;&gt; B = NumCatRVariable(<span class="stringliteral">&quot;B&quot;</span>,</div>
 <div class="line">&gt;&gt;&gt;                     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
-<div class="line">&gt;&gt;&gt;                     distribution=<span class="keyword">lambda</span> x: 0.5)</div>
+<div class="line">&gt;&gt;&gt;                     marginal_distribution=<span class="keyword">lambda</span> x: 0.5)</div>
 <div class="line"> </div>
 <div class="line">&gt;&gt;&gt; fac = Factor.from_joint_vars(svars=set([A, B]))</div>
 <div class="line">&gt;&gt;&gt; fac.phi(scope_product=set([(<span class="stringliteral">&quot;A&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;B&quot;</span>, <span class="keyword">True</span>)]))</div>
@@ -1475,7 +1417,7 @@ Public Attributes</h2></td></tr>
 </dl>
 <div class="fragment"><div class="line">&gt;&gt;&gt; A = NumCatRVariable(<span class="stringliteral">&quot;A&quot;</span>,</div>
 <div class="line">&gt;&gt;&gt;                     input_data={<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
-<div class="line">&gt;&gt;&gt;                     distribution=<span class="keyword">lambda</span> x: 0.5)</div>
+<div class="line">&gt;&gt;&gt;                     marginal_distribution=<span class="keyword">lambda</span> x: 0.5)</div>
 <div class="line">&gt;&gt;&gt; fac = Factor(gid=str(uuid4()), scope_vars=set([A]))</div>
 <div class="line">&gt;&gt;&gt; fac.scope_vars(f=<span class="keyword">lambda</span> x: set([(x,x)]))</div>
 <div class="line">&gt;&gt;&gt; set([(A, A)])</div>

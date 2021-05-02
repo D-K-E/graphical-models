@@ -101,9 +101,9 @@ Inheritance diagram for gmodels.randomvariable.CatRandomVariable:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:af2bc7f60f078e57fe686b66d3be33930"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d99/classgmodels_1_1randomvariable_1_1CatRandomVariable.html#af2bc7f60f078e57fe686b66d3be33930">__init__</a> (self, str node_id, Dict[str, Any] input_data, Callable[[Outcome], Value] f=lambda x:x, Callable[[Value], float] distribution=lambda x:1.0)</td></tr>
-<tr class="memdesc:af2bc7f60f078e57fe686b66d3be33930"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for categorical/discrete random variable.  <a href="../../d8/d99/classgmodels_1_1randomvariable_1_1CatRandomVariable.html#af2bc7f60f078e57fe686b66d3be33930">More...</a><br /></td></tr>
-<tr class="separator:af2bc7f60f078e57fe686b66d3be33930"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a295875a4c53b6594013dce78c1b6b1c9"><td class="memItemLeft" align="right" valign="top">def&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d99/classgmodels_1_1randomvariable_1_1CatRandomVariable.html#a295875a4c53b6594013dce78c1b6b1c9">__init__</a> (self, str node_id, Dict[str, Any] input_data, Callable[[Outcome], Value] f=lambda x:x, Callable[[Value], float] marginal_distribution=lambda x:1.0)</td></tr>
+<tr class="memdesc:a295875a4c53b6594013dce78c1b6b1c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor for categorical/discrete random variable.  <a href="../../d8/d99/classgmodels_1_1randomvariable_1_1CatRandomVariable.html#a295875a4c53b6594013dce78c1b6b1c9">More...</a><br /></td></tr>
+<tr class="separator:a295875a4c53b6594013dce78c1b6b1c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a360fbda75f19f1b11e2bdf1b3bc7e169"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="../../d8/d99/classgmodels_1_1randomvariable_1_1CatRandomVariable.html#a360fbda75f19f1b11e2bdf1b3bc7e169">p_x</a> (self, Value value)</td></tr>
 <tr class="memdesc:a360fbda75f19f1b11e2bdf1b3bc7e169"><td class="mdescLeft">&#160;</td><td class="mdescRight">probability of given outcome value as per the associated distribution  <a href="../../d8/d99/classgmodels_1_1randomvariable_1_1CatRandomVariable.html#a360fbda75f19f1b11e2bdf1b3bc7e169">More...</a><br /></td></tr>
 <tr class="separator:a360fbda75f19f1b11e2bdf1b3bc7e169"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -149,6 +149,10 @@ def&#160;</td><td class="memItemRight" valign="bottom"><b>clear_data</b> (self)<
 <tr class="memitem:a2e3101125ff35b95e13c85b31ae38d76 inherit pub_methods_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject"><td class="memItemLeft" align="right" valign="top"><a id="a2e3101125ff35b95e13c85b31ae38d76"></a>
 def&#160;</td><td class="memItemRight" valign="bottom"><b>update_data</b> (self, dict ndata)</td></tr>
 <tr class="separator:a2e3101125ff35b95e13c85b31ae38d76 inherit pub_methods_classgmodels_1_1gtypes_1_1graphobj_1_1GraphObject"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_classgmodels_1_1gtypes_1_1abstractobj_1_1AbstractGraphObj"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classgmodels_1_1gtypes_1_1abstractobj_1_1AbstractGraphObj')"><img src="../../closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="../../d3/dc4/classgmodels_1_1gtypes_1_1abstractobj_1_1AbstractGraphObj.html">gmodels.gtypes.abstractobj.AbstractGraphObj</a></td></tr>
+<tr class="memitem:a65c4b516581bf98c7582af86dbba0375 inherit pub_methods_classgmodels_1_1gtypes_1_1abstractobj_1_1AbstractGraphObj"><td class="memItemLeft" align="right" valign="top"><a id="a65c4b516581bf98c7582af86dbba0375"></a>
+def&#160;</td><td class="memItemRight" valign="bottom"><b>copy</b> (self)</td></tr>
+<tr class="separator:a65c4b516581bf98c7582af86dbba0375 inherit pub_methods_classgmodels_1_1gtypes_1_1abstractobj_1_1AbstractGraphObj"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -166,8 +170,8 @@ Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>a discrete random variable </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="af2bc7f60f078e57fe686b66d3be33930"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af2bc7f60f078e57fe686b66d3be33930">&#9670;&nbsp;</a></span>__init__()</h2>
+<a id="a295875a4c53b6594013dce78c1b6b1c9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a295875a4c53b6594013dce78c1b6b1c9">&#9670;&nbsp;</a></span>__init__()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -200,7 +204,7 @@ Public Attributes</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">Callable[[Value], float] &#160;</td>
-          <td class="paramname"><em>distribution</em> = <code>lambda&#160;x:&#160;1.0</code>&#160;</td>
+          <td class="paramname"><em>marginal_distribution</em> = <code>lambda&#160;x:&#160;1.0</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -213,7 +217,7 @@ Public Attributes</h2></td></tr>
 <p>Constructor for categorical/discrete random variable. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">distribution</td><td>a function that takes in a value from codomain of the random variable and outputs a value in the range [0,1].</td></tr>
+    <tr><td class="paramname">marginal_distribution</td><td>a function that takes in a value from codomain of the random variable and outputs a value in the range [0,1]. Notice that is not a local distribution, it should be the marginal distribution that is independent of local structure.</td></tr>
   </table>
   </dd>
 </dl>
@@ -234,7 +238,7 @@ Public Attributes</h2></td></tr>
 <div class="line">&gt;&gt;&gt;    input_data=indata, </div>
 <div class="line">&gt;&gt;&gt;    node_id=<span class="stringliteral">&quot;myrandomvar&quot;</span>, </div>
 <div class="line">&gt;&gt;&gt;    f=grade_f,</div>
-<div class="line">&gt;&gt;&gt;    distribution=grade_distribution</div>
+<div class="line">&gt;&gt;&gt;    marginal_distribution=grade_distribution</div>
 <div class="line">&gt;&gt;&gt; )</div>
 </div><!-- fragment --> 
 </div>
@@ -362,7 +366,7 @@ Public Attributes</h2></td></tr>
 <div class="line">&gt;&gt;&gt;    input_data=indata, </div>
 <div class="line">&gt;&gt;&gt;    node_id=<span class="stringliteral">&quot;myrandomvar&quot;</span>, </div>
 <div class="line">&gt;&gt;&gt;    f=grade_f,</div>
-<div class="line">&gt;&gt;&gt;    distribution=grade_distribution</div>
+<div class="line">&gt;&gt;&gt;    marginal_distribution=grade_distribution</div>
 <div class="line">&gt;&gt;&gt; )</div>
 <div class="line">&gt;&gt;&gt; rvar.value_set(</div>
 <div class="line">&gt;&gt;&gt;         value_transform=<span class="keyword">lambda</span> x: x.lower(),</div>
@@ -407,7 +411,7 @@ Public Attributes</h2></td></tr>
 <div class="line">&gt;&gt;&gt;    input_data=indata, </div>
 <div class="line">&gt;&gt;&gt;    node_id=<span class="stringliteral">&quot;myrandomvar&quot;</span>, </div>
 <div class="line">&gt;&gt;&gt;    f=grade_f,</div>
-<div class="line">&gt;&gt;&gt;    distribution=grade_distribution</div>
+<div class="line">&gt;&gt;&gt;    marginal_distribution=grade_distribution</div>
 <div class="line">&gt;&gt;&gt; )</div>
 <div class="line">&gt;&gt;&gt; rvar.values()</div>
 <div class="line">&gt;&gt;&gt; frozenset([<span class="stringliteral">&quot;A&quot;</span>, <span class="stringliteral">&quot;F&quot;</span>])</div>

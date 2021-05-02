@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['zval_542',['zval',['../de/d55/classgmodels_1_1factor_1_1Factor.html#a487a5dff817c4afa4d2e59ff908b8d58',1,'gmodels::factor::Factor']]]
+  ['x_548',['X',['../d6/d49/classgmodels_1_1markov_1_1ConditionalRandomField.html#a43e24e9c9b09a3a2ce1924167d79c865',1,'gmodels::markov::ConditionalRandomField']]]
 ];

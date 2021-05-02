@@ -88,13 +88,13 @@ PGModel Usage</h1>
 <div class="line">            <span class="stringliteral">&quot;c&quot;</span>: {<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
 <div class="line">        }</div>
 <div class="line">a = NumCatRVariable(</div>
-<div class="line">            node_id=<span class="stringliteral">&quot;a&quot;</span>, input_data=idata[<span class="stringliteral">&quot;a&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.6 <span class="keywordflow">if</span> x <span class="keywordflow">else</span> 0.4</div>
+<div class="line">            node_id=<span class="stringliteral">&quot;a&quot;</span>, input_data=idata[<span class="stringliteral">&quot;a&quot;</span>], marginal_distribution=<span class="keyword">lambda</span> x: 0.6 <span class="keywordflow">if</span> x <span class="keywordflow">else</span> 0.4</div>
 <div class="line">        )</div>
 <div class="line">b = NumCatRVariable(</div>
-<div class="line">    node_id=<span class="stringliteral">&quot;b&quot;</span>, input_data=idata[<span class="stringliteral">&quot;b&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.5 <span class="keywordflow">if</span> x <span class="keywordflow">else</span> 0.5</div>
+<div class="line">    node_id=<span class="stringliteral">&quot;b&quot;</span>, input_data=idata[<span class="stringliteral">&quot;b&quot;</span>], marginal_distribution=<span class="keyword">lambda</span> x: 0.5 <span class="keywordflow">if</span> x <span class="keywordflow">else</span> 0.5</div>
 <div class="line">)</div>
 <div class="line">c = NumCatRVariable(</div>
-<div class="line">    node_id=<span class="stringliteral">&quot;c&quot;</span>, input_data=idata[<span class="stringliteral">&quot;c&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.5 <span class="keywordflow">if</span> x <span class="keywordflow">else</span> 0.5</div>
+<div class="line">    node_id=<span class="stringliteral">&quot;c&quot;</span>, input_data=idata[<span class="stringliteral">&quot;c&quot;</span>], marginal_distribution=<span class="keyword">lambda</span> x: 0.5 <span class="keywordflow">if</span> x <span class="keywordflow">else</span> 0.5</div>
 <div class="line">)</div>
 <div class="line">ab = Edge(</div>
 <div class="line">    edge_id=<span class="stringliteral">&quot;ab&quot;</span>,</div>
@@ -159,6 +159,120 @@ PGModel Usage</h1>
 <div class="line">print(round( product_factor.phi_normal(set([(<span class="stringliteral">&quot;c&quot;</span>, <span class="keyword">True</span>)])), 4))</div>
 <div class="line"><span class="comment"># should give you 0.32</span></div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md22"></a>
+Bayesian Network Usage</h1>
+<p>Bayesian Network is defined by Koller, Friedman 2009, p. 57 as: </p><blockquote class="doxtable">
+<p>Bayesian network structure G is a directed acyclic graph whose nodes represent random variables \(X1, \dots, Xn \) . Let \(PaG(Xi)\) denote the parents of \(Xi\) in G, and <code>NonDescendants(Xi)</code> denote the variables in the graph that are not descendants of Xi. Then G encodes the following set of conditional independence assumptions, called the local independencies, and denoted by <code>I(G): For each variable Xi : (Xi ⊥ NonDescendants(Xi) | PaG(Xi))</code>. </p>
+</blockquote>
+<p>Bayesian Network is defined by Koller, Friedman 2009, p. 62 as: </p><blockquote class="doxtable">
+<p>Bayesian Network is a pair <code>B=(G, P)</code> where P factorizes over G, and where P is specified as a set of CPDs associated with G’s nodes. The distribution P is often annotated Pb. Let G be a BN structure over a set of random variables X , and let P be a joint distribution over the same space. If G is an I-map for P , then P factorizes according to G: <code>P(X1, \dots, Xn) = \prods_{i=0}^{n}P(Xi | PaG(Xi) )</code> </p>
+</blockquote>
+<p>Usage:</p>
+<div class="fragment"><div class="line">idata = {<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]}</div>
+<div class="line">                                                              </div>
+<div class="line">C = NumCatRVariable(</div>
+<div class="line">    node_id=<span class="stringliteral">&quot;C&quot;</span>, input_data=idata, distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">)</div>
+<div class="line">E = NumCatRVariable(</div>
+<div class="line">    node_id=<span class="stringliteral">&quot;E&quot;</span>, input_data=idata, distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">)</div>
+<div class="line">F = NumCatRVariable(</div>
+<div class="line">    node_id=<span class="stringliteral">&quot;F&quot;</span>, input_data=idata, distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">)</div>
+<div class="line">D = NumCatRVariable(</div>
+<div class="line">    node_id=<span class="stringliteral">&quot;D&quot;</span>, input_data=idata, distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">)</div>
+<div class="line">CE = Edge(</div>
+<div class="line">  edge_id=<span class="stringliteral">&quot;CE&quot;</span>,</div>
+<div class="line">  start_node=C,</div>
+<div class="line">  end_node=E,</div>
+<div class="line">  edge_type=EdgeType.DIRECTED,</div>
+<div class="line">)</div>
+<div class="line">ED = Edge(</div>
+<div class="line">    edge_id=<span class="stringliteral">&quot;ED&quot;</span>,</div>
+<div class="line">    start_node=E,</div>
+<div class="line">    end_node=D,</div>
+<div class="line">    edge_type=EdgeType.DIRECTED,</div>
+<div class="line">)</div>
+<div class="line">EF = Edge(</div>
+<div class="line">    edge_id=<span class="stringliteral">&quot;EF&quot;</span>,</div>
+<div class="line">    start_node=E,</div>
+<div class="line">    end_node=F,</div>
+<div class="line">    edge_type=EdgeType.DIRECTED,</div>
+<div class="line">)</div>
+<div class="line">                                                              </div>
+<div class="line"><span class="keyword">def </span>phi_c(scope_product):</div>
+<div class="line">    ss = set(scope_product)</div>
+<div class="line">   <span class="keywordflow">if</span> ss == set([(<span class="stringliteral">&quot;C&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">       <span class="keywordflow">return</span> 0.8</div>
+<div class="line">    <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;C&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.2</div>
+<div class="line">    <span class="keywordflow">else</span>:</div>
+<div class="line">        <span class="keywordflow">raise</span> ValueError(<span class="stringliteral">&quot;scope product unknown&quot;</span>)</div>
+<div class="line">                                                              </div>
+<div class="line"><span class="keyword">def </span>phi_ec(scope_product):</div>
+<div class="line">    ss = set(scope_product)</div>
+<div class="line">    <span class="keywordflow">if</span> ss == set([(<span class="stringliteral">&quot;C&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.9</div>
+<div class="line">    <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;C&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.1</div>
+<div class="line">  <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;C&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">      <span class="keywordflow">return</span> 0.7</div>
+<div class="line">  <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;C&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">      <span class="keywordflow">return</span> 0.3</div>
+<div class="line">  <span class="keywordflow">else</span>:</div>
+<div class="line">       <span class="keywordflow">raise</span> ValueError(<span class="stringliteral">&quot;scope product unknown&quot;</span>)</div>
+<div class="line">                                                              </div>
+<div class="line"><span class="keyword">def </span>phi_fe(scope_product):</div>
+<div class="line">  ss = set(scope_product)</div>
+<div class="line">  <span class="keywordflow">if</span> ss == set([(<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;F&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">      <span class="keywordflow">return</span> 0.9</div>
+<div class="line">  <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;F&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">      <span class="keywordflow">return</span> 0.1</div>
+<div class="line">  <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;F&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.5</div>
+<div class="line">    <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;F&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">        <span class="keywordflow">return</span> 0.5</div>
+<div class="line">    <span class="keywordflow">else</span>:</div>
+<div class="line">        <span class="keywordflow">raise</span> ValueError(<span class="stringliteral">&quot;scope product unknown&quot;</span>)</div>
+<div class="line">                                                              </div>
+<div class="line"><span class="keyword">def </span>phi_de(scope_product):</div>
+<div class="line">    ss = set(scope_product)</div>
+<div class="line">  <span class="keywordflow">if</span> ss == set([(<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;D&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">      <span class="keywordflow">return</span> 0.7</div>
+<div class="line">  <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;D&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">      <span class="keywordflow">return</span> 0.3</div>
+<div class="line">  <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;D&quot;</span>, <span class="keyword">True</span>)]):</div>
+<div class="line">      <span class="keywordflow">return</span> 0.4</div>
+<div class="line">  <span class="keywordflow">elif</span> ss == set([(<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;D&quot;</span>, <span class="keyword">False</span>)]):</div>
+<div class="line">      <span class="keywordflow">return</span> 0.6</div>
+<div class="line">   <span class="keywordflow">else</span>:</div>
+<div class="line">       <span class="keywordflow">raise</span> ValueError(<span class="stringliteral">&quot;scope product unknown&quot;</span>)</div>
+<div class="line">                                                              </div>
+<div class="line">CE_f = Factor(</div>
+<div class="line">    gid=<span class="stringliteral">&quot;CE_f&quot;</span>, scope_vars=set([C, E]), factor_fn=phi_ec</div>
+<div class="line">)</div>
+<div class="line">C_f = Factor(gid=<span class="stringliteral">&quot;C_f&quot;</span>, scope_vars=set([C]), factor_fn=phi_c)</div>
+<div class="line">FE_f = Factor(</div>
+<div class="line">    gid=<span class="stringliteral">&quot;FE_f&quot;</span>, scope_vars=set([F, E]), factor_fn=phi_fe</div>
+<div class="line">)</div>
+<div class="line">DE_f = Factor(</div>
+<div class="line">    gid=<span class="stringliteral">&quot;DE_f&quot;</span>, scope_vars=set([D, E]), factor_fn=phi_de</div>
+<div class="line">)</div>
+<div class="line">bayes_n = BayesianNetwork(</div>
+<div class="line">    gid=<span class="stringliteral">&quot;ba&quot;</span>,</div>
+<div class="line">    nodes=set([C, E, D, F]),</div>
+<div class="line">    edges=set([EF, CE, ED]),</div>
+<div class="line">    factors=set([C_f, DE_f, CE_f, FE_f]),</div>
+<div class="line">)</div>
+<div class="line">query_vars = set([self.E])</div>
+<div class="line">evidences = set([(<span class="stringliteral">&quot;F&quot;</span>, <span class="keyword">True</span>)])</div>
+<div class="line">probs, alpha = self.bayes_n.cond_prod_by_variable_elimination(</div>
+<div class="line">    query_vars, evidences=evidences</div>
+<div class="line">)</div>
+<div class="line">query_value = set([(<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">True</span>)])</div>
+<div class="line">round(probs.phi(pss), 4)</div>
+<div class="line"><span class="comment"># 0.774</span></div>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md23"></a>
 Markov Network Usage</h1>
 <p>Markov Network is defined by Koller, Friedman 2009, p. 103 is </p><blockquote class="doxtable">
 <p>As in a Bayesian network, the nodes in the graph of a Markov network represent the variables, and the edges correspond to a notion of direct probabilistic interaction between the neighboring variables — an interaction that is not mediated by any other variable in the network. </p>
@@ -179,16 +293,16 @@ Markov Network Usage</h1>
 <div class="line">                                                                   </div>
 <div class="line"><span class="comment"># misconception example</span></div>
 <div class="line">A = NumCatRVariable(</div>
-<div class="line">    node_id=<span class="stringliteral">&quot;A&quot;</span>, input_data=idata[<span class="stringliteral">&quot;A&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">    node_id=<span class="stringliteral">&quot;A&quot;</span>, input_data=idata[<span class="stringliteral">&quot;A&quot;</span>], marginal_distribution=<span class="keyword">lambda</span> x: 0.5</div>
 <div class="line">)</div>
 <div class="line">B = NumCatRVariable(</div>
-<div class="line">    node_id=<span class="stringliteral">&quot;B&quot;</span>, input_data=idata[<span class="stringliteral">&quot;B&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">    node_id=<span class="stringliteral">&quot;B&quot;</span>, input_data=idata[<span class="stringliteral">&quot;B&quot;</span>], marginal_distribution=<span class="keyword">lambda</span> x: 0.5</div>
 <div class="line">)</div>
 <div class="line">C = NumCatRVariable(</div>
-<div class="line">    node_id=<span class="stringliteral">&quot;C&quot;</span>, input_data=idata[<span class="stringliteral">&quot;C&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">    node_id=<span class="stringliteral">&quot;C&quot;</span>, input_data=idata[<span class="stringliteral">&quot;C&quot;</span>], marginal_distribution=<span class="keyword">lambda</span> x: 0.5</div>
 <div class="line">)</div>
 <div class="line">D = NumCatRVariable(</div>
-<div class="line">    node_id=<span class="stringliteral">&quot;D&quot;</span>, input_data=idata[<span class="stringliteral">&quot;D&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">    node_id=<span class="stringliteral">&quot;D&quot;</span>, input_data=idata[<span class="stringliteral">&quot;D&quot;</span>], marginal_distribution=<span class="keyword">lambda</span> x: 0.5</div>
 <div class="line">)</div>
 <div class="line">AB = Edge(</div>
 <div class="line">    edge_id=<span class="stringliteral">&quot;AB&quot;</span>,</div>
@@ -290,7 +404,7 @@ Markov Network Usage</h1>
 <div class="line">    edges=set([AB, AD, BC, DC]),</div>
 <div class="line">    factors=set([DA_f, CD_f, BC_f, AB_f]),</div>
 <div class="line">)</div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md23"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md24"></a>
 Conditional Random Fields (CRFs) Usage</h1>
 <p>Conditional random fields are defined by Koller, Friedman 2009 p. 143 as: </p><blockquote class="doxtable">
 <p>an undirected graph whose nodes correspond to a union of a set of observed random variables X, and a set of target random variables Y; the network is annotated with a set of factors \(\phi_1(D_1), \dots, \phi_i(D_i), \dots, \phi_m(D_m)\) such that \(D_i \not \subset X\). </p>
@@ -307,16 +421,16 @@ Conditional Random Fields (CRFs) Usage</h1>
 <div class="line"> </div>
 <div class="line"><span class="comment"># from Koller, Friedman 2009, p. 144-145, example 4.20</span></div>
 <div class="line">X_1 = NumCatRVariable(</div>
-<div class="line">    node_id=<span class="stringliteral">&quot;X_1&quot;</span>, input_data=idata[<span class="stringliteral">&quot;A&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">    node_id=<span class="stringliteral">&quot;X_1&quot;</span>, input_data=idata[<span class="stringliteral">&quot;A&quot;</span>], marginal_distribution=<span class="keyword">lambda</span> x: 0.5</div>
 <div class="line">)</div>
 <div class="line">X_2 = NumCatRVariable(</div>
-<div class="line">    node_id=<span class="stringliteral">&quot;X_2&quot;</span>, input_data=idata[<span class="stringliteral">&quot;A&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">    node_id=<span class="stringliteral">&quot;X_2&quot;</span>, input_data=idata[<span class="stringliteral">&quot;A&quot;</span>], marginal_distribution=<span class="keyword">lambda</span> x: 0.5</div>
 <div class="line">)</div>
 <div class="line">X_3 = NumCatRVariable(</div>
-<div class="line">    node_id=<span class="stringliteral">&quot;X_3&quot;</span>, input_data=idata[<span class="stringliteral">&quot;A&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">    node_id=<span class="stringliteral">&quot;X_3&quot;</span>, input_data=idata[<span class="stringliteral">&quot;A&quot;</span>], marginal_distribution=<span class="keyword">lambda</span> x: 0.5</div>
 <div class="line">)</div>
 <div class="line">Y_1 = NumCatRVariable(</div>
-<div class="line">    node_id=<span class="stringliteral">&quot;Y_1&quot;</span>, input_data=idata[<span class="stringliteral">&quot;A&quot;</span>], distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">    node_id=<span class="stringliteral">&quot;Y_1&quot;</span>, input_data=idata[<span class="stringliteral">&quot;A&quot;</span>], marginal_distribution=<span class="keyword">lambda</span> x: 0.5</div>
 <div class="line">)</div>
 <div class="line">X1_Y1 = Edge(</div>
 <div class="line">   edge_id=<span class="stringliteral">&quot;X1_Y1&quot;</span>,</div>
@@ -404,7 +518,7 @@ Conditional Random Fields (CRFs) Usage</h1>
 <div class="line">)</div>
 <div class="line">print(foo1.phi(query) == 1.0)</div>
 <div class="line"><span class="comment"># True</span></div>
-</div><!-- fragment --><h1><a class="anchor" id="autotoc_md24"></a>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md25"></a>
 LWF Chain Graph Usage</h1>
 <p>LWF Chain Graph, also known as Partially Directed Model, is a probabilistic graphical model. It's distinctive nature is best explained by Koller, Friedman 2009, p. 148: </p><blockquote class="doxtable">
 <p>An edge between two nodes in the same chain component must be undirected, while an edge between two nodes in different chain components must be directed. </p>
@@ -419,37 +533,37 @@ LWF Chain Graph Usage</h1>
 <div class="line"> </div>
 <div class="line">idata = {<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]}</div>
 <div class="line">A = NumCatRVariable(</div>
-<div class="line">       node_id=<span class="stringliteral">&quot;A&quot;</span>, input_data=idata, distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">       node_id=<span class="stringliteral">&quot;A&quot;</span>, input_data=idata, marginal_distribution=<span class="keyword">lambda</span> x: 0.5</div>
 <div class="line">)</div>
 <div class="line">B = NumCatRVariable(</div>
-<div class="line">       node_id=<span class="stringliteral">&quot;B&quot;</span>, input_data=idata, distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">       node_id=<span class="stringliteral">&quot;B&quot;</span>, input_data=idata, marginal_distribution=<span class="keyword">lambda</span> x: 0.5</div>
 <div class="line">)</div>
 <div class="line">C = NumCatRVariable(</div>
-<div class="line">       node_id=<span class="stringliteral">&quot;C&quot;</span>, input_data=idata, distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">       node_id=<span class="stringliteral">&quot;C&quot;</span>, input_data=idata, marginal_distribution=<span class="keyword">lambda</span> x: 0.5</div>
 <div class="line">)</div>
 <div class="line">D = NumCatRVariable(</div>
-<div class="line">       node_id=<span class="stringliteral">&quot;D&quot;</span>, input_data=idata, distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">       node_id=<span class="stringliteral">&quot;D&quot;</span>, input_data=idata, marginal_distribution=<span class="keyword">lambda</span> x: 0.5</div>
 <div class="line">)</div>
 <div class="line">E = NumCatRVariable(</div>
-<div class="line">       node_id=<span class="stringliteral">&quot;E&quot;</span>, input_data=idata, distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">       node_id=<span class="stringliteral">&quot;E&quot;</span>, input_data=idata, marginal_distribution=<span class="keyword">lambda</span> x: 0.5</div>
 <div class="line">)</div>
 <div class="line">F = NumCatRVariable(</div>
-<div class="line">       node_id=<span class="stringliteral">&quot;F&quot;</span>, input_data=idata, distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">       node_id=<span class="stringliteral">&quot;F&quot;</span>, input_data=idata, marginal_distribution=<span class="keyword">lambda</span> x: 0.5</div>
 <div class="line">)</div>
 <div class="line">G = NumCatRVariable(</div>
-<div class="line">       node_id=<span class="stringliteral">&quot;G&quot;</span>, input_data=idata, distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">       node_id=<span class="stringliteral">&quot;G&quot;</span>, input_data=idata, marginal_distribution=<span class="keyword">lambda</span> x: 0.5</div>
 <div class="line">)</div>
 <div class="line">H = NumCatRVariable(</div>
-<div class="line">       node_id=<span class="stringliteral">&quot;H&quot;</span>, input_data=idata, distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">       node_id=<span class="stringliteral">&quot;H&quot;</span>, input_data=idata, marginal_distribution=<span class="keyword">lambda</span> x: 0.5</div>
 <div class="line">)</div>
 <div class="line">I = NumCatRVariable(</div>
-<div class="line">       node_id=<span class="stringliteral">&quot;I&quot;</span>, input_data=idata, distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">       node_id=<span class="stringliteral">&quot;I&quot;</span>, input_data=idata, marginal_distribution=<span class="keyword">lambda</span> x: 0.5</div>
 <div class="line">)</div>
 <div class="line">K = NumCatRVariable(</div>
-<div class="line">       node_id=<span class="stringliteral">&quot;K&quot;</span>, input_data=idata, distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">       node_id=<span class="stringliteral">&quot;K&quot;</span>, input_data=idata, marginal_distribution=<span class="keyword">lambda</span> x: 0.5</div>
 <div class="line">)</div>
 <div class="line">L = NumCatRVariable(</div>
-<div class="line">       node_id=<span class="stringliteral">&quot;L&quot;</span>, input_data=idata, distribution=<span class="keyword">lambda</span> x: 0.5</div>
+<div class="line">       node_id=<span class="stringliteral">&quot;L&quot;</span>, input_data=idata, marginal_distribution=<span class="keyword">lambda</span> x: 0.5</div>
 <div class="line">)</div>
 <div class="line"><span class="comment">#</span></div>
 <div class="line"><span class="comment">#  Cowell 2005, p. 110</span></div>
