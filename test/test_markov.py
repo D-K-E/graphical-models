@@ -29,16 +29,16 @@ class MarkovTest(unittest.TestCase):
 
         # misconception example
         self.A = NumCatRVariable(
-            node_id="A", input_data=idata["A"], distribution=lambda x: 0.5
+            node_id="A", input_data=idata["A"], marginal_distribution=lambda x: 0.5
         )
         self.B = NumCatRVariable(
-            node_id="B", input_data=idata["B"], distribution=lambda x: 0.5
+            node_id="B", input_data=idata["B"], marginal_distribution=lambda x: 0.5
         )
         self.C = NumCatRVariable(
-            node_id="C", input_data=idata["C"], distribution=lambda x: 0.5
+            node_id="C", input_data=idata["C"], marginal_distribution=lambda x: 0.5
         )
         self.D = NumCatRVariable(
-            node_id="D", input_data=idata["D"], distribution=lambda x: 0.5
+            node_id="D", input_data=idata["D"], marginal_distribution=lambda x: 0.5
         )
         self.AB = Edge(
             edge_id="AB",
@@ -144,20 +144,20 @@ class MarkovTest(unittest.TestCase):
         self.a = NumCatRVariable(
             node_id="a",
             input_data=idata["A"],
-            distribution=lambda x: 0.01 if x else 0.99,
+            marginal_distribution=lambda x: 0.01 if x else 0.99,
         )
         self.b = NumCatRVariable(
-            node_id="b", input_data=idata["B"], distribution=lambda x: 0.5
+            node_id="b", input_data=idata["B"], marginal_distribution=lambda x: 0.5
         )
         self.d = NumCatRVariable(
             node_id="d",
             input_data=idata["A"],
-            distribution=lambda x: 0.7468 if x else 0.2532,
+            marginal_distribution=lambda x: 0.7468 if x else 0.2532,
         )
         self.c = NumCatRVariable(
             node_id="c",
             input_data=idata["A"],
-            distribution=lambda x: 0.7312 if x else 0.2688,
+            marginal_distribution=lambda x: 0.7312 if x else 0.2688,
         )
         self.ab = Edge(
             "ab", start_node=self.a, end_node=self.b, edge_type=EdgeType.UNDIRECTED
@@ -182,16 +182,16 @@ class MarkovTest(unittest.TestCase):
         # Conditional Random Field test
         # from Koller, Friedman 2009, p. 144-145, example 4.20
         self.X_1 = NumCatRVariable(
-            node_id="X_1", input_data=idata["A"], distribution=lambda x: 0.5
+            node_id="X_1", input_data=idata["A"], marginal_distribution=lambda x: 0.5
         )
         self.X_2 = NumCatRVariable(
-            node_id="X_2", input_data=idata["A"], distribution=lambda x: 0.5
+            node_id="X_2", input_data=idata["A"], marginal_distribution=lambda x: 0.5
         )
         self.X_3 = NumCatRVariable(
-            node_id="X_3", input_data=idata["A"], distribution=lambda x: 0.5
+            node_id="X_3", input_data=idata["A"], marginal_distribution=lambda x: 0.5
         )
         self.Y_1 = NumCatRVariable(
-            node_id="Y_1", input_data=idata["A"], distribution=lambda x: 0.5
+            node_id="Y_1", input_data=idata["A"], marginal_distribution=lambda x: 0.5
         )
         self.X1_Y1 = Edge(
             edge_id="X1_Y1",

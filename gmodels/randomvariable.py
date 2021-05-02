@@ -73,13 +73,15 @@ class CatRandomVariable(RandomVariable):
         node_id: str,
         input_data: Dict[str, Any],
         f: Callable[[Outcome], Value] = lambda x: x,
-        distribution: Callable[[Value], float] = lambda x: 1.0,
+        marginal_distribution: Callable[[Value], float] = lambda x: 1.0,
     ):
         """!
         \brief Constructor for categorical/discrete random variable
 
-        \param distribution a function that takes in a value from codomain of
-        the random variable and outputs a value in the range [0,1].
+        \param marginal_distribution a function that takes in a value from
+        codomain of the random variable and outputs a value in the range [0,1].
+        Notice that is not a local distribution, it should be the marginal
+        distribution that is independent of local structure.
 
         \throws ValueError We raise a value error if the probability values
         associated to outcomes add up to a value bigger than one.
@@ -111,7 +113,7 @@ class CatRandomVariable(RandomVariable):
         >>>    input_data=indata, 
         >>>    node_id="myrandomvar", 
         >>>    f=grade_f,
-        >>>    distribution=grade_distribution
+        >>>    marginal_distribution=grade_distribution
         >>> )
 
         \endcode
@@ -124,10 +126,10 @@ class CatRandomVariable(RandomVariable):
             )
         super().__init__(node_id=node_id, data=data, f=f)
         if "outcome-values" in data:
-            psum = sum(list(map(distribution, data["outcome-values"])))
+            psum = sum(list(map(marginal_distribution, data["outcome-values"])))
             if psum > 1 and psum < 0:
                 raise ValueError("probability sum bigger than 1 or smaller than 0")
-        self.dist = distribution
+        self.dist = marginal_distribution
 
     def p_x(self, value: Value) -> float:
         """!
@@ -179,7 +181,7 @@ class CatRandomVariable(RandomVariable):
         >>>    input_data=indata, 
         >>>    node_id="myrandomvar", 
         >>>    f=grade_f,
-        >>>    distribution=grade_distribution
+        >>>    marginal_distribution=grade_distribution
         >>> )
         >>> rvar.values()
         >>> frozenset(["A", "F"])
@@ -222,7 +224,7 @@ class CatRandomVariable(RandomVariable):
         >>>    input_data=indata, 
         >>>    node_id="myrandomvar", 
         >>>    f=grade_f,
-        >>>    distribution=grade_distribution
+        >>>    marginal_distribution=grade_distribution
         >>> )
         >>> rvar.value_set(
         >>>         value_transform=lambda x: x.lower(),
@@ -256,7 +258,7 @@ class NumCatRVariable(CatRandomVariable):
         node_id: str,
         input_data: Dict[str, Outcome],
         f: Callable[[Outcome], NumericValue] = lambda x: x,
-        distribution: Callable[[NumericValue], float] = lambda x: 1.0,
+        marginal_distribution: Callable[[NumericValue], float] = lambda x: 1.0,
     ):
         """!
         \brief constructor for Numeric Categorical Random Variable
@@ -287,13 +289,16 @@ class NumCatRVariable(CatRandomVariable):
         >>> intelligence = NumCatRVariable(
         >>>    node_id=nid1,
         >>>    input_data=input_data["intelligence"],
-        >>>    distribution=intelligence_dist,
+        >>>    marginal_distribution=intelligence_dist,
         >>> )
         \endcode
 
         """
         super().__init__(
-            node_id=node_id, input_data=input_data, f=f, distribution=distribution
+            node_id=node_id,
+            input_data=input_data,
+            f=f,
+            marginal_distribution=marginal_distribution,
         )
 
     @staticmethod
@@ -814,7 +819,7 @@ class NumCatRVariable(CatRandomVariable):
 
     def mk_new_rvar(self, phi: Callable[[float], float]):
         """!
-        make a new random variable from given function
+        make a new random variable from given function with same distribution
         """
         return NumCatRVariable(
             node_id=str(uuid4()), f=phi, input_data=self.data(), distribution=self.dist,

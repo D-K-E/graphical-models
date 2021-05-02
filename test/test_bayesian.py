@@ -10,6 +10,7 @@ from gmodels.randomvariable import NumCatRVariable
 from uuid import uuid4
 
 import unittest
+import pdb
 
 
 class BayesianNetworkTest(unittest.TestCase):
@@ -30,17 +31,17 @@ class BayesianNetworkTest(unittest.TestCase):
         self.rain = NumCatRVariable(
             input_data=idata["rain"],
             node_id="rain",
-            distribution=lambda x: 0.2 if x is True else 0.8,
+            marginal_distribution=lambda x: 0.2 if x is True else 0.8,
         )
         self.sprink = NumCatRVariable(
             node_id="sprink",
             input_data=idata["sprink"],
-            distribution=lambda x: 0.6 if x is True else 0.4,
+            marginal_distribution=lambda x: 0.6 if x is True else 0.4,
         )
         self.wet = NumCatRVariable(
             node_id="wet",
             input_data=idata["wet"],
-            distribution=lambda x: 0.7 if x is True else 0.3,
+            marginal_distribution=lambda x: 0.7 if x is True else 0.3,
         )
         self.rain_wet = Edge(
             edge_id="rain_wet",
@@ -75,8 +76,8 @@ class BayesianNetworkTest(unittest.TestCase):
             else:
                 raise ValueError("unknown product")
 
-        self.rain_sprink_f = Factor.from_conditional_vars(
-            X_i=self.sprink, Pa_Xi=set([self.rain]), fn=sprink_rain_factor
+        self.rain_sprink_f = Factor.from_scope_variables_with_fn(
+            svars=set([self.rain, self.sprink]), fn=sprink_rain_factor
         )
 
         def grass_wet_factor(scope_product):
@@ -101,8 +102,8 @@ class BayesianNetworkTest(unittest.TestCase):
             else:
                 raise ValueError("unknown product")
 
-        self.grass_wet_f = Factor.from_conditional_vars(
-            X_i=self.wet, Pa_Xi=set([self.rain, self.sprink]), fn=grass_wet_factor
+        self.grass_wet_f = Factor.from_scope_variables_with_fn(
+            svars=set([self.rain, self.sprink, self.wet]), fn=grass_wet_factor
         )
 
         self.bayes = BayesianNetwork(
@@ -122,17 +123,17 @@ class BayesianNetworkTest(unittest.TestCase):
         self.EarthquakeN = NumCatRVariable(
             input_data=idata["earthquake"],
             node_id="EarthquakeN",
-            distribution=lambda x: 0.1 if x is True else 0.9,
+            marginal_distribution=lambda x: 0.1 if x is True else 0.9,
         )
         self.BurglaryN = NumCatRVariable(
             input_data=idata["burglary"],
             node_id="BurglaryN",
-            distribution=lambda x: 0.2 if x is True else 0.8,
+            marginal_distribution=lambda x: 0.2 if x is True else 0.8,
         )
         self.AlarmN = NumCatRVariable(
             input_data=idata["alarm"],
             node_id="AlarmN",
-            distribution=lambda x: 0.2442 if x is True else 0.7558,
+            marginal_distribution=lambda x: 0.2442 if x is True else 0.7558,
         )
         self.burglar_alarm = Edge(
             edge_id="burglar_alarm",
@@ -150,16 +151,16 @@ class BayesianNetworkTest(unittest.TestCase):
         idata = {"outcome-values": [True, False]}
 
         self.C = NumCatRVariable(
-            node_id="C", input_data=idata, distribution=lambda x: 0.5
+            node_id="C", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.E = NumCatRVariable(
-            node_id="E", input_data=idata, distribution=lambda x: 0.5
+            node_id="E", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.F = NumCatRVariable(
-            node_id="F", input_data=idata, distribution=lambda x: 0.5
+            node_id="F", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.D = NumCatRVariable(
-            node_id="D", input_data=idata, distribution=lambda x: 0.5
+            node_id="D", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.CE = Edge(
             edge_id="CE",
@@ -263,6 +264,96 @@ class BayesianNetworkTest(unittest.TestCase):
             ff = round(probs.phi(pss), 4)
             if set([("E", True)]) == pss:
                 self.assertEqual(ff, 0.774)
+
+    def test_from_digraph_with_factors(self):
+        """!
+        Values from Darwiche 2009, p. 132, figure 6.4
+        """
+        A = NumCatRVariable(
+            "A",
+            input_data={"outcome-values": [True, False]},
+            marginal_distribution=lambda x: 0.6 if x else 0.4,
+        )
+        B = NumCatRVariable(
+            "B",
+            input_data={"outcome-values": [True, False]},
+            marginal_distribution=lambda x: 0.62 if x else 0.38,
+        )
+        C = NumCatRVariable(
+            "C",
+            input_data={"outcome-values": [True, False]},
+            marginal_distribution=lambda x: 0.624 if x else 0.376,
+        )
+        AB_Edge = Edge(
+            edge_id="ab_edge", start_node=A, end_node=B, edge_type=EdgeType.DIRECTED,
+        )
+        BC_Edge = Edge(
+            edge_id="bc_edge", start_node=B, end_node=C, edge_type=EdgeType.DIRECTED,
+        )
+
+        def phi_a(scope_product):
+            ""
+            ss = set(scope_product)
+            if ss == set([("A", True)]):
+                return 0.6
+            elif ss == set([("A", False)]):
+                return 0.4
+            else:
+                raise ValueError("unknown argument")
+
+        def phi_ab(scope_product):
+            ss = set(scope_product)
+            if ss == set([("A", True), ("B", True)]):
+                return 0.9
+            elif ss == set([("A", True), ("B", False)]):
+                return 0.1
+            elif ss == set([("A", False), ("B", True)]):
+                return 0.2
+            elif ss == set([("A", False), ("B", False)]):
+                return 0.8
+            else:
+                raise ValueError("unknown argument")
+
+        def phi_bc(scope_product):
+            ss = set(scope_product)
+            if ss == set([("C", True), ("B", True)]):
+                return 0.3
+            elif ss == set([("C", True), ("B", False)]):
+                return 0.5
+            elif ss == set([("C", False), ("B", True)]):
+                return 0.7
+            elif ss == set([("C", False), ("B", False)]):
+                return 0.5
+            else:
+                raise ValueError("unknown argument")
+
+        A_f = Factor(gid="A_f", scope_vars=set([A]), factor_fn=phi_a)
+        AB_f = Factor(gid="AB_f", scope_vars=set([A, B]), factor_fn=phi_ab)
+        BC_f = Factor(gid="BC_f", scope_vars=set([C, B]), factor_fn=phi_bc)
+        dig = DiGraph(gid="temp", nodes=set([A, B, C]), edges=set([AB_Edge, BC_Edge]))
+        factors = set([A_f, AB_f, BC_f])
+        bn = BayesianNetwork(
+            gid="temp",
+            nodes=set([A, B, C]),
+            edges=set([AB_Edge, BC_Edge]),
+            factors=set([A_f, AB_f, BC_f]),
+        )
+        q = set([B])
+        evidence = set([])
+        foo, a = bn.cond_prod_by_variable_elimination(queries=q, evidences=evidence)
+        bayes = BayesianNetwork.from_digraph(dig, factors)
+        foo2, a2 = bayes.cond_prod_by_variable_elimination(
+            queries=q, evidences=evidence
+        )
+        f1 = set([("B", False)])
+        self.assertEqual(foo.phi(f1), foo2.phi(f1))
+        f1 = set([("B", True)])
+        self.assertEqual(foo.phi(f1), foo2.phi(f1))
+
+    @unittest.skip("Factor.from_conditional_vars not yet implemented")
+    def test_deduce_factors_from_digraph(self):
+        ""
+        pass
 
 
 if __name__ == "__main__":

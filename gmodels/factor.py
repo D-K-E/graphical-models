@@ -9,6 +9,7 @@ from gmodels.randomvariable import NumCatRVariable, NumericValue
 
 from typing import Set, Callable, Optional, List, Union, Tuple, FrozenSet
 from itertools import product, combinations
+from functools import reduce as freduce
 from uuid import uuid4
 from pprint import pprint
 
@@ -43,22 +44,22 @@ class Factor(GraphObject):
         >>> Af = NumCatRVariable(
         >>>         node_id="A", 
         >>>         input_data={"outcome-values": [10, 50]},
-        >>>         distribution=lambda x: 0.5,
+        >>>         marginal_distribution=lambda x: 0.5,
         >>>      )
         >>> Bf = NumCatRVariable(
         >>>         node_id="B",
         >>>         input_data={"outcome-values": [10, 50]},
-        >>>         distribution=lambda x: 0.5,
+        >>>         marginal_distribution=lambda x: 0.5,
         >>>     )
         >>> Cf = NumCatRVariable(
         >>>    node_id="C",
         >>>    input_data={"outcome-values": [10, 50]},
-        >>>    distribution=lambda x: 0.5,
+        >>>    marginal_distribution=lambda x: 0.5,
         >>> )
         >>> Df = NumCatRVariable(
         >>>    node_id="D",
         >>>    input_data={"outcome-values": [10, 50]},
-        >>>    distribution=lambda x: 0.5,
+        >>>    marginal_distribution=lambda x: 0.5,
         >>> )
            
         >>> def phiAB(scope_product):
@@ -121,7 +122,7 @@ class Factor(GraphObject):
 
         >>> A = NumCatRVariable("A",
         >>>                     input_data={"outcome-values": [True, False]},
-        >>>                     distribution=lambda x: 0.5)
+        >>>                     marginal_distribution=lambda x: 0.5)
         >>> fac = Factor(gid=str(uuid4()), scope_vars=set([A]))
         >>> fac.scope_vars(f=lambda x: set([(x,x)]))
         >>> set([(A, A)])
@@ -144,10 +145,10 @@ class Factor(GraphObject):
 
         >>> A = NumCatRVariable("A",
         >>>                     input_data={"outcome-values": [True, False]},
-        >>>                     distribution=lambda x: 0.5)
+        >>>                     marginal_distribution=lambda x: 0.5)
         >>> B = NumCatRVariable("B",
         >>>                     input_data={"outcome-values": [True, False]},
-        >>>                     distribution=lambda x: 0.5)
+        >>>                     marginal_distribution=lambda x: 0.5)
 
 
         >>> fac = Factor.from_joint_vars(svars=set([A, B]))
@@ -157,64 +158,15 @@ class Factor(GraphObject):
         return Factor(gid=str(uuid4()), scope_vars=svars)
 
     @classmethod
-    def from_conditional_vars(
+    def from_scope_variables_with_fn(
         cls,
-        X_i: NumCatRVariable,
-        Pa_Xi: Set[NumCatRVariable],
-        fn: Optional[Callable[[Set[Tuple[str, NumericValue]]], float]] = None,
+        svars: Set[NumCatRVariable],
+        fn: Callable[[Set[Tuple[str, NumericValue]]], float],
     ):
         """!
-        \brief Make factor from joint variables
-
-        We assume that given random variables are conditionally related. We
-        simply assume the following factorization between given variables:
-        \f$ P(X_i | Pa_{X_i}) \f$ which decomposes as 
-        \f$ P(X_i | (X_1, X_2, X_3, \dots, X_j)\f$ where 
-        \f${X_1, X_2, \dots, X_j} = Pa_{X_i}\f$
-
-        Basically we take the marginal product of parents and use the bayes
-        rule to output the final probability value of the expression. See
-        Koller, Friedman 2009, p. 46 - 47 on conditional parametrization and p.
-        62 for factorization of conditionally parametrized structures.
-
-        \param X_i main variable
-        \param Pa_Xi parent variables of the main variable
-        \param fn factor function that defines the factor between parent and child
-
-        \code
-
-        >>> A = NumCatRVariable("A",
-        >>>                     input_data={"outcome-values": [True, False]},
-        >>>                     distribution=lambda x: 0.5)
-
-        >>> B = NumCatRVariable("B",
-        >>>                     input_data={"outcome-values": [True, False]},
-        >>>                     distribution=lambda x: 0.5)
-
-        >>> C = NumCatRVariable("C",
-        >>>                     input_data={"outcome-values": [True, False]},
-        >>>                     distribution=lambda x: 0.5)
-
-        >>> fac = Factor.from_conditional_vars(X_i=A, Pa_Xi=set([B,C]))
-
-        \endcode
+        \brief Make a factor from scope variables and a preference function
         """
-        Pa_Xs = 1.0
-        for p in Pa_Xi:
-            Pa_Xs *= p.P_X_e()
-
-        X_i_PaXi = X_i.P_X_e() * Pa_Xs
-
-        def fx(scope_product: Set[Tuple[str, NumericValue]]) -> float:
-            return X_i_PaXi / Pa_Xs
-
-        if fn is None:
-            ff = fx
-        else:
-            ff = fn
-
-        Pa_Xi.add(X_i)
-        return Factor(gid=str(uuid4()), scope_vars=Pa_Xi, factor_fn=ff)
+        return Factor(gid=str(uuid4()), scope_vars=svars, factor_fn=fn)
 
     @classmethod
     def fdomain(
@@ -238,11 +190,11 @@ class Factor(GraphObject):
 
         >>> A = NumCatRVariable("A",
         >>>                     input_data={"outcome-values": [True, False]},
-        >>>                     distribution=lambda x: 0.5)
+        >>>                     marginal_distribution=lambda x: 0.5)
 
         >>> B = NumCatRVariable("B",
         >>>                     input_data={"outcome-values": [True, False]},
-        >>>                     distribution=lambda x: 0.5)
+        >>>                     marginal_distribution=lambda x: 0.5)
 
         >>> D = set([A,B])
 
@@ -280,11 +232,11 @@ class Factor(GraphObject):
 
         >>> A = NumCatRVariable("A",
         >>>                     input_data={"outcome-values": [True, False]},
-        >>>                     distribution=lambda x: 0.5)
+        >>>                     marginal_distribution=lambda x: 0.5)
 
         >>> B = NumCatRVariable("B",
         >>>                     input_data={"outcome-values": [True, False]},
-        >>>                     distribution=lambda x: 0.5)
+        >>>                     marginal_distribution=lambda x: 0.5)
 
         >>> D = set([A,B])
 
@@ -383,12 +335,12 @@ class Factor(GraphObject):
         >>> Af = NumCatRVariable(
         >>>    node_id="A",
         >>>    input_data={"outcome-values": [10, 50]},
-        >>>    distribution=lambda x: 0.5,
+        >>>    marginal_distribution=lambda x: 0.5,
         >>> )
         >>> Bf = NumCatRVariable(
         >>>    node_id="B",
         >>>    input_data={"outcome-values": [10, 50]},
-        >>>    distribution=lambda x: 0.5,
+        >>>    marginal_distribution=lambda x: 0.5,
         >>> )
         >>>
         >>> def phiAB(scope_product):
@@ -469,11 +421,11 @@ class Factor(GraphObject):
         \code
         >>> A = NumCatRVariable("A",
         >>>                     input_data={"outcome-values": [True, False]},
-        >>>                     distribution=lambda x: 0.5)
+        >>>                     marginal_distribution=lambda x: 0.5)
 
         >>> B = NumCatRVariable("B",
         >>>                     input_data={"outcome-values": [True, False]},
-        >>>                     distribution=lambda x: 0.5)
+        >>>                     marginal_distribution=lambda x: 0.5)
 
         >>> fac = Factor.from_joint_vars(svars=set([A, B]))
         >>> fac.phi(scope_product=set([("A", True), ("B", True)]))
@@ -544,12 +496,12 @@ class Factor(GraphObject):
         >>> Bf = NumCatRVariable(
         >>>     node_id="B",
         >>>     input_data={"outcome-values": [10, 50]},
-        >>>     distribution=lambda x: 0.5,
+        >>>     marginal_distribution=lambda x: 0.5,
         >>> )
         >>> Cf = NumCatRVariable(
         >>>     node_id="C",
         >>>     input_data={"outcome-values": [10, 50]},
-        >>>     distribution=lambda x: 0.5,
+        >>>     marginal_distribution=lambda x: 0.5,
         >>> )
         >>> def phibc(scope_product):
         >>>     ""
@@ -589,12 +541,12 @@ class Factor(GraphObject):
         >>> Bf = NumCatRVariable(
         >>>     node_id="B",
         >>>     input_data={"outcome-values": [10, 50]},
-        >>>     distribution=lambda x: 0.5,
+        >>>     marginal_distribution=lambda x: 0.5,
         >>> )
         >>> Cf = NumCatRVariable(
         >>>     node_id="C",
         >>>     input_data={"outcome-values": [10, 50]},
-        >>>     distribution=lambda x: 0.5,
+        >>>     marginal_distribution=lambda x: 0.5,
         >>> )
         >>> def phibc(scope_product):
         >>>     ""
@@ -651,15 +603,17 @@ class Factor(GraphObject):
         >>> intelligence = NumCatRVariable(
         >>>     node_id="int",
         >>>     input_data=input_data["intelligence"],
-        >>>     distribution=intelligence_dist,
+        >>>     marginal_distribution=intelligence_dist,
         >>> )
         >>> 
         >>> grade = NumCatRVariable(
-        >>>     node_id=nid2, input_data=input_data["grade"], distribution=grade_dist
+        >>>     node_id=nid2, input_data=input_data["grade"],
+        >>>     marginal_distribution=grade_dist
         >>> )
         >>> 
         >>> dice = NumCatRVariable(
-        >>>    node_id=nid3, input_data=input_data["dice"], distribution=fair_dice_dist
+        >>>    node_id=nid3, input_data=input_data["dice"],
+        >>>    marginal_distribution=fair_dice_dist
         >>> )
         >>> 
         >>> f = Factor(

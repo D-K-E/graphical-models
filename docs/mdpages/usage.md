@@ -28,13 +28,13 @@ idata = {
             "c": {"outcome-values": [True, False]},
         }
 a = NumCatRVariable(
-            node_id="a", input_data=idata["a"], distribution=lambda x: 0.6 if x else 0.4
+            node_id="a", input_data=idata["a"], marginal_distribution=lambda x: 0.6 if x else 0.4
         )
 b = NumCatRVariable(
-    node_id="b", input_data=idata["b"], distribution=lambda x: 0.5 if x else 0.5
+    node_id="b", input_data=idata["b"], marginal_distribution=lambda x: 0.5 if x else 0.5
 )
 c = NumCatRVariable(
-    node_id="c", input_data=idata["c"], distribution=lambda x: 0.5 if x else 0.5
+    node_id="c", input_data=idata["c"], marginal_distribution=lambda x: 0.5 if x else 0.5
 )
 ab = Edge(
     edge_id="ab",
@@ -130,16 +130,16 @@ idata = {
                                                                    
 # misconception example
 A = NumCatRVariable(
-    node_id="A", input_data=idata["A"], distribution=lambda x: 0.5
+    node_id="A", input_data=idata["A"], marginal_distribution=lambda x: 0.5
 )
 B = NumCatRVariable(
-    node_id="B", input_data=idata["B"], distribution=lambda x: 0.5
+    node_id="B", input_data=idata["B"], marginal_distribution=lambda x: 0.5
 )
 C = NumCatRVariable(
-    node_id="C", input_data=idata["C"], distribution=lambda x: 0.5
+    node_id="C", input_data=idata["C"], marginal_distribution=lambda x: 0.5
 )
 D = NumCatRVariable(
-    node_id="D", input_data=idata["D"], distribution=lambda x: 0.5
+    node_id="D", input_data=idata["D"], marginal_distribution=lambda x: 0.5
 )
 AB = Edge(
     edge_id="AB",
@@ -270,16 +270,16 @@ idata = {"A": {"outcome-values": [True, False]}}
 
 # from Koller, Friedman 2009, p. 144-145, example 4.20
 X_1 = NumCatRVariable(
-    node_id="X_1", input_data=idata["A"], distribution=lambda x: 0.5
+    node_id="X_1", input_data=idata["A"], marginal_distribution=lambda x: 0.5
 )
 X_2 = NumCatRVariable(
-    node_id="X_2", input_data=idata["A"], distribution=lambda x: 0.5
+    node_id="X_2", input_data=idata["A"], marginal_distribution=lambda x: 0.5
 )
 X_3 = NumCatRVariable(
-    node_id="X_3", input_data=idata["A"], distribution=lambda x: 0.5
+    node_id="X_3", input_data=idata["A"], marginal_distribution=lambda x: 0.5
 )
 Y_1 = NumCatRVariable(
-    node_id="Y_1", input_data=idata["A"], distribution=lambda x: 0.5
+    node_id="Y_1", input_data=idata["A"], marginal_distribution=lambda x: 0.5
 )
 X1_Y1 = Edge(
    edge_id="X1_Y1",
@@ -400,37 +400,37 @@ from gmodels.randomvariable import NumCatRVariable
 
 idata = {"outcome-values": [True, False]}
 A = NumCatRVariable(
-       node_id="A", input_data=idata, distribution=lambda x: 0.5
+       node_id="A", input_data=idata, marginal_distribution=lambda x: 0.5
 )
 B = NumCatRVariable(
-       node_id="B", input_data=idata, distribution=lambda x: 0.5
+       node_id="B", input_data=idata, marginal_distribution=lambda x: 0.5
 )
 C = NumCatRVariable(
-       node_id="C", input_data=idata, distribution=lambda x: 0.5
+       node_id="C", input_data=idata, marginal_distribution=lambda x: 0.5
 )
 D = NumCatRVariable(
-       node_id="D", input_data=idata, distribution=lambda x: 0.5
+       node_id="D", input_data=idata, marginal_distribution=lambda x: 0.5
 )
 E = NumCatRVariable(
-       node_id="E", input_data=idata, distribution=lambda x: 0.5
+       node_id="E", input_data=idata, marginal_distribution=lambda x: 0.5
 )
 F = NumCatRVariable(
-       node_id="F", input_data=idata, distribution=lambda x: 0.5
+       node_id="F", input_data=idata, marginal_distribution=lambda x: 0.5
 )
 G = NumCatRVariable(
-       node_id="G", input_data=idata, distribution=lambda x: 0.5
+       node_id="G", input_data=idata, marginal_distribution=lambda x: 0.5
 )
 H = NumCatRVariable(
-       node_id="H", input_data=idata, distribution=lambda x: 0.5
+       node_id="H", input_data=idata, marginal_distribution=lambda x: 0.5
 )
 I = NumCatRVariable(
-       node_id="I", input_data=idata, distribution=lambda x: 0.5
+       node_id="I", input_data=idata, marginal_distribution=lambda x: 0.5
 )
 K = NumCatRVariable(
-       node_id="K", input_data=idata, distribution=lambda x: 0.5
+       node_id="K", input_data=idata, marginal_distribution=lambda x: 0.5
 )
 L = NumCatRVariable(
-       node_id="L", input_data=idata, distribution=lambda x: 0.5
+       node_id="L", input_data=idata, marginal_distribution=lambda x: 0.5
 )
 #
 #  Cowell 2005, p. 110
