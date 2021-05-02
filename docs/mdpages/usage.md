@@ -843,6 +843,13 @@ cowell = LWFChainGraph(
     factors=set([E_cf, EF_cf, DG_cf, A_cf, AB_cf, AC_cf, CDF_cf, IHB_cf, HBD_cf, 
         BD_cf])
 )
+evidences = set([("E", True), ("A", True), ("G", False)])
+
+final_factor, a = cowell.cond_prod_by_variable_elimination(
+    set([B]), evidences
+)
+
+round(final_factor.phi_normal(set([("B", True)])), 4)
+# 0.60
 
 \endcode
-

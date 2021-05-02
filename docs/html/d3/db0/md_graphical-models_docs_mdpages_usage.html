@@ -841,6 +841,14 @@ LWF Chain Graph Usage</h1>
 <div class="line">    factors=set([E_cf, EF_cf, DG_cf, A_cf, AB_cf, AC_cf, CDF_cf, IHB_cf, HBD_cf, </div>
 <div class="line">        BD_cf])</div>
 <div class="line">)</div>
+<div class="line">evidences = set([(<span class="stringliteral">&quot;E&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;A&quot;</span>, <span class="keyword">True</span>), (<span class="stringliteral">&quot;G&quot;</span>, <span class="keyword">False</span>)])</div>
+<div class="line"> </div>
+<div class="line">final_factor, a = cowell.cond_prod_by_variable_elimination(</div>
+<div class="line">    set([B]), evidences</div>
+<div class="line">)</div>
+<div class="line"> </div>
+<div class="line">round(final_factor.phi_normal(set([(<span class="stringliteral">&quot;B&quot;</span>, <span class="keyword">True</span>)])), 4)</div>
+<div class="line"><span class="comment"># 0.60</span></div>
 </div><!-- fragment --> </div></div><!-- contents -->
 </div><!-- PageDoc -->
 <div class="ttc" id="anamespacegmodels_1_1randomvariable_html"><div class="ttname"><a href="../../da/d3d/namespacegmodels_1_1randomvariable.html">gmodels.randomvariable</a></div><div class="ttdef"><b>Definition:</b> randomvariable.py:1</div></div>
