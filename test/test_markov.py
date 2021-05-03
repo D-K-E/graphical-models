@@ -27,7 +27,7 @@ class MarkovTest(unittest.TestCase):
             "D": {"outcome-values": [True, False]},
         }
 
-        # misconception example
+        # misconception example: Koller, Friedman, 2009 p. 104
         self.A = NumCatRVariable(
             node_id="A", input_data=idata["A"], marginal_distribution=lambda x: 0.5
         )
@@ -270,6 +270,31 @@ class MarkovTest(unittest.TestCase):
     def test_id(self):
         ""
         self.assertEqual(self.mnetwork.id(), "mnet")
+
+    def test_cond_prod_by_variable_elimination(self):
+        """
+        \brief compare values from Koller, Friedman, 2009 p. 108
+
+        """
+        query_vars = set([self.A, self.B])
+        prob, a = self.mnetwork.cond_prod_by_variable_elimination(
+            queries=query_vars, evidences=set()
+        )
+        q1 = set([("A", False), ("B", False)])
+        f1 = round(prob.phi_normal(q1), 3)
+        self.assertEqual(f1, 0.125)
+
+        q2 = set([("A", False), ("B", True)])
+        f2 = round(prob.phi_normal(q2), 2)
+        self.assertEqual(f2, 0.69)
+
+        q3 = set([("A", True), ("B", False)])
+        f3 = round(prob.phi_normal(q3), 2)
+        self.assertEqual(f3, 0.14)
+
+        q4 = set([("A", True), ("B", True)])
+        f4 = round(prob.phi_normal(q4), 2)
+        self.assertEqual(f4, 0.04)
 
     def test_from_undigraph(self):
         ""
