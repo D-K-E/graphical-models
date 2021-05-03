@@ -263,7 +263,8 @@ idata = {
     "D": {"outcome-values": [True, False]},
 }
                                                                    
-# misconception example
+# misconception example: Koller, Friedman, 2009 p. 104
+
 A = NumCatRVariable(
     node_id="A", input_data=idata["A"], marginal_distribution=lambda x: 0.5
 )
@@ -376,6 +377,11 @@ mnetwork = MarkovNetwork(
     edges=set([AB, AD, BC, DC]),
     factors=set([DA_f, CD_f, BC_f, AB_f]),
 )
+
+query_vars = set([A, B])
+q2 = set([("A", False), ("B", True)])
+round(prob.phi_normal(q2), 2)
+# 0.69
 
 \endcode
 

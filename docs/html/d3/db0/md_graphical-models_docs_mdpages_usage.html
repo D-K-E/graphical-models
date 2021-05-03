@@ -291,7 +291,8 @@ Markov Network Usage</h1>
 <div class="line">    <span class="stringliteral">&quot;D&quot;</span>: {<span class="stringliteral">&quot;outcome-values&quot;</span>: [<span class="keyword">True</span>, <span class="keyword">False</span>]},</div>
 <div class="line">}</div>
 <div class="line">                                                                   </div>
-<div class="line"><span class="comment"># misconception example</span></div>
+<div class="line"><span class="comment"># misconception example: Koller, Friedman, 2009 p. 104</span></div>
+<div class="line"> </div>
 <div class="line">A = NumCatRVariable(</div>
 <div class="line">    node_id=<span class="stringliteral">&quot;A&quot;</span>, input_data=idata[<span class="stringliteral">&quot;A&quot;</span>], marginal_distribution=<span class="keyword">lambda</span> x: 0.5</div>
 <div class="line">)</div>
@@ -404,6 +405,11 @@ Markov Network Usage</h1>
 <div class="line">    edges=set([AB, AD, BC, DC]),</div>
 <div class="line">    factors=set([DA_f, CD_f, BC_f, AB_f]),</div>
 <div class="line">)</div>
+<div class="line"> </div>
+<div class="line">query_vars = set([A, B])</div>
+<div class="line">q2 = set([(<span class="stringliteral">&quot;A&quot;</span>, <span class="keyword">False</span>), (<span class="stringliteral">&quot;B&quot;</span>, <span class="keyword">True</span>)])</div>
+<div class="line">round(prob.phi_normal(q2), 2)</div>
+<div class="line"><span class="comment"># 0.69</span></div>
 </div><!-- fragment --><h1><a class="anchor" id="autotoc_md24"></a>
 Conditional Random Fields (CRFs) Usage</h1>
 <p>Conditional random fields are defined by Koller, Friedman 2009 p. 143 as: </p><blockquote class="doxtable">
