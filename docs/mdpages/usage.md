@@ -127,20 +127,30 @@ Usage:
 
 \code{.py}
 
+# import necessary parts
+
+from gmodels.bayesian import BayesianNetwork
+from gmodels.gtypes.edge import Edge, EdgeType
+from gmodels.factor import Factor
+from gmodels.randomvariable import NumCatRVariable
+
+# data and nodes
 idata = {"outcome-values": [True, False]}
                                                               
 C = NumCatRVariable(
-    node_id="C", input_data=idata, distribution=lambda x: 0.5
+    node_id="C", input_data=idata, marginal_distribution=lambda x: 0.5
 )
 E = NumCatRVariable(
-    node_id="E", input_data=idata, distribution=lambda x: 0.5
+    node_id="E", input_data=idata, marginal_distribution=lambda x: 0.5
 )
 F = NumCatRVariable(
-    node_id="F", input_data=idata, distribution=lambda x: 0.5
+    node_id="F", input_data=idata, marginal_distribution=lambda x: 0.5
 )
 D = NumCatRVariable(
-    node_id="D", input_data=idata, distribution=lambda x: 0.5
+    node_id="D", input_data=idata, marginal_distribution=lambda x: 0.5
 )
+
+# edges
 CE = Edge(
   edge_id="CE",
   start_node=C,
@@ -159,11 +169,13 @@ EF = Edge(
     end_node=F,
     edge_type=EdgeType.DIRECTED,
 )
-                                                              
+
+# define factor functions
+
 def phi_c(scope_product):
     ss = set(scope_product)
-   if ss == set([("C", True)]):
-       return 0.8
+    if ss == set([("C", True)]):
+        return 0.8
     elif ss == set([("C", False)]):
         return 0.2
     else:
@@ -175,39 +187,41 @@ def phi_ec(scope_product):
         return 0.9
     elif ss == set([("C", True), ("E", False)]):
         return 0.1
-  elif ss == set([("C", False), ("E", True)]):
-      return 0.7
-  elif ss == set([("C", False), ("E", False)]):
-      return 0.3
-  else:
-       raise ValueError("scope product unknown")
+    elif ss == set([("C", False), ("E", True)]):
+        return 0.7
+    elif ss == set([("C", False), ("E", False)]):
+        return 0.3
+    else:
+        raise ValueError("scope product unknown")
                                                               
 def phi_fe(scope_product):
-  ss = set(scope_product)
-  if ss == set([("E", True), ("F", True)]):
-      return 0.9
-  elif ss == set([("E", True), ("F", False)]):
-      return 0.1
-  elif ss == set([("E", False), ("F", True)]):
+    ss = set(scope_product)
+    if ss == set([("E", True), ("F", True)]):
+        return 0.9
+    elif ss == set([("E", True), ("F", False)]):
+        return 0.1
+    elif ss == set([("E", False), ("F", True)]):
         return 0.5
     elif ss == set([("E", False), ("F", False)]):
         return 0.5
     else:
         raise ValueError("scope product unknown")
-                                                              
+                                            
 def phi_de(scope_product):
     ss = set(scope_product)
-  if ss == set([("E", True), ("D", True)]):
-      return 0.7
-  elif ss == set([("E", True), ("D", False)]):
-      return 0.3
-  elif ss == set([("E", False), ("D", True)]):
-      return 0.4
-  elif ss == set([("E", False), ("D", False)]):
-      return 0.6
-   else:
-       raise ValueError("scope product unknown")
-                                                              
+    if ss == set([("E", True), ("D", True)]):
+        return 0.7
+    elif ss == set([("E", True), ("D", False)]):
+        return 0.3
+    elif ss == set([("E", False), ("D", True)]):
+        return 0.4
+    elif ss == set([("E", False), ("D", False)]):
+        return 0.6
+    else:
+        raise ValueError("scope product unknown")
+
+
+# instantiate factors with given factor function and implied random variables                                                         
 CE_f = Factor(
     gid="CE_f", scope_vars=set([C, E]), factor_fn=phi_ec
 )
@@ -224,13 +238,13 @@ bayes_n = BayesianNetwork(
     edges=set([EF, CE, ED]),
     factors=set([C_f, DE_f, CE_f, FE_f]),
 )
-query_vars = set([self.E])
+query_vars = set([E])
 evidences = set([("F", True)])
-probs, alpha = self.bayes_n.cond_prod_by_variable_elimination(
+probs, alpha = bayes_n.cond_prod_by_variable_elimination(
     query_vars, evidences=evidences
 )
 query_value = set([("E", True)])
-round(probs.phi(pss), 4)
+round(probs.phi(query_value), 4)
 # 0.774
 
 \endcode
@@ -250,12 +264,13 @@ Usage:
 
 \code{.py}
 
+# import necessary packages
 from gmodels.markov import MarkovNetwork
 from gmodels.gtypes.edge import Edge, EdgeType
 from gmodels.factor import Factor
 from gmodels.randomvariable import NumCatRVariable
 
-
+# define data and random variable nodes
 idata = {
     "A": {"outcome-values": [True, False]},
     "B": {"outcome-values": [True, False]},
@@ -264,7 +279,7 @@ idata = {
 }
                                                                    
 # misconception example: Koller, Friedman, 2009 p. 104
-
+ 
 A = NumCatRVariable(
     node_id="A", input_data=idata["A"], marginal_distribution=lambda x: 0.5
 )
@@ -277,6 +292,8 @@ C = NumCatRVariable(
 D = NumCatRVariable(
     node_id="D", input_data=idata["D"], marginal_distribution=lambda x: 0.5
 )
+
+# define edges
 AB = Edge(
     edge_id="AB",
     edge_type=EdgeType.UNDIRECTED,
@@ -301,7 +318,9 @@ BC = Edge(
     start_node=B,
     end_node=C,
 )
-                                                                   
+
+# define factor functions
+
 def phi_AB(scope_product):
     ""
     ss = frozenset(scope_product)
@@ -357,7 +376,10 @@ def phi_DA(scope_product):
         return 100.0
     else:
         raise ValueError("product error")
-                                                                   
+
+# instantiate factors with factor functions and implied
+# random variables in scope 
+
 AB_f = Factor(
     gid="ab_f", scope_vars=set([A, B]), factor_fn=phi_AB
 )
@@ -370,15 +392,18 @@ CD_f = Factor(
 DA_f = Factor(
     gid="da_f", scope_vars=set([D, A]), factor_fn=phi_DA
 )
-                                                                   
+
+# instantiate markov network and make a query
 mnetwork = MarkovNetwork(
     gid="mnet",
     nodes=set([A, B, C, D]),
     edges=set([AB, AD, BC, DC]),
     factors=set([DA_f, CD_f, BC_f, AB_f]),
 )
-
-query_vars = set([A, B])
+ 
+queries = set([A, B])
+evidences = set()
+prob, a = mnetwork.cond_prod_by_variable_elimination(queries, evidences)
 q2 = set([("A", False), ("B", True)])
 round(prob.phi_normal(q2), 2)
 # 0.69
@@ -400,6 +425,7 @@ variables.
 Usage:
 \code{.py}
 
+# import necessary packages
 from gmodels.randomvariable import NumCatRVariable
 from gmodels.markov import ConditionalRandomField
 from gmodels.gtypes.edge import Edge, EdgeType
@@ -407,6 +433,7 @@ from gmodels.factor import Factor
 import math
 from random import choice
 
+# define data and nodes
 idata = {"A": {"outcome-values": [True, False]}}
 
 # from Koller, Friedman 2009, p. 144-145, example 4.20
@@ -422,6 +449,9 @@ X_3 = NumCatRVariable(
 Y_1 = NumCatRVariable(
     node_id="Y_1", input_data=idata["A"], marginal_distribution=lambda x: 0.5
 )
+
+# define edges
+
 X1_Y1 = Edge(
    edge_id="X1_Y1",
    edge_type=EdgeType.UNDIRECTED,
@@ -440,7 +470,9 @@ X3_Y1 = Edge(
   start_node=X_3,
   end_node=Y_1,
 )
-                                                                     
+
+# define factor functions
+
 def phi_X1_Y1(scope_product):
   ""
   w = 0.5
@@ -476,7 +508,8 @@ def phi_Y1(scope_product):
       return math.exp(1.0 * w)
   else:
       return math.exp(0.0)
-                                                                     
+
+# instantiate factors with factor functions and implied random variables
 X1_Y1_f = Factor(
     gid="x1_y1_f", scope_vars=set([X_1, Y_1]), factor_fn=phi_X1_Y1
 )
@@ -487,7 +520,9 @@ X3_Y1_f = Factor(
     gid="x3_y1_f", scope_vars=set([X_3, Y_1]), factor_fn=phi_X3_Y1
 )
 Y1_f = Factor(gid="y1_f", scope_vars=set([Y_1]), factor_fn=phi_Y1)
-                                                                     
+
+
+# Instantiate conditional random field and make a query
 crf_koller = ConditionalRandomField(
     "crf",
     observed_vars=set([X_1, X_2, X_3]),
@@ -496,7 +531,8 @@ crf_koller = ConditionalRandomField(
     factors=set([X1_Y1_f, X2_Y1_f, X3_Y1_f, Y1_f]),
 )
 evidence = set([("Y_1", False)])
-query = set(
+query_vars = set([X_1, X_2, X_3])
+query = frozenset(
     [
         ("X_1", choice([False, True])),
         ("X_2", choice([False, True])),
@@ -504,7 +540,7 @@ query = set(
     ]
 )
 foo1, a1 = crf_koller.cond_prod_by_variable_elimination(
-    queries=query, evidences=evidence
+    queries=query_vars, evidences=evidence
 )
 print(foo1.phi(query) == 1.0)
 # True
@@ -533,12 +569,14 @@ Usage:
 
 \code{.py}
 
+# import necessary packages
 from gmodels.lwfchain import LWFChainGraph
 from gmodels.gtypes.edge import Edge, EdgeType
 from gmodels.factor import Factor
 from gmodels.randomvariable import NumCatRVariable
 
 
+# define data and nodes
 idata = {"outcome-values": [True, False]}
 A = NumCatRVariable(
        node_id="A", input_data=idata, marginal_distribution=lambda x: 0.5
@@ -573,6 +611,8 @@ K = NumCatRVariable(
 L = NumCatRVariable(
        node_id="L", input_data=idata, marginal_distribution=lambda x: 0.5
 )
+
+# define edges
 #
 #  Cowell 2005, p. 110
 #
@@ -646,12 +686,11 @@ HI_c = Edge(
   end_node=I,
   edge_type=EdgeType.UNDIRECTED,
 )
-#
-# Factors
-#
+
+# define factor functions
+
 def phi_e(scope_product):
-    "Visit to Asia factor p(a)
-    "
+    "Visit to Asia factor p(a)"
     ss = set(scope_product)
     if ss == set([("E", True)]):
         return 0.01
@@ -659,8 +698,6 @@ def phi_e(scope_product):
         return 0.99
     else:
         raise ValueError("Unknown scope product")
-
-E_cf = Factor(gid="E_cf", scope_vars=set([E]), factor_fn=phi_e)
 
 def phi_fe(scope_product):
     "Tuberculosis | Visit to Asia factor p(t,a)"
@@ -676,9 +713,6 @@ def phi_fe(scope_product):
     else:
         raise ValueError("Unknown scope product")
 
-EF_cf = Factor(
-    gid="EF_cf", scope_vars=set([E, F]), factor_fn=phi_fe
-)
 
 def phi_dg(scope_product):
     "either tuberculosis or lung cancer | x ray p(e,x)"
@@ -694,10 +728,6 @@ def phi_dg(scope_product):
     else:
         raise ValueError("Unknown scope product")
 
-DG_cf = Factor(
-    gid="DG_cf", scope_vars=set([D, G]), factor_fn=phi_dg
-)
-
 def phi_a(scope_product):
     "smoke factor p(s)"
     ss = set(scope_product)
@@ -708,7 +738,6 @@ def phi_a(scope_product):
     else:
         raise ValueError("Unknown scope product")
 
-A_cf = Factor(gid="A_cf", scope_vars=set([A]), factor_fn=phi_a)
 
 def phi_ab(scope_product):
     "smoke given bronchitis p(s,b)"
@@ -724,9 +753,6 @@ def phi_ab(scope_product):
     else:
         raise ValueError("Unknown scope product")
 
-AB_cf = Factor(
-    gid="AB_cf", scope_vars=set([A, B]), factor_fn=phi_ab
-)
 
 def phi_ac(scope_product):
     "lung cancer given smoke p(s,l)"
@@ -742,9 +768,6 @@ def phi_ac(scope_product):
     else:
         raise ValueError("Unknown scope product")
 
-AC_cf = Factor(
-    gid="AC_cf", scope_vars=set([A, C]), factor_fn=phi_ac
-)
 
 def phi_cdf(scope_product):
     "either tuberculosis or lung given lung cancer and tuberculosis p(e, l, t)"
@@ -768,9 +791,6 @@ def phi_cdf(scope_product):
     else:
         raise ValueError("Unknown scope product")
 
-CDF_cf = Factor(
-    gid="CDF_cf", scope_vars=set([D, C, F]), factor_fn=phi_cdf
-)
 
 def phi_ihb(scope_product):
     "cough, dyspnoea, bronchitis I, H, B p(c,d,b)"
@@ -794,9 +814,6 @@ def phi_ihb(scope_product):
     else:
         raise ValueError("Unknown scope product")
 
-IHB_cf = Factor(
-    gid="IHB_cf", scope_vars=set([H, I, B]), factor_fn=phi_ihb
-)
 
 def phi_hbd(scope_product):
     "cough, either tuberculosis or lung cancer, bronchitis D, H, B p(c,b,e)"
@@ -820,9 +837,6 @@ def phi_hbd(scope_product):
     else:
         raise ValueError("Unknown scope product")
 
-HBD_cf = Factor(
-    gid="HBD_cf", scope_vars=set([H, D, B]), factor_fn=phi_hbd
-)
 
 def phi_bd(scope_product):
     "bronchitis, either tuberculosis or lung cancer B, D p(b,e)"
@@ -838,16 +852,47 @@ def phi_bd(scope_product):
     else:
         raise ValueError("Unknown scope product")
 
+# instantiate factors with factor functions and implied random 
+# variables in scope
+
+E_cf = Factor(gid="E_cf", scope_vars=set([E]), factor_fn=phi_e)
+EF_cf = Factor(
+    gid="EF_cf", scope_vars=set([E, F]), factor_fn=phi_fe
+)
+DG_cf = Factor(
+    gid="DG_cf", scope_vars=set([D, G]), factor_fn=phi_dg
+)
+A_cf = Factor(gid="A_cf", scope_vars=set([A]), factor_fn=phi_a)
+AB_cf = Factor(
+    gid="AB_cf", scope_vars=set([A, B]), factor_fn=phi_ab
+)
+AC_cf = Factor(
+    gid="AC_cf", scope_vars=set([A, C]), factor_fn=phi_ac
+)
+CDF_cf = Factor(
+    gid="CDF_cf", scope_vars=set([D, C, F]), factor_fn=phi_cdf
+)
+
+IHB_cf = Factor(
+    gid="IHB_cf", scope_vars=set([H, I, B]), factor_fn=phi_ihb
+)
+
+HBD_cf = Factor(
+    gid="HBD_cf", scope_vars=set([H, D, B]), factor_fn=phi_hbd
+)
 BD_cf = Factor(
     gid="BD_cf", scope_vars=set([D, B]), factor_fn=phi_bd
 )
 
+
+# instantiate lwf chain graph and make a query
 cowell = LWFChainGraph(
     gid="cowell",
     nodes=set([A, B, C, D, E, F, G, H, I]),
-    edges=set([AB_c, AC_c, CD_c, EF_c, FD_c, DG_c, DH_c, BH_c, BI_c, HI_c]),
-    factors=set([E_cf, EF_cf, DG_cf, A_cf, AB_cf, AC_cf, CDF_cf, IHB_cf, HBD_cf, 
-        BD_cf])
+    edges=set([AB_c, AC_c, CD_c, EF_c, FD_c, 
+        DG_c, DH_c, BH_c, BI_c, HI_c]),
+    factors=set([E_cf, EF_cf, DG_cf, A_cf, AB_cf, 
+        AC_cf, CDF_cf, IHB_cf, HBD_cf, BD_cf])
 )
 evidences = set([("E", True), ("A", True), ("G", False)])
 
