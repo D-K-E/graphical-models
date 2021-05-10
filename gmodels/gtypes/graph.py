@@ -99,6 +99,30 @@ class Graph(GraphObject):
         See \see Graph for more information
 
         We obtain nodes from edges then pass them to graph constructor.
+
+        \code{.py}
+
+        n1 = Node("n1", {})
+        n2 = Node("n2", {})
+        n3 = Node("n3", {})
+        n4 = Node("n4", {})
+        e1 = Edge(
+            "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
+        )
+        e2 = Edge(
+            "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
+        )
+        e3 = Edge(
+            "e3", start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED
+        )
+        e4 = Edge(
+            "e4", start_node=n1, end_node=n4, edge_type=EdgeType.UNDIRECTED
+        )
+
+        eset = set([e1, e2, e3, e4])
+
+        g = Graph.from_edgeset(eset)
+        \endcode
         """
         nodes: Set[Node] = set()
         for e in edges:
@@ -225,6 +249,20 @@ class Graph(GraphObject):
         """!
         \brief Check if graph has a self loop.
         We check whether the incident vertices of an edge is same.
+
+        \code{.py}
+        n1 = Node("n1", {})
+        n2 = Node("n2", {})
+        e1 = Edge(
+            "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
+        )
+        e2 = Edge(
+            "e1", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED
+        )
+        g = Graph("graph", nodes=set([n1, n2]), edges=set([e1, e2]))
+        g.has_self_loop()
+        # True
+        \endcode
         """
         for edge in self.edges():
             if edge.start() == edge.end():
@@ -398,6 +436,16 @@ class Graph(GraphObject):
         \brief Obtain vertices of the graph
 
         \throws ValueError if node set is empty for the graph
+
+        \code{.py}
+        n1 = Node("n1", {})
+        n2 = Node("n2", {})
+        e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
+        g = Graph("graph", nodes=set([n1, n2]), edges=set([e1]))
+        g.V
+        # {"n1": Node, "n2": Node}
+
+        \endcode
         """
         if self._nodes is None:
             raise ValueError("Nodes are None for this graph")
@@ -408,6 +456,17 @@ class Graph(GraphObject):
         """!
         \brief obtain edges of the graph
         \throws ValueError if edge set is empty for the graph.
+
+        \code{.py}
+        n1 = Node("n1", {})
+        n2 = Node("n2", {})
+        e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
+        g = Graph("graph", nodes=set([n1, n2]), edges=set([e1]))
+        g.E
+        # {"e1": Edge}
+
+        \endcode
+
         """
         if self._edges is None:
             raise ValueError("Edges are None for this graph")
@@ -492,6 +551,19 @@ class Graph(GraphObject):
 
         \param n node We check if this node is an endvertex of the edge.
         \param e The queried edge.
+
+        \code{.py}
+
+        >>> n1 = Node("n1", {})
+        >>> n2 = Node("n2", {})
+        >>> e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
+        >>> e2 = Edge("e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED)
+        >>> Graph.is_node_incident(n1, e1)
+        >>> # True
+        >>> Graph.is_node_incident(n2, e2)
+        >>> # False
+
+        \endcode
         """
         return e.is_endvertice(n)
 
@@ -874,12 +946,40 @@ class Graph(GraphObject):
         If the edge is undirected, it is going to be included in the set if the
         node is an endvertex of it.  If the edge is directed, it is going to be
         included in the set if the node is at the end position of the vertex.
+
+        \code{.py}
+        >>> n1 = Node("n1", {})
+        >>> n2 = Node("n2", {})
+        >>> e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
+        >>> e2 = Edge("e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED)
+        >>> g = Graph("g", nodes=set([n1, n2]), edges=set([e1,e2]))
+        >>> g.edges_by_end(n2) == set([e1])
+        >>> # True
+
+        \endcode
         """
-        return set([self.E[e] for e in self.E if self.E[e].is_end(n)])
+        es: Set[Edge] = set()
+        for e_id in self.E:
+            edge = self.E[e_id]
+            if edge.is_end(n):
+                es.add(edge)
+        return es
 
     def vertices(self) -> Set[Node]:
         """!
         \brief obtain vertex set of the given graph
+
+        \code{.py}
+
+        >>> n1 = Node("n1", {})
+        >>> n2 = Node("n2", {})
+        >>> e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
+        >>> e2 = Edge("e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED)
+        >>> g = Graph("g", nodes=set([n1, n2]), edges=set([e1,e2]))
+        >>> g.vertices()
+        >>> # set([n1, n2])
+
+        \endcode
         """
         return set([n for n in self.V.values()])
 

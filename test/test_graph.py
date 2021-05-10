@@ -161,6 +161,33 @@ class GraphTest(unittest.TestCase):
     def test_id(self):
         return self.assertEqual(self.graph.id(), "g1")
 
+    def test_from_edgeset(self):
+        ""
+        eset = set([self.e1, self.e2, self.e3, self.e4])
+        g = Graph.from_edgeset(eset)
+        self.assertEqual(g.nodes(), set([self.n1, self.n2, self.n3, self.n4]))
+        self.assertEqual(g.edges(), eset)
+
+    def test_has_self_loop(self):
+        ""
+        n1 = Node("n1", {})
+        n2 = Node("n2", {})
+        e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
+        e2 = Edge("e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED)
+        g1 = Graph("graph", nodes=set([n1, n2]), edges=set([e1, e2]))
+        g2 = Graph("graph", nodes=set([n1, n2]), edges=set([e1]))
+        self.assertTrue(g1.has_self_loop())
+        self.assertFalse(g2.has_self_loop())
+
+    def test_is_node_incident(self):
+        ""
+        n1 = Node("n1", {})
+        n2 = Node("n2", {})
+        e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
+        e2 = Edge("e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED)
+        self.assertTrue(Graph.is_node_incident(n1, e1))
+        self.assertFalse(Graph.is_node_incident(n2, e2))
+
     def test_adjmat_int(self):
         ""
         mat = self.ugraph1.to_adjmat()
@@ -373,6 +400,15 @@ class GraphTest(unittest.TestCase):
         except ValueError:
             check = True
         self.assertTrue(check)
+
+    def test_edges_by_end(self):
+        ""
+        n1 = Node("n1", {})
+        n2 = Node("n2", {})
+        e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
+        e2 = Edge("e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED)
+        g = Graph("g", nodes=set([n1, n2]), edges=set([e1, e2]))
+        self.assertEqual(g.edges_by_end(n2), set([e1]))
 
     def test_vertices_of(self):
         ""
