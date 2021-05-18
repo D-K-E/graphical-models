@@ -3,7 +3,8 @@
 [![Python package workflow ](https://github.com/D-K-E/graphical-models/actions/workflows/python-package.yml/badge.svg?branch=master)](https://github.com/D-K-E/graphical-models/actions/workflows/python-package.yml)
 
 
-[![DOI](https://zenodo.org/badge/321839625.svg)](https://zenodo.org/badge/latestdoi/321839625)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.03115/status.svg)](https://doi.org/10.21105/joss.03115)
+
 
 See doxygen generated [documentation](https://d-k-e.github.io/graphical-models/)
 
@@ -111,12 +112,11 @@ See [Contributing.md](https://github.com/D-K-E/graphical-models/blob/master/CONT
 
 ## Citation
 
-This library has a mirror in another repository as well. The [Viva-Lambda
-repository](https://github.com/Viva-Lambda/graphical-models) is in principal
-identical to the
-[D-K-E/graphical-models](https://github.com/D-K-E/graphical-models) (it might
-be one or two commits behind). During the development of the library, the
-weekly effort had been committed to that repository as well. However since the
-DOI refers to D-K-E/graphical-models, it should be considered as the main
-repository, and any references should refer to that one and not to
-Viva-Lambda/graphical-models.
+For citing in a paper for general usage, use the JOSS paper DOI:
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.03115/status.svg)](https://doi.org/10.21105/joss.03115)
+
+
+If you absolutely need to reference to a particular version of a source code,
+you can use the zenodo DOI:
+
+[![DOI](https://zenodo.org/badge/321839625.svg)](https://zenodo.org/badge/latestdoi/321839625)
