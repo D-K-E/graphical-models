@@ -65,7 +65,7 @@ class RandomVariable(Node):
 
 class CatRandomVariable(RandomVariable):
     """!
-    a discrete random variable
+    \brief A discrete/categorical random variable \see RandomVariable
     """
 
     def __init__(
@@ -248,7 +248,7 @@ class NumCatRVariable(CatRandomVariable):
     """!
     \brief Numerical categorical random variable object
 
-    This is mostly the same as CatRandomVariable. The main difference is that
+    This is mostly the same as \see CatRandomVariable. The main difference is that
     the function associated to random variable produces a numeric value as an
     outcome
     """
@@ -311,6 +311,36 @@ class NumCatRVariable(CatRandomVariable):
 
         \throws TypeError if the other is not a NumCatRVariable, we raise a type
         error
+
+        \code{.py}
+
+        >>> nid1 = "rvar1"
+        >>> input_data = {
+        >>>    "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
+        >>>    "grade": {"outcome-values": [0.2, 0.4, 0.6], "evidence": 0.2},
+        >>>    "dice": {"outcome-values": [i for i in range(1, 7)], "evidence": 1.0 / 6},
+        >>> }
+
+        >>> def intelligence_dist(intelligence_value: float) -> float:
+        >>>    if intelligence_value == 0.1:
+        >>>        return 0.7
+        >>>    elif intelligence_value == 0.9:
+        >>>        return 0.3
+        >>>    else:
+        >>>        return 0.0
+
+        >>> # intelligence
+        >>> intelligence = NumCatRVariable(
+        >>>    node_id=nid1,
+        >>>    input_data=input_data["intelligence"],
+        >>>    marginal_distribution=intelligence_dist,
+        >>> )
+        >>> NumCatRVariable.type_check("my numeric categorical variable")
+        >>> TypeError("other arg must be of type NumCatRVariable, it is str")
+        >>> NumCatRVariable.type_check(intelligence)
+        >>> None
+
+        \endcode
         """
         if isinstance(other, NumCatRVariable) is False:
             raise TypeError(
@@ -323,6 +353,42 @@ class NumCatRVariable(CatRandomVariable):
 
         \throws ValueError We raise a value error if there is no evidence
         associated to random variable.
+
+        \code{.py}
+
+        >>> nid1 = "rvar1"
+        >>> input_data = {
+        >>>    "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
+        >>>    "grade": {"outcome-values": [0.2, 0.4, 0.6], "evidence": 0.2},
+        >>>    "dice": {"outcome-values": [i for i in range(1, 7)], "evidence": 1.0 / 6},
+        >>>    "noevidence": {"outcome-values": [i for i in range(1, 5)]}
+        >>> }
+
+        >>> def intelligence_dist(intelligence_value: float) -> float:
+        >>>    if intelligence_value == 0.1:
+        >>>        return 0.7
+        >>>    elif intelligence_value == 0.9:
+        >>>        return 0.3
+        >>>    else:
+        >>>        return 0.0
+
+        >>> # intelligence
+        >>> intelligence = NumCatRVariable(
+        >>>    node_id=nid1,
+        >>>    input_data=input_data["intelligence"],
+        >>>    marginal_distribution=intelligence_dist,
+        >>> )
+        >>> intelligence.has_evidence()
+        >>> None
+        >>> # no evidence
+        >>> noev = NumCatRVariable(
+        >>>    node_id=nid1,
+        >>>    input_data=input_data["noevidence"],
+        >>>    marginal_distribution=intelligence_dist,
+        >>> )
+        >>> noev.has_evidence()
+        >>> ValueError
+        \endcode
         """
         data = self.data()
         if "evidence" not in data:
@@ -622,19 +688,54 @@ class NumCatRVariable(CatRandomVariable):
         """
         return sum([value * self.p_x(value) for value in self.values()])
 
+    @staticmethod
     def is_numeric(self, v: Any) -> bool:
         """!
         \brief check if v is whether float or int
 
         \param v any value.
+
+        \code{.py}
+        >>> NumCatRVariable.is_numeric("foo")
+        >>> False
+        >>> NumCatRVariable.is_numeric(1)
+        >>> True
+        \endcode
         """
         return True if isinstance(v, (float, int)) else False
 
-    def add_evidence(self, evidence_value: float):
+    def add_evidence(self, evidence_value: NumericValue):
         """!
         \brief add evidence to random variable
         
         \throws TypeError if the evidence is not a numeric value
+
+        \code{.py}
+
+        >>> nid1 = "rvar1"
+        >>> input_data = {
+        >>>    "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
+        >>>    "noevidence": {"outcome-values": [0.1, 0.9]}
+        >>> }
+
+        >>> def intelligence_dist(intelligence_value: float) -> float:
+        >>>    if intelligence_value == 0.1:
+        >>>        return 0.7
+        >>>    elif intelligence_value == 0.9:
+        >>>        return 0.3
+        >>>    else:
+        >>>        return 0.0
+
+        >>> # intelligence
+        >>> noev = NumCatRVariable(
+        >>>    node_id=nid1,
+        >>>    input_data=input_data["noevidence"],
+        >>>    marginal_distribution=intelligence_dist,
+        >>> )
+        >>> noev.add_evidence(0.9)
+        >>> # now noev is same as intelligence
+
+        \endcode
         """
         if isinstance(evidence_value, int):
             evidence_value = float(evidence_value)
@@ -646,6 +747,33 @@ class NumCatRVariable(CatRandomVariable):
     def pop_evidence(self):
         """!
         \brief remove evidence from this random variable
+
+        \code{.py}
+
+        >>> nid1 = "rvar1"
+        >>> input_data = {
+        >>>    "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
+        >>>    "noevidence": {"outcome-values": [0.1, 0.9]}
+        >>> }
+
+        >>> def intelligence_dist(intelligence_value: float) -> float:
+        >>>    if intelligence_value == 0.1:
+        >>>        return 0.7
+        >>>    elif intelligence_value == 0.9:
+        >>>        return 0.3
+        >>>    else:
+        >>>        return 0.0
+
+        >>> # intelligence
+        >>> intelligence = NumCatRVariable(
+        >>>    node_id=nid1,
+        >>>    input_data=input_data["intelligence"],
+        >>>    marginal_distribution=intelligence_dist,
+        >>> )
+        >>> intelligence.pop_evidence()
+        >>> # now intelligence is same as noev
+
+        \endcode
         """
         data = self.data()
         if "evidence" in data:
