@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['tree_309',['Tree',['../d7/db3/classgmodels_1_1gtypes_1_1tree_1_1Tree.html',1,'gmodels::gtypes::tree']]]
+  ['undigraph_295',['UndiGraph',['../d8/d73/classgmodels_1_1gtypes_1_1undigraph_1_1UndiGraph.html',1,'gmodels::gtypes::undigraph']]]
 ];
