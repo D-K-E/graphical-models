@@ -17,7 +17,7 @@ var searchData=
   ['is_5fneighbour_5fof_410',['is_neighbour_of',['../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#adbd2985d817ab00400503592f373729c',1,'gmodels::gtypes::graph::Graph']]],
   ['is_5fnode_5fincident_411',['is_node_incident',['../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a16c90f0b9ca76018de496f31f05ca67a',1,'gmodels::gtypes::graph::Graph']]],
   ['is_5fnode_5findependent_5fof_412',['is_node_independent_of',['../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a5480b99977e709c077ee2fb49a004d9b',1,'gmodels::gtypes::graph::Graph']]],
-  ['is_5fnumeric_413',['is_numeric',['../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html#a5e3ac5f94dd5fcbd2a0d7f079a29b8c9',1,'gmodels::randomvariable::NumCatRVariable']]],
+  ['is_5fnumeric_413',['is_numeric',['../df/d34/classgmodels_1_1randomvariable_1_1NumCatRVariable.html#ae91e771fb768e869ff03d1a39f2264ae',1,'gmodels::randomvariable::NumCatRVariable']]],
   ['is_5fparent_5fof_414',['is_parent_of',['../dd/d00/classgmodels_1_1gtypes_1_1digraph_1_1DiGraph.html#aa26a3e3070e2f220100c8c9752f6ba9a',1,'gmodels::gtypes::digraph::DiGraph']]],
   ['is_5frelated_5fto_415',['is_related_to',['../d2/dfc/classgmodels_1_1gtypes_1_1graph_1_1Graph.html#a05ca0965a51bd7e57467f990f8c3c394',1,'gmodels::gtypes::graph::Graph']]],
   ['is_5fscope_5fsubset_5fof_416',['is_scope_subset_of',['../df/da1/classgmodels_1_1pgmodel_1_1PGModel.html#a06211fcf1888e4db969a5c731868484a',1,'gmodels::pgmodel::PGModel']]],
