@@ -689,7 +689,7 @@ class NumCatRVariable(CatRandomVariable):
         return sum([value * self.p_x(value) for value in self.values()])
 
     @staticmethod
-    def is_numeric(self, v: Any) -> bool:
+    def is_numeric(v: Any) -> bool:
         """!
         \brief check if v is whether float or int
 
