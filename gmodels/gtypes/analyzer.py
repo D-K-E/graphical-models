@@ -4,6 +4,8 @@ graph analyzer
 """
 from typing import Set, Optional, Callable, List, Tuple
 from gmodels.gtypes.graph import Graph
+from gmodels.gtypes.finitegraph import FiniteGraph
+from gmodels.gtypes.basegraph import BaseGraph
 from gmodels.gtypes.node import Node
 
 
@@ -75,3 +77,7 @@ class GraphAnalyzer:
         if not GraphAnalyzer.is_subgraph(g1, g2):
             return False
         return g1.nodes() == g2.nodes()
+
+    @staticmethod
+    def is_tree(g: BaseGraph) -> bool:
+        raise NotImplementedError

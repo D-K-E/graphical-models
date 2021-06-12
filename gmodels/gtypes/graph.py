@@ -13,6 +13,7 @@ from gmodels.gtypes.finitegraph import FiniteGraph
 from gmodels.gtypes.basegraph import BaseGraph
 from gmodels.gtypes.edge import Edge, EdgeType
 from gmodels.gtypes.node import Node
+from gmodels.gops.gtraverser import GraphTraverser
 from uuid import uuid4
 import math
 
@@ -68,11 +69,14 @@ class Graph(FiniteGraph):
         """
         super().__init__(gid=gid, nodes=nodes, edges=edges, data=data)
         #
-        self.mk_nodes(ns=nodes, es=edges)
-        self.mk_gdata()
-        self.props = self.visit_graph_dfs(
-            edge_generator=self.edges_of, check_cycle=True
+        self.props = GraphTraverser.visit_graph_dfs(
+            self.to_finite_graph(), edge_generator=self.edges_of, check_cycle=True
         )
+
+    @classmethod
+    def from_abstract_graph(cls, g_):
+        g = BaseGraph.from_abstract_graph(g_)
+        return cls.from_base_graph(g)
 
     @classmethod
     def from_base_graph(cls, bgraph: BaseGraph):
@@ -99,31 +103,10 @@ class Graph(FiniteGraph):
         g = FiniteGraph.from_edge_node_set(edges=edges, nodes=nodes)
         return cls.from_finite_graph(g)
 
-    def mk_nodes(self, ns: Optional[Set[Node]], es: Optional[Set[Edge]]):
-        """!
-        \brief Obtain all nodes in a single set.
-
-        \param ns set of nodes
-        \param es set of edges
-
-        We assume that node set and edge set might contain different nodes,
-        that is \f$ V[G] = V[ns] \cup V[es] \f$
-        We combine nodes given in both sets to create a final set of nodes
-        for the graph
-        """
-        nodes = set()
-        if ns is None:
-            return
-        for n in ns:
-            nodes.add(n)
-        if es is not None:
-            for e in es:
-                estart = e.start()
-                eend = e.end()
-                nodes.add(estart)
-                nodes.add(eend)
-        #
-        self._nodes = {n.id(): n for n in nodes}
+    def to_finite_graph(self):
+        return FiniteGraph(
+            gid=self.id(), edges=self.edges(), nodes=self.nodes(), data=self.data()
+        )
 
     def to_adjmat(self, vtype=int) -> Dict[Tuple[str, str], int]:
         """!
@@ -271,24 +254,6 @@ class Graph(FiniteGraph):
                     T[(i, j)] = t_ij or (t_ik and t_ki)
         T = {(k, i): v for (k, i), v in T.items() if k != i}
         return T
-
-    def mk_gdata(self):
-        """!
-        \brief Create edge list representation of graph
-
-        For each node we register the edges.
-        """
-        if self._nodes is not None:
-            for vertex in self._nodes.values():
-                self.gdata[vertex.id()] = []
-            #
-            for edge in self._edges.values():
-                for node_id in edge.node_ids():
-                    elist = self.gdata.get(node_id, None)
-                    if elist is None:
-                        self.gdata[node_id] = []
-                    else:
-                        self.gdata[node_id].append(edge.id())
 
     def __eq__(self, n):
         """!
@@ -614,36 +579,6 @@ class Graph(FiniteGraph):
                         cycles[u].append(cycle_info)
         #
         return None
-
-    def has_cycles(self) -> bool:
-        """!
-        \brief Check if graph instance contains cycles.
-        This interpretation is from Diestel 2017, p. 8. The
-        proof is provided in the given page.
-        """
-        md = self.min_degree()
-        if md >= 2:
-            return True
-        return False
-
-    def shortest_path_length(self) -> int:
-        """!
-        \brief Give the shortest possible path length for graph instance
-        
-        This interpretation is taken from Diestel 2017, p. 8. The proof
-        is also given in the corresponding page.
-        """
-        return self.min_degree()
-
-    def shortest_cycle_length(self) -> int:
-        """!
-        \brief Give the shortest possible cycle length for graph instance
-        The interpretation comes from Diestel 2017, p. 8.
-        """
-        if self.has_cycles():
-            return self.min_degree() + 1
-        else:
-            return 0
 
     def nb_components(self) -> int:
         """!

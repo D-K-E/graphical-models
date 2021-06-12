@@ -39,6 +39,17 @@ class BaseGraph(AbstractGraph, GraphObject):
             msg += "\nEdges: " + str(self._edges.keys())
             raise ValueError(msg)
 
+    @classmethod
+    def from_abstract_graph(cls, g_: AbstractGraph):
+        "Obtain base graph from AbstractGraph implementing object"
+        if issubclass(g_, AbstractGraph):
+            raise TypeError("Argument must implement AbstractGraph interface")
+        nodes = set(g_.V.values())
+        edges = set(g_.E.values())
+        data = g_.data()
+        gid = g_.id()
+        return BaseGraph(gid=gid, data=data, nodes=nodes, edges=edges)
+
     def is_trivial(self) -> bool:
         """!
         \brief check if graph is trivial.
