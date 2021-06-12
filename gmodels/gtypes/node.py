@@ -9,9 +9,8 @@ For more theoretical explanation \see nodegroup
 
 """
 from typing import Dict, Set, Tuple, Optional
-from gmodels.gtypes.abstractobj import AbstractEdge, EdgeType
-from gmodels.gtypes.abstractobj import NodePosition
 from gmodels.gtypes.graphobj import GraphObject
+from abc import ABC, abstractmethod
 
 
 class Node(GraphObject):
