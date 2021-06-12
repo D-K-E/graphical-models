@@ -9,13 +9,15 @@ Diestel 2017.
 """
 from typing import Set, Optional, Callable, List, Tuple, Union, Dict, FrozenSet
 from gmodels.gtypes.graphobj import GraphObject
+from gmodels.gtypes.finitegraph import FiniteGraph
+from gmodels.gtypes.basegraph import BaseGraph
 from gmodels.gtypes.edge import Edge, EdgeType
 from gmodels.gtypes.node import Node
 from uuid import uuid4
 import math
 
 
-class Graph(GraphObject):
+class Graph(FiniteGraph):
     """!
     Simple finite graph
     \f$ G = (V, E) \f$ where \f$ V \f$ is the vertex set and \f$ E \f$ is the edge set.
@@ -64,26 +66,7 @@ class Graph(GraphObject):
 
         \endcode
         """
-        super().__init__(oid=gid, odata=data)
-        self._nodes: Optional[Dict[str, Node]] = None
-        if nodes is not None:
-            self._nodes = {n.id(): n for n in nodes}
-        self._edges: Optional[Dict[str, Edge]] = None
-        if edges is not None:
-            self._edges = {e.id(): e for e in edges}
-        #
-        self.gdata: Dict[str, List[str]] = {}
-        if self._nodes is not None:
-            self.is_empty = len(self._nodes) == 0
-        else:
-            self.is_empty = True
-
-        if self.is_trivial():
-            msg = "This library is not compatible with computations with trivial graph"
-            msg += "\nNodes: "
-            msg += str(self._nodes.keys())
-            msg += "\nEdges: " + str(self._edges.keys())
-            raise ValueError(msg)
+        super().__init__(gid=gid, nodes=nodes, edges=edges, data=data)
         #
         self.mk_nodes(ns=nodes, es=edges)
         self.mk_gdata()
@@ -92,61 +75,29 @@ class Graph(GraphObject):
         )
 
     @classmethod
+    def from_base_graph(cls, bgraph: BaseGraph):
+        ""
+        fgraph = FiniteGraph.from_base_graph(bgraph)
+        return cls.from_finite_graph(fgraph)
+
+    @classmethod
+    def from_finite_graph(cls, fgraph: FiniteGraph):
+        ""
+        nodes = fgraph.nodes()
+        edges = fgraph.edges()
+        data = fgraph.data()
+        gid = fgraph.id()
+        return Graph(gid=gid, nodes=nodes, edges=edges, data=data)
+
+    @classmethod
     def from_edgeset(cls, edges: Set[Edge]):
-        """!
-        \brief We construct the graph from given edge set using a random id.
-
-        See \see Graph for more information
-
-        We obtain nodes from edges then pass them to graph constructor.
-
-        \code{.py}
-
-        n1 = Node("n1", {})
-        n2 = Node("n2", {})
-        n3 = Node("n3", {})
-        n4 = Node("n4", {})
-        e1 = Edge(
-            "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
-        )
-        e2 = Edge(
-            "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
-        )
-        e3 = Edge(
-            "e3", start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED
-        )
-        e4 = Edge(
-            "e4", start_node=n1, end_node=n4, edge_type=EdgeType.UNDIRECTED
-        )
-
-        eset = set([e1, e2, e3, e4])
-
-        g = Graph.from_edgeset(eset)
-        \endcode
-        """
-        nodes: Set[Node] = set()
-        for e in edges:
-            nodes.add(e.start())
-            nodes.add(e.end())
-        return Graph(gid=str(uuid4()), nodes=nodes, edges=edges)
+        g = FiniteGraph.from_edgeset(edges)
+        return cls.from_finite_graph(g)
 
     @classmethod
     def from_edge_node_set(cls, edges: Set[Edge], nodes: Set[Node]):
-        """!
-        \brief We construct the graph from given node, and edge sets using a random id.
-        \see Graph for more information
-
-        \param edges set of edges
-        \param nodes set of nodes
-
-        We iterate over set of edges and add the nodes that are not inside the
-        node set. We pass both parameters to Graph constructor afterwards.
-        """
-        nodes = set(nodes)
-        for e in edges:
-            nodes.add(e.start())
-            nodes.add(e.end())
-        return Graph(gid=str(uuid4()), nodes=nodes, edges=edges)
+        g = FiniteGraph.from_edge_node_set(edges=edges, nodes=nodes)
+        return cls.from_finite_graph(g)
 
     def mk_nodes(self, ns: Optional[Set[Node]], es: Optional[Set[Edge]]):
         """!
@@ -244,30 +195,6 @@ class Graph(GraphObject):
                 if tpl2 in gmat:
                     gmat[tpl2] = vtype(1)
         return gmat
-
-    def has_self_loop(self) -> bool:
-        """!
-        \brief Check if graph has a self loop.
-        We check whether the incident vertices of an edge is same.
-
-        \code{.py}
-        n1 = Node("n1", {})
-        n2 = Node("n2", {})
-        e1 = Edge(
-            "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
-        )
-        e2 = Edge(
-            "e1", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED
-        )
-        g = Graph("graph", nodes=set([n1, n2]), edges=set([e1, e2]))
-        g.has_self_loop()
-        # True
-        \endcode
-        """
-        for edge in self.edges():
-            if edge.start() == edge.end():
-                return True
-        return False
 
     def transitive_closure_matrix(self) -> Dict[Tuple[str, str], bool]:
         """!
@@ -430,48 +357,6 @@ class Graph(GraphObject):
         """
         return hash(self.__str__())
 
-    @property
-    def V(self) -> Dict[str, Node]:
-        """!
-        \brief Obtain vertices of the graph
-
-        \throws ValueError if node set is empty for the graph
-
-        \code{.py}
-        n1 = Node("n1", {})
-        n2 = Node("n2", {})
-        e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
-        g = Graph("graph", nodes=set([n1, n2]), edges=set([e1]))
-        g.V
-        # {"n1": Node, "n2": Node}
-
-        \endcode
-        """
-        if self._nodes is None:
-            raise ValueError("Nodes are None for this graph")
-        return self._nodes
-
-    @property
-    def E(self) -> Dict[str, Edge]:
-        """!
-        \brief obtain edges of the graph
-        \throws ValueError if edge set is empty for the graph.
-
-        \code{.py}
-        n1 = Node("n1", {})
-        n2 = Node("n2", {})
-        e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
-        g = Graph("graph", nodes=set([n1, n2]), edges=set([e1]))
-        g.E
-        # {"e1": Edge}
-
-        \endcode
-
-        """
-        if self._edges is None:
-            raise ValueError("Edges are None for this graph")
-        return self._edges
-
     def is_connected(self) -> bool:
         """!
         \brief Check if graph is connected
@@ -505,144 +390,6 @@ class Graph(GraphObject):
         \endcode
         """
         return self.nb_components() == 1
-
-    @classmethod
-    def is_adjacent_of(cls, e1: Edge, e2: Edge) -> bool:
-        """!
-        \brief Check if two edges are adjacent
-
-        \param e1 an edge
-        \param e2 an edge
-
-        \code{.py}
-
-        >>> n1 = Node("n1", {})
-        >>> n2 = Node("n2", {})
-        >>> n3 = Node("n3", {})
-        >>> n4 = Node("n4", {})
-        >>> e1 = Edge(
-        >>>     "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
-        >>> )
-        >>> e2 = Edge(
-        >>>     "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
-        >>> )
-        >>> e3 = Edge(
-        >>>     "e3", start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED
-        >>> )
-        >>> graph_2 = Graph(
-        >>>   "g2",
-        >>>   data={"my": "graph", "data": "is", "very": "awesome"},
-        >>>   nodes=set([n1, n2, n3, n4]),
-        >>>   edges=set([e1, e2, e3]),
-        >>> )
-        >>> graph_2.is_adjacent_of(e2, e3)
-        >>> True
-
-        \endcode
-        """
-        n1_ids = e1.node_ids()
-        n2_ids = e2.node_ids()
-        return len(n1_ids.intersection(n2_ids)) > 0
-
-    @classmethod
-    def is_node_incident(cls, n: Node, e: Edge) -> bool:
-        """!
-        \brief Check if a node is incident of an edge
-
-        \param n node We check if this node is an endvertex of the edge.
-        \param e The queried edge.
-
-        \code{.py}
-
-        >>> n1 = Node("n1", {})
-        >>> n2 = Node("n2", {})
-        >>> e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
-        >>> e2 = Edge("e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED)
-        >>> Graph.is_node_incident(n1, e1)
-        >>> # True
-        >>> Graph.is_node_incident(n2, e2)
-        >>> # False
-
-        \endcode
-        """
-        return e.is_endvertice(n)
-
-    def is_related_to(
-        self,
-        n1: Node,
-        n2: Node,
-        condition: Callable[[Node, Node, Edge], bool],
-        es: Set[Edge] = None,
-    ):
-        """!
-        \brief Generic function for applying proximity conditions on a node pair
-
-        \param n1 first node subject to proximity condition
-        \param n2 second node subject to proximity condition
-        \param condition proximity condition in the form of a callable.
-        \param es edge set. We query the proximity condition in this set if it
-        is specified
-
-        We check whether a proximity condition is valid for given two nodes.
-        """
-        if es is None:
-            es = self.edges()
-        for e in es:
-            if condition(n1, n2, e) is True:
-                return True
-        return False
-
-    def is_neighbour_of(self, n1: Node, n2: Node) -> bool:
-        """!
-        \brief check if two nodes are neighbours
-        We define the condition of neighborhood as having a common edge, not
-        being the same
-
-        \code{.py}
-
-        >>> n1 = Node("n1", {})
-        >>> n2 = Node("n2", {})
-        >>> n3 = Node("n3", {})
-        >>> n4 = Node("n4", {})
-        >>> e1 = Edge(
-        >>>     "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
-        >>> )
-        >>> e2 = Edge(
-        >>>     "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
-        >>> )
-        >>> e3 = Edge(
-        >>>     "e3", start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED
-        >>> )
-        >>> graph_2 = Graph(
-        >>>   "g2",
-        >>>   data={"my": "graph", "data": "is", "very": "awesome"},
-        >>>   nodes=set([n1, n2, n3, n4]),
-        >>>   edges=set([e1, e2, e3]),
-        >>> )
-        >>> graph_2.is_neighbour_of(n2, n3)
-        >>> True
-        >>> graph_2.is_neighbour_of(n2, n2)
-        >>> False
-
-        \endcode
-        """
-
-        def cond(n_1: Node, n_2: Node, e: Edge) -> bool:
-            """!
-            \brief neighborhood condition
-            """
-            estart = e.start()
-            eend = e.end()
-            c1 = estart == n_1 and eend == n_2
-            c2 = estart == n_2 and eend == n_1
-            return c1 or c2
-
-        n1_edge_ids = set(self.gdata[n1.id()])
-        n2_edge_ids = set(self.gdata[n2.id()])
-        edge_ids = n1_edge_ids.intersection(n2_edge_ids)
-        # filter self loops
-        edges = set([self.E[e] for e in edge_ids])
-        return self.is_related_to(n1=n1, n2=n2, condition=cond, es=edges)
 
     def is_node_independent_of(self, n1: Node, n2: Node) -> bool:
         """!
@@ -680,7 +427,7 @@ class Graph(GraphObject):
             return False
         return True if self.is_neighbour_of(n1, n2) is False else False
 
-    def is_stable(self, ns: Set[Node]) -> bool:
+    def is_stable(self, ns: FrozenSet[Node]) -> bool:
         """!
         \brief check if given node set is stable
 
@@ -845,7 +592,7 @@ class Graph(GraphObject):
         edge_ids = self.gdata[n.id()]
         return set([self.E[eid] for eid in edge_ids])
 
-    def outgoing_edges_of(self, n: Node) -> Set[Edge]:
+    def outgoing_edges_of(self, n: Node) -> FrozenSet[Edge]:
         """!
         \brief obtain the outgoing edge set of a given node.
 
@@ -891,9 +638,9 @@ class Graph(GraphObject):
             e = self.E[eid]
             if e.is_start(n):
                 eset.add(e)
-        return eset
+        return frozenset(eset)
 
-    def incoming_edges_of(self, n: Node) -> Set[Edge]:
+    def incoming_edges_of(self, n: Node) -> FrozenSet[Edge]:
         """!
         \brief obtain incoming edges of a given graph
 
@@ -930,9 +677,9 @@ class Graph(GraphObject):
         eset = set()
         for eid in self.gdata[n.id()]:
             e = self.E[eid]
-            if e.end() == n:
+            if e.is_end(n):
                 eset.add(e)
-        return eset
+        return frozenset(eset)
 
     def edges_by_end(self, n: Node) -> Set[Edge]:
         """!

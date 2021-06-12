@@ -188,13 +188,25 @@ class DiGraphTest(unittest.TestCase):
     def test_outgoing_edges_of_1(self):
         ""
         out_edges1 = self.graph_2.outgoing_edges_of(self.n1)
-        comp1 = set([self.e1, self.e4])
+        comp1 = frozenset([self.e1, self.e4])
         self.assertEqual(out_edges1, comp1)
 
     def test_outgoing_edges_of_2(self):
         ""
         out_edges2 = self.graph_2.outgoing_edges_of(self.n2)
-        comp2 = set([self.e2])
+        comp2 = frozenset([self.e2])
+        self.assertEqual(out_edges2, comp2)
+
+    def test_incoming_edges_of_1(self):
+        ""
+        out_edges1 = self.graph_2.incoming_edges_of(self.n1)
+        comp1 = frozenset()
+        self.assertEqual(out_edges1, comp1)
+
+    def test_incoming_edges_of_2(self):
+        ""
+        out_edges2 = self.graph_2.incoming_edges_of(self.n2)
+        comp2 = frozenset([self.e1])
         self.assertEqual(out_edges2, comp2)
 
     def test_is_parent_of_t(self):
