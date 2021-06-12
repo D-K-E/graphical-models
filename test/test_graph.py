@@ -336,12 +336,12 @@ class GraphTest(unittest.TestCase):
     def test_outgoing_edges_of(self):
         ""
         edges = self.graph.outgoing_edges_of(self.n2)
-        self.assertEqual(edges, set([self.e2, self.e1]))
+        self.assertEqual(edges, frozenset([self.e2, self.e1]))
 
     def test_incoming_edges_of(self):
         ""
         edges = self.graph.incoming_edges_of(self.n2)
-        self.assertEqual(edges, set([self.e1]))
+        self.assertEqual(edges, frozenset([self.e1, self.e2]))
 
     def test_is_in_true(self):
         ""
@@ -364,12 +364,12 @@ class GraphTest(unittest.TestCase):
         b = self.graph.nb_edges()
         self.assertEqual(b, 2)
 
-    def test_is_trivial(self):
+    def test_is_trivial_1(self):
         ""
         b = self.graph.is_trivial()
         self.assertFalse(b)
 
-    def test_is_trivial(self):
+    def test_is_trivial_2(self):
         ""
         n = Node("n646", {})
         e = Edge("e8", start_node=self.n1, end_node=n, edge_type=EdgeType.UNDIRECTED)

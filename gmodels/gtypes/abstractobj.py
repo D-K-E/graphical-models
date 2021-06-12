@@ -44,7 +44,8 @@ class EdgeType(Enum):
     UNDIRECTED = 2
 
 
-AbstractNode = NewType("AbstractNode", AbstractGraphObj)
+class AbstractNode(AbstractGraphObj):
+    ""
 
 
 class AbstractEdge(ABC):
@@ -99,9 +100,23 @@ class AbstractGraph(AbstractGraphObj):
         raise NotImplementedError
 
     @abstractmethod
-    def is_neighbour_of(self, n1: AbstractNode, n2: AbstractNode) -> bool:
+    def is_trivial(self) -> bool:
         raise NotImplementedError
 
     @abstractmethod
-    def edges_of(self, n: AbstractNode) -> Set[AbstractEdge]:
+    def order(self) -> int:
+        raise NotImplementedError
+
+    @abstractmethod
+    def is_related_to(
+        self,
+        n1: AbstractNode,
+        n2: AbstractNode,
+        condition: Callable[[AbstractNode, AbstractNode, AbstractEdge], bool],
+        es: FrozenSet[AbstractEdge] = None,
+    ) -> bool:
+        raise NotImplementedError
+
+    @abstractmethod
+    def is_neighbour_of(self, n1: AbstractNode, n2: AbstractNode) -> bool:
         raise NotImplementedError
