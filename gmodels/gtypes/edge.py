@@ -5,7 +5,7 @@
 \see \link graphgroup Graph Object \endlink edgegroup nodegroup
 
 """
-from typing import Set, Union
+from typing import Set, Union, FrozenSet
 from gmodels.gtypes.abstractobj import AbstractEdge, EdgeType
 from gmodels.gtypes.node import Node
 from gmodels.gtypes.graphobj import GraphObject
@@ -179,14 +179,14 @@ class Edge(AbstractEdge, GraphObject):
         """
         self.etype = etype
 
-    def node_ids(self) -> Set[str]:
+    def node_ids(self) -> FrozenSet[str]:
         """!
         \brief Spit out ids of nodes that belong to this edge
         """
         ids = set()
         ids.add(self.start().id())
         ids.add(self.end().id())
-        return ids
+        return frozenset(ids)
 
     def is_endvertice(self, n: Union[Node, str]) -> bool:
         """!

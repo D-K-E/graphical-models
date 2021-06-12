@@ -26,7 +26,7 @@ class DiGraphTest(unittest.TestCase):
             "g2",
             data={"my": "graph", "data": "is", "very": "awesome"},
             nodes=set([self.n1, self.n2, self.n3, self.n4]),
-            edges=set([self.e1, self.e2, self.e3]),
+            edges=set([self.e1, self.e2, self.e3, self.e4]),
         )
         #
         # n1 → n2 → n3 → n4
@@ -184,6 +184,18 @@ class DiGraphTest(unittest.TestCase):
     def test_out_degree_of(self):
         v = self.dgraph6.out_degree_of(self.a)
         self.assertEqual(v, 2)
+
+    def test_outgoing_edges_of_1(self):
+        ""
+        out_edges1 = self.graph_2.outgoing_edges_of(self.n1)
+        comp1 = set([self.e1, self.e4])
+        self.assertEqual(out_edges1, comp1)
+
+    def test_outgoing_edges_of_2(self):
+        ""
+        out_edges2 = self.graph_2.outgoing_edges_of(self.n2)
+        comp2 = set([self.e2])
+        self.assertEqual(out_edges2, comp2)
 
     def test_is_parent_of_t(self):
         v = self.dgraph6.is_parent_of(self.a, self.h)
