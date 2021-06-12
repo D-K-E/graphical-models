@@ -105,7 +105,7 @@ class BaseGraph(AbstractGraph, GraphObject):
 
         \endcode
         """
-        if isinstance(n, Graph):
+        if isinstance(n, BaseGraph):
             return self.id() == n.id()
         return False
 

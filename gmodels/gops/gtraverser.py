@@ -179,3 +179,40 @@ class GraphTraverser:
                     eset = eset.union(g.edge_by_vertices(start=pnode, end=cnode))
             esets[u] = eset
         return esets
+
+    @staticmethod
+    def find_shortest_paths(
+        g_: AbstractGraph, n1: Node, edge_generator: Callable[[Node], Set[Edge]]
+    ) -> Dict[str, Union[dict, set]]:
+        """!
+        \brief find shortest path from given node to all other nodes
+
+        Applies the Breadth first search algorithm from Even and Guy Even 2012, p. 12
+
+        \throws ValueError if given node is not found in graph instance
+        """
+        g = GraphTraverser.cast_graph(g_)
+        if not g.is_in(n1):
+            raise ValueError("argument node is not in graph")
+        nid = n1.id()
+        Q = [nid]
+        l_vs = {v: math.inf for v in g.V}
+        l_vs[nid] = 0
+        T = set([nid])
+        P: Dict[str, Dict[str, str]] = {}
+        P[nid] = {}
+        while Q:
+            u = Q.pop(0)
+            unode = g.V[u]
+            for edge in edge_generator(unode):
+                vnode = edge.get_other(unode)
+                vid = vnode.id()
+                if vid not in T:
+                    T.add(vid)
+                    l_vs[vid] = int(l_vs[u] + 1)
+                    P[nid][u] = vid
+                    Q.append(vid)
+        #
+        T = set([g.V[t] for t in T])
+        path_props = {"bfs-tree": P, "path-set": T, "top-sort": l_vs}
+        return path_props

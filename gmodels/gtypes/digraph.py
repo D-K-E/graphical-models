@@ -19,6 +19,7 @@ from gmodels.gtypes.node import Node
 from gmodels.gtypes.abstractobj import EdgeType
 from gmodels.gtypes.graph import Graph
 from gmodels.gtypes.undigraph import UndiGraph
+from gmodels.gops.gtraverser import GraphTraverser
 from uuid import uuid4
 
 
@@ -48,9 +49,12 @@ class DiGraph(Graph):
                         "Can not instantiate directed graph with" + " undirected edges"
                     )
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
+        fgraph = self.to_finite_graph()
         self.path_props = {v.id(): self.find_shortest_paths(v) for v in self.nodes()}
-        self.dprops = self.visit_graph_dfs(
-            edge_generator=self.outgoing_edges_of, check_cycle=True
+        self.dprops = GraphTraverser.visit_graph_dfs(
+            self.to_finite_graph(),
+            edge_generator=self.outgoing_edges_of,
+            check_cycle=True,
         )
 
     @classmethod
@@ -216,7 +220,9 @@ class DiGraph(Graph):
     def find_shortest_paths(self, n: Node):
         """!
         """
-        return super().find_shortest_paths(n1=n, edge_generator=self.outgoing_edges_of)
+        return GraphTraverser.find_shortest_paths(
+            self, n1=n, edge_generator=self.outgoing_edges_of
+        )
 
     def check_for_path(self, n1: Node, n2: Node) -> bool:
         "check if there is a path between nodes"

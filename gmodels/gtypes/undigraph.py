@@ -15,6 +15,7 @@ from gmodels.gtypes.node import Node
 from gmodels.gtypes.tree import Tree
 from gmodels.gtypes.abstractobj import EdgeType
 from gmodels.gtypes.graph import Graph
+from gmodels.gops.gtraverser import GraphTraverser
 from uuid import uuid4
 
 
@@ -67,7 +68,9 @@ class UndiGraph(Graph):
         edge generating function. We consider every edge that is incident with
         nodes not just incoming or outgoing edges.
         """
-        return super().find_shortest_paths(n1=n1, edge_generator=self.edges_of)
+        return GraphTraverser.find_shortest_paths(
+            self, n1=n1, edge_generator=self.edges_of
+        )
 
     def check_for_path(self, n1: Node, n2: Node) -> bool:
         """!
