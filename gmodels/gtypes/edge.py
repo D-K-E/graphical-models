@@ -102,6 +102,30 @@ class Edge(AbstractEdge, GraphObject):
         """
         return hash(self.__str__())
 
+    @classmethod
+    def directed(
+        cls, eid: str, start_node: Node, end_node: Node, data={}
+    ) -> AbstractEdge:
+        ""
+        return Edge(
+            eid,
+            start_node=start_node,
+            end_node=end_node,
+            edge_type=EdgeType.DIRECTED,
+            data=data,
+        )
+
+    @classmethod
+    def undirected(cls, eid, start_node: Node, end_node: Node, data={}) -> AbstractEdge:
+        ""
+        return Edge(
+            eid,
+            start_node=start_node,
+            end_node=end_node,
+            edge_type=EdgeType.UNDIRECTED,
+            data=data,
+        )
+
     def start(self) -> Node:
         """!
         \brief Returns the Node from which the attribute starts.

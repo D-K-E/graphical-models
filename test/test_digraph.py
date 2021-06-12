@@ -18,18 +18,10 @@ class DiGraphTest(unittest.TestCase):
         self.n3 = Node("n3", {})
         self.n4 = Node("n4", {})
         self.n5 = Node("n5", {})
-        self.e1 = Edge(
-            "e1", start_node=self.n1, end_node=self.n2, edge_type=EdgeType.DIRECTED
-        )
-        self.e2 = Edge(
-            "e2", start_node=self.n2, end_node=self.n3, edge_type=EdgeType.DIRECTED
-        )
-        self.e3 = Edge(
-            "e3", start_node=self.n3, end_node=self.n4, edge_type=EdgeType.DIRECTED
-        )
-        self.e4 = Edge(
-            "e4", start_node=self.n1, end_node=self.n4, edge_type=EdgeType.DIRECTED
-        )
+        self.e1 = Edge.directed("e1", start_node=self.n1, end_node=self.n2)
+        self.e2 = Edge.directed("e2", start_node=self.n2, end_node=self.n3)
+        self.e3 = Edge.directed("e3", start_node=self.n3, end_node=self.n4)
+        self.e4 = Edge.directed("e4", start_node=self.n1, end_node=self.n4)
         self.graph_2 = DiGraph(
             "g2",
             data={"my": "graph", "data": "is", "very": "awesome"},
@@ -49,51 +41,21 @@ class DiGraphTest(unittest.TestCase):
         self.e = Node("e", {})  # e
         self.g = Node("g", {})
         self.h = Node("h", {})
-        self.ae = Edge(
-            "ae", start_node=self.a, end_node=self.e, edge_type=EdgeType.DIRECTED
-        )
-        self.ab = Edge(
-            "ab", start_node=self.a, end_node=self.b, edge_type=EdgeType.DIRECTED
-        )
-        self.af = Edge(
-            "af", start_node=self.a, end_node=self.f, edge_type=EdgeType.DIRECTED
-        )
-        self.ah = Edge(
-            "ah", start_node=self.a, end_node=self.h, edge_type=EdgeType.DIRECTED
-        )
-        self.bh = Edge(
-            "bh", start_node=self.b, end_node=self.h, edge_type=EdgeType.DIRECTED
-        )
-        self.be = Edge(
-            "be", start_node=self.b, end_node=self.e, edge_type=EdgeType.DIRECTED
-        )
-        self.ef = Edge(
-            "ef", start_node=self.e, end_node=self.f, edge_type=EdgeType.DIRECTED
-        )
-        self.de = Edge(
-            "de", start_node=self.d, end_node=self.e, edge_type=EdgeType.DIRECTED
-        )
-        self.df = Edge(
-            "df", start_node=self.d, end_node=self.f, edge_type=EdgeType.DIRECTED
-        )
-        self.cd = Edge(
-            "cd", start_node=self.c, end_node=self.d, edge_type=EdgeType.DIRECTED
-        )
-        self.cg = Edge(
-            "cg", start_node=self.c, end_node=self.g, edge_type=EdgeType.DIRECTED
-        )
-        self.gd = Edge(
-            "gd", start_node=self.g, end_node=self.d, edge_type=EdgeType.DIRECTED
-        )
-        self.bg = Edge(
-            "bg", start_node=self.b, end_node=self.g, edge_type=EdgeType.DIRECTED
-        )
-        self.fg = Edge(
-            "fg", start_node=self.f, end_node=self.g, edge_type=EdgeType.DIRECTED
-        )
-        self.bc = Edge(
-            "bc", start_node=self.b, end_node=self.c, edge_type=EdgeType.DIRECTED
-        )
+        self.ae = Edge.directed("ae", start_node=self.a, end_node=self.e)
+        self.ab = Edge.directed("ab", start_node=self.a, end_node=self.b)
+        self.af = Edge.directed("af", start_node=self.a, end_node=self.f)
+        self.ah = Edge.directed("ah", start_node=self.a, end_node=self.h)
+        self.bh = Edge.directed("bh", start_node=self.b, end_node=self.h)
+        self.be = Edge.directed("be", start_node=self.b, end_node=self.e)
+        self.ef = Edge.directed("ef", start_node=self.e, end_node=self.f)
+        self.de = Edge.directed("de", start_node=self.d, end_node=self.e)
+        self.df = Edge.directed("df", start_node=self.d, end_node=self.f)
+        self.cd = Edge.directed("cd", start_node=self.c, end_node=self.d)
+        self.cg = Edge.directed("cg", start_node=self.c, end_node=self.g)
+        self.gd = Edge.directed("gd", start_node=self.g, end_node=self.d)
+        self.bg = Edge.directed("bg", start_node=self.b, end_node=self.g)
+        self.fg = Edge.directed("fg", start_node=self.f, end_node=self.g)
+        self.bc = Edge.directed("bc", start_node=self.b, end_node=self.c)
 
         # directed graph
         self.dgraph1 = DiGraph(
@@ -154,9 +116,7 @@ class DiGraphTest(unittest.TestCase):
         # |         ↑    ↑   |                  ↑
         # +---------+----+   +------------------+
 
-        self.e_n = Edge(
-            "en", start_node=self.e, end_node=self.n1, edge_type=EdgeType.DIRECTED
-        )
+        self.e_n = Edge.directed("en", start_node=self.e, end_node=self.n1)
 
         self.dgraph5 = DiGraph(
             "dg5",
@@ -248,6 +208,10 @@ class DiGraphTest(unittest.TestCase):
     def test_parents_of(self):
         vs = self.dgraph6.parents_of(self.g)
         self.assertEqual(vs, set([self.c, self.f]))
+
+    @unittest.skip("Reference found but not implemented yet")
+    def test_find_transitive_closure(self):
+        "Nuutila 1995 p. 14 - 15"
 
 
 if __name__ == "__main__":
