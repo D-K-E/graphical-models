@@ -889,7 +889,7 @@ class Graph(GraphObject):
         eset = set()
         for eid in self.gdata[n.id()]:
             e = self.E[eid]
-            if e.start() == n:
+            if e.is_start(n):
                 eset.add(e)
         return eset
 

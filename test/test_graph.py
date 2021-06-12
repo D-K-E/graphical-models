@@ -336,7 +336,7 @@ class GraphTest(unittest.TestCase):
     def test_outgoing_edges_of(self):
         ""
         edges = self.graph.outgoing_edges_of(self.n2)
-        self.assertEqual(edges, set([self.e2]))
+        self.assertEqual(edges, set([self.e2, self.e1]))
 
     def test_incoming_edges_of(self):
         ""

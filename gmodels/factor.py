@@ -112,6 +112,23 @@ class Factor(GraphObject):
         ## constant normalization value
         self.Z = self.partition_value(self.vars_domain())
 
+    def __str__(self):
+        ""
+        msg = "Factor: " + self.id() + "\n"
+        msg += "Scope variables: " + str(self.domain_table)
+        msg += "Factor function: " + str(self.factor_fn)
+        return msg
+
+    def __hash__(self):
+        return hash(self.__str__())
+
+    def __eq__(self, n):
+        "Check if two factors are equal"
+        # TODO Mathematical equivalence of factor is needed"
+        if not isinstance(n, Factor):
+            return False
+        return n.id() == self.id()
+
     def scope_vars(self, f=lambda x: x) -> Set[NumCatRVariable]:
         """!
         \brief get variables that are inside the scope of this factor
@@ -172,9 +189,9 @@ class Factor(GraphObject):
     def fdomain(
         cls,
         D: Set[NumCatRVariable],
-        rvar_filter=lambda x: True,
-        value_filter=lambda x: True,
-        value_transform=lambda x: x,
+        rvar_filter: Callable[[NumCatRVariable], bool] = lambda x: True,
+        value_filter: Callable[[NumericValue], bool] = lambda x: True,
+        value_transform: Callable[[NumericValue], NumericValue] = lambda x: x,
     ) -> List[FrozenSet[Tuple[str, NumericValue]]]:
         """!
         \brief Get factor domain Val(D) D being a set of random variables
@@ -289,9 +306,9 @@ class Factor(GraphObject):
 
     def vars_domain(
         self,
-        rvar_filter=lambda x: True,
-        value_filter=lambda x: True,
-        value_transform=lambda x: x,
+        rvar_filter: Callable[[NumCatRVariable], bool] = lambda x: True,
+        value_filter: Callable[[NumericValue], bool] = lambda x: True,
+        value_transform: Callable[[NumericValue], NumericValue] = lambda x: x,
     ) -> List[FrozenSet[Tuple[str, NumericValue]]]:
         """!
         \brief Get factor domain

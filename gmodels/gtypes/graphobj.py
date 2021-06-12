@@ -24,6 +24,9 @@ class GraphObject(AbstractGraphObj):
         """
         return self.object_id
 
+    def copy(self):
+        return deepcopy(self)
+
     def clear_data(self):
         """!
         """
