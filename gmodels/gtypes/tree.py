@@ -7,6 +7,7 @@ from gmodels.gtypes.edge import Edge, EdgeType
 from gmodels.gtypes.path import Path
 from gmodels.gtypes.node import Node
 from gmodels.gtypes.graph import Graph
+from gmodels.gops.gtraverser import GraphTraverser
 from gmodels.gtypes.queue import PriorityQueue
 from uuid import uuid4
 import math
@@ -34,8 +35,8 @@ class Tree(Graph):
             egen = self.outgoing_edges_of
         else:
             egen = self.edges_of
-        self.paths: Dict[str, Union[dict, set]] = self.find_shortest_paths(
-            n1=self.root_node(), edge_generator=egen
+        self.paths: Dict[str, Union[dict, set]] = GraphTraverser.find_shortest_paths(
+            self, n1=self.root_node(), edge_generator=egen
         )
         self.topsort = self.paths["top-sort"]
         self.bfs_tree = self.paths["bfs-tree"][self.root_node().id()]
