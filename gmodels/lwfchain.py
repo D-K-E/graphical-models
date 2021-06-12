@@ -45,7 +45,7 @@ class LWFChainGraph(PGModel):
         Moralize given chain graph: For any \f X,Y \in Pa_{K_i} \f add an edge
         between them if it does not exist. Then drop the direction of edges.
         """
-        edges = self.edges()
+        edges = set(self.edges())
         enodes = set([frozenset([e.start(), e.end()]) for e in edges])
         # add edges
         for cid in range(len(self.ccomponents)):

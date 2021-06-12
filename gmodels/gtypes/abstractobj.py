@@ -108,15 +108,5 @@ class AbstractGraph(AbstractGraphObj):
         raise NotImplementedError
 
     @abstractmethod
-    def is_related_to(
-        self,
-        n1: AbstractNode,
-        n2: AbstractNode,
-        condition: Callable[[AbstractNode, AbstractNode, AbstractEdge], bool],
-        es: FrozenSet[AbstractEdge] = None,
-    ) -> bool:
-        raise NotImplementedError
-
-    @abstractmethod
     def is_neighbour_of(self, n1: AbstractNode, n2: AbstractNode) -> bool:
         raise NotImplementedError
