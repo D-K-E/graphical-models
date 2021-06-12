@@ -60,6 +60,14 @@ class FiniteGraph(BaseGraph):
         \endcode
         """
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
+        self.mk_nodes(ns=nodes, es=edges)
+        self.mk_gdata()
+
+    @classmethod
+    def from_abstract_graph(cls, g_):
+        ""
+        g = BaseGraph.from_abstract_graph(g_)
+        return cls.from_base_graph(g)
 
     @classmethod
     def from_base_graph(cls, bgraph: BaseGraph):
@@ -79,6 +87,50 @@ class FiniteGraph(BaseGraph):
     def from_edge_node_set(cls, edges: Set[Edge], nodes: Set[Node]):
         g = BaseGraph.from_edge_node_set(edges=edges, nodes=nodes)
         return cls.from_base_graph(g)
+
+    def mk_nodes(self, ns: Optional[Set[Node]], es: Optional[Set[Edge]]):
+        """!
+        \brief Obtain all nodes in a single set.
+
+        \param ns set of nodes
+        \param es set of edges
+
+        We assume that node set and edge set might contain different nodes,
+        that is \f$ V[G] = V[ns] \cup V[es] \f$
+        We combine nodes given in both sets to create a final set of nodes
+        for the graph
+        """
+        nodes = set()
+        if ns is None:
+            return
+        for n in ns:
+            nodes.add(n)
+        if es is not None:
+            for e in es:
+                estart = e.start()
+                eend = e.end()
+                nodes.add(estart)
+                nodes.add(eend)
+        #
+        self._nodes = {n.id(): n for n in nodes}
+
+    def mk_gdata(self):
+        """!
+        \brief Create edge list representation of graph
+
+        For each node we register the edges.
+        """
+        if self._nodes is not None:
+            for vertex in self._nodes.values():
+                self.gdata[vertex.id()] = []
+            #
+            for edge in self._edges.values():
+                for node_id in edge.node_ids():
+                    elist = self.gdata.get(node_id, None)
+                    if elist is None:
+                        self.gdata[node_id] = []
+                    else:
+                        self.gdata[node_id].append(edge.id())
 
     def vertices(self) -> FrozenSet[Node]:
         """!
@@ -978,3 +1030,33 @@ class FiniteGraph(BaseGraph):
         \brief shorthand for ev_ratio_from_average_degree()
         """
         return self.ev_ratio_from_average_degree(self.average_degree())
+
+    def has_cycles(self) -> bool:
+        """!
+        \brief Check if graph instance contains cycles.
+        This interpretation is from Diestel 2017, p. 8. The
+        proof is provided in the given page.
+        """
+        md = self.min_degree()
+        if md >= 2:
+            return True
+        return False
+
+    def shortest_path_length(self) -> int:
+        """!
+        \brief Give the shortest possible path length for graph instance
+        
+        This interpretation is taken from Diestel 2017, p. 8. The proof
+        is also given in the corresponding page.
+        """
+        return self.min_degree()
+
+    def shortest_cycle_length(self) -> int:
+        """!
+        \brief Give the shortest possible cycle length for graph instance
+        The interpretation comes from Diestel 2017, p. 8.
+        """
+        if self.has_cycles():
+            return self.min_degree() + 1
+        else:
+            return 0
