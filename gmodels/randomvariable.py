@@ -3,26 +3,15 @@ Implementation of a random variable
 """
 
 from gmodels.gtypes.node import Node
+from gmodels.pgmtypes.domaintype import DomainValue
+from gmodels.pgmtypes.codomaintype import CodomainValue, NumericValue, Outcome
+from gmodels.pgmtypes.codomaintype import PossibleOutcomes
+
+
 from typing import Callable, Set, Any, List, Dict, FrozenSet, Tuple
 import math
 from uuid import uuid4
 from random import choice
-
-Outcome = Any
-Value = Any
-NumericValue = float
-
-
-class PossibleOutcomes:
-    """!
-    \brief set of possible outcomes from Koller, Friedman 2009, p. 15, 20
-
-    This is simply a frozenset. We assume that possible outcomes contained in
-    this object are measurable.
-    """
-
-    def __init__(self, omega: FrozenSet[Outcome]):
-        self.data = omega
 
 
 class RandomVariable(Node):
@@ -45,7 +34,10 @@ class RandomVariable(Node):
     """
 
     def __init__(
-        self, node_id: str, data: Any, f: Callable[[Outcome], Value] = lambda x: x,
+        self,
+        node_id: str,
+        data: Any,
+        f: Callable[[Outcome], CodomainValue] = lambda x: x,
     ):
         """!
         \brief Constructor of a random variable
@@ -72,8 +64,8 @@ class CatRandomVariable(RandomVariable):
         self,
         node_id: str,
         input_data: Dict[str, Any],
-        f: Callable[[Outcome], Value] = lambda x: x,
-        marginal_distribution: Callable[[Value], float] = lambda x: 1.0,
+        f: Callable[[Outcome], CodomainValue] = lambda x: x,
+        marginal_distribution: Callable[[CodomainValue], float] = lambda x: 1.0,
     ):
         """!
         \brief Constructor for categorical/discrete random variable
@@ -131,7 +123,7 @@ class CatRandomVariable(RandomVariable):
                 raise ValueError("probability sum bigger than 1 or smaller than 0")
         self.dist = marginal_distribution
 
-    def p_x(self, value: Value) -> float:
+    def p_x(self, value: CodomainValue) -> float:
         """!
         \brief probability of given outcome value as per the associated
         distribution
@@ -142,7 +134,7 @@ class CatRandomVariable(RandomVariable):
         """
         return self.dist(value)
 
-    def marginal(self, value: Value) -> float:
+    def marginal(self, value: CodomainValue) -> float:
         """!
         \brief marginal distribution that is the probability of an outcome
 
