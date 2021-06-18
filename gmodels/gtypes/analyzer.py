@@ -4,6 +4,7 @@ graph analyzer
 """
 from typing import Set, Optional, Callable, List, Tuple
 from gmodels.gtypes.graph import Graph
+from gmodels.gtypes.graphobj import AbstractGraph
 from gmodels.gtypes.finitegraph import FiniteGraph
 from gmodels.gtypes.basegraph import BaseGraph
 from gmodels.gtypes.node import Node
