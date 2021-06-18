@@ -81,3 +81,9 @@ class GraphAnalyzer:
     @staticmethod
     def is_tree(g: BaseGraph) -> bool:
         raise NotImplementedError
+
+    @staticmethod
+    def find_articulation_points(
+        g: AbstractGraph, graph_maker=Callable[[Node], GraphObject]
+    ):
+        ""

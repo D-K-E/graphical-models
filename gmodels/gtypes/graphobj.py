@@ -6,7 +6,7 @@ from gmodels.gtypes.abstractobj import AbstractGraphObj
 
 
 class GraphObject(AbstractGraphObj):
-    "object contained in a graph"
+    """!object contained in a graph"""
 
     def __init__(self, oid: str, odata={}):
         """!
