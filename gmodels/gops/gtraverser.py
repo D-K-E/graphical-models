@@ -17,12 +17,12 @@ class GraphTraverser:
 
     @staticmethod
     def cast_graph(g_: AbstractGraph):
-        if isinstance(g_, BaseGraph):
-            return FiniteGraph.from_base_graph(g_)
-        elif isinstance(g_, FiniteGraph):
+        """!
+        """
+        if isinstance(g_, FiniteGraph):
             return g_
-        elif isinstance(g_, Graph):
-            return g_.to_finite_graph()
+        elif isinstance(g_, BaseGraph):
+            return FiniteGraph.from_base_graph(g_)
         else:
             return FiniteGraph.from_abstract_graph(g_)
 
