@@ -298,4 +298,4 @@ class FactorAnalyzer:
         """!
         Wrapper of FactorAnalyzer.cls_normalize
         """
-        return cls.cls_normalize(f=self.factor, phi_result=phi_result)
+        return self.cls_normalize(f=self.factor, phi_result=phi_result)
