@@ -12,8 +12,8 @@ generic model, hence we do not assume a particular independence structure.
 """
 from gmodels.gtypes.edge import Edge
 from gmodels.gtypes.node import Node
-from gmodels.randomvariable import NumCatRVariable, NumericValue
-from gmodels.factor import Factor
+from gmodels.pgmtypes.randomvariable import NumCatRVariable, NumericValue
+from gmodels.pgmtypes.factor import Factor
 from gmodels.fops.factorops import FactorOps
 from gmodels.fops.factoranalyzer import FactorAnalyzer
 from gmodels.gtypes.graph import Graph

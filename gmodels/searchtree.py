@@ -4,8 +4,8 @@ and/or search tree implementation
 from gmodels.gtypes.tree import Tree
 from gmodels.gtypes.path import Path
 from gmodels.gtypes.edge import Edge, EdgeType
-from gmodels.randomvariable import ANDNode, ORNode, NumCatRVariable
-from gmodels.pgmodel import PGModel
+from gmodels.pgmtypes.randomvariable import ANDNode, ORNode, NumCatRVariable
+from gmodels.pgmtypes.pgmodel import PGModel
 from uuid import uuid4
 from copy import deepcopy
 

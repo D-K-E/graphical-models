@@ -51,7 +51,7 @@ class RandomVariable(Node):
         """
         super().__init__(node_id=node_id, data=data)
 
-    def p_x(self, value: Any):
+    def p(self, value: Any):
         raise NotImplementedError
 
 
@@ -123,7 +123,7 @@ class CatRandomVariable(RandomVariable):
                 raise ValueError("probability sum bigger than 1 or smaller than 0")
         self.dist = marginal_distribution
 
-    def p_x(self, value: CodomainValue) -> float:
+    def p(self, value: CodomainValue) -> float:
         """!
         \brief probability of given outcome value as per the associated
         distribution
@@ -143,11 +143,11 @@ class CatRandomVariable(RandomVariable):
         Marginal distribution of X is the function: \f$p_1(x_i) = P(X=x_i)\f$
         </blockquote>
 
-        \see CatRandomVariable.p_x
+        \see CatRandomVariable.p
 
         \returns probability value associated to value
         """
-        return self.p_x(value)
+        return self.p(value)
 
     def values(self):
         """!
@@ -678,7 +678,7 @@ class NumCatRVariable(CatRandomVariable):
 
         \endcode
         """
-        return sum([value * self.p_x(value) for value in self.values()])
+        return sum([value * self.p(value) for value in self.values()])
 
     @staticmethod
     def is_numeric(v: Any) -> bool:
@@ -904,7 +904,7 @@ class NumCatRVariable(CatRandomVariable):
         implements:
         \f$\sum_{i=1}^n \phi(x_i) p(x_i) \f$
         """
-        return sum(self.apply(lambda x: phi(x) * self.p_x(x)))
+        return sum(self.apply(lambda x: phi(x) * self.p(x)))
 
     def apply(self, phi: Callable[[NumericValue], NumericValue]):
         """!

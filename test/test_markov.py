@@ -2,11 +2,11 @@
 Test markov network
 """
 
-from gmodels.randomvariable import NumCatRVariable
+from gmodels.pgmtypes.randomvariable import NumCatRVariable
 from gmodels.markov import MarkovNetwork, ConditionalRandomField
 from gmodels.gtypes.edge import Edge, EdgeType
 from gmodels.gtypes.undigraph import UndiGraph
-from gmodels.factor import Factor
+from gmodels.pgmtypes.factor import Factor
 from gmodels.fops.factoranalyzer import FactorAnalyzer
 from uuid import uuid4
 import pdb

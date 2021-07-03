@@ -1,11 +1,11 @@
 """!
 test lwf chain graph test
 """
-from gmodels.pgmodel import PGModel
+from gmodels.pgmtypes.pgmodel import PGModel
 from gmodels.gtypes.edge import Edge, EdgeType
 from gmodels.gtypes.undigraph import UndiGraph
-from gmodels.factor import Factor
-from gmodels.randomvariable import NumCatRVariable
+from gmodels.pgmtypes.factor import Factor
+from gmodels.pgmtypes.randomvariable import NumCatRVariable
 from gmodels.lwfchain import LWFChainGraph
 from gmodels.markov import ConditionalRandomField
 from uuid import uuid4

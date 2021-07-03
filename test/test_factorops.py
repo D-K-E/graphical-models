@@ -1,9 +1,9 @@
 """!
 Factor operators test cases
 """
-from gmodels.factor import Factor, BaseFactor
+from gmodels.pgmtypes.factor import Factor, BaseFactor
 from gmodels.fops.factorops import FactorOps
-from gmodels.randomvariable import NumCatRVariable
+from gmodels.pgmtypes.randomvariable import NumCatRVariable
 from gmodels.gtypes.edge import Edge, EdgeType
 import unittest
 from random import choice

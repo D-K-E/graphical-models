@@ -4,9 +4,9 @@ Bayesian Network model
 
 from gmodels.gtypes.digraph import DiGraph
 from gmodels.gtypes.edge import Edge
-from gmodels.randomvariable import NumCatRVariable
-from gmodels.factor import Factor
-from gmodels.pgmodel import PGModel
+from gmodels.pgmtypes.randomvariable import NumCatRVariable
+from gmodels.pgmtypes.factor import Factor
+from gmodels.pgmtypes.pgmodel import PGModel
 from typing import Set, Optional, Callable
 from uuid import uuid4
 

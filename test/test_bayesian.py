@@ -5,8 +5,8 @@ Test Bayesian Network
 from gmodels.bayesian import BayesianNetwork
 from gmodels.gtypes.edge import Edge, EdgeType
 from gmodels.gtypes.digraph import DiGraph
-from gmodels.factor import Factor
-from gmodels.randomvariable import NumCatRVariable
+from gmodels.pgmtypes.factor import Factor
+from gmodels.pgmtypes.randomvariable import NumCatRVariable
 from uuid import uuid4
 
 import unittest

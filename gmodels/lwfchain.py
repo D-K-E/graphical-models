@@ -5,9 +5,9 @@ Partially Directed Acyclic Graph as in Koller, Friedman 2009, p. 37
 """
 from gmodels.gtypes.edge import Edge, EdgeType
 from gmodels.gtypes.node import Node
-from gmodels.randomvariable import NumCatRVariable
-from gmodels.factor import Factor
-from gmodels.pgmodel import PGModel
+from gmodels.pgmtypes.randomvariable import NumCatRVariable
+from gmodels.pgmtypes.factor import Factor
+from gmodels.pgmtypes.pgmodel import PGModel
 from gmodels.markov import MarkovNetwork, ConditionalRandomField
 from gmodels.gtypes.graph import Graph
 from gmodels.gtypes.tree import Tree
