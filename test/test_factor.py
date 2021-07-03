@@ -211,16 +211,6 @@ class TestFactor(unittest.TestCase):
 
         self.bc = Factor(gid="bc", scope_vars=set([self.Bf, self.Cf]), factor_fn=phibc)
 
-    def test_max_value(self):
-        ""
-        mval = self.bc.max_value()
-        self.assertEqual(mval, set([("B", 10), ("C", 50)]))
-
-    def test_max_probability(self):
-        ""
-        mval = self.bc.max_probability()
-        self.assertEqual(mval, 0.7)
-
     def test_id(self):
         ""
         self.assertEqual(self.f.id(), "f")
@@ -242,13 +232,13 @@ class TestFactor(unittest.TestCase):
         self.assertEqual(nottuple[1], None)
 
     def test_in_scope_t_num(self):
-        self.assertTrue(self.f.in_scope(self.dice))
+        self.assertTrue(self.dice in self.f)
 
     def test_in_scope_t_str(self):
-        self.assertTrue(self.f.in_scope(self.dice.id()))
+        self.assertTrue(self.dice.id() in self.f)
 
     def test_in_scope_f_str(self):
-        self.assertFalse(self.f.in_scope("fdsfdsa"))
+        self.assertFalse("fdsfdsa" in self.f)
 
     def test_scope_vars(self):
         self.assertTrue(
@@ -283,76 +273,6 @@ class TestFactor(unittest.TestCase):
         imarg = self.intelligence.marginal(0.1)
         gmarg = self.grade.marginal(0.4)
         self.assertTrue(mjoint, (dmarg * imarg * gmarg) / self.f.zval())
-
-    def test_factor_product(self):
-        "from Koller, Friedman 2009, p. 105, figure 4.2"
-        Ab_Bc, prod1 = self.AB.product(self.BC)
-        Ab_Bc_Cd, prod2 = Ab_Bc.product(self.CD)
-        result, prod3 = Ab_Bc_Cd.product(self.DA)
-        for sm in result.scope_products:
-            sms = set(sm)
-            f = result.phi(sms)
-            ff = round(result.phi_normal(sms), 6)
-            if sms == set([("B", 50), ("C", 50), ("A", 50), ("D", 10)]):
-                self.assertEqual(f, 100000)
-                self.assertEqual(ff, 0.013885)
-
-            elif sms == set([("B", 50), ("C", 50), ("A", 50), ("D", 50)]):
-                self.assertEqual(f, 100000)
-                self.assertEqual(ff, 0.013885)
-
-            elif sms == set([("B", 50), ("C", 50), ("A", 10), ("D", 10)]):
-                self.assertEqual(f, 5000000)
-                self.assertEqual(ff, 0.694267)
-
-            elif sms == set([("B", 50), ("C", 50), ("A", 10), ("D", 50)]):
-                self.assertEqual(f, 500)
-                self.assertEqual(ff, 6.9e-05)
-
-            elif sms == set([("B", 50), ("C", 10), ("A", 50), ("D", 10)]):
-                self.assertEqual(f, 10)
-                self.assertEqual(ff, 1e-06)
-
-            elif sms == set([("B", 50), ("C", 10), ("A", 50), ("D", 50)]):
-                self.assertEqual(f, 100000)
-                self.assertEqual(ff, 0.013885)
-            elif sms == set([("B", 50), ("C", 10), ("A", 10), ("D", 10)]):
-                self.assertEqual(f, 500)
-                self.assertEqual(ff, 6.9e-05)
-
-            elif sms == set([("B", 50), ("C", 10), ("A", 10), ("D", 50)]):
-                self.assertEqual(f, 500)
-                self.assertEqual(ff, 6.9e-05)
-
-            elif sms == set([("B", 10), ("C", 50), ("A", 50), ("D", 10)]):
-                self.assertEqual(f, 100)
-                self.assertEqual(ff, 1.4e-05)
-
-            elif sms == set([("B", 10), ("C", 50), ("A", 50), ("D", 50)]):
-                self.assertEqual(f, 100)
-                self.assertEqual(ff, 1.4e-05)
-            elif sms == set([("B", 10), ("C", 50), ("A", 10), ("D", 10)]):
-                self.assertEqual(f, 300000)
-                self.assertEqual(ff, 0.041656)
-
-            elif sms == set([("B", 10), ("C", 50), ("A", 10), ("D", 50)]):
-                self.assertEqual(f, 30)
-                self.assertEqual(ff, 4e-06)
-
-            elif sms == set([("B", 10), ("C", 10), ("A", 50), ("D", 10)]):
-                self.assertEqual(f, 100)
-                self.assertEqual(ff, 1.4e-05)
-
-            elif sms == set([("B", 10), ("C", 10), ("A", 50), ("D", 50)]):
-                self.assertEqual(f, 1000000)
-                self.assertEqual(ff, 0.138853)
-
-            elif sms == set([("B", 10), ("C", 10), ("A", 10), ("D", 10)]):
-                self.assertEqual(f, 300000)
-                self.assertEqual(ff, 0.041656)
-            elif sms == set([("B", 10), ("C", 10), ("A", 10), ("D", 50)]):
-                self.assertEqual(f, 300000)
-                self.assertEqual(ff, 0.041656)
 
     def test_from_scope_variables_with_fn(self):
         ""
@@ -416,109 +336,6 @@ class TestFactor(unittest.TestCase):
         query = set([("A", True), ("B", True)])
         ff = f.phi(query)
         # self.assertEqual(round(ff, 2), 0.9)
-
-    def test_reduced_by_value(self):
-        "from Koller, Friedman 2009, p. 111 figure 4.5"
-        red = set([("C", 10)])
-        aB_c, prod = self.aB.product(self.bc)
-        # print(aB_c.scope_products)
-        nf = aB_c.reduced_by_value(assignments=red)
-        sps = set([frozenset(s) for s in nf.scope_products])
-
-        self.assertEqual(
-            sps,
-            set(
-                [
-                    frozenset([("A", 10), ("B", 50), ("C", 10)]),
-                    frozenset([("A", 10), ("B", 10), ("C", 10)]),
-                    frozenset([("B", 50), ("A", 20), ("C", 10)]),
-                    frozenset([("B", 10), ("A", 20), ("C", 10)]),
-                    frozenset([("A", 50), ("B", 50), ("C", 10)]),
-                    frozenset([("A", 50), ("B", 10), ("C", 10)]),
-                ]
-            ),
-        )
-        for p in nf.scope_products:
-            ps = set(p)
-            f = round(nf.phi(ps), 5)
-            if ps == set([("A", 10), ("B", 50), ("C", 10)]):
-                self.assertEqual(f, 0.08)
-            elif ps == set([("A", 10), ("B", 10), ("C", 10)]):
-                self.assertEqual(f, 0.25)
-            elif ps == set([("B", 50), ("A", 20), ("C", 10)]):
-                self.assertEqual(f, 0.09)
-            elif ps == set([("B", 10), ("A", 20), ("C", 10)]):
-                self.assertEqual(f, 0.15)
-            elif ps == set([("A", 50), ("B", 50), ("C", 10)]):
-                self.assertEqual(f, 0.0)
-            elif ps == set([("A", 50), ("B", 10), ("C", 10)]):
-                self.assertEqual(f, 0.05)
-
-    def test_reduce_by_vars(self):
-        ""
-        evidence = set([("C", 10), ("D", 50)])
-        aB_c, prod = self.aB.product(self.bc)
-        # print(aB_c.scope_products)
-        nf = aB_c.reduced_by_vars(assignments=evidence)
-        sps = set([frozenset(s) for s in nf.scope_products])
-
-        self.assertEqual(
-            sps,
-            set(
-                [
-                    frozenset([("A", 10), ("B", 50), ("C", 10)]),
-                    frozenset([("A", 10), ("B", 10), ("C", 10)]),
-                    frozenset([("B", 50), ("A", 20), ("C", 10)]),
-                    frozenset([("B", 10), ("A", 20), ("C", 10)]),
-                    frozenset([("A", 50), ("B", 50), ("C", 10)]),
-                    frozenset([("A", 50), ("B", 10), ("C", 10)]),
-                ]
-            ),
-        )
-
-    def test_sumout_var(self):
-        "from Koller, Friedman 2009, p. 297 figure 9.7"
-        aB_c, prod = self.aB.product(self.bc)
-        a_c = aB_c.sumout_var(self.Bf)
-        dset = self.Bf.value_set()
-        for p in a_c.scope_products:
-            ps = set(p)
-            f = round(a_c.phi(ps), 4)
-            diff = ps.difference(dset)
-            if diff == set([("C", 10), ("A", 10)]):
-                self.assertEqual(f, 0.33)
-            elif diff == set([("C", 50), ("A", 10)]):
-                self.assertEqual(f, 0.51)
-            elif diff == set([("C", 10), ("A", 50)]):
-                self.assertEqual(f, 0.05)
-            elif diff == set([("C", 50), ("A", 50)]):
-                self.assertEqual(f, 0.07)
-            elif diff == set([("C", 10), ("A", 20)]):
-                self.assertEqual(f, 0.24)
-            elif diff == set([("C", 50), ("A", 20)]):
-                self.assertEqual(f, 0.39)
-
-    def test_maxout_var(self):
-        "from Koller, Friedman 2009, p. 555 figure 13.1"
-        aB_c, prod = self.aB.product(self.bc)
-        a_c = aB_c.maxout_var(self.Bf)
-        dset = self.Bf.value_set()
-        for p in a_c.scope_products:
-            ps = set(p)
-            f = round(a_c.phi(ps), 4)
-            diff = ps.difference(dset)
-            if diff == set([("C", 10), ("A", 10)]):
-                self.assertEqual(f, 0.25)
-            elif diff == set([("C", 50), ("A", 10)]):
-                self.assertEqual(f, 0.35)
-            elif diff == set([("C", 10), ("A", 50)]):
-                self.assertEqual(f, 0.05)
-            elif diff == set([("C", 50), ("A", 50)]):
-                self.assertEqual(f, 0.07)
-            elif diff == set([("C", 10), ("A", 20)]):
-                self.assertEqual(f, 0.15)
-            elif diff == set([("C", 50), ("A", 20)]):
-                self.assertEqual(f, 0.21)
 
 
 if __name__ == "__main__":

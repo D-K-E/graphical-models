@@ -138,6 +138,43 @@ class BaseFactor(AbstractFactor, GraphObject):
         return BaseFactor(gid=f.id(), data=f.data(), factor_fn=fn, scope_vars=svar)
 
     @classmethod
+    def from_joint_vars(cls, svars: Set[NumCatRVariable]):
+        """!
+        \brief Make factor from joint variables
+
+        \param svars set of random variables in the scope of the future factor
+
+        We assume that the factor for the given set of random variables would
+        be their marginal product.
+
+        \code
+
+        >>> A = NumCatRVariable("A",
+        >>>                     input_data={"outcome-values": [True, False]},
+        >>>                     marginal_distribution=lambda x: 0.5)
+        >>> B = NumCatRVariable("B",
+        >>>                     input_data={"outcome-values": [True, False]},
+        >>>                     marginal_distribution=lambda x: 0.5)
+
+
+        >>> fac = Factor.from_joint_vars(svars=set([A, B]))
+
+        \endcode
+        """
+        return Factor(gid=str(uuid4()), scope_vars=svars)
+
+    @classmethod
+    def from_scope_variables_with_fn(
+        cls,
+        svars: Set[NumCatRVariable],
+        fn: Callable[[Set[Tuple[str, NumericValue]]], float],
+    ):
+        """!
+        \brief Make a factor from scope variables and a preference function
+        """
+        return BaseFactor(gid=str(uuid4()), scope_vars=svars, factor_fn=fn)
+
+    @classmethod
     def fdomain(
         cls,
         D: Set[NumCatRVariable],
@@ -358,6 +395,24 @@ class Factor(BaseFactor):
         super().__init__(gid=gid, scope_vars=scope_vars, factor_fn=factor_fn, data=data)
 
     @classmethod
+    def from_abstract_factor(cls, f: AbstractFactor):
+        ""
+        bfac = BaseFactor.from_abstract_factor(f)
+        return cls.from_base_factor(bfac)
+
+    @classmethod
+    def from_base_factor(cls, bfac: BaseFactor):
+        """!
+        Construct normal factor from base factor
+        """
+        return Factor(
+            gid=bfac.id(),
+            scope_vars=bfac.scope_vars(),
+            factor_fn=bfac.factor_fn,
+            data=bfac.data(),
+        )
+
+    @classmethod
     def from_joint_vars(cls, svars: Set[NumCatRVariable]):
         """!
         \brief Make factor from joint variables
@@ -381,7 +436,8 @@ class Factor(BaseFactor):
 
         \endcode
         """
-        return Factor(gid=str(uuid4()), scope_vars=svars)
+        bfac = BaseFactor.from_joint_vars(svars)
+        return cls.from_base_factor(bfac)
 
     @classmethod
     def from_scope_variables_with_fn(
@@ -392,7 +448,8 @@ class Factor(BaseFactor):
         """!
         \brief Make a factor from scope variables and a preference function
         """
-        return Factor(gid=str(uuid4()), scope_vars=svars, factor_fn=fn)
+        bfac = BaseFactor.from_scope_variables_with_fn(svars, fn)
+        return cls.from_base_factor(bfac)
 
     @classmethod
     def matches(
@@ -581,122 +638,6 @@ class Factor(BaseFactor):
         """
         return self.phi(scope_product)
 
-    def normalize(self, phi_result: float) -> float:
-        """!
-        \brief Normalize a given factorization result by dividing it to the
-        value of partition function value Z
-        
-        \param phi_result the preference value to be normalized with partition
-        constant
-
-        \return normalized preference value
-        """
-        return phi_result / self.Z
-
-    def _max_prob_value(self):
-        """!
-        \brief obtain highest yielding domain value and its associated codomain
-        member
-
-        Obtain the highest preference value yielding domain member of this
-        factor with its associated value.
-        """
-        mx = float("-inf")
-        max_val = None
-        for sp in self.factor_domain():
-            ss = set(sp)
-            phi_s = self.phi(ss)
-            if phi_s > mx:
-                mx = phi_s
-                max_val = ss
-        return max_val, mx
-
-    def max_probability(self) -> float:
-        """!
-        \brief maximum preference value for this factor
-
-        \code{.py}
-
-        >>> #
-        >>> Bf = NumCatRVariable(
-        >>>     node_id="B",
-        >>>     input_data={"outcome-values": [10, 50]},
-        >>>     marginal_distribution=lambda x: 0.5,
-        >>> )
-        >>> Cf = NumCatRVariable(
-        >>>     node_id="C",
-        >>>     input_data={"outcome-values": [10, 50]},
-        >>>     marginal_distribution=lambda x: 0.5,
-        >>> )
-        >>> def phibc(scope_product):
-        >>>     ""
-        >>>     sfs = set(scope_product)
-        >>>     if sfs == set([("B", 10), ("C", 10)]):
-        >>>         return 0.5
-        >>>     elif sfs == set([("B", 10), ("C", 50)]):
-        >>>         return 0.7
-        >>>     elif sfs == set([("B", 50), ("C", 10)]):
-        >>>         return 0.1
-        >>>     elif sfs == set([("B", 50), ("C", 50)]):
-        >>>         return 0.2
-        >>>     else:
-        >>>         raise ValueError("unknown arg")
-
-        >>> bc = Factor(gid="bc", scope_vars=set([Bf, Cf]), factor_fn=phibc)
-        >>> mval = self.bc.max_probability()
-        >>> print(mval)
-        >>> 0.7
-
-        \endcode
-        """
-        mval, mprob = self._max_prob_value()
-        return mprob
-
-    def max_value(self) -> Set[Tuple[str, NumericValue]]:
-        """!
-        \brief maximum factor value for this factor
-
-        Obtain the highest probability yielding value from the domain of the
-        factor. Notice that it does not give a probability value. It outputs
-        the value which when evaluated yields the highest probability value.
-
-        \code{.py}
-
-        >>> #
-        >>> Bf = NumCatRVariable(
-        >>>     node_id="B",
-        >>>     input_data={"outcome-values": [10, 50]},
-        >>>     marginal_distribution=lambda x: 0.5,
-        >>> )
-        >>> Cf = NumCatRVariable(
-        >>>     node_id="C",
-        >>>     input_data={"outcome-values": [10, 50]},
-        >>>     marginal_distribution=lambda x: 0.5,
-        >>> )
-        >>> def phibc(scope_product):
-        >>>     ""
-        >>>     sfs = set(scope_product)
-        >>>     if sfs == set([("B", 10), ("C", 10)]):
-        >>>         return 0.5
-        >>>     elif sfs == set([("B", 10), ("C", 50)]):
-        >>>         return 0.7
-        >>>     elif sfs == set([("B", 50), ("C", 10)]):
-        >>>         return 0.1
-        >>>     elif sfs == set([("B", 50), ("C", 50)]):
-        >>>         return 0.2
-        >>>     else:
-        >>>         raise ValueError("unknown arg")
-
-        >>> bc = Factor(gid="bc", scope_vars=set([Bf, Cf]), factor_fn=phibc)
-        >>> mval = self.bc.max_value()
-        >>> print(mval)
-        >>> {[("B", 10), ("C", 50)]}
-
-        \endcode
-        """
-        mval, mrob = self._max_prob_value()
-        return mval
-
     def zval(self) -> float:
         """!
         \brief compute value of partition function for this factor
@@ -729,7 +670,7 @@ class Factor(BaseFactor):
             p *= var.marginal(var_value)
         return p
 
-    def in_scope(self, v: Union[NumCatRVariable, str]) -> bool:
+    def __contains__(self, v: Union[NumCatRVariable, str]) -> bool:
         """!
         \brief Check if given parameter is in scope of this factor
 
@@ -748,255 +689,3 @@ class Factor(BaseFactor):
             return v in self.domain_table
         else:
             raise TypeError("argument must be NumCatRVariable or its id")
-
-    def product(
-        self,
-        other,
-        product_fn=lambda x, y: x * y,
-        accumulator=lambda added, accumulated: added * accumulated,
-    ) -> Tuple[GraphObject, float]:
-        """!
-        \brief Factor product operation from Koller, Friedman 2009, p. 107
-        \f$ \psi(X,Y,Z) =  \phi(X,Y) \cdot \phi(Y,Z) \f$
-        \f$ \prod_i phi(X_i) \f$
-
-        Point wise product of two different factor functions.
-
-        \param product_fn actual function for computing product. This function
-        can be exchanged with another function to compute log-sum for example.
-
-        \param accumulator this function decides how to accumulate resulting product.
-        \param product_fn
-        \parblock
-
-        product function. Default case is that it multiplies
-        its two arguments. In case of a floating precision problem it can be
-        changed into summation.
-
-        \endparblock
-
-        \return tuple whose first element is the resulting factor and second
-        element is the accumulated product.
-        """
-        if not isinstance(other, Factor):
-            raise TypeError("other needs to be a factor")
-        #
-        svar = self.scope_vars()
-        ovar = other.scope_vars()
-        var_inter = svar.intersection(ovar)
-        var_inter = list(var_inter)
-        vsets = [v.value_set() for v in var_inter]
-        inter_products = list(product(*vsets))
-        smatch = self.factor_domain()
-        omatch = other.factor_domain()
-        prod = 1.0
-        common_match = set()
-        for iproduct in inter_products:
-            for o in omatch:
-                for s in smatch:
-                    ss = set(s)
-                    ost = set(o)
-                    prod_s = set(iproduct)
-                    if prod_s.issubset(ss) and prod_s.issubset(ost):
-                        common = ss.union(ost)
-                        multi = product_fn(self.factor_fn(ss), other.factor_fn(ost))
-                        common_match.add((multi, tuple(common)))
-                        prod = accumulator(multi, prod)
-
-        def fx(scope_product: Set[Tuple[str, NumericValue]]):
-            ""
-            for multip, match in common_match:
-                if set(match) == set(scope_product):
-                    return multip
-
-        f = Factor(gid=str(uuid4()), scope_vars=svar.union(ovar), factor_fn=fx)
-        return f, prod
-
-    def reduced(self, assignments: Set[Tuple[str, NumericValue]]):
-        """!
-        \brief reduce factor using given context
-
-        \param assignments values that are assigned to random variables of this
-        factor.
-
-        \return Factor whose conditional probability table rows are shrink to
-        rows that contain assignment values.
-
-        Koller, Friedman 2009, p. 111 reduction by value example
-
-        \f$phi(A,B,C)\f$
-
-         A      B      C
-        ---- | ---- | ----
-         a1  |  b1  |  c1
-         a1  |  b1  |  c2
-         a2  |  b1  |  c1
-         a2  |  b1  |  c2
-
-        reduction C=c1 \f$\phi(A,B,C=c_1)\f$
-
-           A      B      C
-          ---- | ---- | ----
-           a1  |  b1  |  c1
-           a2  |  b1  |  c1
-
-        """
-        svars = set()
-        for sv in self.scope_vars():
-            for kval in assignments:
-                k, value = kval
-                if sv.id() == k:
-                    sv.reduce_to_value(value)
-            svars.add(sv)
-        return Factor(gid=str(uuid4()), scope_vars=svars, factor_fn=self.phi)
-
-    def reduced_by_value(self, assignments: Set[Tuple[str, NumericValue]]):
-        """!
-        \brief \see Factor.reduced(context)
-
-        \return Factor
-        """
-        return self.reduced(assignments)
-
-    def filter_assignments(
-        self, assignments: Set[Tuple[str, NumericValue]], context: Set[NumCatRVariable]
-    ) -> Set[Tuple[str, NumericValue]]:
-        """!
-        \brief filter out assignments that do not belong to context domain
-        
-        Scans the given set of assignements/evidences and removes those that do
-        not belong to the context.
-
-        \param context set of random variables that are relevant to current
-        computation
-
-        \param assignments evidences with respect to the value of a certain
-        random variable in scope of the context.
-
-        \return set of valid assignments
-        """
-        assignment_d = {a[0]: a[1] for a in assignments}
-        context_ids = set([c.id() for c in context])
-        for a in assignment_d.copy().keys():
-            if a not in context_ids:
-                assignment_d.pop(a)
-        return set([(k, v) for k, v in assignment_d.items()])
-
-    def reduced_by_vars(
-        self, assignments: Set[Tuple[str, NumericValue]],
-    ):
-        """!
-        Koller, Friedman 2009, p. 111 follows the definition 4.5
-
-        For \f$ U \not \subset Y \f$, we define \f$phi[u]\f$ to be
-        \f$phi[U'=u']\f$, where \f$ U' = U \cap Y \f$ , and \f$u' = u<U>\f$,
-        where \f$u<U>\f$ denotes the assignment in \f$u\f$ to the variables in
-        \f$U'\f$.
-
-        \return Factor
-        """
-        return self.reduced(assignments=assignments)
-
-    def maxout_var(self, Y: NumCatRVariable):
-        """!
-        \brief max the variable out of factor as per Koller, Friedman 2009, p. 555
-
-        Maxing out a variable, or factor maximization is defined by Koller,
-        Friedman as:
-        <blockquote>
-        Let X be a set of variables, and Y \f$ \not \in \f$ X, a random
-        variable. Let \f$ \phi(X, Y) \f$ be a factor. We define the factor
-        maximization of Y in \f$ \phi \f$ to be factor \f$ \psi \f$ over X such
-        that: \f$ \psi(X) = max_{Y}\phi(X, Y) \f$
-        </blockquote>
-
-        \param Y random variable who is going to be maxed out.
-
-        \throw ValueError If the argument is not in scope of this factor, we
-        throw a value error
-
-        \return Factor
-        """
-        if not self.in_scope(Y):
-            raise ValueError("argument is not in scope of this factor")
-
-        Y_vals = Y.value_set()
-        products = self.factor_domain()
-        fn = self.factor_fn
-
-        def psi(scope_product: Set[Tuple[str, NumericValue]]):
-            ""
-            s = set(scope_product)
-            diffs = set([p for p in products if s.issubset(p) is True])
-            return max([fn(d) for d in diffs])
-
-        return Factor(
-            gid=str(uuid4()),
-            scope_vars=self.scope_vars().difference({Y}),
-            factor_fn=psi,
-        )
-
-    def sumout_var(self, Y: NumCatRVariable):
-        """!
-        \brief Sum the variable out of factor as per Koller, Friedman 2009, p. 297
-
-        Summing out, or factor marginalization, is defined as the following by
-        Koller, Friedman:
-
-        <blockquote>
-
-        Let X be a set of variables and Y \f$\not \in \f$ X a variable. Let
-        \f$\phi(X, Y)\f] be a factor. We define the factor marginalization of Y
-        in phi, denoted \f$ \sum_Y \phi \f$, to be a factor psi over X such
-        that: \f$ \psi(X) = \sum_Y \phi(X,Y) \f$
-
-        </blockquote>
-
-
-        \param Y the variable that we are going to sum out.
-
-        \throw ValueError We raise a value error if the argument is not in
-        the scope of this factor
-
-        \return Factor
-        """
-        if not self.in_scope(Y):
-            msg = "Argument " + str(Y)
-            msg += " is not in scope of this factor: "
-            msg += " ".join(self.scope_vars())
-            raise ValueError(msg)
-
-        Y_vals = Y.value_set()
-        products = self.factor_domain()
-        fn = self.factor_fn
-
-        def psi(scope_product: Set[Tuple[str, NumericValue]]):
-            ""
-            s = set(scope_product)
-            diffs = set([p for p in products if s.issubset(p) is True])
-            return sum([fn(d) for d in diffs])
-
-        return Factor(
-            gid=str(uuid4()),
-            scope_vars=self.scope_vars().difference({Y}),
-            factor_fn=psi,
-        )
-
-    def sumout_vars(self, Ys: Set[NumCatRVariable]):
-        """!
-        \brief Sum the variable out of factor as per Koller, Friedman 2009, p. 297
-
-        \see Factor.sumout_var(Y)
-
-        \return Factor
-        """
-        if len(Ys) == 0:
-            raise ValueError("variables not be an empty set")
-        if len(Ys) == 1:
-            v = Ys.pop()
-            return self.sumout_var(v)
-        ylst = list(Ys)
-        fac = self.sumout_var(ylst[0])
-        for i in range(1, len(ylst)):
-            fac = fac.sumout_var(ylst[i])
-        return fac

@@ -14,6 +14,8 @@ from gmodels.gtypes.edge import Edge
 from gmodels.gtypes.node import Node
 from gmodels.randomvariable import NumCatRVariable, NumericValue
 from gmodels.factor import Factor
+from gmodels.fops.factorops import FactorOps
+from gmodels.fops.factoranalyzer import FactorAnalyzer
 from gmodels.gtypes.graph import Graph
 from typing import Callable, Set, List, Optional, Dict, Tuple
 import math
@@ -132,8 +134,9 @@ class PGModel(Graph):
             return factors[0], None
         prod = factors.pop(0)
         for i in range(0, len(factors)):
-            prod, val = prod.product(
-                factors[i],
+            prod, val = FactorOps.cls_product(
+                f=prod,
+                other=factors[i],
                 product_fn=lambda x, y: x * y,
                 accumulator=lambda x, y: x * y,
             )
@@ -173,7 +176,9 @@ class PGModel(Graph):
         \param Z variable that we are going to sum out, i.e. marginalize
         """
         res = self.eliminate_variable_by(
-            factors=factors, Z=Z, elimination_strategy=lambda x, y: x.sumout_var(y)
+            factors=factors,
+            Z=Z,
+            elimination_strategy=lambda x, y: FactorOps.cls_sumout_var(x, y),
         )
         return res[0]
 
@@ -269,7 +274,9 @@ class PGModel(Graph):
             raise ValueError("evidence set contains variables out of vertices of graph")
         E = set([self.V[e[0]] for e in evidences])
         fs = self.factors()
-        factors = set([f.reduced_by_value(assignments=evidences) for f in fs])
+        factors = set(
+            [FactorOps.cls_reduced_by_value(f, assignments=evidences) for f in fs]
+        )
         return factors, E
 
     def cond_prod_by_variable_elimination(
@@ -309,7 +316,7 @@ class PGModel(Graph):
             self.V[n[0]] for n in sorted(list(cardinality.items()), key=lambda x: x[1])
         ]
         phi = self.sum_product_elimination(factors=factors, Zs=ordering)
-        alpha = phi.sumout_vars(queries)
+        alpha = FactorOps.cls_sumout_vars(phi, queries)
         return phi, alpha
 
     def max_product_eliminate_var(
@@ -319,7 +326,9 @@ class PGModel(Graph):
         from Koller and Friedman 2009, p. 557
         """
         return self.eliminate_variable_by(
-            factors=factors, Z=Z, elimination_strategy=lambda x, y: x.maxout_var(y)
+            factors=factors,
+            Z=Z,
+            elimination_strategy=lambda x, y: FactorOps.cls_maxout_var(x, y),
         )
 
     def max_product_eliminate_vars(self, factors: Set[Edge], Zs: List[NumCatRVariable]):
@@ -381,7 +390,7 @@ class PGModel(Graph):
         """
         max_assignments = {}
         for i in range(len(potentials) - 1, -1, -1):
-            pmax = potentials[i].max_value()
+            pmax = FactorAnalyzer.cls_max_value(potentials[i])
             diff = set([p for p in pmax if p[0] not in max_assignments])
             max_assign = diff.pop()
             max_assignments[max_assign[0]] = max_assign[1]
