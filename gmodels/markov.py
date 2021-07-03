@@ -3,9 +3,13 @@ Markov network
 """
 from gmodels.gtypes.undigraph import UndiGraph
 from gmodels.gtypes.edge import Edge
-from gmodels.randomvariable import NumCatRVariable, RandomVariable, NumericValue
-from gmodels.factor import Factor
-from gmodels.pgmodel import PGModel
+from gmodels.pgmtypes.randomvariable import (
+    NumCatRVariable,
+    RandomVariable,
+    NumericValue,
+)
+from gmodels.pgmtypes.factor import Factor
+from gmodels.pgmtypes.pgmodel import PGModel
 from typing import Set, Optional, Tuple
 from uuid import uuid4
 import pdb

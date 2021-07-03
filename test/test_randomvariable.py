@@ -2,8 +2,8 @@
 
 
 import unittest
-from gmodels.randomvariable import NumCatRVariable, CatRandomVariable
-from gmodels.randomvariable import PossibleOutcomes
+from gmodels.pgmtypes.randomvariable import NumCatRVariable, CatRandomVariable
+from gmodels.pgmtypes.randomvariable import PossibleOutcomes
 import math
 
 
@@ -51,11 +51,15 @@ class NumCatRVariableTest(unittest.TestCase):
         )
         nid2 = "rvar2"
         self.grade = NumCatRVariable(
-            node_id=nid2, input_data=input_data["grade"], marginal_distribution=grade_dist
+            node_id=nid2,
+            input_data=input_data["grade"],
+            marginal_distribution=grade_dist,
         )
         nid3 = "rvar3"
         self.dice = NumCatRVariable(
-            node_id=nid3, input_data=input_data["dice"], marginal_distribution=fair_dice_dist
+            node_id=nid3,
+            input_data=input_data["dice"],
+            marginal_distribution=fair_dice_dist,
         )
         #
         students = PossibleOutcomes(frozenset(["student_1", "student_2"]))
@@ -106,7 +110,7 @@ class NumCatRVariableTest(unittest.TestCase):
 
     def test_p_x_known_value(self):
         ""
-        self.assertEqual(self.grade.p_x(0.4), 0.37)
+        self.assertEqual(self.grade.p(0.4), 0.37)
 
     def test_P_X_e(self):
         ""

@@ -1,9 +1,9 @@
 """!
 Factor analyzer test cases
 """
-from gmodels.factor import Factor, BaseFactor
+from gmodels.pgmtypes.factor import Factor, BaseFactor
 from gmodels.fops.factoranalyzer import FactorAnalyzer
-from gmodels.randomvariable import NumCatRVariable
+from gmodels.pgmtypes.randomvariable import NumCatRVariable
 from gmodels.gtypes.edge import Edge, EdgeType
 import unittest
 from random import choice

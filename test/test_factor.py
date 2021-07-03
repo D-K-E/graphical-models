@@ -1,8 +1,8 @@
 """!
 test for factor.py
 """
-from gmodels.factor import Factor
-from gmodels.randomvariable import NumCatRVariable
+from gmodels.pgmtypes.factor import Factor
+from gmodels.pgmtypes.randomvariable import NumCatRVariable
 from gmodels.gtypes.edge import Edge, EdgeType
 import unittest
 from random import choice
