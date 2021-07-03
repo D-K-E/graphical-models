@@ -309,7 +309,7 @@ class FactorOps:
         """!
         Wrapper of FactorOps.cls_product
         """
-        return cls.cls_product(
+        return self.cls_product(
             f=self.factor, other=other, product_fn=product_fn, accumulator=accumulator
         )
 
