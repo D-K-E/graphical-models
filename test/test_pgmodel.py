@@ -5,6 +5,7 @@ Test probabilistic graph model
 from gmodels.pgmodel import PGModel, min_unmarked_neighbours
 from gmodels.gtypes.edge import Edge, EdgeType
 from gmodels.factor import Factor
+from gmodels.fops.factorops import FactorOps
 from gmodels.randomvariable import NumCatRVariable
 from uuid import uuid4
 import pdb
@@ -301,7 +302,7 @@ class PGModelTest(unittest.TestCase):
         p, f, of = self.pgm.get_factor_product_var(fs=self.pgm.factors(), Z=self.a)
         self.assertEqual(f, set([self.a_f, self.ba_f]))
         self.assertEqual(of, set([self.cb_f]))
-        afbf, v = self.a_f.product(self.ba_f)
+        afbf, v = FactorOps.cls_product(f=self.a_f, other=self.ba_f)
         for pr in afbf.scope_products:
             prs = set(pr)
             for psp in p.scope_products:
@@ -363,19 +364,25 @@ class PGModelTest(unittest.TestCase):
                     frozenset(
                         [
                             frozenset(s)
-                            for s in self.ba_f.reduced_by_value(ev).scope_products
+                            for s in FactorOps.cls_reduced_by_value(
+                                self.ba_f, ev
+                            ).scope_products
                         ]
                     ),
                     frozenset(
                         [
                             frozenset(s)
-                            for s in self.a_f.reduced_by_value(ev).scope_products
+                            for s in FactorOps.cls_reduced_by_value(
+                                self.a_f, ev
+                            ).scope_products
                         ]
                     ),
                     frozenset(
                         [
                             frozenset(s)
-                            for s in self.cb_f.reduced_by_value(ev).scope_products
+                            for s in FactorOps.cls_reduced_by_value(
+                                self.cb_f, ev
+                            ).scope_products
                         ]
                     ),
                 ]

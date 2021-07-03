@@ -7,6 +7,7 @@ from gmodels.markov import MarkovNetwork, ConditionalRandomField
 from gmodels.gtypes.edge import Edge, EdgeType
 from gmodels.gtypes.undigraph import UndiGraph
 from gmodels.factor import Factor
+from gmodels.fops.factoranalyzer import FactorAnalyzer
 from uuid import uuid4
 import pdb
 import math
@@ -309,8 +310,8 @@ class MarkovTest(unittest.TestCase):
         # c - d
         c_d_max = 0.7468 * 0.7312
         for f in factors:
-            fmax_prob = f.max_probability()
-            fmax = f.max_value()
+            fmax_prob = FactorAnalyzer.cls_max_probability(f)
+            fmax = FactorAnalyzer.cls_max_value(f)
             svars = set([s.id() for s in f.scope_vars()])
             if svars == set(["a", "d"]):
                 mval = set([("a", False), ("d", True)])
