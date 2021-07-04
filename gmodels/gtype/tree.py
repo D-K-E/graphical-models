@@ -3,12 +3,12 @@ Path in a given graph
 """
 
 from typing import Set, Optional, Callable, List, Tuple, Dict, Union, Any
-from gmodels.gtypes.edge import Edge, EdgeType
-from gmodels.gtypes.path import Path
-from gmodels.gtypes.node import Node
-from gmodels.gtypes.graph import Graph
-from gmodels.gops.gtraverser import GraphTraverser
-from gmodels.gtypes.queue import PriorityQueue
+from gmodels.gtype.edge import Edge, EdgeType
+from gmodels.gtype.path import Path
+from gmodels.gtype.node import Node
+from gmodels.gtype.graph import Graph
+from gmodels.graphf.gtraverser import GraphTraverser
+from gmodels.gtype.queue import PriorityQueue
 from uuid import uuid4
 import math
 

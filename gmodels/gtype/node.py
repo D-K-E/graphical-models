@@ -9,8 +9,8 @@ For more theoretical explanation \see nodegroup
 
 """
 from typing import Dict, Set, Tuple, Optional
-from gmodels.gtypes.graphobj import GraphObject
-from gmodels.gtypes.abstractobj import AbstractNode
+from gmodels.gtype.graphobj import GraphObject
+from gmodels.gtype.abstractobj import AbstractNode
 from abc import ABC, abstractmethod
 
 

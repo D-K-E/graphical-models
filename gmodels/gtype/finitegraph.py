@@ -8,9 +8,9 @@ Diestel 2017.
 
 """
 from typing import Set, Optional, Callable, List, Tuple, Union, Dict, FrozenSet
-from gmodels.gtypes.basegraph import BaseGraph
-from gmodels.gtypes.edge import Edge, EdgeType
-from gmodels.gtypes.node import Node
+from gmodels.gtype.basegraph import BaseGraph
+from gmodels.gtype.edge import Edge, EdgeType
+from gmodels.gtype.node import Node
 from uuid import uuid4
 import math
 

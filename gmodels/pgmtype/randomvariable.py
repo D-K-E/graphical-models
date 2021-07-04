@@ -2,10 +2,10 @@
 Implementation of a random variable
 """
 
-from gmodels.gtypes.node import Node
-from gmodels.pgmtypes.domaintype import DomainValue
-from gmodels.pgmtypes.codomaintype import CodomainValue, NumericValue, Outcome
-from gmodels.pgmtypes.codomaintype import PossibleOutcomes
+from gmodels.gtype.node import Node
+from gmodels.pgmtype.domaintype import DomainValue
+from gmodels.pgmtype.codomaintype import CodomainValue, NumericValue, Outcome
+from gmodels.pgmtype.codomaintype import PossibleOutcomes
 
 
 from typing import Callable, Set, Any, List, Dict, FrozenSet, Tuple

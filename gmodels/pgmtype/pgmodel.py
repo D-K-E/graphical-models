@@ -10,13 +10,13 @@ using independence structure assumed by the model. The #PGModel is the most
 generic model, hence we do not assume a particular independence structure.
 
 """
-from gmodels.gtypes.edge import Edge
-from gmodels.gtypes.node import Node
-from gmodels.pgmtypes.randomvariable import NumCatRVariable, NumericValue
-from gmodels.pgmtypes.factor import Factor
-from gmodels.fops.factorops import FactorOps
-from gmodels.fops.factoranalyzer import FactorAnalyzer
-from gmodels.gtypes.graph import Graph
+from gmodels.gtype.edge import Edge
+from gmodels.gtype.node import Node
+from gmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
+from gmodels.pgmtype.factor import Factor
+from gmodels.factorf.factorops import FactorOps
+from gmodels.factorf.factoranalyzer import FactorAnalyzer
+from gmodels.gtype.graph import Graph
 from typing import Callable, Set, List, Optional, Dict, Tuple
 import math
 from uuid import uuid4

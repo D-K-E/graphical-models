@@ -1,9 +1,9 @@
 """!
 Test directed graph object
 """
-from gmodels.gtypes.digraph import DiGraph
-from gmodels.gtypes.node import Node
-from gmodels.gtypes.edge import Edge, EdgeType
+from gmodels.gtype.digraph import DiGraph
+from gmodels.gtype.node import Node
+from gmodels.gtype.edge import Edge, EdgeType
 import unittest
 import pprint
 

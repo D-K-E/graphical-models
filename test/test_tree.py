@@ -1,9 +1,9 @@
 """!
 tree.py tests
 """
-from gmodels.gtypes.tree import Tree
-from gmodels.gtypes.edge import Edge, EdgeType
-from gmodels.gtypes.node import Node
+from gmodels.gtype.tree import Tree
+from gmodels.gtype.edge import Edge, EdgeType
+from gmodels.gtype.node import Node
 import unittest
 import pprint
 
