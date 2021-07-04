@@ -19,38 +19,15 @@ There are several overlaps in these problems:
 
 ### Extension by Inheritance
 
-In order for an object to be usable by Factor
+The goal of extension is the use of analyzers and operators on objects.
 
+If one wants to use `factorops` module on her object, for example the methods of
+`FactorAnalyzer` or `FactorOps`, her object needs to implement `AbstractFactor`.
 
-The API of this library expects that any third party object implements the
-`AbstractGraph` object in order to become inferable. 
-It has a very simple structure.
+If one wants to use `graphops` module on her object, it needs to implement
+`AbstractGraph` whose nodes implement `AbstractNode` and whose edges
+implement `AbstractEdge`.
 
-```python
-
-from gmodels.gtypes.abstractobj import AbstractGraph
-
-class MyGraph(AbstractGraph):
-
-    def __init__(self, *args, **kwargs):
-        ""
-
-    @property
-    def V(self) -> Dict[str, AbstractNode]:
-        "output the vertex set as id: vertex dictionary"
-
-    @property
-    def E(self) -> Dict[str, AbstractEdge]:
-        "output the edge set as id: vertex dictionary"
-
-    def is_neighbour_of(self, n1: AbstractNode, n2: AbstractNode) -> bool:
-        "check if any two given nodes are a neighbour"
-
-    def is_trivial(self) -> bool:
-        "check if graph is trivial"
-
-
-    def order(self) -> int:
-        "compute order, number of vertices, of graph"
-
-```
+If one wants to use `pgmops` module on her object, it needs to implement
+`AbstractPGM` whose nodes implement `AbstractRandomVariable`, whose edges
+implement `AbstractEdge`, and whose factors implement `AbstractFactor`.
