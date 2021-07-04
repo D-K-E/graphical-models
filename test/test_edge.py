@@ -2,8 +2,8 @@
 Edge unit tests
 """
 import unittest
-from gmodels.gtypes.edge import Edge, EdgeType
-from gmodels.gtypes.node import Node
+from gmodels.gtype.edge import Edge, EdgeType
+from gmodels.gtype.node import Node
 
 
 class EdgeTest(unittest.TestCase):

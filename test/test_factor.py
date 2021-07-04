@@ -1,9 +1,9 @@
 """!
 test for factor.py
 """
-from gmodels.pgmtypes.factor import Factor
-from gmodels.pgmtypes.randomvariable import NumCatRVariable
-from gmodels.gtypes.edge import Edge, EdgeType
+from gmodels.pgmtype.factor import Factor
+from gmodels.pgmtype.randomvariable import NumCatRVariable
+from gmodels.gtype.edge import Edge, EdgeType
 import unittest
 from random import choice
 import math

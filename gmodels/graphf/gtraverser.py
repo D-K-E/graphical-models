@@ -2,12 +2,12 @@
 Traverse graphs in some fashion
 """
 from typing import Set, Optional, Callable, List, Tuple, Dict, Union
-from gmodels.gtypes.abstractobj import AbstractGraph
-from gmodels.gtypes.basegraph import BaseGraph
-from gmodels.gtypes.finitegraph import FiniteGraph
+from gmodels.gtype.abstractobj import AbstractGraph
+from gmodels.gtype.basegraph import BaseGraph
+from gmodels.gtype.finitegraph import FiniteGraph
 
-from gmodels.gtypes.node import Node
-from gmodels.gtypes.edge import Edge
+from gmodels.gtype.node import Node
+from gmodels.gtype.edge import Edge
 import math
 
 

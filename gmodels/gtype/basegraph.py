@@ -2,10 +2,10 @@
 \file basegraph.py Absolute basic graph which implements the most basic
 functionality for doing graph theoretical operations
 """
-from gmodels.gtypes.abstractobj import AbstractGraph
-from gmodels.gtypes.graphobj import GraphObject
-from gmodels.gtypes.edge import Edge, EdgeType
-from gmodels.gtypes.node import Node
+from gmodels.gtype.abstractobj import AbstractGraph
+from gmodels.gtype.graphobj import GraphObject
+from gmodels.gtype.edge import Edge, EdgeType
+from gmodels.gtype.node import Node
 from typing import Set, Optional, Union, Dict, Callable, FrozenSet, List
 from uuid import uuid4
 

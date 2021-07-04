@@ -14,12 +14,12 @@ the parent's algorithm.
 
 """
 from typing import Set, Callable
-from gmodels.gtypes.edge import Edge
-from gmodels.gtypes.node import Node
-from gmodels.gtypes.abstractobj import EdgeType
-from gmodels.gtypes.graph import Graph
-from gmodels.gtypes.undigraph import UndiGraph
-from gmodels.gops.gtraverser import GraphTraverser
+from gmodels.gtype.edge import Edge
+from gmodels.gtype.node import Node
+from gmodels.gtype.abstractobj import EdgeType
+from gmodels.gtype.graph import Graph
+from gmodels.gtype.undigraph import UndiGraph
+from gmodels.graphf.gtraverser import GraphTraverser
 from uuid import uuid4
 
 

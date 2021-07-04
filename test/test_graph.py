@@ -1,9 +1,9 @@
 """!
 Test general Graph object
 """
-from gmodels.gtypes.graph import Graph
-from gmodels.gtypes.node import Node
-from gmodels.gtypes.edge import Edge, EdgeType
+from gmodels.gtype.graph import Graph
+from gmodels.gtype.node import Node
+from gmodels.gtype.edge import Edge, EdgeType
 import unittest
 import pprint
 

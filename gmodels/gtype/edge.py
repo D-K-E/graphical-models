@@ -6,9 +6,9 @@
 
 """
 from typing import Set, Union, FrozenSet
-from gmodels.gtypes.abstractobj import AbstractEdge, EdgeType
-from gmodels.gtypes.node import Node
-from gmodels.gtypes.graphobj import GraphObject
+from gmodels.gtype.abstractobj import AbstractEdge, EdgeType
+from gmodels.gtype.node import Node
+from gmodels.gtype.graphobj import GraphObject
 
 
 class Edge(AbstractEdge, GraphObject):

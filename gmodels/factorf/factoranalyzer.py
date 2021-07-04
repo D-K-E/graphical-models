@@ -6,9 +6,9 @@ or a set of factors.
 """
 
 from typing import Set, Callable, Optional, List, Union, Tuple, FrozenSet
-from gmodels.pgmtypes.factor import Factor, BaseFactor
-from gmodels.pgmtypes.abstractpgm import AbstractFactor
-from gmodels.pgmtypes.randomvariable import NumCatRVariable, NumericValue
+from gmodels.pgmtype.factor import Factor, BaseFactor
+from gmodels.pgmtype.abstractpgm import AbstractFactor
+from gmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
 
 
 class FactorAnalyzer:

@@ -4,9 +4,9 @@
 Defining a factor from Koller and Friedman 2009, p. 106-107
 """
 
-from gmodels.gtypes.graphobj import GraphObject
-from gmodels.pgmtypes.randomvariable import NumCatRVariable, NumericValue
-from gmodels.pgmtypes.abstractpgm import AbstractFactor
+from gmodels.gtype.graphobj import GraphObject
+from gmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
+from gmodels.pgmtype.abstractpgm import AbstractFactor
 
 from typing import Set, Callable, Optional, List, Union, Tuple, FrozenSet
 from itertools import product, combinations

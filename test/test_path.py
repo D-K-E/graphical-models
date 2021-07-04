@@ -1,10 +1,10 @@
 """!
 Test path object
 """
-from gmodels.gtypes.path import Path
-from gmodels.gtypes.graph import Graph
-from gmodels.gtypes.node import Node
-from gmodels.gtypes.edge import Edge, EdgeType
+from gmodels.gtype.path import Path
+from gmodels.gtype.graph import Graph
+from gmodels.gtype.node import Node
+from gmodels.gtype.edge import Edge, EdgeType
 import unittest
 
 
