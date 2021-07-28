@@ -11,7 +11,7 @@ from gmodels.gtype.node import Node
 from gmodels.gtype.graphobj import GraphObject
 
 
-class Edge(AbstractEdge, GraphObject):
+class Edge(GraphObject, AbstractEdge):
     """!
     \brief A simple edge in a graph.
 
@@ -39,12 +39,12 @@ class Edge(AbstractEdge, GraphObject):
         attribute, in this case, the Edge, which Node it starts with, which
         Node it ends with, its type and other data it holds.
         """
-        super().__init__(oid=edge_id, odata=data)
         self.etype = edge_type
         self.start_node = start_node
         self.end_node = end_node
+        super().__init__(oid=edge_id, odata=data)
 
-    def __eq__(self, n):
+    def __eq__(self, n) -> bool:
         """!
         \brief Check for equality of a given object with this one.
 
@@ -63,7 +63,7 @@ class Edge(AbstractEdge, GraphObject):
             return self.id() == n.id()
         return False
 
-    def __str__(self):
+    def __str__(self) -> str:
         """!
         \brief Obtain string representation of Edge object.
 
@@ -138,23 +138,34 @@ class Edge(AbstractEdge, GraphObject):
         """
         return self.start_node
 
-    def is_start(self, n: Node) -> bool:
+    def is_start(self, n: Union[Node, str]) -> bool:
         """!
         """
         if self.type() == EdgeType.UNDIRECTED:
             return self.is_endvertice(n)
-        if n.id() == self.start().id():
-            return True
+        if isinstance(n, Node):
+            if n.id() == self.start().id():
+                return True
+            return False
+        if isinstance(n, str):
+            if n == self.start().id():
+                return True
+            return False
         return False
 
-    def is_end(self, n: Node) -> bool:
+    def is_end(self, n: Union[Node, str]) -> bool:
         """!
         """
-
         if self.type() == EdgeType.UNDIRECTED:
             return self.is_endvertice(n)
-        if n.id() == self.end().id():
-            return True
+        if isinstance(n, Node):
+            if n.id() == self.end().id():
+                return True
+            return False
+        if isinstance(n, str):
+            if n == self.end().id():
+                return True
+            return False
         return False
 
     def end(self) -> Node:
@@ -208,14 +219,3 @@ class Edge(AbstractEdge, GraphObject):
             return self.end()
         else:
             return self.start()
-
-
-"""!
-\defgroup edgegroup Edge documentation
-\ingroup graphgroup
-
-\section desc_sect Description
-
-Edge is a set of nodes with two members generally designated as E.
-...
-"""

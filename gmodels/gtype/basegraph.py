@@ -10,7 +10,7 @@ from typing import Set, Optional, Union, Dict, Callable, FrozenSet, List
 from uuid import uuid4
 
 
-class BaseGraph(AbstractGraph, GraphObject):
+class BaseGraph(GraphObject, AbstractGraph):
     """!
     \brief Basic graph which implements the AbstractGraph interface
     """
