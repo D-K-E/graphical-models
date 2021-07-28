@@ -27,7 +27,7 @@ properties.
 The goal of extension is the use of analyzers and operators on objects.
 
 If one wants to use `factorf` module on her object, for example the methods of
-`FactorAnalyzer` or `FactorOps`, her object needs to implement `AbstractFactor`.
+`FactorAnalyzer` or `FactorOps`, each object needs to implement `AbstractFactor`.
 
 If one wants to use `graphf` module on her object, it needs to implement
 `AbstractGraph` whose nodes implement `AbstractNode` and whose edges
@@ -37,6 +37,7 @@ If one wants to use `pgmops` module on her object, it needs to implement
 `AbstractPGM` whose nodes implement `AbstractRandomVariable`, whose edges
 implement `AbstractEdge`, and whose factors implement `AbstractFactor`.
 
+For implementation goals and milestones, see project page.
 
 ### IO
 
