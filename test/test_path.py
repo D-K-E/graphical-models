@@ -1,8 +1,8 @@
 """!
 Test path object
 """
-from pygmodels.gtype.path import Path
-from pygmodels.gtype.graph import Graph
+from pygmodels.gmodel.path import Path
+from pygmodels.gmodel.graph import Graph
 from pygmodels.gtype.node import Node
 from pygmodels.gtype.edge import Edge, EdgeType
 import unittest

@@ -1,7 +1,7 @@
 """!
 Markov network
 """
-from pygmodels.gtype.undigraph import UndiGraph
+from pygmodels.gmodel.undigraph import UndiGraph
 from pygmodels.gtype.edge import Edge
 from pygmodels.pgmtype.randomvariable import (
     NumCatRVariable,

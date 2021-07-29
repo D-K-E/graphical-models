@@ -1,7 +1,7 @@
 """!
 Test undirected graph object
 """
-from pygmodels.gtype.undigraph import UndiGraph
+from pygmodels.gmodel.undigraph import UndiGraph
 from pygmodels.gtype.node import Node
 from pygmodels.gtype.edge import Edge, EdgeType
 import unittest

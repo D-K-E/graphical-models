@@ -2,7 +2,7 @@
 Bayesian Network model
 """
 
-from pygmodels.gtype.digraph import DiGraph
+from pygmodels.gmodel.digraph import DiGraph
 from pygmodels.gtype.edge import Edge
 from pygmodels.pgmtype.randomvariable import NumCatRVariable
 from pygmodels.pgmtype.factor import Factor

@@ -1,7 +1,7 @@
 """!
 Test directed graph object
 """
-from pygmodels.gtype.digraph import DiGraph
+from pygmodels.gmodel.digraph import DiGraph
 from pygmodels.gtype.node import Node
 from pygmodels.gtype.edge import Edge, EdgeType
 import unittest
