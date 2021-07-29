@@ -1,7 +1,7 @@
 """!
 Test general Graph object
 """
-from pygmodels.gtype.finitegraph import FiniteGraph
+from pygmodels.gmodel.finitegraph import FiniteGraph
 from pygmodels.gtype.node import Node
 from pygmodels.gtype.edge import Edge, EdgeType
 import unittest

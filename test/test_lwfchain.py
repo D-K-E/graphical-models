@@ -3,7 +3,7 @@ test lwf chain graph test
 """
 from pygmodels.pgmtype.pgmodel import PGModel
 from pygmodels.gtype.edge import Edge, EdgeType
-from pygmodels.gtype.undigraph import UndiGraph
+from pygmodels.gmodel.undigraph import UndiGraph
 from pygmodels.pgmtype.factor import Factor
 from pygmodels.pgmtype.randomvariable import NumCatRVariable
 from pygmodels.pgmodel.lwfchain import LWFChainGraph

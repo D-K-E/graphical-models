@@ -5,7 +5,7 @@ Test markov network
 from pygmodels.pgmtype.randomvariable import NumCatRVariable
 from pygmodels.pgmodel.markov import MarkovNetwork, ConditionalRandomField
 from pygmodels.gtype.edge import Edge, EdgeType
-from pygmodels.gtype.undigraph import UndiGraph
+from pygmodels.gmodel.undigraph import UndiGraph
 from pygmodels.pgmtype.factor import Factor
 from pygmodels.factorf.factoranalyzer import FactorAnalyzer
 from uuid import uuid4

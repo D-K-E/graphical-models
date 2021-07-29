@@ -17,8 +17,8 @@ from typing import Set, Callable
 from pygmodels.gtype.edge import Edge
 from pygmodels.gtype.node import Node
 from pygmodels.gtype.abstractobj import EdgeType
-from pygmodels.gtype.graph import Graph
-from pygmodels.gtype.undigraph import UndiGraph
+from pygmodels.gmodel.graph import Graph
+from pygmodels.gmodel.undigraph import UndiGraph
 from pygmodels.graphf.gtraverser import GraphTraverser
 from uuid import uuid4
 

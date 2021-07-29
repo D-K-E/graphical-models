@@ -1,7 +1,7 @@
 """!
 Test general Graph object
 """
-from pygmodels.gtype.graph import Graph
+from pygmodels.gmodel.graph import Graph
 from pygmodels.gtype.node import Node
 from pygmodels.gtype.edge import Edge, EdgeType
 import unittest

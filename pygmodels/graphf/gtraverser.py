@@ -4,7 +4,7 @@ Traverse graphs in some fashion
 from typing import Set, Optional, Callable, List, Tuple, Dict, Union
 from pygmodels.gtype.abstractobj import AbstractGraph
 from pygmodels.gtype.basegraph import BaseGraph
-from pygmodels.gtype.finitegraph import FiniteGraph
+from pygmodels.gmodel.finitegraph import FiniteGraph
 
 from pygmodels.gtype.node import Node
 from pygmodels.gtype.edge import Edge

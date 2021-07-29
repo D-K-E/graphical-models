@@ -12,9 +12,9 @@ along to the parent's method in order to adapt its functionality.
 from typing import Set, List, Dict, Callable, Union
 from pygmodels.gtype.edge import Edge
 from pygmodels.gtype.node import Node
-from pygmodels.gtype.tree import Tree
+from pygmodels.gmodel.tree import Tree
 from pygmodels.gtype.abstractobj import EdgeType
-from pygmodels.gtype.graph import Graph
+from pygmodels.gmodel.graph import Graph
 from pygmodels.graphf.gtraverser import GraphTraverser
 from uuid import uuid4
 

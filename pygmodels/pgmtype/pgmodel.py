@@ -16,7 +16,7 @@ from pygmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
 from pygmodels.pgmtype.factor import Factor
 from pygmodels.factorf.factorops import FactorOps
 from pygmodels.factorf.factoranalyzer import FactorAnalyzer
-from pygmodels.gtype.graph import Graph
+from pygmodels.gmodel.graph import Graph
 from typing import Callable, Set, List, Optional, Dict, Tuple
 import math
 from uuid import uuid4

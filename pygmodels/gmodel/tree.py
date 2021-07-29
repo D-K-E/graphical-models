@@ -4,9 +4,9 @@ Path in a given graph
 
 from typing import Set, Optional, Callable, List, Tuple, Dict, Union, Any
 from pygmodels.gtype.edge import Edge, EdgeType
-from pygmodels.gtype.path import Path
+from pygmodels.gmodel.path import Path
 from pygmodels.gtype.node import Node
-from pygmodels.gtype.graph import Graph
+from pygmodels.gmodel.graph import Graph
 from pygmodels.graphf.gtraverser import GraphTraverser
 from pygmodels.gtype.queue import PriorityQueue
 from uuid import uuid4

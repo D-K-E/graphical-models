@@ -4,7 +4,7 @@ Test Bayesian Network
 
 from pygmodels.pgmodel.bayesian import BayesianNetwork
 from pygmodels.gtype.edge import Edge, EdgeType
-from pygmodels.gtype.digraph import DiGraph
+from pygmodels.gmodel.digraph import DiGraph
 from pygmodels.pgmtype.factor import Factor
 from pygmodels.pgmtype.randomvariable import NumCatRVariable
 from uuid import uuid4

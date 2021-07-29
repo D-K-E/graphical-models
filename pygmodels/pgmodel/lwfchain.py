@@ -9,9 +9,9 @@ from pygmodels.pgmtype.randomvariable import NumCatRVariable
 from pygmodels.pgmtype.factor import Factor
 from pygmodels.pgmtype.pgmodel import PGModel
 from pygmodels.pgmodel.markov import MarkovNetwork, ConditionalRandomField
-from pygmodels.gtype.graph import Graph
-from pygmodels.gtype.tree import Tree
-from pygmodels.gtype.undigraph import UndiGraph
+from pygmodels.gmodel.graph import Graph
+from pygmodels.gmodel.tree import Tree
+from pygmodels.gmodel.undigraph import UndiGraph
 from typing import Set, Dict, Tuple, Union
 from uuid import uuid4
 

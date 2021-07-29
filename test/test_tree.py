@@ -1,7 +1,7 @@
 """!
 tree.py tests
 """
-from pygmodels.gtype.tree import Tree
+from pygmodels.gmodel.tree import Tree
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
 import unittest
