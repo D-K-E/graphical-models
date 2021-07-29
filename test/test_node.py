@@ -2,7 +2,7 @@
 Node unit tests
 """
 import unittest
-from gmodels.gtype.node import Node
+from pygmodels.gtype.node import Node
 
 
 class NodeTest(unittest.TestCase):

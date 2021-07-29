@@ -1,10 +1,10 @@
 """!
 Factor operators test cases
 """
-from gmodels.pgmtype.factor import Factor, BaseFactor
-from gmodels.factorf.factorops import FactorOps
-from gmodels.pgmtype.randomvariable import NumCatRVariable
-from gmodels.gtype.edge import Edge, EdgeType
+from pygmodels.pgmtype.factor import Factor, BaseFactor
+from pygmodels.factorf.factorops import FactorOps
+from pygmodels.pgmtype.randomvariable import NumCatRVariable
+from pygmodels.gtype.edge import Edge, EdgeType
 import unittest
 from random import choice
 import math

@@ -8,12 +8,12 @@ Diestel 2017.
 
 """
 from typing import Set, Optional, Callable, List, Tuple, Union, Dict, FrozenSet
-from gmodels.gtype.graphobj import GraphObject
-from gmodels.gtype.finitegraph import FiniteGraph
-from gmodels.gtype.basegraph import BaseGraph
-from gmodels.gtype.edge import Edge, EdgeType
-from gmodels.gtype.node import Node
-from gmodels.graphf.gtraverser import GraphTraverser
+from pygmodels.gtype.graphobj import GraphObject
+from pygmodels.gtype.finitegraph import FiniteGraph
+from pygmodels.gtype.basegraph import BaseGraph
+from pygmodels.gtype.edge import Edge, EdgeType
+from pygmodels.gtype.node import Node
+from pygmodels.graphf.gtraverser import GraphTraverser
 from uuid import uuid4
 import math
 

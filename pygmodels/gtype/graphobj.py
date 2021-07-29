@@ -3,7 +3,7 @@ object contained in a graph
 """
 from copy import deepcopy
 
-from gmodels.gtype.abstractobj import AbstractGraphObj
+from pygmodels.gtype.abstractobj import AbstractGraphObj
 
 
 class GraphObject(AbstractGraphObj):

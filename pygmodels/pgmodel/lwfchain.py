@@ -3,15 +3,15 @@ Probabilistic Graphic Model - LWF Chain Graph
 
 Partially Directed Acyclic Graph as in Koller, Friedman 2009, p. 37
 """
-from gmodels.gtype.edge import Edge, EdgeType
-from gmodels.gtype.node import Node
-from gmodels.pgmtype.randomvariable import NumCatRVariable
-from gmodels.pgmtype.factor import Factor
-from gmodels.pgmtype.pgmodel import PGModel
-from gmodels.markov import MarkovNetwork, ConditionalRandomField
-from gmodels.gtype.graph import Graph
-from gmodels.gtype.tree import Tree
-from gmodels.gtype.undigraph import UndiGraph
+from pygmodels.gtype.edge import Edge, EdgeType
+from pygmodels.gtype.node import Node
+from pygmodels.pgmtype.randomvariable import NumCatRVariable
+from pygmodels.pgmtype.factor import Factor
+from pygmodels.pgmtype.pgmodel import PGModel
+from pygmodels.pgmodel.markov import MarkovNetwork, ConditionalRandomField
+from pygmodels.gtype.graph import Graph
+from pygmodels.gtype.tree import Tree
+from pygmodels.gtype.undigraph import UndiGraph
 from typing import Set, Dict, Tuple, Union
 from uuid import uuid4
 

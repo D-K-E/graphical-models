@@ -2,11 +2,11 @@
 Test probabilistic graph model
 """
 
-from gmodels.pgmtype.pgmodel import PGModel, min_unmarked_neighbours
-from gmodels.gtype.edge import Edge, EdgeType
-from gmodels.pgmtype.factor import Factor
-from gmodels.factorf.factorops import FactorOps
-from gmodels.pgmtype.randomvariable import NumCatRVariable
+from pygmodels.pgmtype.pgmodel import PGModel, min_unmarked_neighbours
+from pygmodels.gtype.edge import Edge, EdgeType
+from pygmodels.pgmtype.factor import Factor
+from pygmodels.factorf.factorops import FactorOps
+from pygmodels.pgmtype.randomvariable import NumCatRVariable
 from uuid import uuid4
 import pdb
 

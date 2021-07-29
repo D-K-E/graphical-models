@@ -1,9 +1,9 @@
 """!
 Test general Graph object
 """
-from gmodels.gtype.finitegraph import FiniteGraph
-from gmodels.gtype.node import Node
-from gmodels.gtype.edge import Edge, EdgeType
+from pygmodels.gtype.finitegraph import FiniteGraph
+from pygmodels.gtype.node import Node
+from pygmodels.gtype.edge import Edge, EdgeType
 import unittest
 import pprint
 

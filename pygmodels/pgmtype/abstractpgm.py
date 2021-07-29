@@ -3,14 +3,15 @@ Abstract objects, interfaces, for implementing Probabilistic graphical models
 """
 
 
-from gmodels.gtype.abstractobj import AbstractGraph
-from gmodels.gtype.abstractobj import AbstractNode, AbstractEdge
-from gmodels.gtype.abstractobj import AbstractGraphObj
+from pygmodels.gtype.abstractobj import AbstractGraph
+
+from pygmodels.gtype.abstractobj import AbstractNode, AbstractEdge
+from pygmodels.gtype.abstractobj import AbstractGraphObj
 
 from abc import abstractmethod
 from typing import Callable, Set, List, FrozenSet, Tuple, Dict
 
-from gmodels.pgmtype.codomaintype import NumericValue, Outcome
+from pygmodels.pgmtype.codomaintype import NumericValue, Outcome
 
 
 class AbstractRandomVariable(AbstractNode):

@@ -1,15 +1,15 @@
 """!
 Markov network
 """
-from gmodels.gtype.undigraph import UndiGraph
-from gmodels.gtype.edge import Edge
-from gmodels.pgmtype.randomvariable import (
+from pygmodels.gtype.undigraph import UndiGraph
+from pygmodels.gtype.edge import Edge
+from pygmodels.pgmtype.randomvariable import (
     NumCatRVariable,
     RandomVariable,
     NumericValue,
 )
-from gmodels.pgmtype.factor import Factor
-from gmodels.pgmtype.pgmodel import PGModel
+from pygmodels.pgmtype.factor import Factor
+from pygmodels.pgmtype.pgmodel import PGModel
 from typing import Set, Optional, Tuple
 from uuid import uuid4
 import pdb

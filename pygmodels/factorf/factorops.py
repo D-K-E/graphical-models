@@ -6,10 +6,10 @@ or a set of factors.
 """
 
 from typing import Set, Callable, Optional, List, Union, Tuple, FrozenSet
-from gmodels.pgmtype.factor import Factor, BaseFactor
-from gmodels.pgmtype.abstractpgm import AbstractFactor
-from gmodels.factorf.factoranalyzer import FactorAnalyzer
-from gmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
+from pygmodels.pgmtype.factor import Factor, BaseFactor
+from pygmodels.pgmtype.abstractpgm import AbstractFactor
+from pygmodels.factorf.factoranalyzer import FactorAnalyzer
+from pygmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
 
 from itertools import product, combinations
 from functools import reduce as freduce
