@@ -2,10 +2,10 @@
 Path in a given graph
 """
 from typing import Set, Optional, Callable, List, Tuple, Dict, Union
-from gmodels.gtype.edge import Edge, EdgeType
-from gmodels.gtype.node import Node
-from gmodels.gtype.graph import Graph
-from gmodels.gtype.queue import PriorityQueue
+from pygmodels.gtype.edge import Edge, EdgeType
+from pygmodels.gtype.node import Node
+from pygmodels.gtype.graph import Graph
+from pygmodels.gtype.queue import PriorityQueue
 from uuid import uuid4
 import math
 

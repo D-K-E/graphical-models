@@ -1,9 +1,9 @@
 """!
 Test general BaseGraph object
 """
-from gmodels.gtype.basegraph import BaseGraph
-from gmodels.gtype.node import Node
-from gmodels.gtype.edge import Edge, EdgeType
+from pygmodels.gtype.basegraph import BaseGraph
+from pygmodels.gtype.node import Node
+from pygmodels.gtype.edge import Edge, EdgeType
 import unittest
 import pprint
 

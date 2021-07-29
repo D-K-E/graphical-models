@@ -1,9 +1,9 @@
 """!
 Test undirected graph object
 """
-from gmodels.gtype.undigraph import UndiGraph
-from gmodels.gtype.node import Node
-from gmodels.gtype.edge import Edge, EdgeType
+from pygmodels.gtype.undigraph import UndiGraph
+from pygmodels.gtype.node import Node
+from pygmodels.gtype.edge import Edge, EdgeType
 import unittest
 from random import choice
 

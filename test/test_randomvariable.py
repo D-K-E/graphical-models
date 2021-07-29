@@ -2,8 +2,8 @@
 
 
 import unittest
-from gmodels.pgmtype.randomvariable import NumCatRVariable, CatRandomVariable
-from gmodels.pgmtype.randomvariable import PossibleOutcomes
+from pygmodels.pgmtype.randomvariable import NumCatRVariable, CatRandomVariable
+from pygmodels.pgmtype.randomvariable import PossibleOutcomes
 import math
 
 

@@ -3,12 +3,12 @@
 graph analyzer
 """
 from typing import Set, Optional, Callable, List, Tuple
-from gmodels.gtypes.graph import Graph
-from gmodels.gtypes.abstractobj import AbstractGraph
-from gmodels.gtypes.graphobj import GraphObject
-from gmodels.gtypes.finitegraph import FiniteGraph
-from gmodels.gtypes.basegraph import BaseGraph
-from gmodels.gtypes.node import Node
+from pygmodels.gtypes.graph import Graph
+from pygmodels.gtypes.abstractobj import AbstractGraph
+from pygmodels.gtypes.graphobj import GraphObject
+from pygmodels.gtypes.finitegraph import FiniteGraph
+from pygmodels.gtypes.basegraph import BaseGraph
+from pygmodels.gtypes.node import Node
 
 
 class GraphAnalyzer:
@@ -89,3 +89,4 @@ class GraphAnalyzer:
         g: AbstractGraph, graph_maker=Callable[[Node], GraphObject]
     ):
         ""
+        raise NotImplementedError

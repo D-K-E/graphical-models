@@ -1,8 +1,8 @@
 # simple tests for different queues
 
-from gmodels.gtype.queue import PriorityQueue
-from gmodels.gtype.node import Node
-from gmodels.gtype.edge import Edge, EdgeType
+from pygmodels.gtype.queue import PriorityQueue
+from pygmodels.gtype.node import Node
+from pygmodels.gtype.edge import Edge, EdgeType
 
 import unittest
 

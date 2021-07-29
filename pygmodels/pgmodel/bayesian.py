@@ -2,11 +2,11 @@
 Bayesian Network model
 """
 
-from gmodels.gtype.digraph import DiGraph
-from gmodels.gtype.edge import Edge
-from gmodels.pgmtype.randomvariable import NumCatRVariable
-from gmodels.pgmtype.factor import Factor
-from gmodels.pgmtype.pgmodel import PGModel
+from pygmodels.gtype.digraph import DiGraph
+from pygmodels.gtype.edge import Edge
+from pygmodels.pgmtype.randomvariable import NumCatRVariable
+from pygmodels.pgmtype.factor import Factor
+from pygmodels.pgmtype.pgmodel import PGModel
 from typing import Set, Optional, Callable
 from uuid import uuid4
 
