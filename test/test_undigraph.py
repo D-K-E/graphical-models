@@ -2,6 +2,7 @@
 Test undirected graph object
 """
 from pygmodels.gmodel.undigraph import UndiGraph
+from pygmodels.graphf.bgraphops import BaseGraphOps
 from pygmodels.gtype.node import Node
 from pygmodels.gtype.edge import Edge, EdgeType
 import unittest
@@ -174,8 +175,12 @@ class UndiGraphTest(unittest.TestCase):
         self.ugraph4 = UndiGraph(
             "ug4",
             data={"my": "graph", "data": "is", "very": "awesome"},
-            nodes=self.ugraph2.nodes().union(self.graph_2.nodes()),
-            edges=self.ugraph2.edges().union(self.graph_2.edges()),
+            nodes=BaseGraphOps.nodes(self.ugraph2).union(
+                BaseGraphOps.nodes(self.graph_2)
+            ),
+            edges=BaseGraphOps.edges(self.ugraph2).union(
+                BaseGraphOps.edges(self.graph_2)
+            ),
         )
         # ugraph 4
         #   +-----+     n1 -- n2 -- n3 -- n4
