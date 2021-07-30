@@ -9,6 +9,8 @@ Diestel 2017.
 """
 from typing import Set, Optional, Callable, List, Tuple, Union, Dict, FrozenSet
 from pygmodels.gtype.graphobj import GraphObject
+from pygmodels.graphf.graphops import BaseGraphSetOps, BaseGraphAlgOps
+from pygmodels.graphf.bgraphops import BaseGraphOps
 from pygmodels.gmodel.finitegraph import FiniteGraph
 from pygmodels.gtype.basegraph import BaseGraph
 from pygmodels.gtype.edge import Edge, EdgeType
@@ -70,42 +72,109 @@ class Graph(FiniteGraph):
         super().__init__(gid=gid, nodes=nodes, edges=edges, data=data)
         #
         self.props = GraphTraverser.visit_graph_dfs(
-            self.to_finite_graph(), edge_generator=self.edges_of, check_cycle=True
+            self,
+            edge_generator=lambda x: BaseGraphOps.edges_of(self, x),
+            check_cycle=True,
         )
 
     @classmethod
     def from_abstract_graph(cls, g_):
+        ""
         g = BaseGraph.from_abstract_graph(g_)
         return cls.from_base_graph(g)
 
     @classmethod
     def from_base_graph(cls, bgraph: BaseGraph):
-        ""
-        fgraph = FiniteGraph.from_base_graph(bgraph)
-        return cls.from_finite_graph(fgraph)
-
-    @classmethod
-    def from_finite_graph(cls, fgraph: FiniteGraph):
-        ""
-        nodes = fgraph.nodes()
-        edges = fgraph.edges()
-        data = fgraph.data()
-        gid = fgraph.id()
+        "Obtain finite graph from base graph"
+        nodes = set(bgraph.V.values())
+        edges = set(bgraph.E.values())
+        data = bgraph.data()
+        gid = bgraph.id()
         return Graph(gid=gid, nodes=nodes, edges=edges, data=data)
 
     @classmethod
     def from_edgeset(cls, edges: Set[Edge]):
-        g = FiniteGraph.from_edgeset(edges)
-        return cls.from_finite_graph(g)
+        g = BaseGraph.from_edgeset(edges)
+        return cls.from_base_graph(g)
 
     @classmethod
     def from_edge_node_set(cls, edges: Set[Edge], nodes: Set[Node]):
-        g = FiniteGraph.from_edge_node_set(edges=edges, nodes=nodes)
-        return cls.from_finite_graph(g)
+        g = BaseGraph.from_edge_node_set(edges=edges, nodes=nodes)
+        return cls.from_base_graph(g)
 
-    def to_finite_graph(self):
-        return FiniteGraph(
-            gid=self.id(), edges=self.edges(), nodes=self.nodes(), data=self.data()
+        #
+        self._nodes = {n.id(): n for n in nodes}
+
+    @classmethod
+    def is_adjacent_of(cls, e1: Edge, e2: Edge) -> bool:
+        """!
+        \brief Check if two edges are adjacent
+
+        \param e1 an edge
+        \param e2 an edge
+
+        \code{.py}
+
+        >>> n1 = Node("n1", {})
+        >>> n2 = Node("n2", {})
+        >>> n3 = Node("n3", {})
+        >>> n4 = Node("n4", {})
+        >>> e1 = Edge(
+        >>>     "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e2 = Edge(
+        >>>     "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e3 = Edge(
+        >>>     "e3", start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> graph_2 = Graph(
+        >>>   "g2",
+        >>>   data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>   nodes=set([n1, n2, n3, n4]),
+        >>>   edges=set([e1, e2, e3]),
+        >>> )
+        >>> graph_2.is_adjacent_of(e2, e3)
+        >>> True
+
+        \endcode
+        """
+        n1_ids = e1.node_ids()
+        n2_ids = e2.node_ids()
+        return len(n1_ids.intersection(n2_ids)) > 0
+
+    @classmethod
+    def is_node_incident(cls, n: Node, e: Edge) -> bool:
+        """!
+        \brief Check if a node is incident of an edge
+
+        \param n node We check if this node is an endvertex of the edge.
+        \param e The queried edge.
+
+        \code{.py}
+
+        >>> n1 = Node("n1", {})
+        >>> n2 = Node("n2", {})
+        >>> e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
+        >>> e2 = Edge("e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED)
+        >>> Graph.is_node_incident(n1, e1)
+        >>> # True
+        >>> Graph.is_node_incident(n2, e2)
+        >>> # False
+
+        \endcode
+        """
+        return e.is_endvertice(n)
+
+    def to_base_graph(self):
+        """!
+        Transform Graph object to BaseGraph object
+        """
+        return BaseGraph(
+            gid=self.id(),
+            nodes=set(self.V.values()),
+            edges=set(self.E.values()),
+            data=self.data(),
         )
 
     def to_adjmat(self, vtype=int) -> Dict[Tuple[str, str], int]:
@@ -165,11 +234,12 @@ class Graph(FiniteGraph):
         \endcode
         """
         gmat = {}
+        gdata = BaseGraphOps.to_edgelist(self)
         for v in self.V:
             for k in self.V:
-                common = set(self.gdata[v]).intersection(set(self.gdata[k]))
+                common = set(gdata[v]).intersection(set(gdata[k]))
                 gmat[(v, k)] = vtype(0)
-        for edge in self.edges():
+        for edge in BaseGraphOps.edges(self):
             tpl1 = (edge.start().id(), edge.end().id())
             tpl2 = (edge.end().id(), edge.start().id())
             if tpl1 in gmat:
@@ -240,7 +310,7 @@ class Graph(FiniteGraph):
 
         \endcode
         """
-        if self.has_self_loop():
+        if BaseGraphOps.has_self_loop(self):
             raise ValueError("Graph has a self loop")
         #
         n = len(self.gdata)
@@ -322,51 +392,6 @@ class Graph(FiniteGraph):
             if (estart, eend) not in adjacency_of_vertices:
                 return False
         return True
-
-    def graph_intersection(self, gs):
-        """!
-        """
-        fgraph = super().graph_intersection(gs)
-        return self.from_finite_graph(fgraph)
-
-    def graph_difference(self, gs):
-        """!
-        """
-        fgraph = super().graph_difference(gs)
-        return self.from_finite_graph(fgraph)
-
-    def graph_union(self, gs):
-        """!
-        """
-        fgraph = super().graph_union(gs)
-        return self.from_finite_graph(fgraph)
-
-    def graph_symmetric_difference(self, gs):
-        """!
-        \brief symmetric set difference operation adapted for graph.
-        """
-        fgraph = super().graph_symmetric_difference(gs)
-        return self.from_finite_graph(fgraph)
-
-    def subtract_node(self, n: Node):
-        ""
-        fgraph = super().subtract_node(n)
-        return self.from_finite_graph(fgraph)
-
-    def subtract_edge(self, e: Edge) -> BaseGraph:
-
-        fgraph = super().subtract_edge(e)
-        return self.from_finite_graph(fgraph)
-
-    def subtract_edge_with_nodes(self, e) -> BaseGraph:
-        ""
-        fgraph = super().subtract_edge_with_nodes(e)
-        return self.from_finite_graph(fgraph)
-
-    def add_edge(self, e: Edge):
-        ""
-        fgraph = super().add_edge(e)
-        return self.from_finite_graph(fgraph)
 
     def nb_components(self) -> int:
         """!
@@ -459,7 +484,7 @@ class Graph(FiniteGraph):
         """
         nb_component = self.nb_components()
         points: Set[Node] = set()
-        for node in self.nodes():
+        for node in BaseGraphOps.nodes(self):
             graph = graph_maker(node)
             if graph.nb_components() > nb_component:
                 points.add(node)
@@ -476,8 +501,8 @@ class Graph(FiniteGraph):
         """
         nb_component = self.nb_components()
         bridges: Set[Edge] = set()
-        for edge in self.edges():
-            graph = self.subtract(edge)
+        for edge in BaseGraphOps.edges(self):
+            graph = BaseGraphAlgOps.subtract(self, edge)
             if graph.nb_components() > nb_component:
                 bridges.add(edge)
         return bridges
@@ -498,7 +523,7 @@ class Graph(FiniteGraph):
         default we conserve edges whose incident nodes are a subset of vs
         """
         es: Set[Edge] = set()
-        for e in self.edges():
+        for e in BaseGraphOps.edges(self):
             if edge_policy(e, vs) is True:
                 es.add(e)
         return Graph.from_edge_node_set(edges=es, nodes=vs)
@@ -510,14 +535,7 @@ class Graph(FiniteGraph):
         \brief overloads + sign for doing algebraic operations with graph
         objects.
         """
-        if isinstance(a, Node):
-            nodes = self.union(set([a]))
-            return Graph(gid=str(uuid4()), data={}, nodes=nodes, edges=self.edges())
-        elif isinstance(a, Edge):
-            es = self.union(set([a]))
-            return Graph(gid=str(uuid4()), data={}, nodes=self.nodes(), edges=es)
-        else:
-            return self.union(a)
+        return self.from_base_graph(BaseGraphAlgOps.add(self, a))
 
     def __sub__(
         self, a: Union[Set[Edge], Set[Node], Node, Edge, GraphObject]
@@ -526,11 +544,4 @@ class Graph(FiniteGraph):
         \brief overloads - sign for doing algebraic operations with graph
         objects.
         """
-        if isinstance(a, Node):
-            nodes = self.difference(set([a]))
-            return Graph(gid=str(uuid4()), data={}, nodes=nodes, edges=self.edges())
-        elif isinstance(a, Edge):
-            es = self.difference(set([a]))
-            return Graph(gid=str(uuid4()), data={}, nodes=self.nodes(), edges=es)
-        else:
-            return self.difference(a)
+        return self.from_base_graph(BaseGraphAlgOps.subtract(self, a))

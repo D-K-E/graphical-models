@@ -9,6 +9,20 @@ from collections import namedtuple
 from copy import deepcopy
 
 
+def type_check_msg(ival, itype, mname: str):
+    ""
+    if isinstance(ival, itype) is False:
+        itype2 = str(type(ival))
+        mes = (
+            mname
+            + "() method must return "
+            + itype.__name__
+            + " as type, but it returns "
+            + itype
+        )
+        raise TypeError(mes)
+
+
 class AbstractInfo(ABC):
     ""
 
@@ -23,10 +37,7 @@ class AbstractInfo(ABC):
     def check_types(self) -> bool:
         ""
         ival = self.id()
-        if isinstance(ival, str) is False:
-            itype = str(type(ival))
-            mes = "id() method must return str as type it returns " + itype
-            raise TypeError(mes)
+        type_check_msg(ival, str, "id")
         return True
 
 
@@ -62,18 +73,9 @@ class AbstractGraphObj(AbstractInfo):
         s = self.__str__()
         b = self.__eq__()
         d = self.data()
-        if isinstance(s, str) is False:
-            itype = str(type(s))
-            mes = "__str__() method must return str as type it returns " + itype
-            raise TypeError(mes)
-        if isinstance(b, bool) is False:
-            itype = str(type(b))
-            mes = "__eq__() method must return bool as type it returns " + itype
-            raise TypeError(mes)
-        if isinstance(d, dict) is False:
-            itype = str(type(d))
-            mes = "data() method must return dict as type it returns " + itype
-            raise TypeError(mes)
+        type_check_msg(s, str, "__str__")
+        type_check_msg(b, bool, "__eq__")
+        type_check_msg(d, dict, "data")
         return True
 
 
@@ -132,28 +134,16 @@ class AbstractEdge(AbstractGraphObj):
     def check_types(self) -> bool:
         ""
         tv = self.type()
+        type_check_msg(tv, EdgeType, "type")
+
         is_start_b = self.is_start("f")
+        type_check_msg(is_start_b, bool, "is_start")
+
         is_end_b = self.is_end("f")
+        type_check_msg(is_end_b, bool, "is_end")
+
         node_ids = self.node_ids()
-        sval = self.start()
-        endv = self.end()
-        ivert = self.is_endvertice("fre")
-        if isinstance(tv, EdgeType) is False:
-            itype = str(type(tv))
-            mes = "type() method must return EdgeType as type it returns " + itype
-            raise TypeError(mes)
-        if isinstance(is_start_b, bool) is False:
-            itype = str(type(is_start_b))
-            mes = "is_start() method must return bool as type it returns " + itype
-            raise TypeError(mes)
-        if isinstance(is_end_b, bool) is False:
-            itype = str(type(is_end_b))
-            mes = "is_end() method must return bool as type it returns " + itype
-            raise TypeError(mes)
-        if isinstance(node_ids, frozenset) is False:
-            itype = str(type(node_ids))
-            mes = "node_ids() method must return frozenset as type it returns " + itype
-            raise TypeError(mes)
+        type_check_msg(node_ids, frozenset, "node_ids")
         n = set(node_ids).pop()
         if isinstance(n, str) is False:
             itype = str(type(n))
@@ -164,20 +154,14 @@ class AbstractEdge(AbstractGraphObj):
             )
             raise TypeError(mes)
 
-        if isinstance(ivert, bool) is False:
-            itype = str(type(ivert))
-            mes = "is_end() method must return bool as type it returns " + itype
-            raise TypeError(mes)
+        ivert = self.is_endvertice("fre")
+        type_check_msg(ivert, bool, "is_endvertice")
 
-        if isinstance(sval, AbstractNode) is False:
-            itype = str(type(sval))
-            mes = "start() method must return bool as type it returns " + itype
-            raise TypeError(mes)
+        sval = self.start()
+        type_check_msg(sval, AbstractNode, "start")
 
-        if isinstance(endv, AbstractNode) is False:
-            itype = str(type(endv))
-            mes = "start() method must return bool as type it returns " + itype
-            raise TypeError(mes)
+        endv = self.end()
+        type_check_msg(endv, AbstractNode, "end")
         return True
 
 
@@ -201,14 +185,6 @@ class AbstractGraph(AbstractGraphObj):
         raise NotImplementedError
 
     @abstractmethod
-    def is_trivial(self) -> bool:
-        raise NotImplementedError
-
-    @abstractmethod
-    def order(self) -> int:
-        raise NotImplementedError
-
-    @abstractmethod
     def is_neighbour_of(self, n1: AbstractNode, n2: AbstractNode) -> bool:
         """!
         \todo type checking not done in check types
@@ -229,8 +205,6 @@ class AbstractGraph(AbstractGraphObj):
                 for vid, v in self.E.items()
             ]
         )
-        itriv = self.is_trivial()
-        iorder = self.order()
         if vtypes is False:
             mes = "self.V property must return Dict[str, AbstractNode] it fails "
             mes += " for the following test:\n"
@@ -245,12 +219,78 @@ class AbstractGraph(AbstractGraphObj):
             mes += "for vid, v in self.E.items()]"
             raise TypeError(mes)
 
-        if isinstance(itriv, bool) is False:
-            itype = str(type(itriv))
-            mes = "is_trivial() method must return bool as type it returns " + itype
+
+class AbstractTree(AbstractGraph):
+    ""
+
+    def __init__(self, *args, **kwargs):
+        check_types()
+
+    @property
+    @abstractmethod
+    def root(self) -> AbstractNode:
+        raise NotImplementedError
+
+    def check_types(self) -> bool:
+        ""
+        r = self.root
+        type_check_msg(r, AbstractNode, "property root")
+        return True
+
+
+class AbstractPath(AbstractGraph):
+    ""
+
+    def __init__(*args, **kwargs):
+        ""
+        self.check_types()
+
+    @abstractmethod
+    def length(self) -> int:
+        ""
+        raise NotImplementedError
+
+    @abstractmethod
+    def node_list(self) -> List[AbstractNode]:
+        ""
+        raise NotImplementedError
+
+    @abstractmethod
+    def endvertices(self) -> Tuple[AbstractNode, AbstractNode]:
+        ""
+        raise NotImplementedError
+
+    def check_types(self):
+        "Check types of methods"
+        evs = self.endvertices()
+        type_check_msg(evs, tuple, "endvertices")
+        if len(evs) != 2:
+            mes = "endvertices() method must return a tuple with two members "
+            mes += "it returns " + str(len(evs))
+            raise ValueError(mes)
+        member_check = isinstance(evs[0], AbstractNode) and isinstance(
+            evs[1], AbstractNode
+        )
+        if member_check is False:
+            mes = "endvertices() method must return tuple containing only "
+            mes += "members which subclass AbstractNode. It contains "
+            mes += str(type(evs[0])) + " and " + str(type(evs[1]))
             raise TypeError(mes)
 
-        if isinstance(iorder, int) is False:
-            itype = str(type(iorder))
-            mes = "order() method must return int as type it returns " + itype
+        ns = self.node_list()
+        type_check_msg(ns, list, "node_list")
+        if not all(isinstance(n, AbstractNode) for n in ns):
+            mes = "node_list() method must return list containing only "
+            mes += "members which subclass AbstractNode"
             raise TypeError(mes)
+        #
+        l = self.length()
+        type_check_msg(l, int, "length")
+
+
+class AbstractUndiGraph(AbstractGraph):
+    ""
+
+
+class AbstractDiGraph(AbstractGraph):
+    ""

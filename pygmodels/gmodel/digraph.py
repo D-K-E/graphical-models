@@ -17,6 +17,7 @@ from typing import Set, Callable
 from pygmodels.gtype.edge import Edge
 from pygmodels.gtype.node import Node
 from pygmodels.gtype.abstractobj import EdgeType
+from pygmodels.graphf.graphops import BaseGraphOps
 from pygmodels.gmodel.graph import Graph
 from pygmodels.gmodel.undigraph import UndiGraph
 from pygmodels.graphf.gtraverser import GraphTraverser
@@ -50,10 +51,12 @@ class DiGraph(Graph):
                     )
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
         fgraph = self.to_finite_graph()
-        self.path_props = {v.id(): self.find_shortest_paths(v) for v in self.nodes()}
+        self.path_props = {
+            v.id(): self.find_shortest_paths(v) for v in BaseGraphOps.nodes(self)
+        }
         self.dprops = GraphTraverser.visit_graph_dfs(
             self.to_finite_graph(),
-            edge_generator=self.outgoing_edges_of,
+            edge_generator=lambda x: BaseGraphOps.outgoing_edges_of(self, x),
             check_cycle=True,
         )
 
@@ -67,7 +70,10 @@ class DiGraph(Graph):
         We give a random id for the resulting DiGraph.
         """
         return DiGraph(
-            gid=str(uuid4()), data=g.data(), nodes=g.nodes(), edges=g.edges()
+            gid=str(uuid4()),
+            data=g.data(),
+            nodes=BaseGraphOps.nodes(g),
+            edges=BaseGraphOps.edges(g),
         )
 
     def is_family_of(self, src: Node, dst: Node) -> bool:
@@ -87,7 +93,7 @@ class DiGraph(Graph):
         is also a room for improvement, since it can be much more efficient
         using edge list representation.
         """
-        for e in self.edges():
+        for e in BaseGraphOps.edges(self):
             # dst is child of src
             child_cond = e.start() == src and e.end() == dst
             # dst is parent of src
@@ -135,7 +141,7 @@ class DiGraph(Graph):
             raise ValueError("argument nodes are not in graph")
         #
         eset: Set[Edge] = set()
-        for e in self.edges():
+        for e in BaseGraphOps.edges(self):
             if e.start().id() == start.id() and e.end().id() == end.id():
                 eset.add(e)
         return eset
@@ -164,10 +170,10 @@ class DiGraph(Graph):
         \throws ValueError if the argument does not belong to this graph we
         throw value error.
         """
-        if not self.is_in(n):
+        if not BaseGraphOps.is_in(self, n):
             raise ValueError("node not in graph")
         family = set()
-        for e in self.edges():
+        for e in BaseGraphOps.edges(self):
             if fcond(e, n) is True:
                 family.add(enode_fn(e))
         return family
@@ -202,8 +208,8 @@ class DiGraph(Graph):
         """!
         to undirected graph
         """
-        nodes = self.nodes()
-        edges = self.edges()
+        nodes = BaseGraphOps.nodes(self)
+        edges = BaseGraphOps.edges(self)
         nedges = set()
         nnodes = set([n for n in nodes])
         for e in edges:
@@ -221,7 +227,7 @@ class DiGraph(Graph):
         """!
         """
         return GraphTraverser.find_shortest_paths(
-            self, n1=n, edge_generator=self.outgoing_edges_of
+            self, n1=n, edge_generator=lambda x: BaseGraphOps.outgoing_edges_of(self, x)
         )
 
     def check_for_path(self, n1: Node, n2: Node) -> bool:

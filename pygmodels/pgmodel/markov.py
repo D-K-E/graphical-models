@@ -10,6 +10,7 @@ from pygmodels.pgmtype.randomvariable import (
 )
 from pygmodels.pgmtype.factor import Factor
 from pygmodels.pgmtype.pgmodel import PGModel
+from pygmodels.graphf.graphops import BaseGraphOps
 from typing import Set, Optional, Tuple
 from uuid import uuid4
 import pdb
@@ -211,7 +212,7 @@ class MarkovNetwork(PGModel, UndiGraph):
 
         \endcode
         """
-        for n in udi.nodes():
+        for n in BaseGraphOps.nodes(udi):
             if not isinstance(n, RandomVariable):
                 raise ValueError("Nodes are not an instance of random variable")
         fs: Set[Factor] = set()
@@ -227,7 +228,10 @@ class MarkovNetwork(PGModel, UndiGraph):
                 f = f.reduced_by_value(evidences)
             fs.add(f)
         return MarkovNetwork(
-            gid=str(uuid4()), nodes=udi.nodes(), edges=udi.edges(), factors=fs
+            gid=str(uuid4()),
+            nodes=BaseGraphOps.nodes(udi),
+            edges=BaseGraphOps.edges(udi),
+            factors=fs,
         )
 
 

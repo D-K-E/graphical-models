@@ -6,14 +6,16 @@ from typing import Set, Optional, Callable, List, Tuple, Dict, Union, Any
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gmodel.path import Path
 from pygmodels.gtype.node import Node
-from pygmodels.gmodel.graph import Graph
+from pygmodels.gtype.basegraph import BaseGraph
+from pygmodels.gtype.abstractobj import AbstractTree
 from pygmodels.graphf.gtraverser import GraphTraverser
+from pygmodels.graphf.bgraphops import BaseGraphOps
 from pygmodels.gtype.queue import PriorityQueue
 from uuid import uuid4
 import math
 
 
-class Tree(Graph):
+class Tree(BaseGraph, AbstractTree):
     """!
     Ordered Tree object
     """
@@ -29,17 +31,17 @@ class Tree(Graph):
                 nodes.add(estart)
                 nodes.add(eend)
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
-        self.root = self._root()
-        es = [e.type() for e in self.edges()]
+        self.__root = None
+        es = [e.type() for e in self.E.values()]
         if es[0] == EdgeType.DIRECTED:
-            egen = self.outgoing_edges_of
+            egen = lambda x: BaseGraphOps.outgoing_edges_of(self, x)
         else:
-            egen = self.edges_of
+            egen = lambda x: BaseGraphOps.edges_of(self, x)
         self.paths: Dict[str, Union[dict, set]] = GraphTraverser.find_shortest_paths(
-            self, n1=self.root_node(), edge_generator=egen
+            self, n1=self.root, edge_generator=egen
         )
         self.topsort = self.paths["top-sort"]
-        self.bfs_tree = self.paths["bfs-tree"][self.root_node().id()]
+        self.bfs_tree = self.paths["bfs-tree"][self.root.id()]
 
     @classmethod
     def from_node_tuples(cls, ntpls: Set[Tuple[Node, Node, EdgeType]]):
@@ -64,7 +66,7 @@ class Tree(Graph):
     def node_table(self):
         ""
         node_table = {v: {"child": False, "parent": False} for v in self.V}
-        for e in self.edges():
+        for e in self.E.values():
             estart_id = e.start().id()
             eend_id = e.end().id()
             node_table[estart_id]["parent"] = True
@@ -72,7 +74,7 @@ class Tree(Graph):
         #
         return node_table
 
-    def _root(self):
+    def get_root(self):
         ""
         node_table = self.node_table()
         root_ids = [
@@ -93,14 +95,17 @@ class Tree(Graph):
         ]
         return set([self.V[v] for v in leave_ids])
 
-    def root_node(self) -> Node:
+    @property
+    def root(self) -> Node:
         ""
-        return self.root
+        if self.__root is None:
+            self.__root = self.get_root()
+        return self.__root
 
     def height_of(self, n: Node) -> int:
         """!
         """
-        if not self.is_in(n):
+        if not BaseGraphOps.is_in(self, n):
             raise ValueError("node not in tree")
         nid = n.id()
         return self.topsort[nid]
@@ -146,7 +151,7 @@ class Tree(Graph):
         return self.is_set_of(n, fn=self.is_downclosure_of)
 
     def is_set_of(self, n: Node, fn: Callable[[Node, Node], bool]) -> Set[Node]:
-        nodes = self.nodes()
+        nodes = BaseGraphOps.nodes(self)
         nset = set([y for y in nodes if fn(n, y) is True])
         return nset
 
@@ -162,7 +167,7 @@ class Tree(Graph):
         """!
         extract nodes of certain level in tree
         """
-        return set([n for n in self.nodes() if self.height_of(n) == level])
+        return set([n for n in BaseGraphOps.nodes(self) if self.height_of(n) == level])
 
     def extract_path_info(
         self,
@@ -175,7 +180,10 @@ class Tree(Graph):
         is_min=True,
     ):
         ""
-        if self.is_in(start) is False or self.is_in(end) is False:
+        if (
+            BaseGraphOps.is_in(self, start) is False
+            or BaseGraphOps.is_in(self, end) is False
+        ):
             raise ValueError("start or end node is not inside tree")
         #
         upset = self.upset_of(start)
@@ -184,11 +192,11 @@ class Tree(Graph):
         downset = self.downset_of(end)
         upset_edges = set()
         for u in upset:
-            for e in self.outgoing_edges_of(u):
+            for e in BaseGraphOps.outgoing_edges_of(self, u):
                 upset_edges.add(e)
         downset_edges = set()
         for d in downset:
-            for e in self.outgoing_edges_of(d):
+            for e in BaseGraphOps.outgoing_edges_of(self, d):
                 downset_edges.add(e)
         problem_set = upset_edges.intersection(downset_edges)
         ucs_solution = Path.uniform_cost_search(
@@ -219,8 +227,8 @@ class Tree(Graph):
 
     @classmethod
     def find_mst_prim(
-        cls, g: Graph, edge_generator: Callable[[Node], Set[Node]]
-    ) -> Graph:
+        cls, g: BaseGraph, edge_generator: Callable[[Node], Set[Node]]
+    ) -> AbstractTree:
         """!
         Find minimum spanning tree as per Prim's algorithm
         Even and Guy Even 2012, p. 32
@@ -263,11 +271,11 @@ class Tree(Graph):
     @classmethod
     def find_mnmx_st(
         cls,
-        g: Graph,
+        g: BaseGraph,
         edge_generator: Callable[[Node], Set[Edge]],
         weight_function: Callable[[Edge], float] = lambda x: 1,
         is_min: bool = True,
-    ):
+    ) -> Tuple[AbstractTree, List[Edge]]:
         """!
         a modified version of kruskal minimum spanning tree adapted for
         finding minimum and maximum weighted spanning tree of a graph
