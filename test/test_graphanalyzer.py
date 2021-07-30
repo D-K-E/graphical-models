@@ -8,6 +8,7 @@ from pygmodels.gtype.basegraph import BaseGraph
 from pygmodels.gtype.node import Node
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.gmodel.graph import Graph
 
 from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
 
@@ -207,6 +208,29 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
     def test_ev_ratio(self):
         deg = BaseGraphAnalyzer.ev_ratio(self.graph)
         self.assertEqual(0.5, deg)
+
+    def test_order(self):
+        ""
+        b = BaseGraphAnalyzer.order(self.graph)
+        self.assertEqual(b, 4)
+
+    def test_is_trivial_1(self):
+        ""
+        b = BaseGraphAnalyzer.is_trivial(self.graph)
+        self.assertFalse(b)
+
+    def test_is_trivial_2(self):
+        ""
+        n = Node("n646", {})
+        e = Edge("e8", start_node=n, end_node=n, edge_type=EdgeType.UNDIRECTED)
+        check = False
+        try:
+            gg = BaseGraph(gid="temp", data={}, nodes=set([n]), edges=set([e]))
+            print("gg length", len(gg.V))
+        except ValueError:
+            check = True
+
+        self.assertTrue(check)
 
 
 if __name__ == "__main__":
