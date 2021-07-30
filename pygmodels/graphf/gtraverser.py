@@ -3,8 +3,7 @@ Traverse graphs in some fashion
 """
 from typing import Set, Optional, Callable, List, Tuple, Dict, Union
 from pygmodels.gtype.abstractobj import AbstractGraph
-from pygmodels.gtype.basegraph import BaseGraph
-from pygmodels.gmodel.finitegraph import FiniteGraph
+from pygmodels.graphf.bgraphops import BaseGraphOps
 
 from pygmodels.gtype.node import Node
 from pygmodels.gtype.edge import Edge
@@ -16,19 +15,8 @@ class GraphTraverser:
         pass
 
     @staticmethod
-    def cast_graph(g_: AbstractGraph):
-        """!
-        """
-        if isinstance(g_, FiniteGraph):
-            return g_
-        elif isinstance(g_, BaseGraph):
-            return FiniteGraph.from_base_graph(g_)
-        else:
-            return FiniteGraph.from_abstract_graph(g_)
-
-    @staticmethod
     def dfs_forest(
-        g_: AbstractGraph,
+        g: AbstractGraph,
         u: str,
         pred: Dict[str, str],
         marked: Dict[str, int],
@@ -56,7 +44,6 @@ class GraphTraverser:
         \param check_cycle fill cycles if it is detected
         \param edge_generator generate edges of a vertex with respect to graph type
         """
-        g = GraphTraverser.cast_graph(g_)
         marked[u] = True
         time += 1
         d[u] = time
@@ -108,7 +95,7 @@ class GraphTraverser:
 
     @staticmethod
     def visit_graph_dfs(
-        g_: AbstractGraph,
+        g: AbstractGraph,
         edge_generator: Callable[[Node], Set[Node]],
         check_cycle: bool = False,
     ):
@@ -118,7 +105,6 @@ class GraphTraverser:
 
         \see dfs_forest() method for more information on parameters.
         """
-        g = GraphTraverser.cast_graph(g_)
         time = 0
         marked: Dict[str, bool] = {n: False for n in g.V}
         preds: Dict[str, Dict[str, str]] = {}
@@ -164,12 +150,11 @@ class GraphTraverser:
 
     @staticmethod
     def from_preds_to_edgeset(
-        g_: AbstractGraph, preds: Dict[str, Dict[str, str]]
+        g: AbstractGraph, preds: Dict[str, Dict[str, str]]
     ) -> Dict[str, Set[Edge]]:
         """!
         \brief obtain the edge set implied by the predecessor array.
         """
-        g = GraphTraverser.cast_graph(g_)
         esets: Dict[str, Set[Edge]] = {}
         for u, forest in preds.copy().items():
             eset: Set[Edge] = set()
@@ -177,13 +162,15 @@ class GraphTraverser:
                 cnode = g.V[child]
                 if parent is not None:
                     pnode = g.V[parent]
-                    eset = eset.union(g.edge_by_vertices(start=pnode, end=cnode))
+                    eset = eset.union(
+                        BaseGraphOps.edge_by_vertices(g, start=pnode, end=cnode)
+                    )
             esets[u] = eset
         return esets
 
     @staticmethod
     def find_shortest_paths(
-        g_: AbstractGraph, n1: Node, edge_generator: Callable[[Node], Set[Edge]]
+        g: AbstractGraph, n1: Node, edge_generator: Callable[[Node], Set[Edge]]
     ) -> Dict[str, Union[dict, set]]:
         """!
         \brief find shortest path from given node to all other nodes
@@ -192,8 +179,7 @@ class GraphTraverser:
 
         \throws ValueError if given node is not found in graph instance
         """
-        g = GraphTraverser.cast_graph(g_)
-        if not g.is_in(n1):
+        if not BaseGraphOps.is_in(g, n1):
             raise ValueError("argument node is not in graph")
         nid = n1.id()
         Q = [nid]

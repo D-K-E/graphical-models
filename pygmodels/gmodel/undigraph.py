@@ -14,6 +14,9 @@ from pygmodels.gtype.edge import Edge
 from pygmodels.gtype.node import Node
 from pygmodels.gmodel.tree import Tree
 from pygmodels.gtype.abstractobj import EdgeType
+from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.graphf.graphops import BaseGraphAlgOps
+from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
 from pygmodels.gmodel.graph import Graph
 from pygmodels.graphf.gtraverser import GraphTraverser
 from uuid import uuid4
@@ -53,11 +56,14 @@ class UndiGraph(Graph):
 
         \param g source graph
         """
-        for e in g.edges():
+        for e in BaseGraphOps.edges(g):
             if e.type() == EdgeType.DIRECTED:
                 raise ValueError("Graph contains directed edges")
         return UndiGraph(
-            gid=str(uuid4()), data=g.data(), nodes=g.nodes(), edges=g.edges()
+            gid=str(uuid4()),
+            data=g.data(),
+            nodes=BaseGraphOps.nodes(g),
+            edges=BaseGraphOps.edges(g),
         )
 
     def find_shortest_paths(self, n1: Node) -> Dict[str, Union[dict, set]]:
@@ -69,7 +75,7 @@ class UndiGraph(Graph):
         nodes not just incoming or outgoing edges.
         """
         return GraphTraverser.find_shortest_paths(
-            self, n1=n1, edge_generator=self.edges_of
+            self, n1=n1, edge_generator=lambda x: BaseGraphOps.edges_of(self, x)
         )
 
     def check_for_path(self, n1: Node, n2: Node) -> bool:
@@ -93,7 +99,7 @@ class UndiGraph(Graph):
         \brief also known as shortest possible path length
         see proof Diestel 2017, p. 8
         """
-        return self.min_degree()
+        return BaseGraphAnalyzer.min_degree(self)
 
     def find_minimum_spanning_tree(
         self, weight_fn: Callable[[Edge], int] = lambda x: 1
@@ -110,7 +116,9 @@ class UndiGraph(Graph):
         """
         # t = Tree.find_mst_prim(self, edge_generator=self.edges_of)
         t, L = Tree.find_mnmx_st(
-            self, edge_generator=self.edges_of, weight_function=weight_fn
+            self,
+            edge_generator=lambda x: BaseGraphOps.edges_of(self, x),
+            weight_function=weight_fn,
         )
         return t, L
 
@@ -124,7 +132,10 @@ class UndiGraph(Graph):
         """
         # t = Tree.find_mst_prim(self, edge_generator=self.edges_of)
         t, L = Tree.find_mnmx_st(
-            self, edge_generator=self.edges_of, weight_function=weight_fn, is_min=False
+            self,
+            edge_generator=lambda x: BaseGraphOps.edges_of(self, x),
+            weight_function=weight_fn,
+            is_min=False,
         )
         return t, L
 
@@ -136,7 +147,7 @@ class UndiGraph(Graph):
         a different graph making function.
         \see Graph.find_articulation_points() for more information
         """
-        gmaker = lambda x: self.from_graph(self.subtract_node(x))
+        gmaker = lambda x: self.from_graph(BaseGraphAlgOps.subtract_node(self, x))
         return super().find_articulation_points(graph_maker=gmaker)
 
     def find_bridges(self) -> Set[Node]:
@@ -147,7 +158,7 @@ class UndiGraph(Graph):
         a different graph making function.
         \see Graph.find_bridges() for more information
         """
-        gmaker = lambda x: self.from_graph(self.subtract(x))
+        gmaker = lambda x: self.from_graph(BaseGraphAlgOps.subtract(self, x))
         return super().find_bridges(graph_maker=gmaker)
 
     def bron_kerbosch(
@@ -173,9 +184,9 @@ class UndiGraph(Graph):
             Cs.append(R)
         for v in P:
             self.bron_kerbosch(
-                P=P.intersection(self.neighbours_of(v)),
+                P=P.intersection(BaseGraphOps.neighbours_of(self, v)),
                 R=R.union([v]),
-                X=X.intersection(self.neighbours_of(v)),
+                X=X.intersection(BaseGraphOps.neighbours_of(self, v)),
                 Cs=Cs,
             )
             P = P.difference([v])
@@ -186,7 +197,7 @@ class UndiGraph(Graph):
         find maximal cliques in graph using Bron Kerbosch algorithm
         as per arxiv.org/1006.5440
         """
-        P: Set[Node] = self.nodes()
+        P: Set[Node] = BaseGraphOps.nodes(self)
         X: Set[Node] = set()
         R: Set[Node] = set()
         Cs: List[Set[Node]] = []

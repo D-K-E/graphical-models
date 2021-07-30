@@ -4,6 +4,8 @@ functionality for doing graph theoretical operations
 """
 from pygmodels.gtype.abstractobj import AbstractGraph
 from pygmodels.gtype.graphobj import GraphObject
+from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
 from typing import Set, Optional, Union, Dict, Callable, FrozenSet, List
@@ -21,23 +23,24 @@ class BaseGraph(GraphObject, AbstractGraph):
         super().__init__(oid=gid, odata=data)
         self._nodes: Optional[Dict[str, Node]] = None
         if nodes is not None:
-            self._nodes = {n.id(): n for n in nodes}
+            self._nodes = BaseGraphOps.get_nodes(ns=nodes, es=edges)
         self._edges: Optional[Dict[str, Edge]] = None
         if edges is not None:
             self._edges = {e.id(): e for e in edges}
         #
-        self.gdata: Dict[str, List[str]] = {}
+        self.gdata: Dict[str, List[str]] = BaseGraphOps.to_edgelist(self)
         if self._nodes is not None:
             self.is_empty = len(self._nodes) == 0
         else:
             self.is_empty = True
 
-        if self.is_trivial():
+        if BaseGraphAnalyzer.is_trivial(self):
             msg = "This library is not compatible with computations with trivial graph"
             msg += "\nNodes: "
             msg += str(self._nodes.keys())
             msg += "\nEdges: " + str(self._edges.keys())
             raise ValueError(msg)
+            gid = gid, nodes = nodes, data = data, edges = edges
 
     @classmethod
     def from_abstract_graph(cls, g_: AbstractGraph):
@@ -49,23 +52,6 @@ class BaseGraph(GraphObject, AbstractGraph):
         data = g_.data()
         gid = g_.id()
         return BaseGraph(gid=gid, data=data, nodes=nodes, edges=edges)
-
-    def is_trivial(self) -> bool:
-        """!
-        \brief check if graph is trivial.
-        This triviality condition is taken from
-        Diestel 2017, p. 2
-        """
-        return self.order() < 2
-
-    def order(self) -> int:
-        """!
-        \brief obtain the number of vertices in the graph.
-
-        It corresponds to \f$ |G| \f$.
-        This interpretation of order is taken from Diestel 2017, p. 2.
-        """
-        return len(self.V)
 
     def __eq__(self, n):
         """!
@@ -220,6 +206,8 @@ class BaseGraph(GraphObject, AbstractGraph):
             c1 = estart == n_1 and eend == n_2
             c2 = estart == n_2 and eend == n_1
             return c1 or c2
+
+        gdata = BaseGraphOps.to_edgelist(self)
 
         n1_edge_ids = set(self.gdata[n1.id()])
         n2_edge_ids = set(self.gdata[n2.id()])

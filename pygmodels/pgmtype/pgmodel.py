@@ -17,6 +17,9 @@ from pygmodels.pgmtype.factor import Factor
 from pygmodels.factorf.factorops import FactorOps
 from pygmodels.factorf.factoranalyzer import FactorAnalyzer
 from pygmodels.gmodel.graph import Graph
+from pygmodels.graphf.graphops import BaseGraphAlgOps
+from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
 from typing import Callable, Set, List, Optional, Dict, Tuple
 import math
 from uuid import uuid4
@@ -26,7 +29,7 @@ def min_unmarked_neighbours(g: Graph, nodes: Set[Node], marked: Dict[str, Node])
     """!
     \brief find an unmarked node with minimum number of neighbours
     """
-    ordered = [(n, g.nb_neighbours_of(n)) for n in nodes]
+    ordered = [(n, BaseGraphAnalyzer.nb_neighbours_of(g, n)) for n in nodes]
     ordered.sort(key=lambda x: x[1])
     for X, nb in sorted(ordered, key=lambda x: x[1]):
         if marked[X.id()] is False:
@@ -55,7 +58,7 @@ class PGModel(Graph):
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
         if factors is None:
             fs: Set[Factor] = set()
-            for e in self.edges():
+            for e in BaseGraphOps.edges(self):
                 estart = e.start()
                 eend = e.end()
                 sdata = estart.data()
@@ -77,9 +80,9 @@ class PGModel(Graph):
         """!
         get markov blanket of a node from K. Murphy, 2012, p. 662
         """
-        if self.is_in(t) is False:
+        if BaseGraphOps.is_in(self, t) is False:
             raise ValueError("Node not in graph: " + str(t))
-        ns: Set[NumCatRVariable] = self.neighbours_of(t)
+        ns: Set[NumCatRVariable] = BaseGraphOps.neighbours_of(self, t)
         return ns
 
     def factors(self, f=lambda x: x):
@@ -102,7 +105,7 @@ class PGModel(Graph):
         check if two nodes are conditionally independent
         from K. Murphy, 2012, p. 662
         """
-        return self.is_node_independent_of(n1, n2)
+        return BaseGraphAnalyzer.is_node_independent_of(self, n1, n2)
 
     def scope_of(self, phi: Factor) -> Set[NumCatRVariable]:
         """!
@@ -113,7 +116,7 @@ class PGModel(Graph):
         """!
         filter factors using Koller, Friedman 2009, p. 299 as criteria
         """
-        s = self.scope_of(phi)
+        s: Set[NumCatRVariable] = self.scope_of(phi)
         return s.intersection(X) == s
 
     def scope_subset_factors(self, X: Set[NumCatRVariable]) -> Set[Factor]:
@@ -243,11 +246,13 @@ class PGModel(Graph):
             X = s(g=self, nodes=nodes, marked=marked)
             if X is not None:
                 cardinality[X.id()] = i
-                TEMP = self.neighbours_of(X)
+                TEMP = BaseGraphOps.neighbours_of(self, X)
                 while TEMP:
                     n_x = TEMP.pop()
-                    for n in self.neighbours_of(X):
-                        self.added_edge_between_if_none(n_x, n)
+                    for n in BaseGraphOps.neighbours_of(self, X):
+                        self = BaseGraphAlgOps.added_edge_between_if_none(
+                            self, n_x, n, is_directed=False
+                        )
                 marked[X.id()] = True
         return cardinality
 
@@ -289,12 +294,12 @@ class PGModel(Graph):
         Compute conditional probabilities with variable elimination
         from Koller and Friedman 2009, p. 304
         """
-        if queries.issubset(self.nodes()) is False:
+        if queries.issubset(BaseGraphOps.nodes(self)) is False:
             raise ValueError("Query variables must be a subset of vertices of graph")
         queries = self.reduce_queries_with_evidence(queries, evidences)
         factors, E = self.reduce_factors_with_evidence(evidences)
         Zs = set()
-        for z in self.nodes():
+        for z in BaseGraphOps.nodes(self):
             if z not in E and z not in queries:
                 Zs.add(z)
         return self.conditional_prod_by_variable_elimination(
@@ -351,7 +356,7 @@ class PGModel(Graph):
         """
         factors, E = self.reduce_factors_with_evidence(evidences)
         Zs = set()
-        for z in self.nodes():
+        for z in BaseGraphOps.nodes(self):
             if z not in E:
                 Zs.add(z)
         cardinality = self.order_by_greedy_metric(nodes=Zs, s=min_unmarked_neighbours)
