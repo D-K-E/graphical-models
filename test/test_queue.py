@@ -1,4 +1,5 @@
 # simple tests for different queues
+# tested
 
 from pygmodels.gtype.queue import PriorityQueue
 from pygmodels.gtype.node import Node
