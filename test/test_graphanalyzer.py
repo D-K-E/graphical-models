@@ -226,7 +226,6 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
         check = False
         try:
             gg = BaseGraph(gid="temp", data={}, nodes=set([n]), edges=set([e]))
-            print("gg length", len(gg.V))
         except ValueError:
             check = True
 

@@ -8,7 +8,6 @@ from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
 from pygmodels.gtype.node import Node
 from pygmodels.gtype.edge import Edge, EdgeType
 import unittest
-import pprint
 
 
 class GraphTest(unittest.TestCase):
@@ -379,15 +378,18 @@ class GraphTest(unittest.TestCase):
         cs = list(comps)
         cs0ns = BaseGraphOps.nodes(cs[0])
         cs0es = BaseGraphOps.edges(cs[0])
+        #
         cs1ns = BaseGraphOps.nodes(cs[1])
         cs1es = BaseGraphOps.edges(cs[1])
         #
         u2nodes = BaseGraphOps.nodes(self.ugraph2)
         u2edges = BaseGraphOps.edges(self.ugraph2)
         cond1 = u2nodes == cs0ns or u2edges == cs1ns
+        #
         g2node = BaseGraphOps.nodes(self.graph_2)
         g2edge = BaseGraphOps.edges(self.graph_2)
         cond2 = g2node == cs0ns or g2node == cs1ns
+        #
         cond3 = u2edges == cs0es or u2edges == cs1es
         cond4 = g2edge == cs0es or g2edge == cs1es
         self.assertTrue(cond1)
