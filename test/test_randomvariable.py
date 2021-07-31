@@ -1,5 +1,4 @@
 # unittest for numeric categorical random variable
-# test pass
 
 
 import unittest

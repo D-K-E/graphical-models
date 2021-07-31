@@ -70,7 +70,7 @@ class TreeTest(unittest.TestCase):
         self.assertEqual(self.gtree.id(), "t")
 
     def test_root(self):
-        self.assertEqual(self.gtree.root_node(), self.a)
+        self.assertEqual(self.gtree.root, self.a)
 
     def test_leaves(self):
         ""
@@ -95,7 +95,7 @@ class TreeTest(unittest.TestCase):
             ]
         )
         temp = Tree.from_edgeset(eset)
-        self.assertEqual(self.gtree.root_node(), temp.root_node())
+        self.assertEqual(self.gtree.root, temp.root)
         self.assertEqual(self.gtree.leaves(), temp.leaves())
 
     def test_height_of(self):

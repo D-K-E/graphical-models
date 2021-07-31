@@ -8,6 +8,7 @@ from pygmodels.pgmtype.factor import Factor
 from pygmodels.pgmtype.randomvariable import NumCatRVariable
 from pygmodels.pgmodel.lwfchain import LWFChainGraph
 from pygmodels.pgmodel.markov import ConditionalRandomField
+from pygmodels.graphf.graphops import BaseGraphOps
 from uuid import uuid4
 import pdb
 
@@ -595,7 +596,7 @@ class LWFChainGraphTest(unittest.TestCase):
                 frozenset([self.H.id(), self.I.id()]),
             ]
         )
-        medges = moral.edges()
+        medges = BaseGraphOps.edges(moral)
         ms = set([frozenset([m.start().id(), m.end().id()]) for m in medges])
         # [print(m) for m in ms]
 
