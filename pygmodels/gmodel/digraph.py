@@ -20,7 +20,7 @@ from pygmodels.gtype.abstractobj import EdgeType
 from pygmodels.graphf.graphops import BaseGraphOps
 from pygmodels.gmodel.graph import Graph
 from pygmodels.gmodel.undigraph import UndiGraph
-from pygmodels.graphf.gtraverser import GraphTraverser
+from pygmodels.graphf.graphtraverser import BaseGraphTraverser
 from uuid import uuid4
 
 
@@ -50,12 +50,11 @@ class DiGraph(Graph):
                         "Can not instantiate directed graph with" + " undirected edges"
                     )
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
-        fgraph = self.to_finite_graph()
         self.path_props = {
             v.id(): self.find_shortest_paths(v) for v in BaseGraphOps.nodes(self)
         }
-        self.dprops = GraphTraverser.visit_graph_dfs(
-            self.to_finite_graph(),
+        self.dprops = BaseGraphTraverser.visit_graph_dfs(
+            self,
             edge_generator=lambda x: BaseGraphOps.outgoing_edges_of(self, x),
             check_cycle=True,
         )
@@ -226,7 +225,7 @@ class DiGraph(Graph):
     def find_shortest_paths(self, n: Node):
         """!
         """
-        return GraphTraverser.find_shortest_paths(
+        return BaseGraphTraverser.find_shortest_paths(
             self, n1=n, edge_generator=lambda x: BaseGraphOps.outgoing_edges_of(self, x)
         )
 

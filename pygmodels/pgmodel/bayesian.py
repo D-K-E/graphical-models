@@ -4,6 +4,7 @@ Bayesian Network model
 
 from pygmodels.gmodel.digraph import DiGraph
 from pygmodels.gtype.edge import Edge
+from pygmodels.graphf.bgraphops import BaseGraphOps
 from pygmodels.pgmtype.randomvariable import NumCatRVariable
 from pygmodels.pgmtype.factor import Factor
 from pygmodels.pgmtype.pgmodel import PGModel
@@ -179,5 +180,8 @@ class BayesianNetwork(PGModel, DiGraph):
             fs = cls.deduce_factors_from_digraph(dig)
         #
         return BayesianNetwork(
-            gid=str(uuid4()), nodes=dig.nodes(), edges=dig.edges(), factors=fs
+            gid=str(uuid4()),
+            nodes=BaseGraphOps.nodes(dig),
+            edges=BaseGraphOps.edges(dig),
+            factors=fs,
         )
