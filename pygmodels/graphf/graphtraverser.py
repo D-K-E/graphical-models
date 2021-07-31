@@ -55,7 +55,7 @@ class BaseGraphTraverser:
                 pred[v] = u
                 T.add(v)
                 BaseGraphTraverser.dfs_forest(
-                    g,
+                    g=g,
                     u=v,
                     pred=pred,
                     marked=marked,
@@ -119,7 +119,7 @@ class BaseGraphTraverser:
                 pred: Dict[str, Optional[str]] = {n: None for n in g.V}
                 T: Set[str] = set()
                 BaseGraphTraverser.dfs_forest(
-                    g,
+                    g=g,
                     u=u,
                     pred=pred,
                     cycles=cycles,

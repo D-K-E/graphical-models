@@ -123,11 +123,21 @@ class GraphTest(unittest.TestCase):
         self.ugraph4 = Graph(
             "ug4",
             data={"my": "graph", "data": "is", "very": "awesome"},
-            nodes=BaseGraphOps.nodes(self.ugraph2).union(
-                BaseGraphOps.nodes(self.graph_2)
+            nodes=set(
+                [self.a, self.b, self.e, self.f, self.n1, self.n2, self.n3, self.n4]
             ),
-            edges=BaseGraphOps.edges(self.ugraph2).union(
-                BaseGraphOps.edges(self.graph_2)
+            edges=set(
+                [
+                    self.ab,
+                    self.af,
+                    self.ae,
+                    self.be,
+                    self.ef,
+                    self.e1,
+                    self.e2,
+                    self.e3,
+                    self.e4,
+                ]
             ),
         )
         # ugraph 4

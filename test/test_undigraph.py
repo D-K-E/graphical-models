@@ -285,7 +285,9 @@ class UndiGraphTest(unittest.TestCase):
         self.assertEqual(set([self.b, self.d]), points)
 
     def test_find_bridges(self):
-        ""
+        """
+        Test taken from Erciyes p. 235, Fig. 8.5
+        """
         bridges = self.ugraph6.find_bridges()
         self.assertEqual(bridges, set([self.de, self.bc]))
 

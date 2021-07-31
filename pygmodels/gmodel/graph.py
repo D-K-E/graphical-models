@@ -74,7 +74,7 @@ class Graph(BaseGraph):
         #
         self.props = BaseGraphTraverser.visit_graph_dfs(
             self,
-            edge_generator=lambda x: BaseGraphOps.edges_of(self, x),
+            edge_generator=lambda node: BaseGraphOps.edges_of(self, node),
             check_cycle=True,
         )
 
@@ -502,7 +502,8 @@ class Graph(BaseGraph):
         """
         nb_component = self.nb_components()
         bridges: Set[Edge] = set()
-        for edge in BaseGraphOps.edges(self):
+        edges = set(self.E.values())
+        for edge in edges:
             graph = graph_maker(edge)
             if graph.nb_components() > nb_component:
                 bridges.add(edge)

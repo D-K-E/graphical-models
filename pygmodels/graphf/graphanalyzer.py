@@ -404,3 +404,10 @@ class BaseGraphAnalyzer:
     ):
         ""
         raise NotImplementedError
+
+    @staticmethod
+    def find_bridges(
+        g: AbstractGraph, graph_maker=Callable[[AbstractNode], AbstractGraph]
+    ):
+        ""
+        pass
