@@ -3,6 +3,7 @@ Test path object
 """
 from pygmodels.gmodel.path import Path
 from pygmodels.gmodel.graph import Graph
+from pygmodels.graphf.bgraphops import BaseGraphOps
 from pygmodels.gtype.node import Node
 from pygmodels.gtype.edge import Edge, EdgeType
 import unittest
@@ -143,7 +144,7 @@ class PathTest(unittest.TestCase):
         ""
         start_node = self.b
         goal_node = self.m
-        problem_set = self.gtree.edges()
+        problem_set = BaseGraphOps.edges(self.gtree)
         solution = Path.uniform_cost_search(
             goal=goal_node, start=start_node, problem_set=problem_set
         )
@@ -158,7 +159,7 @@ class PathTest(unittest.TestCase):
         ""
         start_node = self.b
         goal_node = self.m
-        problem_set = self.gtree.edges()
+        problem_set = BaseGraphOps.edges(self.gtree)
         p = Path.from_ucs(goal=goal_node, start=start_node, problem_set=problem_set)
         self.assertEqual(p.node_list(), [self.b, self.f, self.m])
 
