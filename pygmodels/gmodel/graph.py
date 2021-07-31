@@ -71,11 +71,20 @@ class Graph(BaseGraph):
         """
         super().__init__(gid=gid, nodes=nodes, edges=edges, data=data)
         #
-        self.props = BaseGraphTraverser.visit_graph_dfs(
-            self,
-            edge_generator=lambda node: BaseGraphOps.edges_of(self, node),
-            check_cycle=True,
-        )
+        self._props = None
+
+    @property
+    def graph_props(self):
+        """!
+        Several graph properties computed with dfs passage
+        """
+        if self._props is None:
+            self._props = BaseGraphTraverser.visit_graph_dfs(
+                self,
+                edge_generator=lambda node: BaseGraphOps.edges_of(self, node),
+                check_cycle=True,
+            )
+        return self._props
 
     @classmethod
     def from_abstract_graph(cls, g_):
@@ -398,7 +407,7 @@ class Graph(BaseGraph):
         algorithm is adapted for that case. It is computed as we are traversing
         the graph in dfs_forest()
         """
-        return self.props["nb-component"]
+        return self.graph_props["nb-component"]
 
     def is_tree(self) -> bool:
         """!
@@ -418,7 +427,7 @@ class Graph(BaseGraph):
         Given a root node id for a component, obtain its node set.
         """
         v = self.V[root_node_id]
-        Ts = self.props["components"]
+        Ts = self.graph_props["components"]
         T = Ts[root_node_id]
         T.add(v.id())
         return set([self.V[v] for v in T])
@@ -449,7 +458,7 @@ class Graph(BaseGraph):
             return set([self])
 
         # Extract component roots
-        component_roots = [k for k in self.props["dfs-forest"].keys()]
+        component_roots = [k for k in self.graph_props["dfs-forest"].keys()]
         return set([self.get_component(root_node_id=root) for root in component_roots])
 
     def get_components_as_node_sets(self) -> Set[FrozenSet[Node]]:
@@ -463,7 +472,7 @@ class Graph(BaseGraph):
             return set([frozenset(self.nodes())])
 
         # Extract component roots
-        component_roots = [k for k in self.props["dfs-forest"].keys()]
+        component_roots = [k for k in self.graph_props["dfs-forest"].keys()]
         return set([frozenset(self.get_component_nodes(k)) for k in component_roots])
 
     def find_articulation_points(
