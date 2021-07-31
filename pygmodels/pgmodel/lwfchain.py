@@ -3,19 +3,20 @@ Probabilistic Graphic Model - LWF Chain Graph
 
 Partially Directed Acyclic Graph as in Koller, Friedman 2009, p. 37
 """
-from pygmodels.gtype.edge import Edge, EdgeType
-from pygmodels.gtype.node import Node
-from pygmodels.pgmtype.randomvariable import NumCatRVariable
-from pygmodels.pgmtype.factor import Factor
-from pygmodels.pgmtype.pgmodel import PGModel
-from pygmodels.pgmodel.markov import MarkovNetwork, ConditionalRandomField
+from typing import Dict, Set, Tuple, Union
+from uuid import uuid4
+
 from pygmodels.gmodel.graph import Graph
 from pygmodels.gmodel.tree import Tree
 from pygmodels.gmodel.undigraph import UndiGraph
-from pygmodels.graphf.graphops import BaseGraphOps
 from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
-from typing import Set, Dict, Tuple, Union
-from uuid import uuid4
+from pygmodels.graphf.graphops import BaseGraphOps
+from pygmodels.gtype.edge import Edge, EdgeType
+from pygmodels.gtype.node import Node
+from pygmodels.pgmodel.markov import ConditionalRandomField, MarkovNetwork
+from pygmodels.pgmtype.factor import Factor
+from pygmodels.pgmtype.pgmodel import PGModel
+from pygmodels.pgmtype.randomvariable import NumCatRVariable
 
 
 class LWFChainGraph(PGModel):
@@ -31,8 +32,10 @@ class LWFChainGraph(PGModel):
         factors: Set[Factor],
         data={},
     ):
-        ""
-        super().__init__(gid=gid, data=data, nodes=nodes, edges=edges, factors=factors)
+        """"""
+        super().__init__(
+            gid=gid, data=data, nodes=nodes, edges=edges, factors=factors
+        )
         self.ccomponents = list(self.get_chain_components())
         self.chain_components: Dict[str, Set[UndiGraph]] = {
             str(uuid4()): c for c in self.ccomponents
@@ -61,7 +64,8 @@ class LWFChainGraph(PGModel):
                     )
                     if (
                         is_n_ind is True
-                        and frozenset([parent_node, pnode]).issubset(enodes) is False
+                        and frozenset([parent_node, pnode]).issubset(enodes)
+                        is False
                     ):
                         e = Edge(
                             edge_id=str(uuid4()),
@@ -105,16 +109,20 @@ class LWFChainGraph(PGModel):
             if f.scope_vars().issubset(parents.union(component)) is True:
                 fs.add(f)
         return ConditionalRandomField(
-            gid=str(uuid4()), observed_vars=parents, target_vars=component, factors=fs,
+            gid=str(uuid4()),
+            observed_vars=parents,
+            target_vars=component,
+            factors=fs,
         )
 
     def to_crfs(self) -> Set[ConditionalRandomField]:
-        ""
-        return set([self.component_to_crf(i) for i in range(len(self.ccomponents))])
+        """"""
+        return set(
+            [self.component_to_crf(i) for i in range(len(self.ccomponents))]
+        )
 
     def chain_component(self, dag_id: str) -> Set[UndiGraph]:
-        """!
-        """
+        """!"""
         return self.chain_components[dag_id]
 
     def K(self, i: int) -> Union[NumCatRVariable, UndiGraph]:
@@ -124,8 +132,7 @@ class LWFChainGraph(PGModel):
         return self.ccomponents[i]
 
     def K_nodes(self, i: int) -> Set[NumCatRVariable]:
-        """!
-        """
+        """!"""
         K = self.K(i)
         if isinstance(K, UndiGraph):
             return K.nodes()
@@ -152,11 +159,13 @@ class LWFChainGraph(PGModel):
                 for pa_k in self.parents_of(k_i):
                     Pa_Ki_nodes.add(pa_k)
         else:
-            raise TypeError("Component has an unacceptable type:" + str(type(K_i)))
+            raise TypeError(
+                "Component has an unacceptable type:" + str(type(K_i))
+            )
         return Pa_Ki_nodes
 
     def parents_of(self, n: NumCatRVariable) -> Set[NumCatRVariable]:
-        ""
+        """"""
         return set(
             [
                 n_p
@@ -185,12 +194,16 @@ class LWFChainGraph(PGModel):
                 edges.add(e)
 
         undi = UndiGraph.from_graph(
-            Graph.from_edge_node_set(edges=edges, nodes=BaseGraphOps.nodes(self))
+            Graph.from_edge_node_set(
+                edges=edges, nodes=BaseGraphOps.nodes(self)
+            )
         )
         chain_components: Set[Union[Set[Node], UndiGraph]] = set()
         for cg in undi.get_components_as_node_sets():
             if len(cg) > 1:
-                component = UndiGraph.from_graph(undi.get_subgraph_by_vertices(vs=cg))
+                component = UndiGraph.from_graph(
+                    undi.get_subgraph_by_vertices(vs=cg)
+                )
                 chain_components.add(component)
             else:
                 chain_components.add(cg)
@@ -198,7 +211,7 @@ class LWFChainGraph(PGModel):
         return chain_components
 
     def get_chain_component_factors(self) -> Dict[str, Set[Factor]]:
-        ""
+        """"""
         component_factors = {}
         fs = self.factors()
         for gd, component in self.chain_components.items():
@@ -256,7 +269,8 @@ class LWFChainGraph(PGModel):
                     end_component_id,
                 ) = self.check_edge_between_components(e)
                 if edge_between_components_check is True and (
-                    start_component_id is not None and end_component_id is not None
+                    start_component_id is not None
+                    and end_component_id is not None
                 ):
                     dag_edge = Edge(
                         edge_id=str(uuid4()),
@@ -272,11 +286,10 @@ class LWFChainGraph(PGModel):
         return dag
 
     def is_parent_of(self, parent: Node, child: Node):
-        """!
-        """
+        """!"""
 
         def cond(n_1: Node, n_2: Node, e: Edge):
-            ""
+            """"""
             if e.type() == EdgeType.DIRECTED:
                 c1 = n_1 == e.start() and e.end() == n_2
                 return c1
@@ -288,6 +301,5 @@ class LWFChainGraph(PGModel):
         return self.is_related_to(n1=parent, n2=child, condition=cond)
 
     def is_child_of(self, child: Node, parent: Node):
-        """!
-        """
+        """!"""
         return self.is_parent_of(n1=parent, n2=child)

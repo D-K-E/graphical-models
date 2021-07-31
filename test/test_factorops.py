@@ -1,21 +1,21 @@
 """!
 Factor operators test cases
 """
-from pygmodels.pgmtype.factor import Factor, BaseFactor
-from pygmodels.factorf.factorops import FactorOps
-from pygmodels.pgmtype.randomvariable import NumCatRVariable
-from pygmodels.gtype.edge import Edge, EdgeType
+import math
 import unittest
 from random import choice
-import math
+
+from pygmodels.factorf.factorops import FactorOps
+from pygmodels.gtype.edge import Edge, EdgeType
+from pygmodels.pgmtype.factor import BaseFactor, Factor
+from pygmodels.pgmtype.randomvariable import NumCatRVariable
 
 
 class TestFactorOps(unittest.TestCase):
-    """!
-    """
+    """!"""
 
     def setUp(self):
-        ""
+        """"""
         # Koller, Friedman 2009, p. 104
         self.Af = NumCatRVariable(
             node_id="A",
@@ -39,7 +39,7 @@ class TestFactorOps(unittest.TestCase):
         )
 
         def phiAB(scope_product):
-            ""
+            """"""
             sfs = set(scope_product)
             if sfs == set([("A", 10), ("B", 10)]):
                 return 30
@@ -52,13 +52,15 @@ class TestFactorOps(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.AB = Factor(gid="AB", scope_vars=set([self.Af, self.Bf]), factor_fn=phiAB)
+        self.AB = Factor(
+            gid="AB", scope_vars=set([self.Af, self.Bf]), factor_fn=phiAB
+        )
         self.AB_b = BaseFactor(
             gid="AB", scope_vars=set([self.Af, self.Bf]), factor_fn=phiAB
         )
 
         def phiBC(scope_product):
-            ""
+            """"""
             sfs = set(scope_product)
             if sfs == set([("B", 10), ("C", 10)]):
                 return 100
@@ -71,13 +73,15 @@ class TestFactorOps(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.BC = Factor(gid="BC", scope_vars=set([self.Bf, self.Cf]), factor_fn=phiBC)
+        self.BC = Factor(
+            gid="BC", scope_vars=set([self.Bf, self.Cf]), factor_fn=phiBC
+        )
         self.BC_b = BaseFactor(
             gid="BC", scope_vars=set([self.Bf, self.Cf]), factor_fn=phiBC
         )
 
         def phiCD(scope_product):
-            ""
+            """"""
             sfs = set(scope_product)
             if sfs == set([("C", 10), ("D", 10)]):
                 return 1
@@ -90,13 +94,15 @@ class TestFactorOps(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.CD = Factor(gid="CD", scope_vars=set([self.Cf, self.Df]), factor_fn=phiCD)
+        self.CD = Factor(
+            gid="CD", scope_vars=set([self.Cf, self.Df]), factor_fn=phiCD
+        )
         self.CD_b = BaseFactor(
             gid="CD", scope_vars=set([self.Cf, self.Df]), factor_fn=phiCD
         )
 
         def phiDA(scope_product):
-            ""
+            """"""
             sfs = set(scope_product)
             if sfs == set([("D", 10), ("A", 10)]):
                 return 100
@@ -109,7 +115,9 @@ class TestFactorOps(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.DA = Factor(gid="DA", scope_vars=set([self.Df, self.Af]), factor_fn=phiDA)
+        self.DA = Factor(
+            gid="DA", scope_vars=set([self.Df, self.Af]), factor_fn=phiDA
+        )
         self.DA_b = BaseFactor(
             gid="DA", scope_vars=set([self.Df, self.Af]), factor_fn=phiDA
         )
@@ -122,7 +130,7 @@ class TestFactorOps(unittest.TestCase):
         )
 
         def phiaB(scope_product):
-            ""
+            """"""
             sfs = set(scope_product)
             if sfs == set([("A", 10), ("B", 10)]):
                 return 0.5
@@ -139,13 +147,15 @@ class TestFactorOps(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.aB = Factor(gid="ab", scope_vars=set([self.af, self.Bf]), factor_fn=phiaB)
+        self.aB = Factor(
+            gid="ab", scope_vars=set([self.af, self.Bf]), factor_fn=phiaB
+        )
         self.aB_b = BaseFactor(
             gid="ab", scope_vars=set([self.af, self.Bf]), factor_fn=phiaB
         )
 
         def phibc(scope_product):
-            ""
+            """"""
             sfs = set(scope_product)
             if sfs == set([("B", 10), ("C", 10)]):
                 return 0.5
@@ -158,7 +168,9 @@ class TestFactorOps(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.bc = Factor(gid="bc", scope_vars=set([self.Bf, self.Cf]), factor_fn=phibc)
+        self.bc = Factor(
+            gid="bc", scope_vars=set([self.Bf, self.Cf]), factor_fn=phibc
+        )
         self.bc_b = BaseFactor(
             gid="bc", scope_vars=set([self.Bf, self.Cf]), factor_fn=phibc
         )
@@ -271,7 +283,7 @@ class TestFactorOps(unittest.TestCase):
                 self.assertEqual(f, 0.05)
 
     def test_cls_reduce_by_vars(self):
-        ""
+        """"""
         evidence = set([("C", 10), ("D", 50)])
         aB_c, prod = FactorOps.cls_product(f=self.aB, other=self.bc)
         # print(aB_c.scope_products)

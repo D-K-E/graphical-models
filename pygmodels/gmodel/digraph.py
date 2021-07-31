@@ -13,15 +13,16 @@ Whenever possible we simply change the edge generation strategy in order to use
 the parent's algorithm.
 
 """
-from typing import Set, Callable
-from pygmodels.gtype.edge import Edge
-from pygmodels.gtype.node import Node
-from pygmodels.gtype.abstractobj import EdgeType
-from pygmodels.graphf.graphops import BaseGraphOps
+from typing import Callable, Set
+from uuid import uuid4
+
 from pygmodels.gmodel.graph import Graph
 from pygmodels.gmodel.undigraph import UndiGraph
+from pygmodels.graphf.graphops import BaseGraphOps
 from pygmodels.graphf.graphtraverser import BaseGraphTraverser
-from uuid import uuid4
+from pygmodels.gtype.abstractobj import EdgeType
+from pygmodels.gtype.edge import Edge
+from pygmodels.gtype.node import Node
 
 
 class DiGraph(Graph):
@@ -30,7 +31,11 @@ class DiGraph(Graph):
     """
 
     def __init__(
-        self, gid: str, data={}, nodes: Set[Node] = None, edges: Set[Edge] = None
+        self,
+        gid: str,
+        data={},
+        nodes: Set[Node] = None,
+        edges: Set[Edge] = None,
     ):
         """!
         \brief Constructor for DiGraph
@@ -47,11 +52,13 @@ class DiGraph(Graph):
             for edge in edges:
                 if edge.type() == EdgeType.UNDIRECTED:
                     raise ValueError(
-                        "Can not instantiate directed graph with" + " undirected edges"
+                        "Can not instantiate directed graph with"
+                        + " undirected edges"
                     )
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
         self.path_props = {
-            v.id(): self.find_shortest_paths(v) for v in BaseGraphOps.nodes(self)
+            v.id(): self.find_shortest_paths(v)
+            for v in BaseGraphOps.nodes(self)
         }
         self.dprops = BaseGraphTraverser.visit_graph_dfs(
             self,
@@ -111,7 +118,7 @@ class DiGraph(Graph):
         """
 
         def cond(n_1: Node, n_2: Node, e: Edge):
-            ""
+            """"""
             c = n_1 == e.start() and e.end() == n_2
             return c
 
@@ -214,7 +221,9 @@ class DiGraph(Graph):
         for e in edges:
             e.set_type(etype=EdgeType.UNDIRECTED)
             nedges.add(e)
-        return UndiGraph(gid=str(uuid4()), data=self.data(), nodes=nnodes, edges=nedges)
+        return UndiGraph(
+            gid=str(uuid4()), data=self.data(), nodes=nnodes, edges=nedges
+        )
 
     def in_degree_of(self, n: Node) -> int:
         return len(self.parents_of(n))
@@ -223,10 +232,11 @@ class DiGraph(Graph):
         return len(self.children_of(n))
 
     def find_shortest_paths(self, n: Node):
-        """!
-        """
+        """!"""
         return BaseGraphTraverser.find_shortest_paths(
-            self, n1=n, edge_generator=lambda x: BaseGraphOps.outgoing_edges_of(self, x)
+            self,
+            n1=n,
+            edge_generator=lambda x: BaseGraphOps.outgoing_edges_of(self, x),
         )
 
     def check_for_path(self, n1: Node, n2: Node) -> bool:

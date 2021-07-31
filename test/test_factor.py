@@ -1,24 +1,27 @@
 """!
 test for factor.py
 """
-from pygmodels.pgmtype.factor import Factor
-from pygmodels.pgmtype.randomvariable import NumCatRVariable
-from pygmodels.gtype.edge import Edge, EdgeType
+import math
 import unittest
 from random import choice
-import math
+
+from pygmodels.gtype.edge import Edge, EdgeType
+from pygmodels.pgmtype.factor import Factor
+from pygmodels.pgmtype.randomvariable import NumCatRVariable
 
 
 class TestFactor(unittest.TestCase):
-    """!
-    """
+    """!"""
 
     def setUp(self):
-        ""
+        """"""
         input_data = {
             "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
             "grade": {"outcome-values": [0.2, 0.4, 0.6], "evidence": 0.2},
-            "dice": {"outcome-values": [i for i in range(1, 7)], "evidence": 1.0 / 6},
+            "dice": {
+                "outcome-values": [i for i in range(1, 7)],
+                "evidence": 1.0 / 6,
+            },
             "fdice": {"outcome-values": [i for i in range(1, 7)]},
         }
 
@@ -105,7 +108,7 @@ class TestFactor(unittest.TestCase):
         )
 
         def phiAB(scope_product):
-            ""
+            """"""
             sfs = set(scope_product)
             if sfs == set([("A", 10), ("B", 10)]):
                 return 30
@@ -118,10 +121,12 @@ class TestFactor(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.AB = Factor(gid="AB", scope_vars=set([self.Af, self.Bf]), factor_fn=phiAB)
+        self.AB = Factor(
+            gid="AB", scope_vars=set([self.Af, self.Bf]), factor_fn=phiAB
+        )
 
         def phiBC(scope_product):
-            ""
+            """"""
             sfs = set(scope_product)
             if sfs == set([("B", 10), ("C", 10)]):
                 return 100
@@ -134,10 +139,12 @@ class TestFactor(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.BC = Factor(gid="BC", scope_vars=set([self.Bf, self.Cf]), factor_fn=phiBC)
+        self.BC = Factor(
+            gid="BC", scope_vars=set([self.Bf, self.Cf]), factor_fn=phiBC
+        )
 
         def phiCD(scope_product):
-            ""
+            """"""
             sfs = set(scope_product)
             if sfs == set([("C", 10), ("D", 10)]):
                 return 1
@@ -150,10 +157,12 @@ class TestFactor(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.CD = Factor(gid="CD", scope_vars=set([self.Cf, self.Df]), factor_fn=phiCD)
+        self.CD = Factor(
+            gid="CD", scope_vars=set([self.Cf, self.Df]), factor_fn=phiCD
+        )
 
         def phiDA(scope_product):
-            ""
+            """"""
             sfs = set(scope_product)
             if sfs == set([("D", 10), ("A", 10)]):
                 return 100
@@ -166,7 +175,9 @@ class TestFactor(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.DA = Factor(gid="DA", scope_vars=set([self.Df, self.Af]), factor_fn=phiDA)
+        self.DA = Factor(
+            gid="DA", scope_vars=set([self.Df, self.Af]), factor_fn=phiDA
+        )
 
         # Koller, Friedman 2009 p. 107
         self.af = NumCatRVariable(
@@ -176,7 +187,7 @@ class TestFactor(unittest.TestCase):
         )
 
         def phiaB(scope_product):
-            ""
+            """"""
             sfs = set(scope_product)
             if sfs == set([("A", 10), ("B", 10)]):
                 return 0.5
@@ -193,10 +204,12 @@ class TestFactor(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.aB = Factor(gid="ab", scope_vars=set([self.af, self.Bf]), factor_fn=phiaB)
+        self.aB = Factor(
+            gid="ab", scope_vars=set([self.af, self.Bf]), factor_fn=phiaB
+        )
 
         def phibc(scope_product):
-            ""
+            """"""
             sfs = set(scope_product)
             if sfs == set([("B", 10), ("C", 10)]):
                 return 0.5
@@ -209,21 +222,23 @@ class TestFactor(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.bc = Factor(gid="bc", scope_vars=set([self.Bf, self.Cf]), factor_fn=phibc)
+        self.bc = Factor(
+            gid="bc", scope_vars=set([self.Bf, self.Cf]), factor_fn=phibc
+        )
 
     def test_id(self):
-        ""
+        """"""
         self.assertEqual(self.f.id(), "f")
 
     def test_domain_scope(self):
-        ""
+        """"""
         d = self.AB.domain_scope(
             domain=[set([("A", 50), ("B", 50)]), set([("A", 10), ("B", 10)])]
         )
         self.assertEqual(set(d), set([self.Af, self.Bf]))
 
     def test_has_var(self):
-        ""
+        """"""
         intuple = self.f.has_var(ids="dice")
         nottuple = self.f.has_var(ids="dice22")
         self.assertTrue(intuple[0])
@@ -242,25 +257,27 @@ class TestFactor(unittest.TestCase):
 
     def test_scope_vars(self):
         self.assertTrue(
-            self.f.scope_vars(), set([self.dice, self.intelligence, self.grade])
+            self.f.scope_vars(),
+            set([self.dice, self.intelligence, self.grade]),
         )
 
     def test_marginal_joint(self):
-        """
-        """
-        mjoint = self.f.marginal_joint(set([("int", 0.1), ("grade", 0.4), ("dice", 2)]))
+        """ """
+        mjoint = self.f.marginal_joint(
+            set([("int", 0.1), ("grade", 0.4), ("dice", 2)])
+        )
         dmarg = self.dice.marginal(2)
         imarg = self.intelligence.marginal(0.1)
         gmarg = self.grade.marginal(0.4)
         self.assertTrue(mjoint, dmarg * imarg * gmarg)
 
     def test_partition_value(self):
-        ""
+        """"""
         pval = self.f.partition_value(self.f.vars_domain())
         self.assertTrue(pval, 1.0)
 
     def test_phi(self):
-        ""
+        """"""
         mjoint = self.f.phi(set([("int", 0.1), ("grade", 0.4), ("dice", 2)]))
         dmarg = self.dice.marginal(2)
         imarg = self.intelligence.marginal(0.1)
@@ -275,7 +292,7 @@ class TestFactor(unittest.TestCase):
         self.assertTrue(mjoint, (dmarg * imarg * gmarg) / self.f.zval())
 
     def test_from_scope_variables_with_fn(self):
-        ""
+        """"""
         A = NumCatRVariable(
             "A",
             input_data={"outcome-values": [True, False]},
@@ -307,7 +324,7 @@ class TestFactor(unittest.TestCase):
 
     @unittest.skip("Factor.from_conditional_vars not yet implemented")
     def test_from_conditional_vars(self):
-        ""
+        """"""
         A = NumCatRVariable(
             "A",
             input_data={"outcome-values": [True, False]},

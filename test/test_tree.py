@@ -1,18 +1,19 @@
 """!
 tree.py tests
 """
+import pprint
+import unittest
+
 from pygmodels.gmodel.tree import Tree
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
-import unittest
-import pprint
 
 
 class TreeTest(unittest.TestCase):
-    ""
+    """"""
 
     def setUp(self):
-        ""
+        """"""
         self.a = Node("a")
         self.b = Node("b")
         self.c = Node("c")
@@ -73,13 +74,13 @@ class TreeTest(unittest.TestCase):
         self.assertEqual(self.gtree.root, self.a)
 
     def test_leaves(self):
-        ""
+        """"""
         self.assertEqual(
             self.gtree.leaves(), set([self.k, self.d, self.e, self.m, self.j])
         )
 
     def test_from_edgeset(self):
-        ""
+        """"""
         eset = set(
             [
                 self.ab,
@@ -99,52 +100,52 @@ class TreeTest(unittest.TestCase):
         self.assertEqual(self.gtree.leaves(), temp.leaves())
 
     def test_height_of(self):
-        ""
+        """"""
         c = self.gtree.height_of(self.g)
         self.assertEqual(c, 2)
 
     def test_is_upclosure_of_t(self):
-        ""
+        """"""
         c = self.gtree.is_upclosure_of(self.g, self.k)
         self.assertTrue(c)
 
     def test_is_upclosure_of_f(self):
-        ""
+        """"""
         c = self.gtree.is_upclosure_of(self.g, self.b)
         self.assertFalse(c)
 
     def test_is_downclosure_of_t(self):
-        ""
+        """"""
         c = self.gtree.is_downclosure_of(self.g, self.k)
         self.assertFalse(c)
 
     def test_is_downclosure_of_f(self):
-        ""
+        """"""
         c = self.gtree.is_downclosure_of(self.g, self.b)
         self.assertTrue(c)
 
     def test_upset_of_t(self):
-        ""
+        """"""
         uset = self.gtree.upset_of(self.k)
         self.assertTrue(uset == set([self.k, self.m, self.h, self.j]))
 
     def test_upset_of_f(self):
-        ""
+        """"""
         uset = self.gtree.upset_of(self.k)
         self.assertFalse(uset == set([self.k, self.m, self.h, self.b]))
 
     def test_downset_of_t(self):
-        ""
+        """"""
         uset = self.gtree.downset_of(self.b)
         self.assertTrue(uset == set([self.b, self.a, self.c]))
 
     def test_downset_of_f(self):
-        ""
+        """"""
         uset = self.gtree.downset_of(self.b)
         self.assertFalse(uset == set([self.b, self.a, self.d]))
 
     def test_extract_path(self):
-        ""
+        """"""
         p = self.gtree.extract_path(start=self.b, end=self.m)
         self.assertEqual(p.node_list(), [self.b, self.f, self.m])
 

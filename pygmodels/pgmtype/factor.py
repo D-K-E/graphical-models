@@ -4,28 +4,30 @@
 Defining a factor from Koller and Friedman 2009, p. 106-107
 """
 
-from pygmodels.gtype.graphobj import GraphObject
-from pygmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
-from pygmodels.pgmtype.abstractpgm import AbstractFactor
-
-from typing import Set, Callable, Optional, List, Union, Tuple, FrozenSet
-from itertools import product, combinations
 from functools import reduce as freduce
-from uuid import uuid4
+from itertools import combinations, product
 from pprint import pprint
+from typing import Callable, FrozenSet, List, Optional, Set, Tuple, Union
+from uuid import uuid4
+
+from pygmodels.gtype.graphobj import GraphObject
+from pygmodels.pgmtype.abstractpgm import AbstractFactor
+from pygmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
 
 
 class BaseFactor(AbstractFactor, GraphObject):
-    ""
+    """"""
 
     def __init__(
         self,
         gid: str,
         scope_vars: Set[NumCatRVariable],
-        factor_fn: Optional[Callable[[Set[Tuple[str, NumCatRVariable]]], float]] = None,
+        factor_fn: Optional[
+            Callable[[Set[Tuple[str, NumCatRVariable]]], float]
+        ] = None,
         data={},
     ):
-        ""
+        """"""
         super().__init__(oid=gid, odata=data)
         for svar in scope_vars:
             vs = svar.values()
@@ -51,7 +53,7 @@ class BaseFactor(AbstractFactor, GraphObject):
         self.Z = self.partition_value(self.vars_domain())
 
     def __str__(self):
-        ""
+        """"""
         msg = "Factor: " + self.id() + "\n"
         msg += "Scope variables: " + str(self.domain_table)
         msg += "Factor function: " + str(self.factor_fn)
@@ -135,7 +137,9 @@ class BaseFactor(AbstractFactor, GraphObject):
         """
         svar = f.scope_vars()
         fn = f.phi
-        return BaseFactor(gid=f.id(), data=f.data(), factor_fn=fn, scope_vars=svar)
+        return BaseFactor(
+            gid=f.id(), data=f.data(), factor_fn=fn, scope_vars=svar
+        )
 
     @classmethod
     def from_joint_vars(cls, svars: Set[NumCatRVariable]):
@@ -215,7 +219,9 @@ class BaseFactor(AbstractFactor, GraphObject):
 
         """
         return [
-            s.value_set(value_filter=value_filter, value_transform=value_transform)
+            s.value_set(
+                value_filter=value_filter, value_transform=value_transform
+            )
             for s in D
             if rvar_filter(s)
         ]
@@ -245,7 +251,9 @@ class BaseFactor(AbstractFactor, GraphObject):
         """
         return self.factor_fn(scope_product)
 
-    def phi_normal(self, scope_product: Set[Tuple[str, NumericValue]]) -> float:
+    def phi_normal(
+        self, scope_product: Set[Tuple[str, NumericValue]]
+    ) -> float:
         """!
         \brief normalize a given factor value
 
@@ -258,7 +266,9 @@ class BaseFactor(AbstractFactor, GraphObject):
         """
         return self.phi(scope_product) / self.Z
 
-    def partition_value(self, domains: List[FrozenSet[Tuple[str, NumericValue]]]):
+    def partition_value(
+        self, domains: List[FrozenSet[Tuple[str, NumericValue]]]
+    ):
         """!
         \brief compute partition value aka normalizing value for the factor
         from Koller, Friedman 2009 p. 105
@@ -285,27 +295,27 @@ class BaseFactor(AbstractFactor, GraphObject):
         >>>    "dice": {"outcome-values": [i for i in range(1, 7)], "evidence": 1.0 / 6},
         >>>    "fdice": {"outcome-values": [i for i in range(1, 7)]},
         >>> }
-        >>> 
+        >>>
         >>> intelligence = NumCatRVariable(
         >>>     node_id="int",
         >>>     input_data=input_data["intelligence"],
         >>>     marginal_distribution=intelligence_dist,
         >>> )
-        >>> 
+        >>>
         >>> grade = NumCatRVariable(
         >>>     node_id=nid2, input_data=input_data["grade"],
         >>>     marginal_distribution=grade_dist
         >>> )
-        >>> 
+        >>>
         >>> dice = NumCatRVariable(
         >>>    node_id=nid3, input_data=input_data["dice"],
         >>>    marginal_distribution=fair_dice_dist
         >>> )
-        >>> 
+        >>>
         >>> f = Factor(
         >>>    gid="f", scope_vars=set([grade, dice, intelligence])
         >>> )
-        >>> 
+        >>>
         >>> pval = f.partition_value(f.vars_domain())
         >>> print(pval)
         >>> 1.0
@@ -327,7 +337,9 @@ class Factor(BaseFactor):
         self,
         gid: str,
         scope_vars: Set[NumCatRVariable],
-        factor_fn: Optional[Callable[[Set[Tuple[str, NumCatRVariable]]], float]] = None,
+        factor_fn: Optional[
+            Callable[[Set[Tuple[str, NumCatRVariable]]], float]
+        ] = None,
         data={},
     ):
         """!
@@ -345,7 +357,7 @@ class Factor(BaseFactor):
         \code{.py}
 
         >>> Af = NumCatRVariable(
-        >>>         node_id="A", 
+        >>>         node_id="A",
         >>>         input_data={"outcome-values": [10, 50]},
         >>>         marginal_distribution=lambda x: 0.5,
         >>>      )
@@ -364,7 +376,7 @@ class Factor(BaseFactor):
         >>>    input_data={"outcome-values": [10, 50]},
         >>>    marginal_distribution=lambda x: 0.5,
         >>> )
-           
+
         >>> def phiAB(scope_product):
         >>>    ""
         >>>    sfs = set(scope_product)
@@ -378,9 +390,9 @@ class Factor(BaseFactor):
         >>>        return 10
         >>>    else:
         >>>        raise ValueError("unknown arg")
-           
-        >>> AB = Factor(gid="AB", 
-        >>>         scope_vars=set([self.Af, self.Bf]), 
+
+        >>> AB = Factor(gid="AB",
+        >>>         scope_vars=set([self.Af, self.Bf]),
         >>>         factor_fn=phiAB
         >>>     )
 
@@ -392,11 +404,13 @@ class Factor(BaseFactor):
             factor_fn = self.marginal_joint
 
         # check all values are positive
-        super().__init__(gid=gid, scope_vars=scope_vars, factor_fn=factor_fn, data=data)
+        super().__init__(
+            gid=gid, scope_vars=scope_vars, factor_fn=factor_fn, data=data
+        )
 
     @classmethod
     def from_abstract_factor(cls, f: AbstractFactor):
-        ""
+        """"""
         bfac = BaseFactor.from_abstract_factor(f)
         return cls.from_base_factor(bfac)
 
@@ -482,7 +496,7 @@ class Factor(BaseFactor):
 
         >>> [frozenset([("A", True), ("B", True)]),
         >>>  frozenset([("A", True), ("B", False)]),
-        >>>  frozenset([("A", False), ("B", True)]), 
+        >>>  frozenset([("A", False), ("B", True)]),
         >>>  frozenset([("A", False), ("B", False)])]
 
         \endcode
@@ -537,7 +551,7 @@ class Factor(BaseFactor):
 
         \param domain list of arbitrary domain values
 
-        \throw ValueError 
+        \throw ValueError
         \parblock
 
         We raise value error when the argument domain
@@ -593,9 +607,7 @@ class Factor(BaseFactor):
         # check for values out of domain of this factor
         scope_ids = set([s.id() for s in self.scope_vars()])
         if sids.issubset(scope_ids) is False:
-            msg = (
-                "Given argument domain include values out of the domain of this factor"
-            )
+            msg = "Given argument domain include values out of the domain of this factor"
             raise ValueError(msg)
         svars = set([s for s in self.scope_vars() if s.id() in sids])
         return svars
@@ -610,7 +622,7 @@ class Factor(BaseFactor):
         \throw ValueError Value error is raised if there are more than one
         random variable associated to id string
 
-        \return Tuple 
+        \return Tuple
         \parblock
 
         a tuple whose first element is a boolean flag indicating if
@@ -628,7 +640,9 @@ class Factor(BaseFactor):
         else:
             vs = [s for s in self.svars if s.id() == ids]
             if len(vs) > 1:
-                raise ValueError("more than one variable matches the id string")
+                raise ValueError(
+                    "more than one variable matches the id string"
+                )
 
     def __call__(self, scope_product: Set[Tuple[str, NumericValue]]) -> float:
         """!
@@ -646,9 +660,13 @@ class Factor(BaseFactor):
         """
         domains = self.vars_domain()
         self.scope_products = list(product(*domains))
-        return sum([self.factor_fn(scope_product=sv) for sv in self.factor_domain()])
+        return sum(
+            [self.factor_fn(scope_product=sv) for sv in self.factor_domain()]
+        )
 
-    def marginal_joint(self, scope_product: Set[Tuple[str, NumericValue]]) -> float:
+    def marginal_joint(
+        self, scope_product: Set[Tuple[str, NumericValue]]
+    ) -> float:
         """!
         \brief marginal joint function.
         Default factor function when none is provided.
@@ -656,7 +674,7 @@ class Factor(BaseFactor):
         \param scope_product a row in conditional probability table of factor
 
         \throw ValueError A value error is raised when there is an unknown
-        random variable with an identifier 
+        random variable with an identifier
 
         \return preference value for a given scope_product
         """
@@ -666,7 +684,9 @@ class Factor(BaseFactor):
             var_value = sv[1]
             hasv, var = self.has_var(var_id)
             if hasv is False:
-                raise ValueError("Unknown variable id among arguments: " + var_id)
+                raise ValueError(
+                    "Unknown variable id among arguments: " + var_id
+                )
             p *= var.marginal(var_value)
         return p
 

@@ -1,11 +1,12 @@
 """!
 Test general BaseGraph object
 """
-from pygmodels.gtype.basegraph import BaseGraph
-from pygmodels.gtype.node import Node
-from pygmodels.gtype.edge import Edge, EdgeType
-import unittest
 import pprint
+import unittest
+
+from pygmodels.gtype.basegraph import BaseGraph
+from pygmodels.gtype.edge import Edge, EdgeType
+from pygmodels.gtype.node import Node
 
 
 class BaseGraphTest(unittest.TestCase):
@@ -31,7 +32,7 @@ class BaseGraphTest(unittest.TestCase):
         return self.assertEqual(self.graph.id(), "g1")
 
     def test_V(self):
-        ""
+        """"""
         V = self.graph.V
         nodes = {"n1": self.n1, "n2": self.n2, "n3": self.n3, "n4": self.n4}
         for nid, node in nodes.copy().items():
@@ -39,7 +40,7 @@ class BaseGraphTest(unittest.TestCase):
             self.assertEqual(V[nid], nodes[nid])
 
     def test_E(self):
-        ""
+        """"""
         E = self.graph.E
 
         edges = {"e1": self.e1, "e2": self.e2}

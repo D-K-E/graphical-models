@@ -1,25 +1,25 @@
 """!
 test lwf chain graph test
 """
-from pygmodels.pgmtype.pgmodel import PGModel
-from pygmodels.gtype.edge import Edge, EdgeType
+import pdb
+import unittest
+from uuid import uuid4
+
 from pygmodels.gmodel.undigraph import UndiGraph
-from pygmodels.pgmtype.factor import Factor
-from pygmodels.pgmtype.randomvariable import NumCatRVariable
+from pygmodels.graphf.graphops import BaseGraphOps
+from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.pgmodel.lwfchain import LWFChainGraph
 from pygmodels.pgmodel.markov import ConditionalRandomField
-from pygmodels.graphf.graphops import BaseGraphOps
-from uuid import uuid4
-import pdb
-
-import unittest
+from pygmodels.pgmtype.factor import Factor
+from pygmodels.pgmtype.pgmodel import PGModel
+from pygmodels.pgmtype.randomvariable import NumCatRVariable
 
 
 class LWFChainGraphTest(unittest.TestCase):
-    ""
+    """"""
 
     def setUp(self):
-        ""
+        """"""
         idata = {"outcome-values": [True, False]}
         self.A = NumCatRVariable(
             node_id="A", input_data=idata, marginal_distribution=lambda x: 0.5
@@ -143,7 +143,9 @@ class LWFChainGraphTest(unittest.TestCase):
             else:
                 raise ValueError("Unknown scope product")
 
-        self.E_cf = Factor(gid="E_cf", scope_vars=set([self.E]), factor_fn=phi_e)
+        self.E_cf = Factor(
+            gid="E_cf", scope_vars=set([self.E]), factor_fn=phi_e
+        )
 
         def phi_fe(scope_product):
             """!
@@ -200,7 +202,9 @@ class LWFChainGraphTest(unittest.TestCase):
             else:
                 raise ValueError("Unknown scope product")
 
-        self.A_cf = Factor(gid="A_cf", scope_vars=set([self.A]), factor_fn=phi_a)
+        self.A_cf = Factor(
+            gid="A_cf", scope_vars=set([self.A]), factor_fn=phi_a
+        )
 
         def phi_ab(scope_product):
             """!
@@ -270,7 +274,9 @@ class LWFChainGraphTest(unittest.TestCase):
                 raise ValueError("Unknown scope product")
 
         self.CDF_cf = Factor(
-            gid="CDF_cf", scope_vars=set([self.D, self.C, self.F]), factor_fn=phi_cdf
+            gid="CDF_cf",
+            scope_vars=set([self.D, self.C, self.F]),
+            factor_fn=phi_cdf,
         )
 
         def phi_ihb(scope_product):
@@ -300,7 +306,9 @@ class LWFChainGraphTest(unittest.TestCase):
                 raise ValueError("Unknown scope product")
 
         self.IHB_cf = Factor(
-            gid="IHB_cf", scope_vars=set([self.H, self.I, self.B]), factor_fn=phi_ihb
+            gid="IHB_cf",
+            scope_vars=set([self.H, self.I, self.B]),
+            factor_fn=phi_ihb,
         )
 
         def phi_hbd(scope_product):
@@ -330,7 +338,9 @@ class LWFChainGraphTest(unittest.TestCase):
                 raise ValueError("Unknown scope product")
 
         self.HBD_cf = Factor(
-            gid="HBD_cf", scope_vars=set([self.H, self.D, self.B]), factor_fn=phi_hbd
+            gid="HBD_cf",
+            scope_vars=set([self.H, self.D, self.B]),
+            factor_fn=phi_hbd,
         )
 
         def phi_bd(scope_product):
@@ -358,7 +368,17 @@ class LWFChainGraphTest(unittest.TestCase):
         self.cowell = LWFChainGraph(
             gid="cowell",
             nodes=set(
-                [self.A, self.B, self.C, self.D, self.E, self.F, self.G, self.H, self.I]
+                [
+                    self.A,
+                    self.B,
+                    self.C,
+                    self.D,
+                    self.E,
+                    self.F,
+                    self.G,
+                    self.H,
+                    self.I,
+                ]
             ),
             edges=set(
                 [
@@ -468,7 +488,18 @@ class LWFChainGraphTest(unittest.TestCase):
         )
         self.koller = LWFChainGraph(
             gid="koller",
-            nodes=set([self.A, self.C, self.D, self.E, self.B, self.I, self.F, self.G]),
+            nodes=set(
+                [
+                    self.A,
+                    self.C,
+                    self.D,
+                    self.E,
+                    self.B,
+                    self.I,
+                    self.F,
+                    self.G,
+                ]
+            ),
             edges=set(
                 [
                     self.AC_k,
@@ -510,41 +541,52 @@ class LWFChainGraphTest(unittest.TestCase):
         }
 
     def test_id(self):
-        ""
+        """"""
         self.assertEqual(self.cowell.id(), "cowell")
 
     def test_nb_chain_components(self):
-        ""
+        """"""
         nb = self.cowell.nb_components
         self.assertEqual(nb, 8)
 
     def test_ccomponents(self):
-        ""
+        """"""
         ccomps_nds = set(
-            [set(s).pop() for s in self.cowell.ccomponents if isinstance(s, frozenset)]
+            [
+                set(s).pop()
+                for s in self.cowell.ccomponents
+                if isinstance(s, frozenset)
+            ]
         )
         ccomps_undi = [
             s for s in self.cowell.ccomponents if isinstance(s, UndiGraph)
         ].pop()
         self.assertEqual(
-            ccomps_nds, set([self.A, self.B, self.C, self.E, self.F, self.D, self.G])
+            ccomps_nds,
+            set([self.A, self.B, self.C, self.E, self.F, self.D, self.G]),
         )
-        self.assertEqual(BaseGraphOps.nodes(ccomps_undi), set([self.H, self.I]))
+        self.assertEqual(
+            BaseGraphOps.nodes(ccomps_undi), set([self.H, self.I])
+        )
 
     def test_get_chain_dag(self):
-        ""
+        """"""
         dag_comps = self.cowell.dag_components
         self.assertEqual(len(BaseGraphOps.nodes(dag_comps)), 8)
 
     def test_parents_of_K(self):
-        ""
+        """"""
         ccomps_undi = [
-            s for s in enumerate(self.cowell.ccomponents) if isinstance(s[1], UndiGraph)
+            s
+            for s in enumerate(self.cowell.ccomponents)
+            if isinstance(s[1], UndiGraph)
         ].pop()
         parents_k = self.cowell.parents_of_K(ccomps_undi[0])
         self.assertEqual(parents_k, set([self.B, self.D]))
         ccomps_undi = [
-            s for s in enumerate(self.koller.ccomponents) if isinstance(s[1], frozenset)
+            s
+            for s in enumerate(self.koller.ccomponents)
+            if isinstance(s[1], frozenset)
         ]
         parents = set()
         for c in ccomps_undi:
@@ -564,9 +606,11 @@ class LWFChainGraphTest(unittest.TestCase):
         )
 
     def test_K(self):
-        ""
+        """"""
         ccomps_undi = [
-            s for s in enumerate(self.cowell.ccomponents) if isinstance(s[1], UndiGraph)
+            s
+            for s in enumerate(self.cowell.ccomponents)
+            if isinstance(s[1], UndiGraph)
         ]
         cundi = ccomps_undi[0][1]
         hi = self.cowell.K(ccomps_undi[0][0])
@@ -601,12 +645,12 @@ class LWFChainGraphTest(unittest.TestCase):
         # [print(m) for m in ms]
 
         self.assertEqual(
-            ms, koller_moralized,
+            ms,
+            koller_moralized,
         )
 
     def test_cond_prod_by_variable_elimination_evidence(self):
-        """!
-        """
+        """!"""
         qs = set([self.B])
         evs = set([("E", True), ("A", True), ("G", False)])
         moral = self.cowell

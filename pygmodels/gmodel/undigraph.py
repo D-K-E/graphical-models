@@ -9,17 +9,18 @@ parent class include in most cases a specific edge related function to pass
 along to the parent's method in order to adapt its functionality.
 
 """
-from typing import Set, List, Dict, Callable, Union
+from typing import Callable, Dict, List, Set, Union
+from uuid import uuid4
+
+from pygmodels.gmodel.graph import Graph
+from pygmodels.gmodel.tree import Tree
+from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
+from pygmodels.graphf.graphops import BaseGraphAlgOps
+from pygmodels.graphf.graphtraverser import BaseGraphTraverser
+from pygmodels.gtype.abstractobj import EdgeType
 from pygmodels.gtype.edge import Edge
 from pygmodels.gtype.node import Node
-from pygmodels.gmodel.tree import Tree
-from pygmodels.gtype.abstractobj import EdgeType
-from pygmodels.graphf.bgraphops import BaseGraphOps
-from pygmodels.graphf.graphops import BaseGraphAlgOps
-from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
-from pygmodels.gmodel.graph import Graph
-from pygmodels.graphf.graphtraverser import BaseGraphTraverser
-from uuid import uuid4
 
 
 class UndiGraph(Graph):
@@ -28,13 +29,17 @@ class UndiGraph(Graph):
     """
 
     def __init__(
-        self, gid: str, data={}, nodes: Set[Node] = None, edges: Set[Edge] = None
+        self,
+        gid: str,
+        data={},
+        nodes: Set[Node] = None,
+        edges: Set[Edge] = None,
     ):
         """!
         \brief constructor for undirected graph
 
         The general procedure is described in Graph constructor.
-        The only procedure we apply here is to check that every 
+        The only procedure we apply here is to check that every
         edge is indeed an undirected edge.
 
         \throws ValueError if a directed edge is found in the given edge set.
@@ -43,7 +48,8 @@ class UndiGraph(Graph):
             for edge in edges:
                 if edge.type() == EdgeType.DIRECTED:
                     raise ValueError(
-                        "Can not instantiate undirected graph with" + " directed edges"
+                        "Can not instantiate undirected graph with"
+                        + " directed edges"
                     )
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
 
@@ -70,12 +76,14 @@ class UndiGraph(Graph):
         """!
         \brief Find shortest path between given node and all other nodes.
 
-        This mostly the same function from Graph with the difference being the 
+        This mostly the same function from Graph with the difference being the
         edge generating function. We consider every edge that is incident with
         nodes not just incoming or outgoing edges.
         """
         return BaseGraphTraverser.find_shortest_paths(
-            self, n1=n1, edge_generator=lambda x: BaseGraphOps.edges_of(self, x)
+            self,
+            n1=n1,
+            edge_generator=lambda x: BaseGraphOps.edges_of(self, x),
         )
 
     def check_for_path(self, n1: Node, n2: Node) -> bool:
@@ -86,7 +94,7 @@ class UndiGraph(Graph):
         \param n2 destination node
 
         We search for the shortest paths that can be obtained from the source
-        node. Since we obtain also a vertex set that are reachable from the 
+        node. Since we obtain also a vertex set that are reachable from the
         source node, if the node is inside the vertex set, we consider that
         there must be a path between source node and the destination node
         """
@@ -147,7 +155,10 @@ class UndiGraph(Graph):
         a different graph making function.
         \see Graph.find_articulation_points() for more information
         """
-        gmaker = lambda x: self.from_graph(BaseGraphAlgOps.subtract(self, x))
+
+        def gmaker(x):
+            return self.from_graph(BaseGraphAlgOps.subtract(self, x))
+
         return super().find_articulation_points(graph_maker=gmaker)
 
     def find_bridges(self) -> Set[Node]:
@@ -158,7 +169,10 @@ class UndiGraph(Graph):
         a different graph making function.
         \see Graph.find_bridges() for more information
         """
-        gmaker = lambda x: self.from_graph(BaseGraphAlgOps.subtract(self, x))
+
+        def gmaker(x):
+            return self.from_graph(BaseGraphAlgOps.subtract(self, x))
+
         return super().find_bridges(graph_maker=gmaker)
 
     def bron_kerbosch(

@@ -1,13 +1,14 @@
 """!
 and/or search tree implementation
 """
-from gmodels.gtypes.tree import Tree
-from gmodels.gtypes.path import Path
-from gmodels.gtypes.edge import Edge, EdgeType
-from gmodels.pgmtypes.randomvariable import ANDNode, ORNode, NumCatRVariable
-from gmodels.pgmtypes.pgmodel import PGModel
-from uuid import uuid4
 from copy import deepcopy
+from uuid import uuid4
+
+from gmodels.gtypes.edge import Edge, EdgeType
+from gmodels.gtypes.path import Path
+from gmodels.gtypes.tree import Tree
+from gmodels.pgmtypes.pgmodel import PGModel
+from gmodels.pgmtypes.randomvariable import ANDNode, NumCatRVariable, ORNode
 
 
 class OrTree(Tree):
@@ -18,7 +19,9 @@ class OrTree(Tree):
     def __init__(self, pmodel: PGModel):
         self.model = pmodel
         (self.mst, self.edge_order) = self.model.find_minimum_spanning_tree(
-            weight_fn=lambda x: x.data()["factor"] if "factor" in x.data() else 1
+            weight_fn=lambda x: x.data()["factor"]
+            if "factor" in x.data()
+            else 1
         )
         # expand mst to cover values
         es = set()
@@ -51,10 +54,12 @@ class OrTree(Tree):
         end = leaf
 
         def costfn(e: Edge, parent_cost: float):
-            ""
+            """"""
             return self.model.factor(e) + parent_cost
 
-        return self.extract_path_info(end=end, start=start, costfn=costfn, is_min=False)
+        return self.extract_path_info(
+            end=end, start=start, costfn=costfn, is_min=False
+        )
 
     def most_likely_instants(self):
         """!
@@ -77,6 +82,6 @@ class AndOrTree(Tree):
     """
 
     def __init__(self, pmodel: PGModel):
-        ""
+        """"""
         self.model = pmodel
         self.mprops = self.model.props

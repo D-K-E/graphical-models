@@ -2,60 +2,59 @@
 Test probabilistic graph model
 """
 
-from pygmodels.pgmtype.pgmodel import PGModel, min_unmarked_neighbours
+import pdb
+import unittest
+from uuid import uuid4
+
+from pygmodels.factorf.factorops import FactorOps
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.pgmtype.factor import Factor
-from pygmodels.factorf.factorops import FactorOps
+from pygmodels.pgmtype.pgmodel import PGModel, min_unmarked_neighbours
 from pygmodels.pgmtype.randomvariable import NumCatRVariable
-from uuid import uuid4
-import pdb
-
-import unittest
 
 
 class PGModelTest(unittest.TestCase):
-    ""
+    """
+    PGModel tests
+    """
 
-    def setUp(self):
-        """!
-        Graph made from values of
-        Darwiche 2009, p. 132, figure 6.4
-        """
+    def cls_nodes_1(cls):
+        """"""
         idata = {
             "a": {"outcome-values": [True, False]},
             "b": {"outcome-values": [True, False]},
             "c": {"outcome-values": [True, False]},
         }
-        self.a = NumCatRVariable(
+        cls.a = NumCatRVariable(
             node_id="a",
             input_data=idata["a"],
             marginal_distribution=lambda x: 0.6 if x else 0.4,
         )
-        self.b = NumCatRVariable(
+        cls.b = NumCatRVariable(
             node_id="b",
             input_data=idata["b"],
             marginal_distribution=lambda x: 0.5 if x else 0.5,
         )
-        self.c = NumCatRVariable(
+        cls.c = NumCatRVariable(
             node_id="c",
             input_data=idata["c"],
             marginal_distribution=lambda x: 0.5 if x else 0.5,
         )
-        self.ab = Edge(
+        cls.ab = Edge(
             edge_id="ab",
             edge_type=EdgeType.UNDIRECTED,
-            start_node=self.a,
-            end_node=self.b,
+            start_node=cls.a,
+            end_node=cls.b,
         )
-        self.bc = Edge(
+        cls.bc = Edge(
             edge_id="bc",
             edge_type=EdgeType.UNDIRECTED,
-            start_node=self.b,
-            end_node=self.c,
+            start_node=cls.b,
+            end_node=cls.c,
         )
 
         def phi_ba(scope_product):
-            ""
+            """"""
             ss = set(scope_product)
             if ss == set([("a", True), ("b", True)]):
                 return 0.9
@@ -69,7 +68,7 @@ class PGModelTest(unittest.TestCase):
                 raise ValueError("product error")
 
         def phi_cb(scope_product):
-            ""
+            """"""
             ss = set(scope_product)
             if ss == set([("c", True), ("b", True)]):
                 return 0.3
@@ -91,68 +90,65 @@ class PGModelTest(unittest.TestCase):
             else:
                 raise ValueError("product error")
 
-        self.ba_f = Factor(gid="ba", scope_vars=set([self.b, self.a]), factor_fn=phi_ba)
-        self.cb_f = Factor(gid="cb", scope_vars=set([self.c, self.b]), factor_fn=phi_cb)
-        self.a_f = Factor(gid="a", scope_vars=set([self.a]), factor_fn=phi_a)
-
-        self.pgm = PGModel(
-            gid="pgm",
-            nodes=set([self.a, self.b, self.c]),
-            edges=set([self.ab, self.bc]),
-            factors=set([self.ba_f, self.cb_f, self.a_f]),
+        cls.ba_f = Factor(
+            gid="ba", scope_vars=set([cls.b, cls.a]), factor_fn=phi_ba
         )
+        cls.cb_f = Factor(
+            gid="cb", scope_vars=set([cls.c, cls.b]), factor_fn=phi_cb
+        )
+        cls.a_f = Factor(gid="a", scope_vars=set([cls.a]), factor_fn=phi_a)
 
-        # most probable explanation instantiations
-        # graph
+    def cls_nodes_2(cls):
+        """"""
         odata = {"outcome-values": [True, False]}
-        self.J = NumCatRVariable(
+        cls.J = NumCatRVariable(
             node_id="J", input_data=odata, marginal_distribution=lambda x: 0.5
         )
-        self.I = NumCatRVariable(
+        cls.I = NumCatRVariable(
             node_id="I", input_data=odata, marginal_distribution=lambda x: 0.5
         )
-        self.X = NumCatRVariable(
+        cls.X = NumCatRVariable(
             node_id="X", input_data=odata, marginal_distribution=lambda x: 0.5
         )
-        self.Y = NumCatRVariable(
+        cls.Y = NumCatRVariable(
             node_id="Y", input_data=odata, marginal_distribution=lambda x: 0.5
         )
-        self.O = NumCatRVariable(
+        cls.O = NumCatRVariable(
             node_id="O", input_data=odata, marginal_distribution=lambda x: 0.5
         )
-        self.JX = Edge(
+        cls.JX = Edge(
             edge_id="JX",
             edge_type=EdgeType.DIRECTED,
-            start_node=self.J,
-            end_node=self.X,
+            start_node=cls.J,
+            end_node=cls.X,
         )
-        self.JY = Edge(
+        cls.JY = Edge(
             edge_id="JY",
             edge_type=EdgeType.DIRECTED,
-            start_node=self.J,
-            end_node=self.Y,
+            start_node=cls.J,
+            end_node=cls.Y,
         )
-        self.IX = Edge(
+        cls.IX = Edge(
             edge_id="IX",
             edge_type=EdgeType.DIRECTED,
-            start_node=self.I,
-            end_node=self.X,
+            start_node=cls.I,
+            end_node=cls.X,
         )
-        self.XO = Edge(
+        cls.XO = Edge(
             edge_id="XO",
             edge_type=EdgeType.DIRECTED,
-            start_node=self.X,
-            end_node=self.O,
+            start_node=cls.X,
+            end_node=cls.O,
         )
-        self.YO = Edge(
+        cls.YO = Edge(
             edge_id="YO",
             edge_type=EdgeType.DIRECTED,
-            start_node=self.Y,
-            end_node=self.O,
+            start_node=cls.Y,
+            end_node=cls.O,
         )
 
         def phi_ij(scope_product, i: str):
-            ""
+            """"""
             ss = set(scope_product)
             if ss == set([(i, True)]):
                 return 0.5
@@ -162,19 +158,19 @@ class PGModelTest(unittest.TestCase):
                 raise ValueError("unknown scope product")
 
         def phi_i(scope_product):
-            ""
+            """"""
             return phi_ij(scope_product, i="I")
 
-        self.I_f = Factor(gid="I_f", scope_vars=set([self.I]), factor_fn=phi_i)
+        cls.I_f = Factor(gid="I_f", scope_vars=set([cls.I]), factor_fn=phi_i)
 
         def phi_j(scope_product):
-            ""
+            """"""
             return phi_ij(scope_product, i="J")
 
-        self.J_f = Factor(gid="J_f", scope_vars=set([self.J]), factor_fn=phi_j)
+        cls.J_f = Factor(gid="J_f", scope_vars=set([cls.J]), factor_fn=phi_j)
 
         def phi_jy(scope_product):
-            ""
+            """"""
             ss = set(scope_product)
             if ss == set([("J", True), ("Y", True)]):
                 return 0.01
@@ -187,12 +183,16 @@ class PGModelTest(unittest.TestCase):
             else:
                 raise ValueError("scope product unknown")
 
-        self.JY_f = Factor(
-            gid="JY_f", scope_vars=set([self.J, self.Y]), factor_fn=phi_jy
+        cls.JY_f = Factor(
+            gid="JY_f", scope_vars=set([cls.J, cls.Y]), factor_fn=phi_jy
         )
 
+    def cls_nodes_3(cls):
+        """"""
+        cls.cls_nodes_2()
+
         def phi_ijx(scope_product):
-            ""
+            """"""
             ss = set(scope_product)
             if ss == set([("I", True), ("J", True), ("X", True)]):
                 return 0.95
@@ -213,12 +213,14 @@ class PGModelTest(unittest.TestCase):
             else:
                 raise ValueError("scope product unknown")
 
-        self.IJX_f = Factor(
-            gid="IJX_f", scope_vars=set([self.J, self.X, self.I]), factor_fn=phi_ijx
+        cls.IJX_f = Factor(
+            gid="IJX_f",
+            scope_vars=set([cls.J, cls.X, cls.I]),
+            factor_fn=phi_ijx,
         )
 
         def phi_xyo(scope_product):
-            ""
+            """"""
             ss = set(scope_product)
             if ss == set([("X", True), ("Y", True), ("O", True)]):
                 return 0.98
@@ -239,67 +241,99 @@ class PGModelTest(unittest.TestCase):
             else:
                 raise ValueError("scope product unknown")
 
-        self.XYO_f = Factor(
-            gid="XYO_f", scope_vars=set([self.Y, self.X, self.O]), factor_fn=phi_xyo
+        cls.XYO_f = Factor(
+            gid="XYO_f",
+            scope_vars=set([cls.Y, cls.X, cls.O]),
+            factor_fn=phi_xyo,
         )
+
+    def setUp(self):
+        """!
+        Graph made from values of
+        Darwiche 2009, p. 132, figure 6.4
+        """
+        self.cls_nodes_1()
+        self.cls_nodes_2()
+        self.pgm = PGModel(
+            gid="pgm",
+            nodes=set([self.a, self.b, self.c]),
+            edges=set([self.ab, self.bc]),
+            factors=set([self.ba_f, self.cb_f, self.a_f]),
+        )
+
+        # most probable explanation instantiations
+        # graph
 
         self.pgm_mpe = PGModel(
             gid="mpe",
             nodes=set([self.J, self.Y, self.X, self.I, self.O]),
             edges=set([self.JY, self.JX, self.YO, self.IX, self.XO]),
-            factors=set([self.I_f, self.J_f, self.JY_f, self.IJX_f, self.XYO_f]),
+            factors=set(
+                [self.I_f, self.J_f, self.JY_f, self.IJX_f, self.XYO_f]
+            ),
         )
 
     def test_id(self):
-        ""
+        """"""
         self.assertEqual(self.pgm.id(), "pgm")
 
     def test_markov_blanket(self):
-        ""
+        """"""
         self.assertEqual(self.pgm.markov_blanket(self.a), set([self.b]))
 
     def test_factors(self):
-        ""
-        self.assertEqual(self.pgm.factors(), set([self.ba_f, self.cb_f, self.a_f]))
+        """"""
+        self.assertEqual(
+            self.pgm.factors(), set([self.ba_f, self.cb_f, self.a_f])
+        )
 
     def test_closure_of(self):
-        ""
+        """"""
         self.assertEqual(self.pgm.closure_of(self.a), set([self.b, self.a]))
 
     def test_conditionaly_independent_of_t(self):
-        ""
-        self.assertEqual(self.pgm.is_conditionaly_independent_of(self.a, self.c), True)
+        """"""
+        self.assertEqual(
+            self.pgm.is_conditionaly_independent_of(self.a, self.c), True
+        )
 
     def test_conditionaly_independent_of_f(self):
-        ""
+        """"""
         # pdb.set_trace()
         iscond = self.pgm.is_conditionaly_independent_of(self.a, self.b)
         self.assertEqual(iscond, False)
 
     def test_scope_of(self):
-        ""
+        """"""
         self.assertEqual(self.pgm.scope_of(self.ba_f), set([self.a, self.b]))
 
     def test_is_scope_subset_of_t(self):
-        ""
+        """"""
         self.assertEqual(
-            self.pgm.is_scope_subset_of(self.ba_f, set([self.a, self.b, self.c])), True
+            self.pgm.is_scope_subset_of(
+                self.ba_f, set([self.a, self.b, self.c])
+            ),
+            True,
         )
 
     def test_is_scope_subset_of_f(self):
-        ""
-        self.assertEqual(self.pgm.is_scope_subset_of(self.ba_f, set([self.c])), False)
+        """"""
+        self.assertEqual(
+            self.pgm.is_scope_subset_of(self.ba_f, set([self.c])), False
+        )
 
     def test_scope_subset_factors(self):
-        ""
+        """"""
         self.assertEqual(
             self.pgm.scope_subset_factors(set([self.c, self.a, self.b])),
             set([self.ba_f, self.cb_f, self.a_f]),
         )
 
     def test_get_factor_product_var(self):
-        ""
-        p, f, of = self.pgm.get_factor_product_var(fs=self.pgm.factors(), Z=self.a)
+        """"""
+        p, f, of = self.pgm.get_factor_product_var(
+            fs=self.pgm.factors(), Z=self.a
+        )
         self.assertEqual(f, set([self.a_f, self.ba_f]))
         self.assertEqual(of, set([self.cb_f]))
         afbf, v = FactorOps.cls_product(f=self.a_f, other=self.ba_f)
@@ -314,7 +348,9 @@ class PGModelTest(unittest.TestCase):
         """!
         based on values of Darwiche 2009 p. 133
         """
-        ofacs = self.pgm.sum_prod_var_eliminate(factors=self.pgm.factors(), Z=self.a)
+        ofacs = self.pgm.sum_prod_var_eliminate(
+            factors=self.pgm.factors(), Z=self.a
+        )
         smf = [o for o in ofacs if o.id() != "cb"][0]
         for s in smf.scope_products:
             ss = set(s)
@@ -340,23 +376,32 @@ class PGModelTest(unittest.TestCase):
                 self.assertEqual(res, 0.624)
 
     def test_order_by_greedy_metric(self):
-        """!
-        """
+        """!"""
         ns = set([self.a, self.b])
-        cards = self.pgm.order_by_greedy_metric(nodes=ns, s=min_unmarked_neighbours)
+        cards = self.pgm.order_by_greedy_metric(
+            nodes=ns, s=min_unmarked_neighbours
+        )
         self.assertEqual(cards, {"a": 0, "b": 1})
         ns = set([self.c, self.b])
-        cards2 = self.pgm.order_by_greedy_metric(nodes=ns, s=min_unmarked_neighbours)
+        cards2 = self.pgm.order_by_greedy_metric(
+            nodes=ns, s=min_unmarked_neighbours
+        )
         self.assertEqual(cards2, {"c": 0, "b": 1})
         ns = set([self.c, self.a])
-        cards3 = self.pgm.order_by_greedy_metric(nodes=ns, s=min_unmarked_neighbours)
-        self.assertTrue(cards3 == {"a": 0, "c": 1} or cards3 == {"a": 1, "c": 0})
+        cards3 = self.pgm.order_by_greedy_metric(
+            nodes=ns, s=min_unmarked_neighbours
+        )
+        self.assertTrue(
+            cards3 == {"a": 0, "c": 1} or cards3 == {"a": 1, "c": 0}
+        )
 
     def test_reduce_factors_with_evidence(self):
-        ""
+        """"""
         ev = set([("a", True), ("b", True)])
         fs, es = self.pgm.reduce_factors_with_evidence(ev)
-        fs_s = set([frozenset([frozenset(s) for s in f.scope_products]) for f in fs])
+        fs_s = set(
+            [frozenset([frozenset(s) for s in f.scope_products]) for f in fs]
+        )
         self.assertEqual(
             fs_s,
             set(
@@ -424,8 +469,24 @@ class PGModelTest(unittest.TestCase):
         assignments, fac, f = self.pgm_mpe.max_product_ve(evidences=ev)
         assign = set([a for a in assignments.items()])
         possibles = [
-            set([("J", True), ("O", False), ("X", False), ("Y", False), ("I", False)]),
-            set([("J", True), ("O", False), ("X", False), ("Y", False), ("I", True)]),
+            set(
+                [
+                    ("J", True),
+                    ("O", False),
+                    ("X", False),
+                    ("Y", False),
+                    ("I", False),
+                ]
+            ),
+            set(
+                [
+                    ("J", True),
+                    ("O", False),
+                    ("X", False),
+                    ("Y", False),
+                    ("I", True),
+                ]
+            ),
         ]
         cond = assign == possibles[0] or assign == possibles[1]
         self.assertTrue(cond)

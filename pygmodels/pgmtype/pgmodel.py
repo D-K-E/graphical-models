@@ -10,22 +10,25 @@ using independence structure assumed by the model. The #PGModel is the most
 generic model, hence we do not assume a particular independence structure.
 
 """
-from pygmodels.gtype.edge import Edge
-from pygmodels.gtype.node import Node
-from pygmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
-from pygmodels.pgmtype.factor import Factor
-from pygmodels.factorf.factorops import FactorOps
-from pygmodels.factorf.factoranalyzer import FactorAnalyzer
-from pygmodels.gmodel.graph import Graph
-from pygmodels.graphf.graphops import BaseGraphAlgOps
-from pygmodels.graphf.bgraphops import BaseGraphOps
-from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
-from typing import Callable, Set, List, Optional, Dict, Tuple
 import math
+from typing import Callable, Dict, List, Optional, Set, Tuple
 from uuid import uuid4
 
+from pygmodels.factorf.factoranalyzer import FactorAnalyzer
+from pygmodels.factorf.factorops import FactorOps
+from pygmodels.gmodel.graph import Graph
+from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
+from pygmodels.graphf.graphops import BaseGraphAlgOps
+from pygmodels.gtype.edge import Edge
+from pygmodels.gtype.node import Node
+from pygmodels.pgmtype.factor import Factor
+from pygmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
 
-def min_unmarked_neighbours(g: Graph, nodes: Set[Node], marked: Dict[str, Node]):
+
+def min_unmarked_neighbours(
+    g: Graph, nodes: Set[Node], marked: Dict[str, Node]
+):
     """!
     \brief find an unmarked node with minimum number of neighbours
     """
@@ -38,7 +41,7 @@ def min_unmarked_neighbours(g: Graph, nodes: Set[Node], marked: Dict[str, Node])
 
 
 class PGModel(Graph):
-    ""
+    """"""
 
     def __init__(
         self,
@@ -93,7 +96,7 @@ class PGModel(Graph):
 
     def closure_of(self, t: NumCatRVariable) -> Set[NumCatRVariable]:
         """!
-        get closure of node 
+        get closure of node
         from K. Murphy, 2012, p. 662
         """
         return set([t]).union(self.markov_blanket(t))
@@ -108,8 +111,7 @@ class PGModel(Graph):
         return BaseGraphAnalyzer.is_node_independent_of(self, n1, n2)
 
     def scope_of(self, phi: Factor) -> Set[NumCatRVariable]:
-        """!
-        """
+        """!"""
         return phi.scope_vars()
 
     def is_scope_subset_of(self, phi: Factor, X: Set[NumCatRVariable]) -> bool:
@@ -123,7 +125,13 @@ class PGModel(Graph):
         """!
         choose factors using Koller, Friedman 2009, p. 299 as criteria
         """
-        return set([f for f in self.factors() if self.is_scope_subset_of(f, X) is True])
+        return set(
+            [
+                f
+                for f in self.factors()
+                if self.is_scope_subset_of(f, X) is True
+            ]
+        )
 
     def get_factor_product(self, fs: Set[Factor]):
         """!
@@ -166,7 +174,9 @@ class PGModel(Graph):
         eliminate variables using given strategy. Unites max product and sum
         product
         """
-        (prod, scope_factors, other_factors) = self.get_factor_product_var(factors, Z)
+        (prod, scope_factors, other_factors) = self.get_factor_product_var(
+            factors, Z
+        )
         sum_factor = elimination_strategy(prod, Z)
         other_factors = other_factors.union({sum_factor})
         return other_factors, sum_factor, prod
@@ -257,9 +267,11 @@ class PGModel(Graph):
         return cardinality
 
     def reduce_queries_with_evidence(
-        self, queries: Set[NumCatRVariable], evidences: Set[Tuple[str, NumericValue]],
+        self,
+        queries: Set[NumCatRVariable],
+        evidences: Set[Tuple[str, NumericValue]],
     ) -> Set[NumCatRVariable]:
-        ""
+        """"""
         reduced_queries = set()
         evs = {e[0]: e[1] for e in evidences}
         for q in queries:
@@ -269,18 +281,25 @@ class PGModel(Graph):
             reduced_queries.add(q)
         return reduced_queries
 
-    def reduce_factors_with_evidence(self, evidences: Set[Tuple[str, NumericValue]]):
+    def reduce_factors_with_evidence(
+        self, evidences: Set[Tuple[str, NumericValue]]
+    ):
         """!
         reduce factors if there is evidence
         """
         if len(evidences) == 0:
             return self.factors(), set()
         if any(e[0] not in self.V for e in evidences):
-            raise ValueError("evidence set contains variables out of vertices of graph")
+            raise ValueError(
+                "evidence set contains variables out of vertices of graph"
+            )
         E = set([self.V[e[0]] for e in evidences])
         fs = self.factors()
         factors = set(
-            [FactorOps.cls_reduced_by_value(f, assignments=evidences) for f in fs]
+            [
+                FactorOps.cls_reduced_by_value(f, assignments=evidences)
+                for f in fs
+            ]
         )
         return factors, E
 
@@ -295,7 +314,9 @@ class PGModel(Graph):
         from Koller and Friedman 2009, p. 304
         """
         if queries.issubset(BaseGraphOps.nodes(self)) is False:
-            raise ValueError("Query variables must be a subset of vertices of graph")
+            raise ValueError(
+                "Query variables must be a subset of vertices of graph"
+            )
         queries = self.reduce_queries_with_evidence(queries, evidences)
         factors, E = self.reduce_factors_with_evidence(evidences)
         Zs = set()
@@ -318,7 +339,8 @@ class PGModel(Graph):
         """
         cardinality = self.order_by_greedy_metric(nodes=Zs, s=ordering_fn)
         ordering = [
-            self.V[n[0]] for n in sorted(list(cardinality.items()), key=lambda x: x[1])
+            self.V[n[0]]
+            for n in sorted(list(cardinality.items()), key=lambda x: x[1])
         ]
         phi = self.sum_product_elimination(factors=factors, Zs=ordering)
         alpha = FactorOps.cls_sumout_vars(phi, queries)
@@ -336,15 +358,18 @@ class PGModel(Graph):
             elimination_strategy=lambda x, y: FactorOps.cls_maxout_var(x, y),
         )
 
-    def max_product_eliminate_vars(self, factors: Set[Edge], Zs: List[NumCatRVariable]):
+    def max_product_eliminate_vars(
+        self, factors: Set[Edge], Zs: List[NumCatRVariable]
+    ):
         """!
         from Koller and Friedman 2009, p. 557
         """
         Z_potential: List[Tuple[Factor, int]] = []
-        fs = []
         for i in range(len(Zs)):
             Z = Zs[i]
-            factors, maxed_out, z_phi = self.max_product_eliminate_var(factors, Z=Z)
+            factors, maxed_out, z_phi = self.max_product_eliminate_var(
+                factors, Z=Z
+            )
             Z_potential.append(z_phi)
         #
         values = self.traceback_map(potentials=Z_potential, X_is=Zs)
@@ -359,9 +384,12 @@ class PGModel(Graph):
         for z in BaseGraphOps.nodes(self):
             if z not in E:
                 Zs.add(z)
-        cardinality = self.order_by_greedy_metric(nodes=Zs, s=min_unmarked_neighbours)
+        cardinality = self.order_by_greedy_metric(
+            nodes=Zs, s=min_unmarked_neighbours
+        )
         ordering = [
-            self.V[n[0]] for n in sorted(list(cardinality.items()), key=lambda x: x[1])
+            self.V[n[0]]
+            for n in sorted(list(cardinality.items()), key=lambda x: x[1])
         ]
         assignments, factors, z_phi = self.max_product_eliminate_vars(
             factors=factors, Zs=ordering
@@ -384,7 +412,7 @@ class PGModel(Graph):
     ) -> List[Tuple[str, NumericValue]]:
         """!
         from Koller and Friedman 2009, p. 557
-        The idea here is the following: 
+        The idea here is the following:
         For the last variable eliminated, Z, the factor for the value x
         contains the probability of the most likely assignment that contains
         Z=x.

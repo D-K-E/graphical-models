@@ -2,25 +2,25 @@
 Test markov network
 """
 
-from pygmodels.pgmtype.randomvariable import NumCatRVariable
-from pygmodels.pgmodel.markov import MarkovNetwork, ConditionalRandomField
-from pygmodels.gtype.edge import Edge, EdgeType
-from pygmodels.gmodel.undigraph import UndiGraph
-from pygmodels.pgmtype.factor import Factor
-from pygmodels.factorf.factoranalyzer import FactorAnalyzer
-from uuid import uuid4
-import pdb
 import math
-from random import choice
-
+import pdb
 import unittest
+from random import choice
+from uuid import uuid4
+
+from pygmodels.factorf.factoranalyzer import FactorAnalyzer
+from pygmodels.gmodel.undigraph import UndiGraph
+from pygmodels.gtype.edge import Edge, EdgeType
+from pygmodels.pgmodel.markov import ConditionalRandomField, MarkovNetwork
+from pygmodels.pgmtype.factor import Factor
+from pygmodels.pgmtype.randomvariable import NumCatRVariable
 
 
 class MarkovTest(unittest.TestCase):
-    ""
+    """"""
 
     def setUp(self):
-        ""
+        """"""
         idata = {
             "A": {"outcome-values": [True, False]},
             "B": {"outcome-values": [True, False]},
@@ -30,16 +30,24 @@ class MarkovTest(unittest.TestCase):
 
         # misconception example: Koller, Friedman, 2009 p. 104
         self.A = NumCatRVariable(
-            node_id="A", input_data=idata["A"], marginal_distribution=lambda x: 0.5
+            node_id="A",
+            input_data=idata["A"],
+            marginal_distribution=lambda x: 0.5,
         )
         self.B = NumCatRVariable(
-            node_id="B", input_data=idata["B"], marginal_distribution=lambda x: 0.5
+            node_id="B",
+            input_data=idata["B"],
+            marginal_distribution=lambda x: 0.5,
         )
         self.C = NumCatRVariable(
-            node_id="C", input_data=idata["C"], marginal_distribution=lambda x: 0.5
+            node_id="C",
+            input_data=idata["C"],
+            marginal_distribution=lambda x: 0.5,
         )
         self.D = NumCatRVariable(
-            node_id="D", input_data=idata["D"], marginal_distribution=lambda x: 0.5
+            node_id="D",
+            input_data=idata["D"],
+            marginal_distribution=lambda x: 0.5,
         )
         self.AB = Edge(
             edge_id="AB",
@@ -67,7 +75,7 @@ class MarkovTest(unittest.TestCase):
         )
 
         def phi_AB(scope_product):
-            ""
+            """"""
             ss = frozenset(scope_product)
             if ss == frozenset([("A", False), ("B", False)]):
                 return 30.0
@@ -81,7 +89,7 @@ class MarkovTest(unittest.TestCase):
                 raise ValueError("product error")
 
         def phi_BC(scope_product):
-            ""
+            """"""
             ss = frozenset(scope_product)
             if ss == frozenset([("B", False), ("C", False)]):
                 return 100.0
@@ -95,7 +103,7 @@ class MarkovTest(unittest.TestCase):
                 raise ValueError("product error")
 
         def phi_CD(scope_product):
-            ""
+            """"""
             ss = frozenset(scope_product)
             if ss == frozenset([("C", False), ("D", False)]):
                 return 1.0
@@ -109,7 +117,7 @@ class MarkovTest(unittest.TestCase):
                 raise ValueError("product error")
 
         def phi_DA(scope_product):
-            ""
+            """"""
             ss = frozenset(scope_product)
             if ss == frozenset([("D", False), ("A", False)]):
                 return 100.0
@@ -148,7 +156,9 @@ class MarkovTest(unittest.TestCase):
             marginal_distribution=lambda x: 0.01 if x else 0.99,
         )
         self.b = NumCatRVariable(
-            node_id="b", input_data=idata["B"], marginal_distribution=lambda x: 0.5
+            node_id="b",
+            input_data=idata["B"],
+            marginal_distribution=lambda x: 0.5,
         )
         self.d = NumCatRVariable(
             node_id="d",
@@ -161,17 +171,29 @@ class MarkovTest(unittest.TestCase):
             marginal_distribution=lambda x: 0.7312 if x else 0.2688,
         )
         self.ab = Edge(
-            "ab", start_node=self.a, end_node=self.b, edge_type=EdgeType.UNDIRECTED
+            "ab",
+            start_node=self.a,
+            end_node=self.b,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.ad = Edge(
-            "ad", start_node=self.a, end_node=self.d, edge_type=EdgeType.UNDIRECTED
+            "ad",
+            start_node=self.a,
+            end_node=self.d,
+            edge_type=EdgeType.UNDIRECTED,
         )
 
         self.bc = Edge(
-            "bc", start_node=self.b, end_node=self.c, edge_type=EdgeType.UNDIRECTED
+            "bc",
+            start_node=self.b,
+            end_node=self.c,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.dc = Edge(
-            "dc", start_node=self.d, end_node=self.c, edge_type=EdgeType.UNDIRECTED
+            "dc",
+            start_node=self.d,
+            end_node=self.c,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.ugraph = UndiGraph(
             "ug1",
@@ -183,16 +205,24 @@ class MarkovTest(unittest.TestCase):
         # Conditional Random Field test
         # from Koller, Friedman 2009, p. 144-145, example 4.20
         self.X_1 = NumCatRVariable(
-            node_id="X_1", input_data=idata["A"], marginal_distribution=lambda x: 0.5
+            node_id="X_1",
+            input_data=idata["A"],
+            marginal_distribution=lambda x: 0.5,
         )
         self.X_2 = NumCatRVariable(
-            node_id="X_2", input_data=idata["A"], marginal_distribution=lambda x: 0.5
+            node_id="X_2",
+            input_data=idata["A"],
+            marginal_distribution=lambda x: 0.5,
         )
         self.X_3 = NumCatRVariable(
-            node_id="X_3", input_data=idata["A"], marginal_distribution=lambda x: 0.5
+            node_id="X_3",
+            input_data=idata["A"],
+            marginal_distribution=lambda x: 0.5,
         )
         self.Y_1 = NumCatRVariable(
-            node_id="Y_1", input_data=idata["A"], marginal_distribution=lambda x: 0.5
+            node_id="Y_1",
+            input_data=idata["A"],
+            marginal_distribution=lambda x: 0.5,
         )
         self.X1_Y1 = Edge(
             edge_id="X1_Y1",
@@ -214,7 +244,7 @@ class MarkovTest(unittest.TestCase):
         )
 
         def phi_X1_Y1(scope_product):
-            ""
+            """"""
             w = 0.5
             ss = frozenset(scope_product)
             if ss == frozenset([("X_1", True), ("Y_1", True)]):
@@ -223,7 +253,7 @@ class MarkovTest(unittest.TestCase):
                 return math.exp(0.0)
 
         def phi_X2_Y1(scope_product):
-            ""
+            """"""
             w = 5.0
             ss = frozenset(scope_product)
             if ss == frozenset([("X_2", True), ("Y_1", True)]):
@@ -232,7 +262,7 @@ class MarkovTest(unittest.TestCase):
                 return math.exp(0.0)
 
         def phi_X3_Y1(scope_product):
-            ""
+            """"""
             w = 9.4
             ss = frozenset(scope_product)
             if ss == frozenset([("X_3", True), ("Y_1", True)]):
@@ -241,7 +271,7 @@ class MarkovTest(unittest.TestCase):
                 return math.exp(0.0)
 
         def phi_Y1(scope_product):
-            ""
+            """"""
             w = 0.6
             ss = frozenset(scope_product)
             if ss == frozenset([("Y_1", True)]):
@@ -250,15 +280,23 @@ class MarkovTest(unittest.TestCase):
                 return math.exp(0.0)
 
         self.X1_Y1_f = Factor(
-            gid="x1_y1_f", scope_vars=set([self.X_1, self.Y_1]), factor_fn=phi_X1_Y1
+            gid="x1_y1_f",
+            scope_vars=set([self.X_1, self.Y_1]),
+            factor_fn=phi_X1_Y1,
         )
         self.X2_Y1_f = Factor(
-            gid="x2_y1_f", scope_vars=set([self.X_2, self.Y_1]), factor_fn=phi_X2_Y1
+            gid="x2_y1_f",
+            scope_vars=set([self.X_2, self.Y_1]),
+            factor_fn=phi_X2_Y1,
         )
         self.X3_Y1_f = Factor(
-            gid="x3_y1_f", scope_vars=set([self.X_3, self.Y_1]), factor_fn=phi_X3_Y1
+            gid="x3_y1_f",
+            scope_vars=set([self.X_3, self.Y_1]),
+            factor_fn=phi_X3_Y1,
         )
-        self.Y1_f = Factor(gid="y1_f", scope_vars=set([self.Y_1]), factor_fn=phi_Y1)
+        self.Y1_f = Factor(
+            gid="y1_f", scope_vars=set([self.Y_1]), factor_fn=phi_Y1
+        )
 
         self.crf_koller = ConditionalRandomField(
             "crf",
@@ -269,7 +307,7 @@ class MarkovTest(unittest.TestCase):
         )
 
     def test_id(self):
-        ""
+        """"""
         self.assertEqual(self.mnetwork.id(), "mnet")
 
     def test_cond_prod_by_variable_elimination(self):
@@ -298,7 +336,7 @@ class MarkovTest(unittest.TestCase):
         self.assertEqual(f4, 0.04)
 
     def test_from_undigraph(self):
-        ""
+        """"""
         markov = MarkovNetwork.from_undigraph(udi=self.ugraph)
         factors = markov.factors()
         # a - d

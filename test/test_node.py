@@ -2,20 +2,21 @@
 Node unit tests
 """
 import unittest
+
 from pygmodels.gtype.node import Node
 
 
 class NodeTest(unittest.TestCase):
     def setUp(self):
-        ""
+        """"""
         self.node = Node(node_id="mnode", data={"my": "data"})
 
     def test_id(self):
-        ""
+        """"""
         self.assertEqual(self.node.id(), "mnode")
 
     def test_data(self):
-        ""
+        """"""
         self.assertEqual(self.node.data(), {"my": "data"})
 
     def test_equal(self):

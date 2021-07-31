@@ -8,10 +8,11 @@
 For more theoretical explanation \see nodegroup
 
 """
-from typing import Dict, Set, Tuple, Optional
-from pygmodels.gtype.graphobj import GraphObject
-from pygmodels.gtype.abstractobj import AbstractNode
 from abc import ABC, abstractmethod
+from typing import Dict, Optional, Set, Tuple
+
+from pygmodels.gtype.abstractobj import AbstractNode
+from pygmodels.gtype.graphobj import GraphObject
 
 
 class Node(AbstractNode, GraphObject):
@@ -61,7 +62,9 @@ class Node(AbstractNode, GraphObject):
         return (
             self.id()
             + "--"
-            + "::".join([str(k) + "-" + str(v) for k, v in self.data().items()])
+            + "::".join(
+                [str(k) + "-" + str(v) for k, v in self.data().items()]
+            )
         )
 
     def __hash__(self):

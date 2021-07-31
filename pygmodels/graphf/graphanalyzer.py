@@ -2,12 +2,15 @@
 \file graphanalyzer.py Graph Analyzer for BaseGraph subclasses
 """
 
-from typing import Set, Optional, Callable, List, Tuple, Union, Dict, FrozenSet
-from pygmodels.gtype.abstractobj import AbstractGraph
-from pygmodels.gtype.abstractobj import AbstractNode, AbstractEdge
-from pygmodels.graphf.bgraphops import BaseGraphOps
-
 import math
+from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
+
+from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.gtype.abstractobj import (
+    AbstractEdge,
+    AbstractGraph,
+    AbstractNode,
+)
 
 
 class BaseGraphAnalyzer:
@@ -193,7 +196,9 @@ class BaseGraphAnalyzer:
         """
         return int(
             BaseGraphAnalyzer.comp_degree(
-                g, fn=lambda nb_edges, compare: nb_edges < compare, comp_val=math.inf
+                g,
+                fn=lambda nb_edges, compare: nb_edges < compare,
+                comp_val=math.inf,
             )
         )
 
@@ -228,13 +233,15 @@ class BaseGraphAnalyzer:
     def edge_vertex_ratio(g: AbstractGraph) -> float:
         """!
         \brief obtain edge vertex ratio of graph instance
-        Corresponds to \f[\epsilon(G)\f]. 
+        Corresponds to \f[\epsilon(G)\f].
         The formula comes from Diestel 2017, p. 5.
         """
         return len(g.E) / len(g.V)
 
     @staticmethod
-    def ev_ratio_from_average_degree(g: AbstractGraph, average_degree: float) -> float:
+    def ev_ratio_from_average_degree(
+        g: AbstractGraph, average_degree: float
+    ) -> float:
         """!
         \brief obtain edge vertex ratio from average degree
 
@@ -269,7 +276,7 @@ class BaseGraphAnalyzer:
     def shortest_path_length(g: AbstractGraph) -> int:
         """!
         \brief Give the shortest possible path length for graph instance
-        
+
         This interpretation is taken from Diestel 2017, p. 8. The proof
         is also given in the corresponding page.
         """
@@ -402,12 +409,12 @@ class BaseGraphAnalyzer:
     def find_articulation_points(
         g: AbstractGraph, graph_maker=Callable[[AbstractNode], AbstractGraph]
     ):
-        ""
+        """"""
         raise NotImplementedError
 
     @staticmethod
     def find_bridges(
         g: AbstractGraph, graph_maker=Callable[[AbstractNode], AbstractGraph]
     ):
-        ""
+        """"""
         pass

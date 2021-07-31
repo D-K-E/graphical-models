@@ -2,14 +2,15 @@
 Bayesian Network model
 """
 
+from typing import Callable, Optional, Set
+from uuid import uuid4
+
 from pygmodels.gmodel.digraph import DiGraph
-from pygmodels.gtype.edge import Edge
 from pygmodels.graphf.bgraphops import BaseGraphOps
-from pygmodels.pgmtype.randomvariable import NumCatRVariable
+from pygmodels.gtype.edge import Edge
 from pygmodels.pgmtype.factor import Factor
 from pygmodels.pgmtype.pgmodel import PGModel
-from typing import Set, Optional, Callable
-from uuid import uuid4
+from pygmodels.pgmtype.randomvariable import NumCatRVariable
 
 
 class BayesianNetwork(PGModel, DiGraph):
@@ -133,15 +134,19 @@ class BayesianNetwork(PGModel, DiGraph):
 
         \endcode
         """
-        super().__init__(gid=gid, data=data, nodes=nodes, edges=edges, factors=factors)
+        super().__init__(
+            gid=gid, data=data, nodes=nodes, edges=edges, factors=factors
+        )
 
     @classmethod
     def deduce_factors_from_digraph(
         cls,
         dig: DiGraph,
-        fn: Optional[Callable[[NumCatRVariable, Set[NumCatRVariable]], Factor]] = None,
+        fn: Optional[
+            Callable[[NumCatRVariable, Set[NumCatRVariable]], Factor]
+        ] = None,
     ) -> Set[Factor]:
-        ""
+        """"""
         fs: Set[Factor] = set()
         for X_i in dig.nodes():
             evidences = set()
@@ -168,7 +173,7 @@ class BayesianNetwork(PGModel, DiGraph):
 
         \param dig A Directed Graph whose nodes are random variables
 
-        \return BayesianNetwork 
+        \return BayesianNetwork
 
         \code{.py}
 

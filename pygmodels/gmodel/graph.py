@@ -3,21 +3,22 @@
 
 \defgroup graphgroup Graph and Related Objects
 
-Contains a general graph object. Most of the functionality is based on 
+Contains a general graph object. Most of the functionality is based on
 Diestel 2017.
 
 """
-from typing import Set, Optional, Callable, List, Tuple, Union, Dict, FrozenSet
-from pygmodels.gtype.graphobj import GraphObject
-from pygmodels.graphf.graphops import BaseGraphSetOps, BaseGraphAlgOps
+import math
+from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
+from uuid import uuid4
+
 from pygmodels.graphf.bgraphops import BaseGraphOps
 from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
+from pygmodels.graphf.graphops import BaseGraphAlgOps, BaseGraphSetOps
+from pygmodels.graphf.graphtraverser import BaseGraphTraverser
 from pygmodels.gtype.basegraph import BaseGraph
 from pygmodels.gtype.edge import Edge, EdgeType
+from pygmodels.gtype.graphobj import GraphObject
 from pygmodels.gtype.node import Node
-from pygmodels.graphf.graphtraverser import BaseGraphTraverser
-from uuid import uuid4
-import math
 
 
 class Graph(BaseGraph):
@@ -27,7 +28,11 @@ class Graph(BaseGraph):
     """
 
     def __init__(
-        self, gid: str, data={}, nodes: Set[Node] = None, edges: Set[Edge] = None
+        self,
+        gid: str,
+        data={},
+        nodes: Set[Node] = None,
+        edges: Set[Edge] = None,
     ):
         """!
         \brief Graph Constructor
@@ -88,7 +93,7 @@ class Graph(BaseGraph):
 
     @classmethod
     def from_abstract_graph(cls, g_):
-        ""
+        """"""
         g = BaseGraph.from_abstract_graph(g_)
         return cls.from_base_graph(g)
 
@@ -240,10 +245,8 @@ class Graph(BaseGraph):
         \endcode
         """
         gmat = {}
-        gdata = BaseGraphOps.to_edgelist(self)
         for v in self.V:
             for k in self.V:
-                common = set(gdata[v]).intersection(set(gdata[k]))
                 gmat[(v, k)] = vtype(0)
         for edge in BaseGraphOps.edges(self):
             tpl1 = (edge.start().id(), edge.end().id())
@@ -319,7 +322,6 @@ class Graph(BaseGraph):
         if BaseGraphAnalyzer.has_self_loop(self):
             raise ValueError("Graph has a self loop")
         #
-        n = len(self.gdata)
         T = self.to_adjmat(vtype=bool)
         for k in self.V.copy():
             for i in self.V.copy():
@@ -374,10 +376,10 @@ class Graph(BaseGraph):
         \brief Check if a function is a homomorphism on the given graph.
 
         \warning Absolutely untested function that tries to follow the definition
-        given in Diestel 2017, p. 3. Basically if a function transforms 
+        given in Diestel 2017, p. 3. Basically if a function transforms
         vertex set of graph but conserve adjacency properties of the graph,
         it is a homomorphism.
-        
+
         """
         edges = self.edges()
         adjacency_of_vertices = set()
@@ -459,7 +461,9 @@ class Graph(BaseGraph):
 
         # Extract component roots
         component_roots = [k for k in self.graph_props["dfs-forest"].keys()]
-        return set([self.get_component(root_node_id=root) for root in component_roots])
+        return set(
+            [self.get_component(root_node_id=root) for root in component_roots]
+        )
 
     def get_components_as_node_sets(self) -> Set[FrozenSet[Node]]:
         """!
@@ -473,7 +477,9 @@ class Graph(BaseGraph):
 
         # Extract component roots
         component_roots = [k for k in self.graph_props["dfs-forest"].keys()]
-        return set([frozenset(self.get_component_nodes(k)) for k in component_roots])
+        return set(
+            [frozenset(self.get_component_nodes(k)) for k in component_roots]
+        )
 
     def find_articulation_points(
         self, graph_maker: Callable[[Node], GraphObject]
@@ -496,7 +502,9 @@ class Graph(BaseGraph):
                 points.add(node)
         return points
 
-    def find_bridges(self, graph_maker: Callable[[Edge], GraphObject]) -> Set[Edge]:
+    def find_bridges(
+        self, graph_maker: Callable[[Edge], GraphObject]
+    ) -> Set[Edge]:
         """!
         \brief find bridges of a given graph.
 

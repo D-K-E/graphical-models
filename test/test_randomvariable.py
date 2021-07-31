@@ -1,10 +1,14 @@
 # unittest for numeric categorical random variable
 
 
-import unittest
-from pygmodels.pgmtype.randomvariable import NumCatRVariable, CatRandomVariable
-from pygmodels.pgmtype.randomvariable import PossibleOutcomes
 import math
+import unittest
+
+from pygmodels.pgmtype.randomvariable import (
+    CatRandomVariable,
+    NumCatRVariable,
+    PossibleOutcomes,
+)
 
 
 class NumCatRVariableTest(unittest.TestCase):
@@ -13,7 +17,10 @@ class NumCatRVariableTest(unittest.TestCase):
         input_data = {
             "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
             "grade": {"outcome-values": [0.2, 0.4, 0.6], "evidence": 0.2},
-            "dice": {"outcome-values": [i for i in range(1, 7)], "evidence": 1.0 / 6},
+            "dice": {
+                "outcome-values": [i for i in range(1, 7)],
+                "evidence": 1.0 / 6,
+            },
         }
 
         def intelligence_dist(intelligence_value: float):
@@ -74,7 +81,7 @@ class NumCatRVariableTest(unittest.TestCase):
         )
 
     def test_id(self):
-        ""
+        """"""
         self.assertEqual(self.grade.id(), "rvar2")
 
     def test_values(self):
@@ -83,7 +90,8 @@ class NumCatRVariableTest(unittest.TestCase):
     def test_value_set(self):
         self.assertEqual(
             self.rvar.value_set(
-                value_transform=lambda x: x.lower(), value_filter=lambda x: x != "A"
+                value_transform=lambda x: x.lower(),
+                value_filter=lambda x: x != "A",
             ),
             frozenset([("myrandomvar", "f")]),
         )
@@ -101,37 +109,37 @@ class NumCatRVariableTest(unittest.TestCase):
         self.assertEqual(self.intelligence.min_marginal_value(), 0.9)
 
     def test_expected_value(self):
-        ""
+        """"""
         self.assertEqual(self.dice.expected_value(), 3.5)
 
     def test_marginal_with_known_value(self):
-        ""
+        """"""
         self.assertEqual(self.grade.marginal(0.4), 0.37)
 
     def test_p_x_known_value(self):
-        ""
+        """"""
         self.assertEqual(self.grade.p(0.4), 0.37)
 
     def test_P_X_e(self):
-        ""
+        """"""
         self.assertEqual(self.grade.P_X_e(), 0.25)
 
     def test_max_marginal_e(self):
-        ""
+        """"""
         self.assertEqual(self.grade.max_marginal_e(), 0.25)
 
     def test_min_marginal_e(self):
-        ""
+        """"""
         self.assertEqual(self.grade.min_marginal_e(), 0.25)
 
     def test_marginal_over(self):
-        ""
+        """"""
         eval_value = 0.2
         margover = self.grade.marginal_over(eval_value, self.dice)
         self.assertEqual(margover, 3.5 * 0.25)
 
     def test_marginal_over_evidence_key(self):
-        ""
+        """"""
         margover = self.grade.marginal_over_evidence_key(self.dice)
         self.assertEqual(margover, 3.5 * 0.25)
 
@@ -144,9 +152,10 @@ class NumCatRVariableTest(unittest.TestCase):
         self.assertEqual(round(self.dice.variance(), 3), 2.917)
 
     def test_standard_deviation(self):
-        ""
+        """"""
         self.assertEqual(
-            round(self.dice.standard_deviation(), 3), round(math.sqrt(2.917), 3)
+            round(self.dice.standard_deviation(), 3),
+            round(math.sqrt(2.917), 3),
         )
 
 

@@ -2,15 +2,24 @@
 Abstract Node of a graph
 """
 from abc import ABC, abstractmethod
-from typing import Dict, List, Tuple, Optional, NewType, Callable, Set
-from typing import Union, FrozenSet
-from enum import Enum
 from collections import namedtuple
 from copy import deepcopy
+from enum import Enum
+from typing import (
+    Callable,
+    Dict,
+    FrozenSet,
+    List,
+    NewType,
+    Optional,
+    Set,
+    Tuple,
+    Union,
+)
 
 
 def type_check_msg(ival, itype, mname: str):
-    ""
+    """"""
     if isinstance(ival, itype) is False:
         itype2 = str(type(ival))
         mes = (
@@ -18,16 +27,16 @@ def type_check_msg(ival, itype, mname: str):
             + "() method must return "
             + itype.__name__
             + " as type, but it returns "
-            + itype
+            + itype2
         )
         raise TypeError(mes)
 
 
 class AbstractInfo(ABC):
-    ""
+    """"""
 
     def __init__(self, *args, **kwargs):
-        ""
+        """"""
         self.check_types()
 
     @abstractmethod
@@ -35,7 +44,7 @@ class AbstractInfo(ABC):
         raise NotImplementedError
 
     def check_types(self) -> bool:
-        ""
+        """"""
         ival = self.id()
         type_check_msg(ival, str, "id")
         return True
@@ -69,7 +78,7 @@ class AbstractGraphObj(AbstractInfo):
         raise NotImplementedError
 
     def check_types(self) -> bool:
-        ""
+        """"""
         s = self.__str__()
         b = self.__eq__()
         d = self.data()
@@ -85,14 +94,14 @@ class EdgeType(Enum):
 
 
 class AbstractNode(AbstractGraphObj):
-    ""
+    """"""
 
 
 class AbstractEdge(AbstractGraphObj):
     "abstract edge object"
 
     def __init__(self, *args, **kwargs):
-        ""
+        """"""
         super().__init__(*args, **kwargs)
         self.check_types()
 
@@ -132,7 +141,7 @@ class AbstractEdge(AbstractGraphObj):
         raise NotImplementedError
 
     def check_types(self) -> bool:
-        ""
+        """"""
         tv = self.type()
         type_check_msg(tv, EdgeType, "type")
 
@@ -192,7 +201,7 @@ class AbstractGraph(AbstractGraphObj):
         raise NotImplementedError
 
     def check_types(self) -> bool:
-        ""
+        """"""
         vtypes = all(
             [
                 isinstance(vid, str) and isinstance(v, AbstractNode)
@@ -206,14 +215,18 @@ class AbstractGraph(AbstractGraphObj):
             ]
         )
         if vtypes is False:
-            mes = "self.V property must return Dict[str, AbstractNode] it fails "
+            mes = (
+                "self.V property must return Dict[str, AbstractNode] it fails "
+            )
             mes += " for the following test:\n"
             mes += "[isinstance(vid, str) and isinstance(v, AbstractNode) "
             mes += "for vid, v in self.V.items()]"
             raise TypeError(mes)
 
         if etypes is False:
-            mes = "self.E property must return Dict[str, AbstractEdge] it fails "
+            mes = (
+                "self.E property must return Dict[str, AbstractEdge] it fails "
+            )
             mes += " for the following test:\n"
             mes += "[isinstance(vid, str) and isinstance(v, AbstractEdge) "
             mes += "for vid, v in self.E.items()]"
@@ -221,7 +234,7 @@ class AbstractGraph(AbstractGraphObj):
 
 
 class AbstractTree(AbstractGraph):
-    ""
+    """"""
 
     def __init__(self, *args, **kwargs):
         self.check_types()
@@ -232,32 +245,32 @@ class AbstractTree(AbstractGraph):
         raise NotImplementedError
 
     def check_types(self) -> bool:
-        ""
+        """"""
         r = self.root
         type_check_msg(r, AbstractNode, "property root")
         return True
 
 
 class AbstractPath(AbstractGraph):
-    ""
+    """"""
 
     def __init__(self, *args, **kwargs):
-        ""
+        """"""
         self.check_types()
 
     @abstractmethod
     def length(self) -> int:
-        ""
+        """"""
         raise NotImplementedError
 
     @abstractmethod
     def node_list(self) -> List[AbstractNode]:
-        ""
+        """"""
         raise NotImplementedError
 
     @abstractmethod
     def endvertices(self) -> Tuple[AbstractNode, AbstractNode]:
-        ""
+        """"""
         raise NotImplementedError
 
     def check_types(self):
@@ -284,13 +297,13 @@ class AbstractPath(AbstractGraph):
             mes += "members which subclass AbstractNode"
             raise TypeError(mes)
         #
-        l = self.length()
-        type_check_msg(l, int, "length")
+        l_path = self.length()
+        type_check_msg(l_path, int, "length")
 
 
 class AbstractUndiGraph(AbstractGraph):
-    ""
+    """"""
 
 
 class AbstractDiGraph(AbstractGraph):
-    ""
+    """"""

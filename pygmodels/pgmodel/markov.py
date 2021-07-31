@@ -1,19 +1,20 @@
 """!
 Markov network
 """
+import pdb
+from typing import Optional, Set, Tuple
+from uuid import uuid4
+
 from pygmodels.gmodel.undigraph import UndiGraph
+from pygmodels.graphf.graphops import BaseGraphOps
 from pygmodels.gtype.edge import Edge
-from pygmodels.pgmtype.randomvariable import (
-    NumCatRVariable,
-    RandomVariable,
-    NumericValue,
-)
 from pygmodels.pgmtype.factor import Factor
 from pygmodels.pgmtype.pgmodel import PGModel
-from pygmodels.graphf.graphops import BaseGraphOps
-from typing import Set, Optional, Tuple
-from uuid import uuid4
-import pdb
+from pygmodels.pgmtype.randomvariable import (
+    NumCatRVariable,
+    NumericValue,
+    RandomVariable,
+)
 
 
 class MarkovNetwork(PGModel, UndiGraph):
@@ -155,7 +156,9 @@ class MarkovNetwork(PGModel, UndiGraph):
 
         \endcode
         """
-        super().__init__(gid=gid, nodes=nodes, edges=edges, data=data, factors=factors)
+        super().__init__(
+            gid=gid, nodes=nodes, edges=edges, data=data, factors=factors
+        )
 
     @classmethod
     def from_undigraph(cls, udi: UndiGraph):
@@ -195,7 +198,7 @@ class MarkovNetwork(PGModel, UndiGraph):
          >>> ad = Edge(
          >>>     "ad", start_node=a, end_node=d, edge_type=EdgeType.UNDIRECTED
          >>> )
-            
+
          >>> bc = Edge(
          >>>     "bc", start_node=b, end_node=c, edge_type=EdgeType.UNDIRECTED
          >>> )
@@ -214,7 +217,9 @@ class MarkovNetwork(PGModel, UndiGraph):
         """
         for n in BaseGraphOps.nodes(udi):
             if not isinstance(n, RandomVariable):
-                raise ValueError("Nodes are not an instance of random variable")
+                raise ValueError(
+                    "Nodes are not an instance of random variable"
+                )
         fs: Set[Factor] = set()
         maximal_cliques = udi.find_maximal_cliques()
         for clique in maximal_cliques:
@@ -441,8 +446,10 @@ class ConditionalRandomField(MarkovNetwork):
         return self.ovars
 
     @classmethod
-    def from_markov_network(cls, mn: MarkovNetwork, targets: Set[NumCatRVariable]):
-        ""
+    def from_markov_network(
+        cls, mn: MarkovNetwork, targets: Set[NumCatRVariable]
+    ):
+        """"""
         mnodes = mn.nodes()
         if targets.issubset(mnodes) is False:
             raise ValueError("target variables are not a subset of network")

@@ -1,13 +1,14 @@
 """!
 Path in a given graph
 """
-from typing import Set, Optional, Callable, List, Tuple, Dict, Union
+import math
+from typing import Callable, Dict, List, Optional, Set, Tuple, Union
+from uuid import uuid4
+
+from pygmodels.gmodel.graph import Graph
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
-from pygmodels.gmodel.graph import Graph
 from pygmodels.gtype.queue import PriorityQueue
-from uuid import uuid4
-import math
 
 
 class Path(Graph):
@@ -16,7 +17,7 @@ class Path(Graph):
     """
 
     def __init__(self, gid: str, data={}, edges: List[Edge] = None):
-        ""
+        """"""
         nodes = None
         if edges is not None:
             nodes = set()
@@ -29,7 +30,9 @@ class Path(Graph):
                 if eend not in ns:
                     ns.append(eend)
 
-        super().__init__(gid=gid, data=data, nodes=set(nodes), edges=set(edges))
+        super().__init__(
+            gid=gid, data=data, nodes=set(nodes), edges=set(edges)
+        )
         self._node_list = ns
         self._edge_list = edges
 
@@ -52,7 +55,7 @@ class Path(Graph):
         return self._node_list
 
     def endvertices(self) -> Tuple[Node, Node]:
-        ""
+        """"""
         vs = self.node_list()
         if len(vs) == 1:
             return (vs[0], vs[0])
@@ -98,7 +101,9 @@ class Path(Graph):
                     # node is already in frontier
                     ckey = frontier.key(child, f=lambda x: x["state"])
                     if ckey > cnode["cost"]:
-                        frontier.insert(cnode["cost"], cnode, f=lambda x: x["state"])
+                        frontier.insert(
+                            cnode["cost"], cnode, f=lambda x: x["state"]
+                        )
 
     @classmethod
     def from_ucs_result(cls, ucs_solution):
@@ -125,7 +130,7 @@ class Path(Graph):
         costfn: Callable[[Edge, float], float] = lambda x, y: y + 1,
         is_min=True,
     ):
-        ""
+        """"""
         ucs_solution = cls.uniform_cost_search(
             goal=goal,
             start=start,
@@ -143,10 +148,16 @@ class Cycle(Path):
     """
 
     def __init__(
-        self, gid: str, data={}, nodes: List[Node] = None, edges: List[Edge] = None
+        self,
+        gid: str,
+        data={},
+        nodes: List[Node] = None,
+        edges: List[Edge] = None,
     ):
-        ""
+        """"""
         super().__init__(gid, data, nodes, edges)
         vs = self.vertices()
         if vs[0] != vs[-1]:
-            raise ValueError("The first and last vertice of a cycle must be same")
+            raise ValueError(
+                "The first and last vertice of a cycle must be same"
+            )

@@ -1,18 +1,17 @@
 """!
 Traverse graphs in some fashion
 """
-from typing import Set, Optional, Callable, List, Tuple, Dict, Union
-from pygmodels.gtype.abstractobj import AbstractGraph
-from pygmodels.graphf.bgraphops import BaseGraphOps
-
-from pygmodels.gtype.node import Node
-from pygmodels.gtype.edge import Edge
 import math
+from typing import Callable, Dict, List, Optional, Set, Tuple, Union
+
+from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.gtype.abstractobj import AbstractGraph
+from pygmodels.gtype.edge import Edge
+from pygmodels.gtype.node import Node
 
 
 class BaseGraphTraverser:
-    """!
-    """
+    """!"""
 
     @staticmethod
     def dfs_forest(
@@ -86,7 +85,8 @@ class BaseGraphTraverser:
                         cycle_info = {
                             "ancestor": vid,
                             "before": u,
-                            "ancestor-first-time-visit": d[vid],
+                            "ancestor-first-time-visit": first_visit,
+                            "ancestor-last-time-visit": last_visit,
                             "current-final-time-visit": f[u],
                         }
                         cycles[u].append(cycle_info)
@@ -111,7 +111,9 @@ class BaseGraphTraverser:
         Ts: Dict[str, Set[str]] = {}
         d: Dict[str, int] = {n: math.inf for n in g.V}
         f: Dict[str, int] = {n: math.inf for n in g.V}
-        cycles: Dict[str, List[Dict[str, Union[str, int]]]] = {n: [] for n in g.V}
+        cycles: Dict[str, List[Dict[str, Union[str, int]]]] = {
+            n: [] for n in g.V
+        }
         component_counter = 0
         #
         for u in g.V:
@@ -163,7 +165,9 @@ class BaseGraphTraverser:
                 if parent is not None:
                     pnode = g.V[parent]
                     eset = eset.union(
-                        BaseGraphOps.edge_by_vertices(g, start=pnode, end=cnode)
+                        BaseGraphOps.edge_by_vertices(
+                            g, start=pnode, end=cnode
+                        )
                     )
             esets[u] = eset
         return esets

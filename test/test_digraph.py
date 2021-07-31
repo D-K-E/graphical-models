@@ -1,16 +1,17 @@
 """!
 Test directed graph object
 """
+import pprint
+import unittest
+
 from pygmodels.gmodel.digraph import DiGraph
-from pygmodels.gtype.node import Node
 from pygmodels.graphf.bgraphops import BaseGraphOps
 from pygmodels.gtype.edge import Edge, EdgeType
-import unittest
-import pprint
+from pygmodels.gtype.node import Node
 
 
 class DiGraphTest(unittest.TestCase):
-    ""
+    """"""
 
     def setUp(self):
         #
@@ -85,7 +86,15 @@ class DiGraphTest(unittest.TestCase):
             "dg2",
             data={"my": "graph", "data": "is", "very": "awesome"},
             nodes=set([self.a, self.b, self.e, self.f]),
-            edges=set([self.ae, self.ab, self.af, self.be, self.ef,]),
+            edges=set(
+                [
+                    self.ae,
+                    self.ab,
+                    self.af,
+                    self.be,
+                    self.ef,
+                ]
+            ),
         )
         # dgraph2 :
         #
@@ -97,7 +106,13 @@ class DiGraphTest(unittest.TestCase):
             "dg3",
             data={"my": "graph", "data": "is", "very": "awesome"},
             nodes=set([self.a, self.b, self.e, self.f]),
-            edges=set([self.ab, self.af, self.be,]),
+            edges=set(
+                [
+                    self.ab,
+                    self.af,
+                    self.be,
+                ]
+            ),
         )
         # dgraph3 :
         #
@@ -126,9 +141,20 @@ class DiGraphTest(unittest.TestCase):
         self.dgraph5 = DiGraph(
             "dg5",
             data={"my": "graph", "data": "is", "very": "awesome"},
-            nodes=set([self.a, self.b, self.c, self.d, self.e, self.f, self.g]),
+            nodes=set(
+                [self.a, self.b, self.c, self.d, self.e, self.f, self.g]
+            ),
             edges=set(
-                [self.ab, self.bc, self.bg, self.cd, self.gd, self.df, self.de, self.ef]
+                [
+                    self.ab,
+                    self.bc,
+                    self.bg,
+                    self.cd,
+                    self.gd,
+                    self.df,
+                    self.de,
+                    self.ef,
+                ]
             ),
         )
         # dgraph 5
@@ -141,7 +167,18 @@ class DiGraphTest(unittest.TestCase):
         self.dgraph6 = DiGraph(
             "dg6",
             data={"my": "graph", "data": "is", "very": "awesome"},
-            nodes=set([self.a, self.b, self.c, self.d, self.e, self.f, self.g, self.h]),
+            nodes=set(
+                [
+                    self.a,
+                    self.b,
+                    self.c,
+                    self.d,
+                    self.e,
+                    self.f,
+                    self.g,
+                    self.h,
+                ]
+            ),
             edges=set(
                 [
                     self.ab,
@@ -168,7 +205,7 @@ class DiGraphTest(unittest.TestCase):
         return self.assertEqual(self.dgraph1.id(), "dg1")
 
     def test_find_shortest_path(self):
-        ""
+        """"""
         path_props = self.dgraph4.find_shortest_paths(n=self.n1)
         self.assertEqual(
             path_props["path-set"], set([self.n1, self.n2, self.n3, self.n4])
@@ -191,25 +228,25 @@ class DiGraphTest(unittest.TestCase):
         self.assertEqual(v, 2)
 
     def test_outgoing_edges_of_1(self):
-        ""
+        """"""
         out_edges1 = BaseGraphOps.outgoing_edges_of(self.graph_2, self.n1)
         comp1 = frozenset([self.e1, self.e4])
         self.assertEqual(out_edges1, comp1)
 
     def test_outgoing_edges_of_2(self):
-        ""
+        """"""
         out_edges2 = BaseGraphOps.outgoing_edges_of(self.graph_2, self.n2)
         comp2 = frozenset([self.e2])
         self.assertEqual(out_edges2, comp2)
 
     def test_incoming_edges_of_1(self):
-        ""
+        """"""
         out_edges1 = BaseGraphOps.incoming_edges_of(self.graph_2, self.n1)
         comp1 = frozenset()
         self.assertEqual(out_edges1, comp1)
 
     def test_incoming_edges_of_2(self):
-        ""
+        """"""
         out_edges2 = BaseGraphOps.incoming_edges_of(self.graph_2, self.n2)
         comp2 = frozenset([self.e1])
         self.assertEqual(out_edges2, comp2)

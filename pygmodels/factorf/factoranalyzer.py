@@ -5,9 +5,10 @@ The main objective of these functions is to analyze a given factor
 or a set of factors.
 """
 
-from typing import Set, Callable, Optional, List, Union, Tuple, FrozenSet
-from pygmodels.pgmtype.factor import Factor, BaseFactor
+from typing import Callable, FrozenSet, List, Optional, Set, Tuple, Union
+
 from pygmodels.pgmtype.abstractpgm import AbstractFactor
+from pygmodels.pgmtype.factor import BaseFactor, Factor
 from pygmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
 
 
@@ -17,7 +18,7 @@ class FactorAnalyzer:
     """
 
     def __init__(self, f):
-        ""
+        """"""
         if isinstance(f, AbstractFactor):
             fac = Factor.from_abstract_factor(f)
         elif isinstance(f, BaseFactor):
@@ -35,7 +36,7 @@ class FactorAnalyzer:
         comp_fn: Callable[[float, float], bool] = lambda phi_s, mx: phi_s > mx,
         comp_v: float = float("-inf"),
     ):
-        ""
+        """"""
         if not isinstance(f, Factor):
             raise TypeError("The object must be of Factor type")
 
@@ -262,7 +263,7 @@ class FactorAnalyzer:
         """!
         \brief Normalize a given factorization result by dividing it to the
         value of partition function value Z
-        
+
         \param phi_result the preference value to be normalized with partition
         constant
 

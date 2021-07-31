@@ -2,13 +2,17 @@
 \file bgraphops.py BaseGraph operations implemented for BaseGraph and its subclasses
 """
 
-from typing import Set, Optional, Callable, List, Tuple, Union, Dict, FrozenSet
-from pygmodels.gtype.abstractobj import AbstractGraph, AbstractUndiGraph
-from pygmodels.gtype.abstractobj import AbstractGraph, AbstractDiGraph
-from pygmodels.gtype.abstractobj import AbstractNode, AbstractEdge
-
-from uuid import uuid4
 import math
+from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
+from uuid import uuid4
+
+from pygmodels.gtype.abstractobj import (
+    AbstractDiGraph,
+    AbstractEdge,
+    AbstractGraph,
+    AbstractNode,
+    AbstractUndiGraph,
+)
 
 
 class BaseGraphOps:
@@ -18,7 +22,8 @@ class BaseGraphOps:
 
     @staticmethod
     def get_nodes(
-        ns: Optional[Set[AbstractNode]], es: Optional[Set[AbstractEdge]],
+        ns: Optional[Set[AbstractNode]],
+        es: Optional[Set[AbstractEdge]],
     ) -> Dict[str, AbstractNode]:
         """!
         \brief Obtain all nodes in a single set.
@@ -52,7 +57,9 @@ class BaseGraphOps:
 
         For each node we register the edges.
         """
-        _nodes = BaseGraphOps.get_nodes(ns=set(g.V.values()), es=set(g.E.values()))
+        _nodes = BaseGraphOps.get_nodes(
+            ns=set(g.V.values()), es=set(g.E.values())
+        )
         gdata = {}
         for vertex in _nodes.values():
             gdata[vertex.id()] = []
@@ -201,13 +208,15 @@ class BaseGraphOps:
         return set([g.E[eid] for eid in edge_ids])
 
     @staticmethod
-    def outgoing_edges_of(g: AbstractGraph, n: AbstractNode) -> FrozenSet[AbstractEdge]:
+    def outgoing_edges_of(
+        g: AbstractGraph, n: AbstractNode
+    ) -> FrozenSet[AbstractEdge]:
         """!
         \brief obtain the outgoing edge set of a given node.
 
         Outgoing edge set means all edges that start with the given node
-        and end in another node. This information is mostly trivial for 
-        undirected graphs but becomes important for distinguishing 
+        and end in another node. This information is mostly trivial for
+        undirected graphs but becomes important for distinguishing
         parents from children in directed graphs.
 
         \param n node whose adjacent edges we are interested in
@@ -251,7 +260,9 @@ class BaseGraphOps:
         return frozenset(eset)
 
     @staticmethod
-    def incoming_edges_of(g: AbstractGraph, n: AbstractNode) -> FrozenSet[AbstractEdge]:
+    def incoming_edges_of(
+        g: AbstractGraph, n: AbstractNode
+    ) -> FrozenSet[AbstractEdge]:
         """!
         \brief obtain incoming edges of a given graph
 

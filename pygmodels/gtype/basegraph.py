@@ -2,15 +2,19 @@
 \file basegraph.py Absolute basic graph which implements the most basic
 functionality for doing graph theoretical operations
 """
-from pygmodels.gtype.abstractobj import AbstractGraph, AbstractEdge
-from pygmodels.gtype.abstractobj import AbstractNode
-from pygmodels.gtype.graphobj import GraphObject
+from typing import Callable, Dict, FrozenSet, List, Optional, Set, Union
+from uuid import uuid4
+
 from pygmodels.graphf.bgraphops import BaseGraphOps
 from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
+from pygmodels.gtype.abstractobj import (
+    AbstractEdge,
+    AbstractGraph,
+    AbstractNode,
+)
 from pygmodels.gtype.edge import Edge, EdgeType
+from pygmodels.gtype.graphobj import GraphObject
 from pygmodels.gtype.node import Node
-from typing import Set, Optional, Union, Dict, Callable, FrozenSet, List
-from uuid import uuid4
 
 
 class BaseGraph(GraphObject, AbstractGraph):
@@ -19,7 +23,11 @@ class BaseGraph(GraphObject, AbstractGraph):
     """
 
     def __init__(
-        self, gid: str, data={}, nodes: Set[Node] = None, edges: Set[Edge] = None
+        self,
+        gid: str,
+        data={},
+        nodes: Set[Node] = None,
+        edges: Set[Edge] = None,
     ):
         super().__init__(oid=gid, odata=data)
         self._nodes: Optional[Dict[str, Node]] = None
@@ -69,17 +77,17 @@ class BaseGraph(GraphObject, AbstractGraph):
         >>> ae = Edge(
         >>>    "ae", start_node=a, end_node=e, edge_type=EdgeType.UNDIRECTED
         >>> )
-        >>> g1 = Graph("graph", 
+        >>> g1 = Graph("graph",
         >>>     data={"my": "graph", "data": "is", "very": "awesome"},
         >>>     nodes=set([a, e]),
         >>>     edges=set([ae])
         >>> )
-        >>> g2 = Graph("other", 
+        >>> g2 = Graph("other",
         >>>     data={"my": "graph", "data": "is", "very": "awesome"},
         >>>     nodes=set([a, e]),
         >>>     edges=set([ae])
         >>> )
-        >>> g3 = Graph("graph", 
+        >>> g3 = Graph("graph",
         >>>     data={"my": "graph", "data": "is", "very": "awesome"},
         >>>     nodes=set([a, e, b]),
         >>>     edges=set([ae])
@@ -107,7 +115,9 @@ class BaseGraph(GraphObject, AbstractGraph):
             + "--"
             + "!!".join([str(n) for n in self._edges])
             + "--"
-            + "::".join([str(k) + "-" + str(v) for k, v in self.data().items()])
+            + "::".join(
+                [str(k) + "-" + str(v) for k, v in self.data().items()]
+            )
         )
 
     def __hash__(self):
@@ -210,8 +220,8 @@ class BaseGraph(GraphObject, AbstractGraph):
 
         gdata = BaseGraphOps.to_edgelist(self)
 
-        n1_edge_ids = set(self.gdata[n1.id()])
-        n2_edge_ids = set(self.gdata[n2.id()])
+        n1_edge_ids = set(gdata[n1.id()])
+        n2_edge_ids = set(gdata[n2.id()])
         edge_ids = n1_edge_ids.intersection(n2_edge_ids)
         # filter self loops
         edges = set([self.E[e] for e in edge_ids])
@@ -275,9 +285,10 @@ class BaseGraph(GraphObject, AbstractGraph):
         return BaseGraph(gid=str(uuid4()), nodes=nodes, edges=edges)
 
     @classmethod
-    def based_on_node_set(cls, edges: Set[AbstractEdge], nodes: Set[AbstractNode]):
-        """!
-        """
+    def based_on_node_set(
+        cls, edges: Set[AbstractEdge], nodes: Set[AbstractNode]
+    ):
+        """!"""
         eset: Set[AbstractEdge] = set(
             [e for e in edges if set([e.start(), e.end()]).issubset(nodes)]
         )

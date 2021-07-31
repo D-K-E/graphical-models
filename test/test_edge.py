@@ -2,15 +2,16 @@
 Edge unit tests
 """
 import unittest
+
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
 
 
 class EdgeTest(unittest.TestCase):
-    ""
+    """"""
 
     def setUp(self):
-        ""
+        """"""
         n1 = Node("m1", {})
         n2 = Node("m2", {})
         self.dedge = Edge(
@@ -29,11 +30,11 @@ class EdgeTest(unittest.TestCase):
         )
 
     def test_id(self):
-        ""
+        """"""
         self.assertEqual(self.uedge.id(), "uedge")
 
     def test_type(self):
-        ""
+        """"""
         self.assertEqual(self.uedge.type(), EdgeType.UNDIRECTED)
 
     def test_start(self):
@@ -46,11 +47,11 @@ class EdgeTest(unittest.TestCase):
         self.assertEqual(self.uedge.node_ids(), set(["m1", "m2"]))
 
     def test_is_endvertice_true(self):
-        ""
+        """"""
         positive = self.uedge.is_endvertice(Node("m1", {}))
         self.assertEqual(positive, True)
 
     def test_is_endvertice_false(self):
-        ""
+        """"""
         negative = self.uedge.is_endvertice(Node("m3", {}))
         self.assertEqual(negative, False)

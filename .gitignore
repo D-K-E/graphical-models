@@ -133,3 +133,6 @@ docs/
 
 # by viva
 profiles/
+
+# by viva
+.isort.cfg

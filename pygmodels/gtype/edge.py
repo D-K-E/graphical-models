@@ -5,10 +5,11 @@
 \see \link graphgroup Graph Object \endlink edgegroup nodegroup
 
 """
-from typing import Set, Union, FrozenSet
+from typing import FrozenSet, Set, Union
+
 from pygmodels.gtype.abstractobj import AbstractEdge, EdgeType
-from pygmodels.gtype.node import Node
 from pygmodels.gtype.graphobj import GraphObject
+from pygmodels.gtype.node import Node
 
 
 class Edge(GraphObject, AbstractEdge):
@@ -81,7 +82,9 @@ class Edge(GraphObject, AbstractEdge):
             + "--"
             + str(self.type())
             + "--"
-            + "::".join([str(k) + "-" + str(v) for k, v in self.data().items()])
+            + "::".join(
+                [str(k) + "-" + str(v) for k, v in self.data().items()]
+            )
             + "--"
             + str(self.start_node)
             + "--"
@@ -106,7 +109,7 @@ class Edge(GraphObject, AbstractEdge):
     def directed(
         cls, eid: str, start_node: Node, end_node: Node, data={}
     ) -> AbstractEdge:
-        ""
+        """"""
         return Edge(
             eid,
             start_node=start_node,
@@ -116,8 +119,10 @@ class Edge(GraphObject, AbstractEdge):
         )
 
     @classmethod
-    def undirected(cls, eid, start_node: Node, end_node: Node, data={}) -> AbstractEdge:
-        ""
+    def undirected(
+        cls, eid, start_node: Node, end_node: Node, data={}
+    ) -> AbstractEdge:
+        """"""
         return Edge(
             eid,
             start_node=start_node,
@@ -139,8 +144,7 @@ class Edge(GraphObject, AbstractEdge):
         return self.start_node
 
     def is_start(self, n: Union[Node, str]) -> bool:
-        """!
-        """
+        """!"""
         if self.type() == EdgeType.UNDIRECTED:
             return self.is_endvertice(n)
         if isinstance(n, Node):
@@ -154,8 +158,7 @@ class Edge(GraphObject, AbstractEdge):
         return False
 
     def is_end(self, n: Union[Node, str]) -> bool:
-        """!
-        """
+        """!"""
         if self.type() == EdgeType.UNDIRECTED:
             return self.is_endvertice(n)
         if isinstance(n, Node):
@@ -181,13 +184,11 @@ class Edge(GraphObject, AbstractEdge):
         return self.end_node
 
     def type(self) -> EdgeType:
-        """!
-        """
+        """!"""
         return self.etype
 
     def set_type(self, etype: EdgeType):
-        """!
-        """
+        """!"""
         self.etype = etype
 
     def node_ids(self) -> FrozenSet[str]:
@@ -210,8 +211,7 @@ class Edge(GraphObject, AbstractEdge):
             return n.id() in ids
 
     def get_other(self, n: Union[Node, str]) -> Node:
-        """!
-        """
+        """!"""
         if not self.is_endvertice(n):
             raise ValueError("node is not an end vertex")
         cmpv: str = n if isinstance(n, str) else n.id()

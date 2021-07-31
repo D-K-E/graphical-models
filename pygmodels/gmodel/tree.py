@@ -2,17 +2,18 @@
 Path in a given graph
 """
 
-from typing import Set, Optional, Callable, List, Tuple, Dict, Union, Any
-from pygmodels.gtype.edge import Edge, EdgeType
-from pygmodels.gmodel.path import Path
-from pygmodels.gtype.node import Node
-from pygmodels.gtype.basegraph import BaseGraph
-from pygmodels.gtype.abstractobj import AbstractTree
-from pygmodels.graphf.graphtraverser import BaseGraphTraverser
-from pygmodels.graphf.bgraphops import BaseGraphOps
-from pygmodels.gtype.queue import PriorityQueue
-from uuid import uuid4
 import math
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
+from uuid import uuid4
+
+from pygmodels.gmodel.path import Path
+from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.graphf.graphtraverser import BaseGraphTraverser
+from pygmodels.gtype.abstractobj import AbstractTree
+from pygmodels.gtype.basegraph import BaseGraph
+from pygmodels.gtype.edge import Edge, EdgeType
+from pygmodels.gtype.node import Node
+from pygmodels.gtype.queue import PriorityQueue
 
 
 class Tree(BaseGraph, AbstractTree):
@@ -21,7 +22,7 @@ class Tree(BaseGraph, AbstractTree):
     """
 
     def __init__(self, gid: str, data={}, edges: Set[Edge] = None):
-        ""
+        """"""
         nodes = None
         if edges is not None:
             nodes = set()
@@ -34,9 +35,15 @@ class Tree(BaseGraph, AbstractTree):
         self.__root = None
         es = [e.type() for e in self.E.values()]
         if es[0] == EdgeType.DIRECTED:
-            egen = lambda x: BaseGraphOps.outgoing_edges_of(self, x)
+
+            def egen(x):
+                return BaseGraphOps.outgoing_edges_of(self, x)
+
         else:
-            egen = lambda x: BaseGraphOps.edges_of(self, x)
+
+            def egen(x):
+                return BaseGraphOps.edges_of(self, x)
+
         self.paths: Dict[
             str, Union[dict, set]
         ] = BaseGraphTraverser.find_shortest_paths(
@@ -47,26 +54,28 @@ class Tree(BaseGraph, AbstractTree):
 
     @classmethod
     def from_node_tuples(cls, ntpls: Set[Tuple[Node, Node, EdgeType]]):
-        ""
+        """"""
         edges: Set[Edge] = set()
-        root = None
 
         for e in ntpls:
             child = e[0]
             parent = e[1]
             edge = Edge(
-                edge_id=str(uuid4()), start_node=parent, end_node=child, edge_type=e[2]
+                edge_id=str(uuid4()),
+                start_node=parent,
+                end_node=child,
+                edge_type=e[2],
             )
             edges.add(edge)
         return Tree(gid=str(uuid4()), edges=edges)
 
     @classmethod
     def from_edgeset(cls, eset: Set[Edge]):
-        ""
+        """"""
         return Tree(gid=str(uuid4()), edges=eset)
 
     def node_table(self):
-        ""
+        """"""
         node_table = {v: {"child": False, "parent": False} for v in self.V}
         for e in self.E.values():
             estart_id = e.start().id()
@@ -77,7 +86,7 @@ class Tree(BaseGraph, AbstractTree):
         return node_table
 
     def get_root(self):
-        ""
+        """"""
         node_table = self.node_table()
         root_ids = [
             k
@@ -87,7 +96,7 @@ class Tree(BaseGraph, AbstractTree):
         return self.V[root_ids[0]]
 
     def leaves(self) -> Set[Node]:
-        ""
+        """"""
         node_table = self.node_table()
         #
         leave_ids = [
@@ -99,21 +108,22 @@ class Tree(BaseGraph, AbstractTree):
 
     @property
     def root(self) -> Node:
-        ""
+        """"""
         if self.__root is None:
             self.__root = self.get_root()
         return self.__root
 
     def height_of(self, n: Node) -> int:
-        """!
-        """
+        """!"""
         if not BaseGraphOps.is_in(self, n):
             raise ValueError("node not in tree")
         nid = n.id()
         return self.topsort[nid]
 
-    def _is_closure_of(self, x: Node, y: Node, fn: Callable[[int, int], bool]) -> bool:
-        ""
+    def _is_closure_of(
+        self, x: Node, y: Node, fn: Callable[[int, int], bool]
+    ) -> bool:
+        """"""
         xheight = self.height_of(x)
         yheight = self.height_of(y)
         f = fn(xheight, yheight)
@@ -152,24 +162,28 @@ class Tree(BaseGraph, AbstractTree):
         """
         return self.is_set_of(n, fn=self.is_downclosure_of)
 
-    def is_set_of(self, n: Node, fn: Callable[[Node, Node], bool]) -> Set[Node]:
+    def is_set_of(
+        self, n: Node, fn: Callable[[Node, Node], bool]
+    ) -> Set[Node]:
         nodes = BaseGraphOps.nodes(self)
         nset = set([y for y in nodes if fn(n, y) is True])
         return nset
 
     def less_than_or_equal(self, first: Node, second: Node) -> bool:
-        ""
+        """"""
         return self.height_of(first) <= self.height_of(second)
 
     def greater_than_or_equal(self, first: Node, second: Node) -> bool:
-        ""
+        """"""
         return self.height_of(first) >= self.height_of(second)
 
     def nodes_per_level(self, level: int) -> Set[Node]:
         """!
         extract nodes of certain level in tree
         """
-        return set([n for n in BaseGraphOps.nodes(self) if self.height_of(n) == level])
+        return set(
+            [n for n in BaseGraphOps.nodes(self) if self.height_of(n) == level]
+        )
 
     def extract_path_info(
         self,
@@ -181,7 +195,7 @@ class Tree(BaseGraph, AbstractTree):
         costfn: Callable[[Edge, float], float] = lambda x, y: y + 1.0,
         is_min=True,
     ):
-        ""
+        """"""
         if (
             BaseGraphOps.is_in(self, start) is False
             or BaseGraphOps.is_in(self, end) is False
@@ -224,7 +238,9 @@ class Tree(BaseGraph, AbstractTree):
         """!
         Extract path from tree
         """
-        solution = self.extract_path_info(start, end, filter_fn, costfn, is_min)
+        solution = self.extract_path_info(
+            start, end, filter_fn, costfn, is_min
+        )
         return Path.from_ucs_result(solution)
 
     @classmethod
@@ -319,7 +335,7 @@ class Tree(BaseGraph, AbstractTree):
         counter: int,
         generative_fn: Callable[[Node], Set[Node]],
     ):
-        ""
+        """"""
         counter += 1
         num[v] = counter
         visited[v] = True
@@ -350,7 +366,7 @@ class Tree(BaseGraph, AbstractTree):
         aset: Set[str],
         generative_fn: Callable[[Node], Set[Node]],
     ):
-        ""
+        """"""
         low[v] = num[v]
         vnode = self.V[v]
         for unode in generative_fn(vnode):

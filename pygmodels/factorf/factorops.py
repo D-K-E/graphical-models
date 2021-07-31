@@ -5,15 +5,15 @@ The main objective of these functions is to operate on a given factor
 or a set of factors.
 """
 
-from typing import Set, Callable, Optional, List, Union, Tuple, FrozenSet
-from pygmodels.pgmtype.factor import Factor, BaseFactor
-from pygmodels.pgmtype.abstractpgm import AbstractFactor
-from pygmodels.factorf.factoranalyzer import FactorAnalyzer
-from pygmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
-
-from itertools import product, combinations
 from functools import reduce as freduce
+from itertools import combinations, product
+from typing import Callable, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
+
+from pygmodels.factorf.factoranalyzer import FactorAnalyzer
+from pygmodels.pgmtype.abstractpgm import AbstractFactor
+from pygmodels.pgmtype.factor import BaseFactor, Factor
+from pygmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
 
 
 class FactorOps:
@@ -22,7 +22,7 @@ class FactorOps:
     """
 
     def __init__(self, f):
-        ""
+        """"""
         if isinstance(f, AbstractFactor):
             fac = Factor.from_abstract_factor(f)
         elif isinstance(f, BaseFactor):
@@ -88,12 +88,14 @@ class FactorOps:
                     prod_s = set(iproduct)
                     if prod_s.issubset(ss) and prod_s.issubset(ost):
                         common = ss.union(ost)
-                        multi = product_fn(f.factor_fn(ss), other.factor_fn(ost))
+                        multi = product_fn(
+                            f.factor_fn(ss), other.factor_fn(ost)
+                        )
                         common_match.add((multi, tuple(common)))
                         prod = accumulator(multi, prod)
 
         def fx(scope_product: Set[Tuple[str, NumericValue]]):
-            ""
+            """"""
             for multip, match in common_match:
                 if set(match) == set(scope_product):
                     return multip
@@ -162,7 +164,7 @@ class FactorOps:
     ) -> Set[Tuple[str, NumericValue]]:
         """!
         \brief filter out assignments that do not belong to context domain
-        
+
         Scans the given set of assignements/evidences and removes those that do
         not belong to the context.
 
@@ -183,7 +185,9 @@ class FactorOps:
 
     @classmethod
     def cls_reduced_by_vars(
-        cls, f: Factor, assignments: Set[Tuple[str, NumericValue]],
+        cls,
+        f: Factor,
+        assignments: Set[Tuple[str, NumericValue]],
     ):
         """!
         Koller, Friedman 2009, p. 111 follows the definition 4.5
@@ -221,18 +225,20 @@ class FactorOps:
         if Y not in f:
             raise ValueError("argument is not in scope of this factor")
 
-        Y_vals = Y.value_set()
+        # Y_vals = Y.value_set()
         products = f.factor_domain()
         fn = f.factor_fn
 
         def psi(scope_product: Set[Tuple[str, NumericValue]]):
-            ""
+            """"""
             s = set(scope_product)
             diffs = set([p for p in products if s.issubset(p) is True])
             return max([fn(d) for d in diffs])
 
         return Factor(
-            gid=str(uuid4()), scope_vars=f.scope_vars().difference({Y}), factor_fn=psi,
+            gid=str(uuid4()),
+            scope_vars=f.scope_vars().difference({Y}),
+            factor_fn=psi,
         )
 
     @classmethod
@@ -266,18 +272,20 @@ class FactorOps:
             msg += " ".join(f.scope_vars())
             raise ValueError(msg)
 
-        Y_vals = Y.value_set()
+        # Y_vals = Y.value_set()
         products = f.factor_domain()
         fn = f.factor_fn
 
         def psi(scope_product: Set[Tuple[str, NumericValue]]):
-            ""
+            """"""
             s = set(scope_product)
             diffs = set([p for p in products if s.issubset(p) is True])
             return sum([fn(d) for d in diffs])
 
         return Factor(
-            gid=str(uuid4()), scope_vars=f.scope_vars().difference({Y}), factor_fn=psi,
+            gid=str(uuid4()),
+            scope_vars=f.scope_vars().difference({Y}),
+            factor_fn=psi,
         )
 
     @classmethod
@@ -310,7 +318,10 @@ class FactorOps:
         Wrapper of FactorOps.cls_product
         """
         return self.cls_product(
-            f=self.factor, other=other, product_fn=product_fn, accumulator=accumulator
+            f=self.factor,
+            other=other,
+            product_fn=product_fn,
+            accumulator=accumulator,
         )
 
     def reduced(self, assignments):
@@ -323,13 +334,17 @@ class FactorOps:
         """!
         Wrapper of FactorOps.cls_reduced_by_value
         """
-        return self.cls_reduced_by_value(f=self.factor, assignments=assignments)
+        return self.cls_reduced_by_value(
+            f=self.factor, assignments=assignments
+        )
 
     def filter_assignments(self, assignments):
         """!
         Wrapper of FactorOps.cls_filter_assignments
         """
-        return self.cls_filter_assignments(f=self.factor, assignments=assignments)
+        return self.cls_filter_assignments(
+            f=self.factor, assignments=assignments
+        )
 
     def reduced_by_vars(self, assignments):
         """!

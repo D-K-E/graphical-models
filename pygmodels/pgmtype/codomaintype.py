@@ -2,19 +2,19 @@
 Different types or aliases for codomains of pgm objects
 """
 
-from typing import Callable, Set, Any, List, Dict, FrozenSet, Tuple
+from typing import Any, Callable, Dict, FrozenSet, List, Set, Tuple
 
 NumericValue = float
 
 
 class Outcome:
     def __init__(self, v):
-        self = v
+        self.data = v
 
 
 class CodomainValue:
     def __init__(self, v):
-        self = v
+        self.data = v
 
 
 class PossibleOutcomes:

@@ -1,26 +1,31 @@
 # simple tests for different queues
 
-from pygmodels.gtype.queue import PriorityQueue
-from pygmodels.gtype.node import Node
-from pygmodels.gtype.edge import Edge, EdgeType
-
 import unittest
+
+from pygmodels.gtype.edge import Edge, EdgeType
+from pygmodels.gtype.node import Node
+from pygmodels.gtype.queue import PriorityQueue
 
 
 class PriorityQueueTest(unittest.TestCase):
-    ""
+    """"""
 
     def setUp(self):
-        """
-        """
+        """ """
         self.n1 = Node("n1", {})
         self.n2 = Node("n2", {})
         self.n3 = Node("n3", {})
         self.e1 = Edge(
-            "e1", start_node=self.n1, end_node=self.n2, edge_type=EdgeType.DIRECTED
+            "e1",
+            start_node=self.n1,
+            end_node=self.n2,
+            edge_type=EdgeType.DIRECTED,
         )
         self.e2 = Edge(
-            "e2", start_node=self.n2, end_node=self.n3, edge_type=EdgeType.DIRECTED
+            "e2",
+            start_node=self.n2,
+            end_node=self.n3,
+            edge_type=EdgeType.DIRECTED,
         )
         self.q = PriorityQueue(is_min=True)
         self.q.insert(2, self.n1)
@@ -32,30 +37,33 @@ class PriorityQueueTest(unittest.TestCase):
         self.qm.insert(1, self.n3)
 
     def test_insert_min(self):
-        ""
+        """"""
         self.minq = PriorityQueue(is_min=True)
         self.minq.insert(2, self.n1)
         self.minq.insert(5, self.n2)
         self.minq.insert(1, self.n3)
-        self.assertEqual(self.minq.queue, [(1, self.n3), (2, self.n1), (5, self.n2)])
+        self.assertEqual(
+            self.minq.queue, [(1, self.n3), (2, self.n1), (5, self.n2)]
+        )
 
     def test_insert_max(self):
-        ""
+        """"""
         self.maxq = PriorityQueue(is_min=False)
         self.maxq.insert(2, self.n1)
         self.maxq.insert(5, self.n2)
         self.maxq.insert(1, self.n3)
         self.assertEqual(
-            self.maxq.queue, list(reversed([(1, self.n3), (2, self.n1), (5, self.n2)]))
+            self.maxq.queue,
+            list(reversed([(1, self.n3), (2, self.n1), (5, self.n2)])),
         )
 
     def test_key(self):
-        ""
+        """"""
         k = self.q.key(self.n1)
         self.assertEqual(k, 2)
 
     def test_values(self):
-        ""
+        """"""
         k = self.q.values(2)
         self.assertEqual(k, set([self.n1]))
 
