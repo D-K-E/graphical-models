@@ -194,8 +194,7 @@ class BaseGraphAlgOps:
         if isinstance(el, AbstractGraph):
             if is_plus is False:
                 nodes = {n for n in g.V.values() if n not in BaseGraphOps.nodes(el)}
-                edges = {n for n in g.E.values() if n not in BaseGraphOps.edges(el)}
-                bg = BaseGraph.based_on_node_set(edges=edges, nodes=nodes)
+                bg = BaseGraph.based_on_node_set(edges=set(g.E.values()), nodes=nodes)
                 bg.update_data(g.data())
                 return bg
             else:

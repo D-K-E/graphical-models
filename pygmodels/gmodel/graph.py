@@ -503,7 +503,7 @@ class Graph(BaseGraph):
         nb_component = self.nb_components()
         bridges: Set[Edge] = set()
         for edge in BaseGraphOps.edges(self):
-            graph = self.from_base_graph(BaseGraphAlgOps.subtract(self, edge))
+            graph = graph_maker(edge)
             if graph.nb_components() > nb_component:
                 bridges.add(edge)
         return bridges
