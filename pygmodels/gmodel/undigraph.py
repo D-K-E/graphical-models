@@ -147,7 +147,7 @@ class UndiGraph(Graph):
         a different graph making function.
         \see Graph.find_articulation_points() for more information
         """
-        gmaker = lambda x: self.from_graph(BaseGraphAlgOps.subtract_node(self, x))
+        gmaker = lambda x: self.from_graph(BaseGraphAlgOps.subtract(self, x))
         return super().find_articulation_points(graph_maker=gmaker)
 
     def find_bridges(self) -> Set[Node]:
