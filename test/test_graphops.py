@@ -16,7 +16,7 @@ import pprint
 import math
 
 
-class BaseGraphAlgSetOps(unittest.TestCase):
+class BaseGraphAlgSetOpsTest(unittest.TestCase):
     ""
 
     def setUp(self):
@@ -104,11 +104,12 @@ class BaseGraphAlgSetOps(unittest.TestCase):
         # a -- b -- e
         #  \
         #   +-----f
+        u2nodes = BaseGraphOps.nodes(self.ugraph2)
 
         self.ugraph4 = BaseGraph(
             "ug4",
             data={"my": "graph", "data": "is", "very": "awesome"},
-            nodes=BaseGraphOps.nodes(self.ugraph2).union(
+            nodes=set(BaseGraphOps.nodes(self.ugraph2)).union(
                 BaseGraphOps.nodes(self.graph_2)
             ),
             edges=BaseGraphOps.edges(self.ugraph2).union(
@@ -200,9 +201,46 @@ class BaseGraphAlgSetOps(unittest.TestCase):
         gs = BaseGraphAlgOps.subtract(self.graph, self.e2)
         self.assertEqual(set(gs.E.values()), set([self.e1]))
 
+    def test_subtract_g(self):
+        n = Node("n646", {})
+        n1 = Node("n647", {})
+        n2 = Node("n648", {})
+        e = Edge("e8", start_node=self.n1, end_node=n, edge_type=EdgeType.UNDIRECTED)
+        gg = BaseGraph(
+            gid="temp", data={}, nodes=set([n, n1, n2]), edges=set([e, self.e1])
+        )
+        g = BaseGraphAlgOps.subtract(self.graph, gg)
+        self.assertEqual(BaseGraphOps.edges(g), set([]))
+        self.assertEqual(BaseGraphOps.nodes(g), set([self.n3, self.n4]))
+
     def test_add_edge(self):
         ""
         g = BaseGraphAlgOps.add(self.graph, self.e3)
         #
         self.assertEqual(set(self.graph.V.values()), set(g.V.values()))
+
+        #
         self.assertEqual(set(self.graph_2.E.values()), set(g.E.values()))
+
+    def test_add_node(self):
+        n = Node("n646", {})
+        g = BaseGraphAlgOps.add(self.graph, n)
+        self.assertEqual(
+            BaseGraphOps.nodes(g), set([self.n1, self.n2, self.n3, self.n4, n])
+        )
+
+    def test_add_graph(self):
+        n = Node("n646", {})
+        n1 = Node("n647", {})
+        n2 = Node("n648", {})
+        e = Edge("e8", start_node=self.n1, end_node=n, edge_type=EdgeType.UNDIRECTED)
+        gg = BaseGraph(gid="temp", data={}, nodes=set([n, n1, n2]), edges=set([e]))
+        g = BaseGraphAlgOps.add(self.graph, gg)
+        self.assertEqual(
+            BaseGraphOps.nodes(g), set([self.n1, self.n2, self.n3, self.n4, n, n1, n2])
+        )
+        self.assertEqual(BaseGraphOps.edges(g), set([e, self.e1, self.e2]))
+
+
+if __name__ == "__main__":
+    unittest.main()
