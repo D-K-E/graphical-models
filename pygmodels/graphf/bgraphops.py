@@ -318,7 +318,7 @@ class BaseGraphOps:
 
         \endcode
         """
-        es: Set[Edge] = set()
+        es: Set[AbstractEdge] = set()
         for e_id in g.E:
             edge = g.E[e_id]
             if edge.is_end(n):

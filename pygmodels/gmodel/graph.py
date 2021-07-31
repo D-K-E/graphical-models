@@ -102,9 +102,6 @@ class Graph(BaseGraph):
         g = BaseGraph.from_edge_node_set(edges=edges, nodes=nodes)
         return cls.from_base_graph(g)
 
-        #
-        self._nodes = {n.id(): n for n in nodes}
-
     @classmethod
     def is_adjacent_of(cls, e1: Edge, e2: Edge) -> bool:
         """!

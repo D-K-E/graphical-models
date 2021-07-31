@@ -224,7 +224,7 @@ class AbstractTree(AbstractGraph):
     ""
 
     def __init__(self, *args, **kwargs):
-        check_types()
+        self.check_types()
 
     @property
     @abstractmethod
@@ -241,7 +241,7 @@ class AbstractTree(AbstractGraph):
 class AbstractPath(AbstractGraph):
     ""
 
-    def __init__(*args, **kwargs):
+    def __init__(self, *args, **kwargs):
         ""
         self.check_types()
 
