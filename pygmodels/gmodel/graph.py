@@ -12,7 +12,6 @@ from pygmodels.gtype.graphobj import GraphObject
 from pygmodels.graphf.graphops import BaseGraphSetOps, BaseGraphAlgOps
 from pygmodels.graphf.bgraphops import BaseGraphOps
 from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
-from pygmodels.gmodel.finitegraph import FiniteGraph
 from pygmodels.gtype.basegraph import BaseGraph
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
