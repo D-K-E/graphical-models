@@ -9,6 +9,10 @@ from pygmodels.gtype.node import Node
 from pygmodels.gtype.edge import Edge, EdgeType
 import unittest
 
+# profiler related
+from pstats import Stats
+import cProfile
+
 
 class GraphTest(unittest.TestCase):
     ""
@@ -174,6 +178,21 @@ class GraphTest(unittest.TestCase):
             nodes=set([self.bb, self.cc, self.dd, self.ee]),
             edges=set([self.bb_cc, self.cc_dd, self.dd_ee, self.ee_bb, self.bb_dd]),
         )
+
+        # initialize profiler
+        self.prof = cProfile.Profile()
+        self.prof.enable()
+        # print("\n<<<<--------")
+
+    def tearDown(self):
+        """
+        """
+        p = Stats(self.prof)
+        p.sort_stats("cumtime")
+        p.dump_stats("profiles/test_graph.py.prof")
+        p.strip_dirs()
+        # p.print_stats()
+        # print("\n--------->>>")
 
     def test_id(self):
         return self.assertEqual(self.graph.id(), "g1")
@@ -392,12 +411,17 @@ class GraphTest(unittest.TestCase):
         cs1ns = BaseGraphOps.nodes(cs[1])
         cs1es = BaseGraphOps.edges(cs[1])
         #
-        u2nodes = BaseGraphOps.nodes(self.ugraph2)
-        u2edges = BaseGraphOps.edges(self.ugraph2)
-        cond1 = u2nodes == cs0ns or u2edges == cs1ns
+        # compare graphs
+        # first component
+        u2nodes = set([self.a, self.b, self.e, self.f])
+        u2edges = set([self.ab, self.af, self.ae, self.be, self.ef])
+
+        # second component
+        g2node = set([self.n1, self.n2, self.n3, self.n4])
+        g2edge = set([self.e1, self.e2, self.e3, self.e4])
         #
-        g2node = BaseGraphOps.nodes(self.graph_2)
-        g2edge = BaseGraphOps.edges(self.graph_2)
+        cond1 = u2nodes == cs0ns or u2nodes == cs1ns
+        #
         cond2 = g2node == cs0ns or g2node == cs1ns
         #
         cond3 = u2edges == cs0es or u2edges == cs1es
@@ -418,5 +442,13 @@ class GraphTest(unittest.TestCase):
         self.assertTrue(c3)
 
 
+def suite():
+    ""
+    s = unittest.TestSuite()
+    s.addTest(GraphTest("Graph Object Tests"))
+    return s
+
+
 if __name__ == "__main__":
-    unittest.main()
+    runner = unittest.TextTestRunner()
+    runner.run(suite())
