@@ -11,16 +11,17 @@ from typing import Set, Optional, Callable, List, Tuple, Union, Dict, FrozenSet
 from pygmodels.gtype.graphobj import GraphObject
 from pygmodels.graphf.graphops import BaseGraphSetOps, BaseGraphAlgOps
 from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
 from pygmodels.gmodel.finitegraph import FiniteGraph
 from pygmodels.gtype.basegraph import BaseGraph
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
-from pygmodels.graphf.gtraverser import GraphTraverser
+from pygmodels.graphf.graphtraverser import BaseGraphTravers
 from uuid import uuid4
 import math
 
 
-class Graph(FiniteGraph):
+class Graph(BaseGraph):
     """!
     Simple finite graph
     \f$ G = (V, E) \f$ where \f$ V \f$ is the vertex set and \f$ E \f$ is the edge set.
@@ -71,7 +72,7 @@ class Graph(FiniteGraph):
         """
         super().__init__(gid=gid, nodes=nodes, edges=edges, data=data)
         #
-        self.props = GraphTraverser.visit_graph_dfs(
+        self.props = BaseGraphTravers.visit_graph_dfs(
             self,
             edge_generator=lambda x: BaseGraphOps.edges_of(self, x),
             check_cycle=True,
@@ -310,7 +311,7 @@ class Graph(FiniteGraph):
 
         \endcode
         """
-        if BaseGraphOps.has_self_loop(self):
+        if BaseGraphAnalyzer.has_self_loop(self):
             raise ValueError("Graph has a self loop")
         #
         n = len(self.gdata)
@@ -502,7 +503,7 @@ class Graph(FiniteGraph):
         nb_component = self.nb_components()
         bridges: Set[Edge] = set()
         for edge in BaseGraphOps.edges(self):
-            graph = BaseGraphAlgOps.subtract(self, edge)
+            graph = self.from_base_graph(BaseGraphAlgOps.subtract(self, edge))
             if graph.nb_components() > nb_component:
                 bridges.add(edge)
         return bridges
@@ -538,10 +539,12 @@ class Graph(FiniteGraph):
         return self.from_base_graph(BaseGraphAlgOps.add(self, a))
 
     def __sub__(
-        self, a: Union[Set[Edge], Set[Node], Node, Edge, GraphObject]
-    ) -> GraphObject:
+        self, a: Union[Set[Edge], Set[Node], Node, Edge, BaseGraph]
+    ) -> BaseGraph:
         """!
         \brief overloads - sign for doing algebraic operations with graph
         objects.
         """
-        return self.from_base_graph(BaseGraphAlgOps.subtract(self, a))
+        bgraph = BaseGraphAlgOps.subtract(self, a)
+
+        return self.from_base_graph(bgraph)

@@ -18,6 +18,28 @@ class BaseGraphSetOps:
     """
 
     @staticmethod
+    def set_op_node_edge(
+        g: AbstractGraph,
+        obj: Union[Set[AbstractNode], Set[AbstractEdge]],
+        op: Callable[
+            [Union[Set[AbstractNode], Set[AbstractEdge]]],
+            Union[Set[AbstractNode], Set[AbstractEdge]],
+        ],
+    ):
+        """!
+        """
+        is_eset = all(isinstance(o, AbstractEdge) for o in obj)
+        if is_eset:
+            edges = BaseGraphOps.edges(g)
+            return op(edges, obj)
+        is_nset = all(isinstance(o, AbstractNode) for o in obj)
+        if is_nset is False:
+            raise TypeError("argument type is not supported: " + type(obj).__name__)
+        #
+        nodes = BaseGraphOps.nodes(g)
+        return op(nodes, obj)
+
+    @staticmethod
     def set_op(
         g: AbstractGraph,
         obj: Union[
@@ -46,42 +68,24 @@ class BaseGraphSetOps:
         edge we provide a set of edges of this graph
         """
         is_node = isinstance(obj, AbstractNode)
-        is_edge = isinstance(obj, AbstractEdge)
-        is_graph = isinstance(obj, AbstractGraph)
-        is_set = isinstance(obj, (set, frozenset))
-        is_eset = False
-        is_nset = False
-        if is_set:
-            is_eset = all(isinstance(o, AbstractEdge) for o in obj)
-            if is_eset is False:
-                is_nset = all(isinstance(o, AbstractNode) for o in obj)
-                if is_nset is False:
-                    raise TypeError(
-                        "argument type is not supported: " + type(obj).__name__
-                    )
-        aset = set()
         if is_node:
-            aset.add(obj)
-            return op(BaseGraphOps.nodes(g), aset)
-        elif is_edge:
-            aset.add(obj)
-            return op(BaseGraphOps.edges(g), aset)
+            return BaseGraphSetOps.set_op_node_edge(g=g, obj=set([obj]), op=op)
+        is_edge = isinstance(obj, AbstractEdge)
+        if is_edge:
+            return BaseGraphSetOps.set_op_node_edge(g=g, obj=set([obj]), op=op)
+        is_set = isinstance(obj, (set, frozenset))
         if is_set:
-            aset = obj
-        if is_eset:
-            return op(BaseGraphOps.edges(g), aset)
-        elif is_nset:
-            return op(BaseGraphOps.nodes(g), aset)
-        elif is_graph:
+            return BaseGraphSetOps.set_op_node_edge(g=g, obj=obj, op=op)
+        is_graph = isinstance(obj, AbstractGraph)
+        if is_graph:
             oeset = BaseGraphOps.edges(obj)
             onset = BaseGraphOps.nodes(obj)
             oedge_set = BaseGraphSetOps.set_op(g, obj=oeset, op=op)
             onode_set = BaseGraphSetOps.set_op(g, obj=onset, op=op)
+            gdata = g.data()
+            gdata.update(obj.data())
             return BaseGraph(
-                gid=str(uuid4()),
-                nodes=onode_set,
-                edges=oedge_set,
-                data=g.data().update(obj.data()),
+                gid=str(uuid4()), nodes=onode_set, edges=oedge_set, data=gdata
             )
         else:
             raise TypeError("argument type is not supported: " + type(obj).__name__)
@@ -179,37 +183,92 @@ class BaseGraphAlgOps:
     ""
 
     @staticmethod
+    def plus_minus_node_edge(
+        g: AbstractGraph,
+        el: Union[Set[AbstractNode], Set[AbstractEdge], AbstractGraph],
+        is_plus=False,
+    ) -> BaseGraph:
+        """!
+        \brief subtraction of elements for G - v cases, see Diestel p. 4
+        """
+        if isinstance(el, AbstractGraph):
+            if is_plus is False:
+                nodes = {n for n in g.V.values() if n not in BaseGraphOps.nodes(el)}
+                edges = {n for n in g.E.values() if n not in BaseGraphOps.edges(el)}
+                bg = BaseGraph.based_on_node_set(edges=edges, nodes=nodes)
+                bg.update_data(g.data())
+                return bg
+            else:
+                nodes = set(g.V.values()).union(BaseGraphOps.nodes(el))
+                edges = set(g.E.values()).union(BaseGraphOps.edges(el))
+                bg = BaseGraph.from_edge_node_set(edges=edges, nodes=nodes)
+                bg.update_data(g.data())
+                return bg
+
+        nset = all(isinstance(e, AbstractNode) for e in el)
+        if nset:
+            if is_plus is False:
+                nodes = {n for n in g.V.values() if n not in el}
+                edges = set(g.E.values())
+                bg = BaseGraph.based_on_node_set(edges=edges, nodes=nodes)
+                bg.update_data(g.data())
+                return bg
+            else:
+                nodes = set(g.V.values()).union(el)
+                edges = set(g.E.values())
+                bg = BaseGraph.based_on_node_set(edges=edges, nodes=nodes)
+                bg.update_data(g.data())
+                return bg
+        eset = all(isinstance(e, AbstractEdge) for e in el)
+        if eset:
+            if is_plus is False:
+                edges = {e for e in g.E.values() if e not in el}
+                bg = BaseGraph.from_edgeset(edges=edges)
+                bg.update_data(g.data())
+                return bg
+            else:
+                edges = set(g.E.values()).union(el)
+                bg = BaseGraph.from_edgeset(edges=edges)
+                bg.update_data(g.data())
+                return bg
+
+    @staticmethod
+    def plus_minus(
+        g: AbstractGraph, el: Union[Set[AbstractNode], Set[AbstractEdge]], is_plus=False
+    ) -> BaseGraph:
+        ""
+        if isinstance(el, AbstractNode):
+            return BaseGraphAlgOps.plus_minus_node_edge(
+                g=g, el=set([el]), is_plus=is_plus
+            )
+        #
+        if isinstance(el, AbstractEdge):
+            return BaseGraphAlgOps.plus_minus_node_edge(
+                g=g, el=set([el]), is_plus=is_plus
+            )
+        #
+        if isinstance(el, (set, frozenset)):
+            return BaseGraphAlgOps.plus_minus_node_edge(g=g, el=el, is_plus=is_plus)
+        #
+        if isinstance(el, AbstractGraph):
+            return BaseGraphAlgOps.plus_minus_node_edge(g=g, el=el, is_plus=is_plus)
+        raise TypeError("argument type is not compatible with operation")
+
+    @staticmethod
     def subtract(
         g: AbstractGraph,
         el: Union[
             Set[AbstractNode],
             Set[AbstractEdge],
-            AbstractNode,
             AbstractEdge,
+            AbstractNode,
             AbstractGraph,
         ],
-    ) -> BaseGraph:
-        ""
-        #
-        res = BaseGraphSetOps.difference(g, el)
-        if isinstance(res, AbstractGraph):
-            return res
-        if isinstance(res, (set, frozenset)):
-            if all(isinstance(r, AbstractNode) for r in res):
-                # delete vertices that contained the deleted node
-                rV = {r.id(): r for r in res}
-                edges = set()
-                for edge in g.E.values():
-                    nids = edge.node_ids()
-                    if all(n in rV for n in nids):
-                        edges.add(edge)
-                return BaseGraph(
-                    gid=str(uuid4()), nodes=res, edges=edges, data=g.data(),
-                )
-            if all(isinstance(r, AbstractEdge) for r in res):
-                return BaseGraph(
-                    gid=str(uuid4()), nodes=set(g.V.values()), edges=res, data=g.data()
-                )
+    ):
+        """!
+        \brief subtraction of elements for G - v cases, see Diestel p. 4
+        """
+        return BaseGraphAlgOps.plus_minus(g=g, el=el, is_plus=False)
 
     @staticmethod
     def added_edge_between_if_none(
@@ -250,19 +309,15 @@ class BaseGraphAlgOps:
     @staticmethod
     def add(
         g: AbstractGraph,
-        el: Union[Set[AbstractNode], Set[AbstractEdge], AbstractNode, AbstractEdge],
+        el: Union[
+            Set[AbstractNode],
+            Set[AbstractEdge],
+            AbstractNode,
+            AbstractEdge,
+            AbstractGraph,
+        ],
     ) -> BaseGraph:
-        ""
-        #
-        res = BaseGraphSetOps.union(g, el)
-        if isinstance(res, AbstractGraph):
-            return res
-        if isinstance(res, (set, frozenset)):
-            if all(isinstance(r, AbstractNode) for r in res):
-                return BaseGraph(
-                    gid=str(uuid4()), nodes=res, edges=set(g.E.values()), data=g.data()
-                )
-            if all(isinstance(r, AbstractEdge) for r in res):
-                return BaseGraph(
-                    gid=str(uuid4()), nodes=set(g.V.values()), edges=res, data=g.data()
-                )
+        """!
+        \brief addition of elements for G + v cases, see Diestel p. 4
+        """
+        return BaseGraphAlgOps.plus_minus(g=g, el=el, is_plus=True)

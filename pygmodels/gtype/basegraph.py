@@ -2,7 +2,8 @@
 \file basegraph.py Absolute basic graph which implements the most basic
 functionality for doing graph theoretical operations
 """
-from pygmodels.gtype.abstractobj import AbstractGraph
+from pygmodels.gtype.abstractobj import AbstractGraph, AbstractEdge
+from pygmodels.gtype.abstractobj import AbstractNode
 from pygmodels.gtype.graphobj import GraphObject
 from pygmodels.graphf.bgraphops import BaseGraphOps
 from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
@@ -34,13 +35,13 @@ class BaseGraph(GraphObject, AbstractGraph):
         else:
             self.is_empty = True
 
-        if BaseGraphAnalyzer.is_trivial(self):
+        is_trivial = BaseGraphAnalyzer.is_trivial(self)
+        if is_trivial:
             msg = "This library is not compatible with computations with trivial graph"
             msg += "\nNodes: "
             msg += str(self._nodes.keys())
             msg += "\nEdges: " + str(self._edges.keys())
             raise ValueError(msg)
-            gid = gid, nodes = nodes, data = data, edges = edges
 
     @classmethod
     def from_abstract_graph(cls, g_: AbstractGraph):
@@ -272,6 +273,15 @@ class BaseGraph(GraphObject, AbstractGraph):
             nodes.add(e.start())
             nodes.add(e.end())
         return BaseGraph(gid=str(uuid4()), nodes=nodes, edges=edges)
+
+    @classmethod
+    def based_on_node_set(cls, edges: Set[AbstractEdge], nodes: Set[AbstractNode]):
+        """!
+        """
+        eset: Set[AbstractEdge] = set(
+            [e for e in edges if set([e.start(), e.end()]).issubset(nodes)]
+        )
+        return cls.from_edge_node_set(edges=eset, nodes=nodes)
 
     def is_related_to(
         self,
