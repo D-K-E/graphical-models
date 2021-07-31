@@ -10,7 +10,7 @@ from pygmodels.gtype.edge import Edge
 import math
 
 
-class BaseGraphTravers:
+class BaseGraphTraverser:
     """!
     """
 
@@ -54,7 +54,7 @@ class BaseGraphTravers:
             if marked[v] is False:
                 pred[v] = u
                 T.add(v)
-                BaseGraphTravers.dfs_forest(
+                BaseGraphTraverser.dfs_forest(
                     g,
                     u=v,
                     pred=pred,
@@ -118,7 +118,7 @@ class BaseGraphTravers:
             if marked[u] is False:
                 pred: Dict[str, Optional[str]] = {n: None for n in g.V}
                 T: Set[str] = set()
-                BaseGraphTravers.dfs_forest(
+                BaseGraphTraverser.dfs_forest(
                     g,
                     u=u,
                     pred=pred,
@@ -139,7 +139,7 @@ class BaseGraphTravers:
                 preds[u] = pred
         #
         res = {
-            "dfs-forest": BaseGraphTravers.from_preds_to_edgeset(g, preds),
+            "dfs-forest": BaseGraphTraverser.from_preds_to_edgeset(g, preds),
             "first-visit-times": d,
             "last-visit-times": f,
             "components": Ts,

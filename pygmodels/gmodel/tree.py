@@ -8,7 +8,7 @@ from pygmodels.gmodel.path import Path
 from pygmodels.gtype.node import Node
 from pygmodels.gtype.basegraph import BaseGraph
 from pygmodels.gtype.abstractobj import AbstractTree
-from pygmodels.graphf.gtraverser import GraphTraverser
+from pygmodels.graphf.graphtraverser import BaseGraphTraverser
 from pygmodels.graphf.bgraphops import BaseGraphOps
 from pygmodels.gtype.queue import PriorityQueue
 from uuid import uuid4
@@ -37,7 +37,9 @@ class Tree(BaseGraph, AbstractTree):
             egen = lambda x: BaseGraphOps.outgoing_edges_of(self, x)
         else:
             egen = lambda x: BaseGraphOps.edges_of(self, x)
-        self.paths: Dict[str, Union[dict, set]] = GraphTraverser.find_shortest_paths(
+        self.paths: Dict[
+            str, Union[dict, set]
+        ] = BaseGraphTraverser.find_shortest_paths(
             self, n1=self.root, edge_generator=egen
         )
         self.topsort = self.paths["top-sort"]

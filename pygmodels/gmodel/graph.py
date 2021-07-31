@@ -16,7 +16,7 @@ from pygmodels.gmodel.finitegraph import FiniteGraph
 from pygmodels.gtype.basegraph import BaseGraph
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
-from pygmodels.graphf.graphtraverser import BaseGraphTravers
+from pygmodels.graphf.graphtraverser import BaseGraphTraverser
 from uuid import uuid4
 import math
 
@@ -72,7 +72,7 @@ class Graph(BaseGraph):
         """
         super().__init__(gid=gid, nodes=nodes, edges=edges, data=data)
         #
-        self.props = BaseGraphTravers.visit_graph_dfs(
+        self.props = BaseGraphTraverser.visit_graph_dfs(
             self,
             edge_generator=lambda x: BaseGraphOps.edges_of(self, x),
             check_cycle=True,

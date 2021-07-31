@@ -46,20 +46,3 @@ class BaseGraphTest(unittest.TestCase):
         for eid, edge in edges.copy().items():
             self.assertEqual(eid in E, eid in edges)
             self.assertEqual(E[eid], edges[eid])
-
-    def test_is_trivial_1(self):
-        ""
-        b = self.graph.is_trivial()
-        self.assertFalse(b)
-
-    def test_is_trivial_2(self):
-        ""
-        n = Node("n646", {})
-        e = Edge("e8", start_node=self.n1, end_node=n, edge_type=EdgeType.UNDIRECTED)
-        check = False
-        try:
-            gg = BaseGraph(gid="temp", data={}, nodes=set([n]), edges=set([e]))
-        except ValueError:
-            check = True
-
-        self.assertTrue(check)
