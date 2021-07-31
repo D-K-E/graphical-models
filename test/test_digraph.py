@@ -3,6 +3,7 @@ Test directed graph object
 """
 from pygmodels.gmodel.digraph import DiGraph
 from pygmodels.gtype.node import Node
+from pygmodels.graphf.bgraphops import BaseGraphOps
 from pygmodels.gtype.edge import Edge, EdgeType
 import unittest
 import pprint
@@ -107,8 +108,12 @@ class DiGraphTest(unittest.TestCase):
         self.dgraph4 = DiGraph(
             "dg4",
             data={"my": "graph", "data": "is", "very": "awesome"},
-            nodes=self.dgraph2.nodes().union(self.graph_2.nodes()),
-            edges=self.dgraph2.edges().union(self.graph_2.edges()),
+            nodes=BaseGraphOps.nodes(self.dgraph2).union(
+                BaseGraphOps.nodes(self.graph_2)
+            ),
+            edges=BaseGraphOps.edges(self.dgraph2).union(
+                BaseGraphOps.edges(self.graph_2)
+            ),
         )
         # dgraph 4
         #
@@ -187,25 +192,25 @@ class DiGraphTest(unittest.TestCase):
 
     def test_outgoing_edges_of_1(self):
         ""
-        out_edges1 = self.graph_2.outgoing_edges_of(self.n1)
+        out_edges1 = BaseGraphOps.outgoing_edges_of(self.graph_2, self.n1)
         comp1 = frozenset([self.e1, self.e4])
         self.assertEqual(out_edges1, comp1)
 
     def test_outgoing_edges_of_2(self):
         ""
-        out_edges2 = self.graph_2.outgoing_edges_of(self.n2)
+        out_edges2 = BaseGraphOps.outgoing_edges_of(self.graph_2, self.n2)
         comp2 = frozenset([self.e2])
         self.assertEqual(out_edges2, comp2)
 
     def test_incoming_edges_of_1(self):
         ""
-        out_edges1 = self.graph_2.incoming_edges_of(self.n1)
+        out_edges1 = BaseGraphOps.incoming_edges_of(self.graph_2, self.n1)
         comp1 = frozenset()
         self.assertEqual(out_edges1, comp1)
 
     def test_incoming_edges_of_2(self):
         ""
-        out_edges2 = self.graph_2.incoming_edges_of(self.n2)
+        out_edges2 = BaseGraphOps.incoming_edges_of(self.graph_2, self.n2)
         comp2 = frozenset([self.e1])
         self.assertEqual(out_edges2, comp2)
 

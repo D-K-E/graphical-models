@@ -529,12 +529,12 @@ class LWFChainGraphTest(unittest.TestCase):
         self.assertEqual(
             ccomps_nds, set([self.A, self.B, self.C, self.E, self.F, self.D, self.G])
         )
-        self.assertEqual(ccomps_undi.nodes(), set([self.H, self.I]))
+        self.assertEqual(BaseGraphOps.nodes(ccomps_undi), set([self.H, self.I]))
 
     def test_get_chain_dag(self):
         ""
         dag_comps = self.cowell.dag_components
-        self.assertEqual(len(dag_comps.nodes()), 8)
+        self.assertEqual(len(BaseGraphOps.nodes(dag_comps)), 8)
 
     def test_parents_of_K(self):
         ""
@@ -570,7 +570,7 @@ class LWFChainGraphTest(unittest.TestCase):
         ]
         cundi = ccomps_undi[0][1]
         hi = self.cowell.K(ccomps_undi[0][0])
-        self.assertEqual(hi.nodes(), set([self.H, self.I]))
+        self.assertEqual(BaseGraphOps.nodes(hi), set([self.H, self.I]))
 
     def test_moralize(self):
         """!
