@@ -377,7 +377,6 @@ class MarkovTest(unittest.TestCase):
         Koller, Friedman 2009, p. 145, example 4.20
         """
         ev = set([("Y_1", False)])
-        ev2 = set([("Y_1", True)])
         qs = set([self.X_1, self.X_2, self.X_3])
         qqs = set(
             [

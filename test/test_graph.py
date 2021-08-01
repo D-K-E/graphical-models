@@ -25,7 +25,6 @@ class GraphTest(unittest.TestCase):
         self.n3 = Node("n3", {})
         self.n4 = Node("n4", {})
         self.n5 = Node("n5", {})
-        nset = set([self.n1, self.n2, self.n3, self.n4, self.n5])
         self.e1 = Edge(
             "e1",
             start_node=self.n1,
@@ -251,7 +250,7 @@ class GraphTest(unittest.TestCase):
         """ """
         p = Stats(self.prof)
         p.sort_stats("cumtime")
-        if self.verbose == True:
+        if self.verbose is True:
             p.dump_stats("profiles/test_graph.py.prof")
         p.strip_dirs()
         # p.print_stats()
@@ -540,4 +539,5 @@ def suite():
 
 if __name__ == "__main__":
     runner = unittest.TextTestRunner()
-    runner.run(suite())
+    # runner.run(suite())
+    unittest.main()

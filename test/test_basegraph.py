@@ -1,8 +1,12 @@
 """!
 Test general BaseGraph object
 """
+import cProfile
 import pprint
 import unittest
+
+# profiler related
+from pstats import Stats
 
 from pygmodels.gtype.basegraph import BaseGraph
 from pygmodels.gtype.edge import Edge, EdgeType
@@ -28,6 +32,19 @@ class BaseGraphTest(unittest.TestCase):
             edges=set([self.e1, self.e2]),
         )
 
+        # intialize profiler
+        self.prof = cProfile.Profile()
+        self.prof.enable()
+        self.verbose = False
+
+    def tearDown(self):
+        """ """
+        p = Stats(self.prof)
+        p.sort_stats("cumtime")
+        if self.verbose is True:
+            p.dump_stats("profiles/test_basegraph.py.prof")
+        p.strip_dirs()
+
     def test_id(self):
         return self.assertEqual(self.graph.id(), "g1")
 
@@ -47,3 +64,19 @@ class BaseGraphTest(unittest.TestCase):
         for eid, edge in edges.copy().items():
             self.assertEqual(eid in E, eid in edges)
             self.assertEqual(E[eid], edges[eid])
+
+
+def suite(verbose=False):
+    """"""
+    s = unittest.TestSuite()
+    bgraphtest = BaseGraphTest()
+    bgraphtest.verbose = verbose
+    #
+    s.addTest(bgraphtest)
+    return s
+
+
+if __name__ == "__main__":
+    runner = unittest.TextTestRunner()
+    # runner.run(suite())
+    unittest.main()

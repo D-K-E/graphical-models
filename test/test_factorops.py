@@ -14,7 +14,7 @@ from pygmodels.pgmtype.randomvariable import NumCatRVariable
 class TestFactorOps(unittest.TestCase):
     """!"""
 
-    def setUp(self):
+    def data_1(self):
         """"""
         # Koller, Friedman 2009, p. 104
         self.Af = NumCatRVariable(
@@ -80,6 +80,9 @@ class TestFactorOps(unittest.TestCase):
             gid="BC", scope_vars=set([self.Bf, self.Cf]), factor_fn=phiBC
         )
 
+    def data_2(self):
+        """"""
+
         def phiCD(scope_product):
             """"""
             sfs = set(scope_product)
@@ -121,6 +124,11 @@ class TestFactorOps(unittest.TestCase):
         self.DA_b = BaseFactor(
             gid="DA", scope_vars=set([self.Df, self.Af]), factor_fn=phiDA
         )
+
+    def setUp(self):
+        """"""
+        self.data_1()
+        self.data_2()
 
         # Koller, Friedman 2009 p. 107
         self.af = NumCatRVariable(

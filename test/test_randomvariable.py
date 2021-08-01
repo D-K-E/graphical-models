@@ -70,8 +70,13 @@ class NumCatRVariableTest(unittest.TestCase):
         )
         #
         students = PossibleOutcomes(frozenset(["student_1", "student_2"]))
-        grade_f = lambda x: "F" if x == "student_1" else "A"
-        grade_distribution = lambda x: 0.1 if x == "F" else 0.9
+
+        def grade_f(x):
+            return "F" if x == "student_1" else "A"
+
+        def grade_distribution(x):
+            return 0.1 if x == "F" else 0.9
+
         indata = {"possible-outcomes": students}
         self.rvar = CatRandomVariable(
             input_data=indata,

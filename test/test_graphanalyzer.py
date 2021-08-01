@@ -1,5 +1,5 @@
 """!
-\file test_graphanalyzer.py Graph Analyzer Test for BaseGraph subclasses 
+\file test_graphanalyzer.py Graph Analyzer Test for BaseGraph subclasses
 """
 import math
 import pprint
@@ -28,7 +28,6 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
         self.n3 = Node("n3", {})
         self.n4 = Node("n4", {})
         self.n5 = Node("n5", {})
-        nset = set([self.n1, self.n2, self.n3, self.n4, self.n5])
         self.e1 = Edge(
             "e1",
             start_node=self.n1,
@@ -285,7 +284,7 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
         e = Edge("e8", start_node=n, end_node=n, edge_type=EdgeType.UNDIRECTED)
         check = False
         try:
-            gg = BaseGraph(gid="temp", data={}, nodes=set([n]), edges=set([e]))
+            BaseGraph(gid="temp", data={}, nodes=set([n]), edges=set([e]))
         except ValueError:
             check = True
 

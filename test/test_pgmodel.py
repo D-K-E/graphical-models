@@ -94,8 +94,12 @@ class PGModelTest(unittest.TestCase):
             else:
                 raise ValueError("product error")
 
-        cls.ba_f = Factor(gid="ba", scope_vars=set([cls.b, cls.a]), factor_fn=phi_ba)
-        cls.cb_f = Factor(gid="cb", scope_vars=set([cls.c, cls.b]), factor_fn=phi_cb)
+        cls.ba_f = Factor(
+            gid="ba", scope_vars=set([cls.b, cls.a]), factor_fn=phi_ba
+        )
+        cls.cb_f = Factor(
+            gid="cb", scope_vars=set([cls.c, cls.b]), factor_fn=phi_cb
+        )
         cls.a_f = Factor(gid="a", scope_vars=set([cls.a]), factor_fn=phi_a)
 
     def cls_nodes_2(cls):
@@ -117,10 +121,16 @@ class PGModelTest(unittest.TestCase):
             node_id="O", input_data=odata, marginal_distribution=lambda x: 0.5
         )
         cls.JX = Edge(
-            edge_id="JX", edge_type=EdgeType.DIRECTED, start_node=cls.J, end_node=cls.X,
+            edge_id="JX",
+            edge_type=EdgeType.DIRECTED,
+            start_node=cls.J,
+            end_node=cls.X,
         )
         cls.JY = Edge(
-            edge_id="JY", edge_type=EdgeType.DIRECTED, start_node=cls.J, end_node=cls.Y,
+            edge_id="JY",
+            edge_type=EdgeType.DIRECTED,
+            start_node=cls.J,
+            end_node=cls.Y,
         )
         cls.IX = Edge(
             edge_id="IX",
@@ -155,7 +165,9 @@ class PGModelTest(unittest.TestCase):
             """"""
             return phi_ij(scope_product, i="I")
 
-        cls.I_f = Factor(gid="I_f", scope_vars=set([cls.Irvar]), factor_fn=phi_i)
+        cls.I_f = Factor(
+            gid="I_f", scope_vars=set([cls.Irvar]), factor_fn=phi_i
+        )
 
         def phi_j(scope_product):
             """"""
@@ -177,7 +189,9 @@ class PGModelTest(unittest.TestCase):
             else:
                 raise ValueError("scope product unknown")
 
-        cls.JY_f = Factor(gid="JY_f", scope_vars=set([cls.J, cls.Y]), factor_fn=phi_jy)
+        cls.JY_f = Factor(
+            gid="JY_f", scope_vars=set([cls.J, cls.Y]), factor_fn=phi_jy
+        )
 
     def cls_nodes_3(cls):
         """"""
@@ -206,7 +220,9 @@ class PGModelTest(unittest.TestCase):
                 raise ValueError("scope product unknown")
 
         cls.IJX_f = Factor(
-            gid="IJX_f", scope_vars=set([cls.J, cls.X, cls.Irvar]), factor_fn=phi_ijx,
+            gid="IJX_f",
+            scope_vars=set([cls.J, cls.X, cls.Irvar]),
+            factor_fn=phi_ijx,
         )
 
         def phi_xyo(scope_product):
@@ -232,7 +248,9 @@ class PGModelTest(unittest.TestCase):
                 raise ValueError("scope product unknown")
 
         cls.XYO_f = Factor(
-            gid="XYO_f", scope_vars=set([cls.Y, cls.X, cls.Orvar]), factor_fn=phi_xyo,
+            gid="XYO_f",
+            scope_vars=set([cls.Y, cls.X, cls.Orvar]),
+            factor_fn=phi_xyo,
         )
 
     def setUp(self):
@@ -257,7 +275,9 @@ class PGModelTest(unittest.TestCase):
             gid="mpe",
             nodes=set([self.J, self.Y, self.X, self.Irvar, self.Orvar]),
             edges=set([self.JY, self.JX, self.YO, self.IX, self.XO]),
-            factors=set([self.I_f, self.J_f, self.JY_f, self.IJX_f, self.XYO_f]),
+            factors=set(
+                [self.I_f, self.J_f, self.JY_f, self.IJX_f, self.XYO_f]
+            ),
         )
 
         # profiler code
@@ -287,7 +307,9 @@ class PGModelTest(unittest.TestCase):
 
     def test_factors(self):
         """"""
-        self.assertEqual(self.pgm.factors(), set([self.ba_f, self.cb_f, self.a_f]))
+        self.assertEqual(
+            self.pgm.factors(), set([self.ba_f, self.cb_f, self.a_f])
+        )
 
     def test_closure_of(self):
         """"""
@@ -295,7 +317,9 @@ class PGModelTest(unittest.TestCase):
 
     def test_conditionaly_independent_of_t(self):
         """"""
-        self.assertEqual(self.pgm.is_conditionaly_independent_of(self.a, self.c), True)
+        self.assertEqual(
+            self.pgm.is_conditionaly_independent_of(self.a, self.c), True
+        )
 
     def test_conditionaly_independent_of_f(self):
         """"""
@@ -310,12 +334,17 @@ class PGModelTest(unittest.TestCase):
     def test_is_scope_subset_of_t(self):
         """"""
         self.assertEqual(
-            self.pgm.is_scope_subset_of(self.ba_f, set([self.a, self.b, self.c])), True,
+            self.pgm.is_scope_subset_of(
+                self.ba_f, set([self.a, self.b, self.c])
+            ),
+            True,
         )
 
     def test_is_scope_subset_of_f(self):
         """"""
-        self.assertEqual(self.pgm.is_scope_subset_of(self.ba_f, set([self.c])), False)
+        self.assertEqual(
+            self.pgm.is_scope_subset_of(self.ba_f, set([self.c])), False
+        )
 
     def test_scope_subset_factors(self):
         """"""
@@ -326,7 +355,9 @@ class PGModelTest(unittest.TestCase):
 
     def test_get_factor_product_var(self):
         """"""
-        p, f, of = self.pgm.get_factor_product_var(fs=self.pgm.factors(), Z=self.a)
+        p, f, of = self.pgm.get_factor_product_var(
+            fs=self.pgm.factors(), Z=self.a
+        )
         self.assertEqual(f, set([self.a_f, self.ba_f]))
         self.assertEqual(of, set([self.cb_f]))
         afbf, v = FactorOps.cls_product(f=self.a_f, other=self.ba_f)
@@ -341,7 +372,9 @@ class PGModelTest(unittest.TestCase):
         """!
         based on values of Darwiche 2009 p. 133
         """
-        ofacs = self.pgm.sum_prod_var_eliminate(factors=self.pgm.factors(), Z=self.a)
+        ofacs = self.pgm.sum_prod_var_eliminate(
+            factors=self.pgm.factors(), Z=self.a
+        )
         smf = [o for o in ofacs if o.id() != "cb"][0]
         for s in smf.scope_products:
             ss = set(s)
@@ -369,20 +402,30 @@ class PGModelTest(unittest.TestCase):
     def test_order_by_greedy_metric(self):
         """!"""
         ns = set([self.a, self.b])
-        cards = self.pgm.order_by_greedy_metric(nodes=ns, s=min_unmarked_neighbours)
+        cards = self.pgm.order_by_greedy_metric(
+            nodes=ns, s=min_unmarked_neighbours
+        )
         self.assertEqual(cards, {"a": 0, "b": 1})
         ns = set([self.c, self.b])
-        cards2 = self.pgm.order_by_greedy_metric(nodes=ns, s=min_unmarked_neighbours)
+        cards2 = self.pgm.order_by_greedy_metric(
+            nodes=ns, s=min_unmarked_neighbours
+        )
         self.assertEqual(cards2, {"c": 0, "b": 1})
         ns = set([self.c, self.a])
-        cards3 = self.pgm.order_by_greedy_metric(nodes=ns, s=min_unmarked_neighbours)
-        self.assertTrue(cards3 == {"a": 0, "c": 1} or cards3 == {"a": 1, "c": 0})
+        cards3 = self.pgm.order_by_greedy_metric(
+            nodes=ns, s=min_unmarked_neighbours
+        )
+        self.assertTrue(
+            cards3 == {"a": 0, "c": 1} or cards3 == {"a": 1, "c": 0}
+        )
 
     def test_reduce_factors_with_evidence(self):
         """"""
         ev = set([("a", True), ("b", True)])
         fs, es = self.pgm.reduce_factors_with_evidence(ev)
-        fs_s = set([frozenset([frozenset(s) for s in f.scope_products]) for f in fs])
+        fs_s = set(
+            [frozenset([frozenset(s) for s in f.scope_products]) for f in fs]
+        )
         self.assertEqual(
             fs_s,
             set(
@@ -450,8 +493,24 @@ class PGModelTest(unittest.TestCase):
         assignments, fac, f = self.pgm_mpe.max_product_ve(evidences=ev)
         assign = set([a for a in assignments.items()])
         possibles = [
-            set([("J", True), ("O", False), ("X", False), ("Y", False), ("I", False),]),
-            set([("J", True), ("O", False), ("X", False), ("Y", False), ("I", True),]),
+            set(
+                [
+                    ("J", True),
+                    ("O", False),
+                    ("X", False),
+                    ("Y", False),
+                    ("I", False),
+                ]
+            ),
+            set(
+                [
+                    ("J", True),
+                    ("O", False),
+                    ("X", False),
+                    ("Y", False),
+                    ("I", True),
+                ]
+            ),
         ]
         cond = assign == possibles[0] or assign == possibles[1]
         self.assertTrue(cond)

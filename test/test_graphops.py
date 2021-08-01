@@ -1,5 +1,5 @@
 """!
-\file test_graphops.py Graph Analyzer Test for BaseGraph subclasses 
+\file test_graphops.py Graph Analyzer Test for BaseGraph subclasses
 """
 import math
 import pprint
@@ -27,7 +27,6 @@ class BaseGraphAlgSetOpsTest(unittest.TestCase):
         self.n3 = Node("n3", {})
         self.n4 = Node("n4", {})
         self.n5 = Node("n5", {})
-        nset = set([self.n1, self.n2, self.n3, self.n4, self.n5])
         self.e1 = Edge(
             "e1",
             start_node=self.n1,
@@ -141,7 +140,6 @@ class BaseGraphAlgSetOpsTest(unittest.TestCase):
         # a -- b -- e
         #  \
         #   +-----f
-        u2nodes = BaseGraphOps.nodes(self.ugraph2)
 
         self.ugraph4 = BaseGraph(
             "ug4",
@@ -213,9 +211,6 @@ class BaseGraphAlgSetOpsTest(unittest.TestCase):
 
     def test_union_v(self):
         n = Node("n646", {})
-        e = Edge(
-            "e8", start_node=self.n1, end_node=n, edge_type=EdgeType.UNDIRECTED
-        )
         vset = BaseGraphSetOps.union(self.graph, set([n]))
         self.assertEqual(vset, set([self.n1, self.n2, self.n3, self.n4, n]))
 

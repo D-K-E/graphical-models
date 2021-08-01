@@ -18,7 +18,7 @@ from pygmodels.pgmtype.randomvariable import NumCatRVariable
 class LWFChainGraphTest(unittest.TestCase):
     """"""
 
-    def setUp(self):
+    def data_1(self):
         """"""
         idata = {"outcome-values": [True, False]}
         self.A = NumCatRVariable(
@@ -45,7 +45,7 @@ class LWFChainGraphTest(unittest.TestCase):
         self.H = NumCatRVariable(
             node_id="H", input_data=idata, marginal_distribution=lambda x: 0.5
         )
-        self.I = NumCatRVariable(
+        self.Irvar = NumCatRVariable(
             node_id="I", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.K = NumCatRVariable(
@@ -118,18 +118,19 @@ class LWFChainGraphTest(unittest.TestCase):
         self.BI_c = Edge(
             edge_id="BI",
             start_node=self.B,
-            end_node=self.I,
+            end_node=self.Irvar,
             edge_type=EdgeType.DIRECTED,
         )
         self.HI_c = Edge(
             edge_id="HI",
             start_node=self.H,
-            end_node=self.I,
+            end_node=self.Irvar,
             edge_type=EdgeType.UNDIRECTED,
         )
-        #
-        # Factors
-        #
+
+    def data_2(self):
+        """"""
+
         def phi_e(scope_product):
             """!
             Visit to Asia factor
@@ -188,6 +189,9 @@ class LWFChainGraphTest(unittest.TestCase):
         self.DG_cf = Factor(
             gid="DG_cf", scope_vars=set([self.D, self.G]), factor_fn=phi_dg
         )
+
+    def data_3(self):
+        """"""
 
         def phi_a(scope_product):
             """!
@@ -248,6 +252,11 @@ class LWFChainGraphTest(unittest.TestCase):
             gid="AC_cf", scope_vars=set([self.A, self.C]), factor_fn=phi_ac
         )
 
+    def data_4(self):
+        """"""
+        # Factors
+        #
+
         def phi_cdf(scope_product):
             """!
             either tuberculosis or lung given lung cancer and tuberculosis
@@ -307,7 +316,7 @@ class LWFChainGraphTest(unittest.TestCase):
 
         self.IHB_cf = Factor(
             gid="IHB_cf",
-            scope_vars=set([self.H, self.I, self.B]),
+            scope_vars=set([self.H, self.Irvar, self.B]),
             factor_fn=phi_ihb,
         )
 
@@ -365,6 +374,14 @@ class LWFChainGraphTest(unittest.TestCase):
             gid="BD_cf", scope_vars=set([self.D, self.B]), factor_fn=phi_bd
         )
 
+    def setUp(self):
+        """"""
+        self.data_1()
+        self.data_2()
+        self.data_3()
+        self.data_4()
+        #
+
         self.cowell = LWFChainGraph(
             gid="cowell",
             nodes=set(
@@ -377,7 +394,7 @@ class LWFChainGraphTest(unittest.TestCase):
                     self.F,
                     self.G,
                     self.H,
-                    self.I,
+                    self.Irvar,
                 ]
             ),
             edges=set(
@@ -459,7 +476,7 @@ class LWFChainGraphTest(unittest.TestCase):
         self.CI_k = Edge(
             edge_id="CI",
             start_node=self.C,
-            end_node=self.I,
+            end_node=self.Irvar,
             edge_type=EdgeType.DIRECTED,
         )
         self.DE_k = Edge(
@@ -471,7 +488,7 @@ class LWFChainGraphTest(unittest.TestCase):
         self.EI_k = Edge(
             edge_id="EI",
             start_node=self.E,
-            end_node=self.I,
+            end_node=self.Irvar,
             edge_type=EdgeType.DIRECTED,
         )
         self.BE_k = Edge(
@@ -483,7 +500,7 @@ class LWFChainGraphTest(unittest.TestCase):
         self.HI_k = Edge(
             edge_id="HI",
             start_node=self.H,
-            end_node=self.I,
+            end_node=self.Irvar,
             edge_type=EdgeType.DIRECTED,
         )
         self.koller = LWFChainGraph(
@@ -495,7 +512,7 @@ class LWFChainGraphTest(unittest.TestCase):
                     self.D,
                     self.E,
                     self.B,
-                    self.I,
+                    self.Irvar,
                     self.F,
                     self.G,
                 ]
@@ -530,7 +547,7 @@ class LWFChainGraphTest(unittest.TestCase):
         self.evidences = set([("E", True), ("A", True), ("G", False)])
         self.q_tsts = {
             (self.E): e_comp_val,  # asia
-            (self.I): i_comp_val,  # dyspnoea
+            (self.Irvar): i_comp_val,  # dyspnoea
             (self.H): h_comp_val,  # cough
             (self.A): a_comp_val,  # smoke
             (self.B): b_comp_val,  # bronchitis
@@ -566,7 +583,7 @@ class LWFChainGraphTest(unittest.TestCase):
             set([self.A, self.B, self.C, self.E, self.F, self.D, self.G]),
         )
         self.assertEqual(
-            BaseGraphOps.nodes(ccomps_undi), set([self.H, self.I])
+            BaseGraphOps.nodes(ccomps_undi), set([self.H, self.Irvar])
         )
 
     def test_get_chain_dag(self):
@@ -600,7 +617,9 @@ class LWFChainGraphTest(unittest.TestCase):
                     frozenset([self.B, frozenset()]),
                     frozenset([self.A, frozenset()]),
                     frozenset([self.H, frozenset()]),
-                    frozenset([self.I, frozenset([self.H, self.C, self.E])]),
+                    frozenset(
+                        [self.Irvar, frozenset([self.H, self.C, self.E])]
+                    ),
                 ]
             ),
         )
@@ -612,9 +631,8 @@ class LWFChainGraphTest(unittest.TestCase):
             for s in enumerate(self.cowell.ccomponents)
             if isinstance(s[1], UndiGraph)
         ]
-        cundi = ccomps_undi[0][1]
         hi = self.cowell.K(ccomps_undi[0][0])
-        self.assertEqual(BaseGraphOps.nodes(hi), set([self.H, self.I]))
+        self.assertEqual(BaseGraphOps.nodes(hi), set([self.H, self.Irvar]))
 
     def test_moralize(self):
         """!
@@ -629,15 +647,15 @@ class LWFChainGraphTest(unittest.TestCase):
                 frozenset([self.C.id(), self.F.id()]),
                 frozenset([self.C.id(), self.D.id()]),
                 frozenset([self.C.id(), self.E.id()]),
-                frozenset([self.C.id(), self.I.id()]),
+                frozenset([self.C.id(), self.Irvar.id()]),
                 frozenset([self.C.id(), self.H.id()]),
                 frozenset([self.D.id(), self.E.id()]),
                 frozenset([self.D.id(), self.G.id()]),
                 frozenset([self.F.id(), self.G.id()]),
-                frozenset([self.E.id(), self.I.id()]),
+                frozenset([self.E.id(), self.Irvar.id()]),
                 frozenset([self.B.id(), self.E.id()]),
                 frozenset([self.E.id(), self.H.id()]),
-                frozenset([self.H.id(), self.I.id()]),
+                frozenset([self.H.id(), self.Irvar.id()]),
             ]
         )
         medges = BaseGraphOps.edges(moral)
@@ -672,20 +690,6 @@ class LWFChainGraphTest(unittest.TestCase):
         Test values taken from
         Cowell 2005, p. 116, table 6.9
         """
-        qs = set(
-            [
-                #  self.I,  # dyspnoea
-                #  self.E,  # visit to asia
-                #  self.H,  # cough
-                #  self.A,  # smoke
-                #  self.B,  # bronchitis
-                #  self.C,  # lung
-                #  self.D,  # either
-                #  self.G,  # positive x ray
-                #  self.F,  # tuberculosis
-                #  self.E,  # visit to asia
-            ]
-        )
         e_comp_val = [("E", True, 0.01), ("E", False, 0.99)]
         i_comp_val = [("I", True, 0.7468), ("I", False, 0.2532)]
         h_comp_val = [("H", True, 0.7312), ("H", False, 0.2688)]
@@ -696,7 +700,7 @@ class LWFChainGraphTest(unittest.TestCase):
         f_comp_val = [("F", True, 0.0104), ("F", False, 0.9896)]
         q_tsts = {
             (self.E): e_comp_val,
-            (self.I): i_comp_val,  # dyspnoea
+            (self.Irvar): i_comp_val,  # dyspnoea
             (self.H): h_comp_val,  # cough
             (self.A): a_comp_val,  # smoke
             (self.B): b_comp_val,  # bronchitis
@@ -740,9 +744,9 @@ class LWFChainGraphTest(unittest.TestCase):
         Test values taken from
         Cowell 2005, p. 119, table 6.12
         """
-        comp_vals = self.q_tsts[self.I]
+        comp_vals = self.q_tsts[self.Irvar]
         final_factor, a = self.cowell.cond_prod_by_variable_elimination(
-            set([self.I]), self.evidences
+            set([self.Irvar]), self.evidences
         )
         for e_val in comp_vals:
             ename = e_val[0]
@@ -795,11 +799,11 @@ class LWFChainGraphTest(unittest.TestCase):
             f = round(final_factor.phi_normal(set([(ename, e_v)])), 4)
             self.assertEqual(f, e_val[2])
 
+    @unittest.skip("unfinished test")
     def test_most_probable_assignment(self):
         """!
         From Cowell 2005, p. 119
         """
-        compare_value = {}
         assignments, factors, z_phi = self.cowell.max_product_ve(set())
 
     def test_mpe_prob_no_evidence(self):

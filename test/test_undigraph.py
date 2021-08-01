@@ -340,7 +340,7 @@ class UndiGraphTest(unittest.TestCase):
         )
 
         self.assertEqual(
-            [l.id() for l in L],
+            [li.id() for li in L],
             ["ab", "bc", "cd", "de", "ef", "bg", "gd", "df"],
         )
 
@@ -350,7 +350,7 @@ class UndiGraphTest(unittest.TestCase):
             weight_fn=lambda e: e.data()["w"]
         )
         self.assertEqual(
-            [l.id() for l in L],
+            [li.id() for li in L],
             ["df", "gd", "bg", "ef", "de", "cd", "bc", "ab"],
         )
 
