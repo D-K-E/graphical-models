@@ -27,16 +27,28 @@ class GraphTest(unittest.TestCase):
         self.n5 = Node("n5", {})
         nset = set([self.n1, self.n2, self.n3, self.n4, self.n5])
         self.e1 = Edge(
-            "e1", start_node=self.n1, end_node=self.n2, edge_type=EdgeType.UNDIRECTED,
+            "e1",
+            start_node=self.n1,
+            end_node=self.n2,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.e2 = Edge(
-            "e2", start_node=self.n2, end_node=self.n3, edge_type=EdgeType.UNDIRECTED,
+            "e2",
+            start_node=self.n2,
+            end_node=self.n3,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.e3 = Edge(
-            "e3", start_node=self.n3, end_node=self.n4, edge_type=EdgeType.UNDIRECTED,
+            "e3",
+            start_node=self.n3,
+            end_node=self.n4,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.e4 = Edge(
-            "e4", start_node=self.n1, end_node=self.n4, edge_type=EdgeType.UNDIRECTED,
+            "e4",
+            start_node=self.n1,
+            end_node=self.n4,
+            edge_type=EdgeType.UNDIRECTED,
         )
 
         self.graph = Graph(
@@ -57,19 +69,34 @@ class GraphTest(unittest.TestCase):
         self.f = Node("f", {})  # d
         self.e = Node("e", {})  # e
         self.ae = Edge(
-            "ae", start_node=self.a, end_node=self.e, edge_type=EdgeType.UNDIRECTED,
+            "ae",
+            start_node=self.a,
+            end_node=self.e,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.ab = Edge(
-            "ab", start_node=self.a, end_node=self.b, edge_type=EdgeType.UNDIRECTED,
+            "ab",
+            start_node=self.a,
+            end_node=self.b,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.af = Edge(
-            "af", start_node=self.a, end_node=self.f, edge_type=EdgeType.UNDIRECTED,
+            "af",
+            start_node=self.a,
+            end_node=self.f,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.be = Edge(
-            "be", start_node=self.b, end_node=self.e, edge_type=EdgeType.UNDIRECTED,
+            "be",
+            start_node=self.b,
+            end_node=self.e,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.ef = Edge(
-            "ef", start_node=self.e, end_node=self.f, edge_type=EdgeType.UNDIRECTED,
+            "ef",
+            start_node=self.e,
+            end_node=self.f,
+            edge_type=EdgeType.UNDIRECTED,
         )
 
         # undirected graph
@@ -98,7 +125,15 @@ class GraphTest(unittest.TestCase):
             "ug2",
             data={"my": "graph", "data": "is", "very": "awesome"},
             nodes=set([self.a, self.b, self.e, self.f]),
-            edges=set([self.ae, self.ab, self.af, self.be, self.ef,]),
+            edges=set(
+                [
+                    self.ae,
+                    self.ab,
+                    self.af,
+                    self.be,
+                    self.ef,
+                ]
+            ),
         )
         # ugraph2 :
         #   +-----+
@@ -130,7 +165,16 @@ class GraphTest(unittest.TestCase):
             "ug4",
             data={"my": "graph", "data": "is", "very": "awesome"},
             nodes=set(
-                [self.a, self.b, self.e, self.f, self.n1, self.n2, self.n3, self.n4,]
+                [
+                    self.a,
+                    self.b,
+                    self.e,
+                    self.f,
+                    self.n1,
+                    self.n2,
+                    self.n3,
+                    self.n4,
+                ]
             ),
             edges=set(
                 [
@@ -160,25 +204,42 @@ class GraphTest(unittest.TestCase):
         self.ee = Node("ee", {})
 
         self.bb_cc = Edge(
-            "bb_cc", start_node=self.bb, end_node=self.cc, edge_type=EdgeType.DIRECTED,
+            "bb_cc",
+            start_node=self.bb,
+            end_node=self.cc,
+            edge_type=EdgeType.DIRECTED,
         )
         self.cc_dd = Edge(
-            "cc_dd", start_node=self.cc, end_node=self.dd, edge_type=EdgeType.DIRECTED,
+            "cc_dd",
+            start_node=self.cc,
+            end_node=self.dd,
+            edge_type=EdgeType.DIRECTED,
         )
         self.dd_ee = Edge(
-            "dd_ee", start_node=self.dd, end_node=self.ee, edge_type=EdgeType.DIRECTED,
+            "dd_ee",
+            start_node=self.dd,
+            end_node=self.ee,
+            edge_type=EdgeType.DIRECTED,
         )
         self.ee_bb = Edge(
-            "ee_bb", start_node=self.ee, end_node=self.bb, edge_type=EdgeType.DIRECTED,
+            "ee_bb",
+            start_node=self.ee,
+            end_node=self.bb,
+            edge_type=EdgeType.DIRECTED,
         )
         self.bb_dd = Edge(
-            "bb_dd", start_node=self.bb, end_node=self.dd, edge_type=EdgeType.DIRECTED,
+            "bb_dd",
+            start_node=self.bb,
+            end_node=self.dd,
+            edge_type=EdgeType.DIRECTED,
         )
         self.dgraph = Graph(
             "g1",
             data={"my": "graph", "data": "is", "very": "awesome"},
             nodes=set([self.bb, self.cc, self.dd, self.ee]),
-            edges=set([self.bb_cc, self.cc_dd, self.dd_ee, self.ee_bb, self.bb_dd]),
+            edges=set(
+                [self.bb_cc, self.cc_dd, self.dd_ee, self.ee_bb, self.bb_dd]
+            ),
         )
 
         # initialize profiler
@@ -212,8 +273,12 @@ class GraphTest(unittest.TestCase):
         """"""
         n1 = Node("n1", {})
         n2 = Node("n2", {})
-        e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
-        e2 = Edge("e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED)
+        e1 = Edge(
+            "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
+        )
+        e2 = Edge(
+            "e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED
+        )
         self.assertTrue(Graph.is_node_incident(n1, e1))
         self.assertFalse(Graph.is_node_incident(n2, e2))
 
@@ -293,9 +358,15 @@ class GraphTest(unittest.TestCase):
         n2 = Node("n2", {})
         n3 = Node("n3", {})
         n4 = Node("n4", {})
-        e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
-        e2 = Edge("e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED)
-        graph = Graph("g1", data={}, nodes=set([n1, n2, n3, n4]), edges=set([e1, e2]))
+        e1 = Edge(
+            "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
+        )
+        e2 = Edge(
+            "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
+        )
+        graph = Graph(
+            "g1", data={}, nodes=set([n1, n2, n3, n4]), edges=set([e1, e2])
+        )
         self.assertEqual(graph, self.graph)
 
     def test_V(self):
@@ -335,7 +406,9 @@ class GraphTest(unittest.TestCase):
         self.assertFalse(isneighbor)
 
     def test_neighbours_of(self):
-        ndes = set([n.id() for n in BaseGraphOps.neighbours_of(self.graph_2, self.n2)])
+        ndes = set(
+            [n.id() for n in BaseGraphOps.neighbours_of(self.graph_2, self.n2)]
+        )
         self.assertEqual(ndes, set([self.n1.id(), self.n3.id()]))
 
     def test_nb_neighbours_of(self):
@@ -353,7 +426,9 @@ class GraphTest(unittest.TestCase):
     def test__add__e(self):
         """"""
         n = Node("n646", {})
-        e = Edge("e8", start_node=self.n1, end_node=n, edge_type=EdgeType.UNDIRECTED)
+        e = Edge(
+            "e8", start_node=self.n1, end_node=n, edge_type=EdgeType.UNDIRECTED
+        )
         g = self.graph + e
         self.assertEqual(BaseGraphOps.edges(g), set([e, self.e1, self.e2]))
 
@@ -362,11 +437,14 @@ class GraphTest(unittest.TestCase):
         n = Node("n646", {})
         n1 = Node("n647", {})
         n2 = Node("n648", {})
-        e = Edge("e8", start_node=self.n1, end_node=n, edge_type=EdgeType.UNDIRECTED)
+        e = Edge(
+            "e8", start_node=self.n1, end_node=n, edge_type=EdgeType.UNDIRECTED
+        )
         gg = Graph(gid="temp", data={}, nodes=set([n, n1, n2]), edges=set([e]))
         g = self.graph + gg
         self.assertEqual(
-            BaseGraphOps.nodes(g), set([self.n1, self.n2, self.n3, self.n4, n, n1, n2]),
+            BaseGraphOps.nodes(g),
+            set([self.n1, self.n2, self.n3, self.n4, n, n1, n2]),
         )
         self.assertEqual(BaseGraphOps.edges(g), set([e, self.e1, self.e2]))
 
@@ -381,7 +459,9 @@ class GraphTest(unittest.TestCase):
     def test__sub__e(self):
         """"""
         n = Node("n646", {})
-        e = Edge("e8", start_node=self.n1, end_node=n, edge_type=EdgeType.UNDIRECTED)
+        e = Edge(
+            "e8", start_node=self.n1, end_node=n, edge_type=EdgeType.UNDIRECTED
+        )
         g = self.graph - e
         self.assertEqual(BaseGraphOps.edges(g), set([self.e1, self.e2]))
 
@@ -390,9 +470,14 @@ class GraphTest(unittest.TestCase):
         n = Node("n646", {})
         n1 = Node("n647", {})
         n2 = Node("n648", {})
-        e = Edge("e8", start_node=self.n1, end_node=n, edge_type=EdgeType.UNDIRECTED)
+        e = Edge(
+            "e8", start_node=self.n1, end_node=n, edge_type=EdgeType.UNDIRECTED
+        )
         gg = Graph(
-            gid="temp", data={}, nodes=set([n, n1, n2]), edges=set([e, self.e1]),
+            gid="temp",
+            data={},
+            nodes=set([n, n1, n2]),
+            edges=set([e, self.e1]),
         )
         g = self.graph - gg
         self.assertEqual(BaseGraphOps.edges(g), set([]))
