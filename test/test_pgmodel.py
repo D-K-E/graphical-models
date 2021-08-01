@@ -262,7 +262,7 @@ class PGModelTest(unittest.TestCase):
 
         # profiler code
         # initialize profiler
-        self.verbose = True
+        self.verbose = False
         self.prof = cProfile.Profile()
         self.prof.enable()
         # print("\n<<<<--------")

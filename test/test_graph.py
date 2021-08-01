@@ -19,7 +19,7 @@ class GraphTest(unittest.TestCase):
     """"""
 
     def setUp(self):
-        self.verbose = True
+        self.verbose = False
         self.n1 = Node("n1", {})
         self.n2 = Node("n2", {})
         self.n3 = Node("n3", {})
