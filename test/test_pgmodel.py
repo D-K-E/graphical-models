@@ -2,8 +2,12 @@
 Test probabilistic graph model
 """
 
+import cProfile
 import pdb
 import unittest
+
+# profiler related
+from pstats import Stats
 from uuid import uuid4
 
 from pygmodels.factorf.factorops import FactorOps
@@ -104,7 +108,7 @@ class PGModelTest(unittest.TestCase):
         cls.J = NumCatRVariable(
             node_id="J", input_data=odata, marginal_distribution=lambda x: 0.5
         )
-        cls.I = NumCatRVariable(
+        cls.Irvar = NumCatRVariable(
             node_id="I", input_data=odata, marginal_distribution=lambda x: 0.5
         )
         cls.X = NumCatRVariable(
@@ -113,7 +117,7 @@ class PGModelTest(unittest.TestCase):
         cls.Y = NumCatRVariable(
             node_id="Y", input_data=odata, marginal_distribution=lambda x: 0.5
         )
-        cls.O = NumCatRVariable(
+        cls.Orvar = NumCatRVariable(
             node_id="O", input_data=odata, marginal_distribution=lambda x: 0.5
         )
         cls.JX = Edge(
@@ -131,20 +135,20 @@ class PGModelTest(unittest.TestCase):
         cls.IX = Edge(
             edge_id="IX",
             edge_type=EdgeType.DIRECTED,
-            start_node=cls.I,
+            start_node=cls.Irvar,
             end_node=cls.X,
         )
         cls.XO = Edge(
             edge_id="XO",
             edge_type=EdgeType.DIRECTED,
             start_node=cls.X,
-            end_node=cls.O,
+            end_node=cls.Orvar,
         )
         cls.YO = Edge(
             edge_id="YO",
             edge_type=EdgeType.DIRECTED,
             start_node=cls.Y,
-            end_node=cls.O,
+            end_node=cls.Orvar,
         )
 
         def phi_ij(scope_product, i: str):
@@ -161,7 +165,9 @@ class PGModelTest(unittest.TestCase):
             """"""
             return phi_ij(scope_product, i="I")
 
-        cls.I_f = Factor(gid="I_f", scope_vars=set([cls.I]), factor_fn=phi_i)
+        cls.I_f = Factor(
+            gid="I_f", scope_vars=set([cls.Irvar]), factor_fn=phi_i
+        )
 
         def phi_j(scope_product):
             """"""
@@ -215,7 +221,7 @@ class PGModelTest(unittest.TestCase):
 
         cls.IJX_f = Factor(
             gid="IJX_f",
-            scope_vars=set([cls.J, cls.X, cls.I]),
+            scope_vars=set([cls.J, cls.X, cls.Irvar]),
             factor_fn=phi_ijx,
         )
 
@@ -243,7 +249,7 @@ class PGModelTest(unittest.TestCase):
 
         cls.XYO_f = Factor(
             gid="XYO_f",
-            scope_vars=set([cls.Y, cls.X, cls.O]),
+            scope_vars=set([cls.Y, cls.X, cls.Orvar]),
             factor_fn=phi_xyo,
         )
 
@@ -254,6 +260,7 @@ class PGModelTest(unittest.TestCase):
         """
         self.cls_nodes_1()
         self.cls_nodes_2()
+        self.cls_nodes_3()
         self.pgm = PGModel(
             gid="pgm",
             nodes=set([self.a, self.b, self.c]),
@@ -266,12 +273,27 @@ class PGModelTest(unittest.TestCase):
 
         self.pgm_mpe = PGModel(
             gid="mpe",
-            nodes=set([self.J, self.Y, self.X, self.I, self.O]),
+            nodes=set([self.J, self.Y, self.X, self.Irvar, self.Orvar]),
             edges=set([self.JY, self.JX, self.YO, self.IX, self.XO]),
             factors=set(
                 [self.I_f, self.J_f, self.JY_f, self.IJX_f, self.XYO_f]
             ),
         )
+
+        # profiler code
+        # initialize profiler
+        self.prof = cProfile.Profile()
+        self.prof.enable()
+        # print("\n<<<<--------")
+
+    def tearDown(self):
+        """ """
+        p = Stats(self.prof)
+        p.sort_stats("cumtime")
+        p.dump_stats("profiles/test_graph.py.prof")
+        p.strip_dirs()
+        # p.print_stats()
+        # print("\n--------->>>")
 
     def test_id(self):
         """"""

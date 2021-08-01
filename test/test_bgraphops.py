@@ -28,7 +28,6 @@ class BaseGraphOpsTest(unittest.TestCase):
         self.n3 = Node("n3", {})
         self.n4 = Node("n4", {})
         self.n5 = Node("n5", {})
-        nset = set([self.n1, self.n2, self.n3, self.n4, self.n5])
         self.e1 = Edge(
             "e1",
             start_node=self.n1,
@@ -248,7 +247,7 @@ class BaseGraphOpsTest(unittest.TestCase):
     def test_edge_by_vertices_n(self):
         check = False
         try:
-            e = BaseGraphOps.edge_by_vertices(self.graph, self.n1, self.n3)
+            BaseGraphOps.edge_by_vertices(self.graph, self.n1, self.n3)
         except ValueError:
             check = True
         self.assertTrue(check)

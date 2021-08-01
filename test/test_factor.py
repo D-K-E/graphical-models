@@ -13,7 +13,7 @@ from pygmodels.pgmtype.randomvariable import NumCatRVariable
 class TestFactor(unittest.TestCase):
     """!"""
 
-    def setUp(self):
+    def data_1(self):
         """"""
         input_data = {
             "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
@@ -85,6 +85,8 @@ class TestFactor(unittest.TestCase):
         )
         self.f2 = Factor(gid="f2", scope_vars=set([self.grade, self.fdice]))
 
+    def data_2(self):
+        """"""
         # Koller, Friedman 2009, p. 104
         self.Af = NumCatRVariable(
             node_id="A",
@@ -143,6 +145,9 @@ class TestFactor(unittest.TestCase):
             gid="BC", scope_vars=set([self.Bf, self.Cf]), factor_fn=phiBC
         )
 
+    def data_3(self):
+        """"""
+
         def phiCD(scope_product):
             """"""
             sfs = set(scope_product)
@@ -178,6 +183,12 @@ class TestFactor(unittest.TestCase):
         self.DA = Factor(
             gid="DA", scope_vars=set([self.Df, self.Af]), factor_fn=phiDA
         )
+
+    def setUp(self):
+        """"""
+        self.data_1()
+        self.data_2()
+        self.data_3()
 
         # Koller, Friedman 2009 p. 107
         self.af = NumCatRVariable(
@@ -325,16 +336,16 @@ class TestFactor(unittest.TestCase):
     @unittest.skip("Factor.from_conditional_vars not yet implemented")
     def test_from_conditional_vars(self):
         """"""
-        A = NumCatRVariable(
-            "A",
-            input_data={"outcome-values": [True, False]},
-            marginal_distribution=lambda x: 0.6 if x else 0.4,
-        )
-        B = NumCatRVariable(
-            "B",
-            input_data={"outcome-values": [True, False]},
-            marginal_distribution=lambda x: 0.62 if x else 0.38,
-        )
+        # A = NumCatRVariable(
+        #     "A",
+        #     input_data={"outcome-values": [True, False]},
+        #     marginal_distribution=lambda x: 0.6 if x else 0.4,
+        # )
+        # B = NumCatRVariable(
+        #     "B",
+        #     input_data={"outcome-values": [True, False]},
+        #     marginal_distribution=lambda x: 0.62 if x else 0.38,
+        # )
 
         def phi_ab(scope_product):
             ss = set(scope_product)
@@ -349,9 +360,9 @@ class TestFactor(unittest.TestCase):
             else:
                 raise ValueError("unknown argument")
 
-        f = Factor.from_conditional_vars(X_i=B, Pa_Xi=set([A]))
-        query = set([("A", True), ("B", True)])
-        ff = f.phi(query)
+        # f = Factor.from_conditional_vars(X_i=B, Pa_Xi=set([A]))
+        # query = set([("A", True), ("B", True)])
+        # ff = f.phi(query)
         # self.assertEqual(round(ff, 2), 0.9)
 
 
