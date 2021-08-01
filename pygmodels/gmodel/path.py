@@ -18,21 +18,19 @@ class Path(Graph):
 
     def __init__(self, gid: str, data={}, edges: List[Edge] = None):
         """"""
-        nodes = None
-        if edges is not None:
-            nodes = set()
-            ns = [edges[0].start()]
-            for e in edges:
-                estart = e.start()
-                eend = e.end()
-                nodes.add(estart)
-                nodes.add(eend)
-                if eend not in ns:
-                    ns.append(eend)
+        nodes = set()
+        snodes = set()
+        snodes = set()
+        ns = [edges[0].start()]
+        for e in edges:
+            estart = e.start()
+            eend = e.end()
+            nodes.add(estart)
+            nodes.add(eend)
+            if eend not in ns:
+                ns.append(eend)
 
-        super().__init__(
-            gid=gid, data=data, nodes=set(nodes), edges=set(edges)
-        )
+        super().__init__(gid=gid, data=data, nodes=set(nodes), edges=set(edges))
         self._node_list = ns
         self._edge_list = edges
 
@@ -101,9 +99,7 @@ class Path(Graph):
                     # node is already in frontier
                     ckey = frontier.key(child, f=lambda x: x["state"])
                     if ckey > cnode["cost"]:
-                        frontier.insert(
-                            cnode["cost"], cnode, f=lambda x: x["state"]
-                        )
+                        frontier.insert(cnode["cost"], cnode, f=lambda x: x["state"])
 
     @classmethod
     def from_ucs_result(cls, ucs_solution):
@@ -148,16 +144,10 @@ class Cycle(Path):
     """
 
     def __init__(
-        self,
-        gid: str,
-        data={},
-        nodes: List[Node] = None,
-        edges: List[Edge] = None,
+        self, gid: str, data={}, nodes: List[Node] = None, edges: List[Edge] = None,
     ):
         """"""
         super().__init__(gid, data, nodes, edges)
         vs = self.vertices()
         if vs[0] != vs[-1]:
-            raise ValueError(
-                "The first and last vertice of a cycle must be same"
-            )
+            raise ValueError("The first and last vertice of a cycle must be same")
