@@ -20,17 +20,46 @@ class Path(Graph):
         """"""
         nodes = set()
         snodes = set()
-        snodes = set()
+        enodes = set()
         ns = [edges[0].start()]
         for e in edges:
             estart = e.start()
+            snodes.add(estart)
+            #
             eend = e.end()
+            enodes.add(eend)
+            #
             nodes.add(estart)
             nodes.add(eend)
+            #
             if eend not in ns:
                 ns.append(eend)
 
+        #
         super().__init__(gid=gid, data=data, nodes=set(nodes), edges=set(edges))
+        # starts path specific constructor
+
+        # start nodes are those who are never end nodes
+        starts = {n for n in snodes if n not in enodes}
+        # end nodes are those who are never start nodes
+        ends = {n for n in enodes if n not in snodes}
+
+        # check if starts or ends have more than 2 elements
+        # they should not.
+        if len(starts) > 2:
+            raise ValueError("Path should not have more than 2 start nodes")
+
+        if len(ends) > 2:
+            raise ValueError("Path should not have more than 2 end nodes")
+
+        if len(starts) == 2 and len(ends) == 2:
+            raise ValueError("Path can not have 2 start and end nodes")
+
+        # the easy option that does not depend on any graph types
+        if len(starts) == 1 and len(ends) == 1:
+            start_node = starts.pop()
+            end_node = ends.pop()
+
         self._node_list = ns
         self._edge_list = edges
 
