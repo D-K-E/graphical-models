@@ -50,7 +50,7 @@ class BaseGraphTest(unittest.TestCase):
 
     def test_V(self):
         """"""
-        V = self.graph.V
+        V = {v.id(): v for v in self.graph.V}
         nodes = {"n1": self.n1, "n2": self.n2, "n3": self.n3, "n4": self.n4}
         for nid, node in nodes.copy().items():
             self.assertEqual(nid in V, nid in nodes)
@@ -58,7 +58,7 @@ class BaseGraphTest(unittest.TestCase):
 
     def test_E(self):
         """"""
-        E = self.graph.E
+        E = {e.id(): e for e in self.graph.E}
 
         edges = {"e1": self.e1, "e2": self.e2}
         for eid, edge in edges.copy().items():

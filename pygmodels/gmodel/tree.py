@@ -33,7 +33,7 @@ class Tree(BaseGraph, AbstractTree):
                 nodes.add(eend)
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
         self.__root = None
-        es = [e.type() for e in self.E.values()]
+        es = [e.type() for e in self.E]
         if es[0] == EdgeType.DIRECTED:
 
             def egen(x):
@@ -76,8 +76,10 @@ class Tree(BaseGraph, AbstractTree):
 
     def node_table(self):
         """"""
-        node_table = {v: {"child": False, "parent": False} for v in self.V}
-        for e in self.E.values():
+        node_table = {
+            v.id(): {"child": False, "parent": False} for v in self.V
+        }
+        for e in self.E:
             estart_id = e.start().id()
             eend_id = e.end().id()
             node_table[estart_id]["parent"] = True
@@ -93,7 +95,8 @@ class Tree(BaseGraph, AbstractTree):
             for k, v in node_table.items()
             if v["child"] is False and v["parent"] is True
         ]
-        return self.V[root_ids[0]]
+        V = {v.id(): v for v in self.V}
+        return V[root_ids[0]]
 
     def leaves(self) -> Set[Node]:
         """"""
@@ -104,7 +107,7 @@ class Tree(BaseGraph, AbstractTree):
             for k, v in node_table.items()
             if v["child"] is True and v["parent"] is False
         ]
-        return set([self.V[v] for v in leave_ids])
+        return set([v for v in self.V if v.id() in leave_ids])
 
     @property
     def root(self) -> Node:
@@ -302,9 +305,9 @@ class Tree(BaseGraph, AbstractTree):
         """
         queue = PriorityQueue(is_min=is_min)
         T: Set[Edge] = set()
-        clusters = {v: set([v]) for v in g.V}
+        clusters = {v.id(): set([v]) for v in g.V}
         L: List[Edge] = []
-        for e, edge in g.E.items():
+        for edge in g.E:
             queue.insert(weight_function(edge), edge)
         #
         while len(queue) > 0:

@@ -100,8 +100,8 @@ class Graph(BaseGraph):
     @classmethod
     def from_base_graph(cls, bgraph: BaseGraph):
         "Obtain finite graph from base graph"
-        nodes = set(bgraph.V.values())
-        edges = set(bgraph.E.values())
+        nodes = set(bgraph.V)
+        edges = set(bgraph.E)
         data = bgraph.data()
         gid = bgraph.id()
         return Graph(gid=gid, nodes=nodes, edges=edges, data=data)
@@ -247,7 +247,7 @@ class Graph(BaseGraph):
         gmat = {}
         for v in self.V:
             for k in self.V:
-                gmat[(v, k)] = vtype(0)
+                gmat[(v.id(), k.id())] = vtype(0)
         for edge in BaseGraphOps.edges(self):
             tpl1 = (edge.start().id(), edge.end().id())
             tpl2 = (edge.end().id(), edge.start().id())
@@ -326,10 +326,10 @@ class Graph(BaseGraph):
         for k in self.V.copy():
             for i in self.V.copy():
                 for j in self.V.copy():
-                    t_ij = T[(i, j)]
-                    t_ik = T[(i, k)]
-                    t_ki = T[(i, k)]
-                    T[(i, j)] = t_ij or (t_ik and t_ki)
+                    t_ij = T[(i.id(), j.id())]
+                    t_ik = T[(i.id(), k.id())]
+                    t_ki = T[(i.id(), k.id())]
+                    T[(i.id(), j.id())] = t_ij or (t_ik and t_ki)
         T = {(k, i): v for (k, i), v in T.items() if k != i}
         return T
 
@@ -428,13 +428,14 @@ class Graph(BaseGraph):
 
         Given a root node id for a component, obtain its node set.
         """
-        v = self.V[root_node_id]
+        V = {v.id(): v for v in self.V}
+        v = V[root_node_id]
         Ts = self.graph_props["components"]
         T = Ts[root_node_id]
         T.add(v.id())
-        return set([self.V[v] for v in T])
+        return set([V[v] for v in T])
 
-    def get_component(self, root_node_id: str) -> GraphObject:
+    def get_component(self, root_node_id: str) -> BaseGraph:
         """!
         \brief get a component graph from graph instance
 
@@ -443,10 +444,11 @@ class Graph(BaseGraph):
         """
         vertices = self.get_component_nodes(root_node_id)
         edges = [self.gdata[v.id()] for v in vertices]
+        E = {e.id(): e for e in self.E}
         es: Set[Edge] = set()
         for elst in edges:
             for e in elst:
-                es.add(self.E[e])
+                es.add(E[e])
 
         return Graph(gid=str(uuid4()), nodes=vertices, edges=es)
 
@@ -514,12 +516,9 @@ class Graph(BaseGraph):
         p. 228. For the definition of the bridge, see Diestel 2017, p. 11
         """
         nb_component = self.nb_components()
-        bridges: Set[Edge] = set()
-        edges = set(self.E.values())
-        for edge in edges:
-            graph = graph_maker(edge)
-            if graph.nb_components() > nb_component:
-                bridges.add(edge)
+        bridges: Set[Edge] = set(
+            e for e in self.E if graph_maker(e).nb_components() > nb_component
+        )
         return bridges
 
     def get_subgraph_by_vertices(

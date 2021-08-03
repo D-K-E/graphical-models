@@ -202,16 +202,14 @@ class BaseGraphAlgOps:
         """
         if isinstance(el, AbstractGraph):
             if is_plus is False:
-                elnodes = set(el.V.values())
-                nodes = {n for n in g.V.values() if n not in elnodes}
-                bg = BaseGraph.based_on_node_set(
-                    edges=set(g.E.values()), nodes=nodes
-                )
+                elnodes = set(el.V)
+                nodes = {n for n in g.V if n not in elnodes}
+                bg = BaseGraph.based_on_node_set(edges=set(g.E), nodes=nodes)
                 bg.update_data(g.data())
                 return bg
             else:
-                nodes = set(g.V.values()).union(el.V.values())
-                edges = set(g.E.values()).union(BaseGraphOps.edges(el))
+                nodes = set(g.V).union(el.V)
+                edges = set(g.E).union(el.E)
                 bg = BaseGraph.from_edge_node_set(edges=edges, nodes=nodes)
                 bg.update_data(g.data())
                 return bg
@@ -219,31 +217,27 @@ class BaseGraphAlgOps:
         nset = all(isinstance(e, AbstractNode) for e in el)
         if nset:
             if is_plus is False:
-                nodes = {n for n in g.V.values() if n not in el}
-                edges = set(g.E.values())
+                nodes = {n for n in g.V if n not in el}
+                edges = set(g.E)
                 bg = BaseGraph.based_on_node_set(edges=edges, nodes=nodes)
                 bg.update_data(g.data())
                 return bg
             else:
-                nodes = set(g.V.values()).union(el)
-                edges = set(g.E.values())
+                nodes = set(g.V).union(el)
+                edges = set(g.E)
                 bg = BaseGraph.based_on_node_set(edges=edges, nodes=nodes)
                 bg.update_data(g.data())
                 return bg
         eset = all(isinstance(e, AbstractEdge) for e in el)
         if eset:
             if is_plus is False:
-                edges = {e for e in g.E.values() if e not in el}
-                bg = BaseGraph.from_edge_node_set(
-                    edges=edges, nodes=set(g.V.values())
-                )
+                edges = {e for e in g.E if e not in el}
+                bg = BaseGraph.from_edge_node_set(edges=edges, nodes=set(g.V))
                 bg.update_data(g.data())
                 return bg
             else:
-                edges = set(g.E.values()).union(el)
-                bg = BaseGraph.from_edge_node_set(
-                    edges=edges, nodes=set(g.V.values())
-                )
+                edges = set(g.E).union(el)
+                bg = BaseGraph.from_edge_node_set(edges=edges, nodes=set(g.V))
                 bg.update_data(g.data())
                 return bg
 

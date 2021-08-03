@@ -5,7 +5,11 @@ import math
 from typing import Callable, Dict, List, Optional, Set, Tuple, Union
 
 from pygmodels.graphf.bgraphops import BaseGraphOps
-from pygmodels.gtype.abstractobj import AbstractGraph
+from pygmodels.gtype.abstractobj import (
+    AbstractEdge,
+    AbstractGraph,
+    AbstractNode,
+)
 from pygmodels.gtype.edge import Edge
 from pygmodels.gtype.node import Node
 
@@ -16,6 +20,7 @@ class BaseGraphTraverser:
     @staticmethod
     def dfs_forest(
         g: AbstractGraph,
+        V: Dict[str, AbstractNode],
         u: str,
         pred: Dict[str, str],
         marked: Dict[str, int],
@@ -24,7 +29,7 @@ class BaseGraphTraverser:
         T: Set[str],
         cycles: Dict[str, List[Dict[str, Union[str, int]]]],
         time: int,
-        edge_generator: Callable[[Node], Set[Edge]],
+        edge_generator: Callable[[AbstractNode], Set[AbstractEdge]],
         check_cycle: bool = False,
     ) -> Optional[Tuple[str, str]]:
         """!
@@ -37,6 +42,7 @@ class BaseGraphTraverser:
         \param marked storing if node is visited
         \param pred storing the parent of nodes
         \param g graph we are searching for
+        \param V vertex set of g converted to dict for easy access
         \param u node id
         \param T set of pred nodes
         \param time global visit counter
@@ -46,7 +52,7 @@ class BaseGraphTraverser:
         marked[u] = True
         time += 1
         d[u] = time
-        unode = g.V[u]
+        unode = V[u]
         for edge in edge_generator(unode):
             vnode = edge.get_other(unode)
             v = vnode.id()
@@ -55,6 +61,7 @@ class BaseGraphTraverser:
                 T.add(v)
                 BaseGraphTraverser.dfs_forest(
                     g=g,
+                    V=V,
                     u=v,
                     pred=pred,
                     marked=marked,
@@ -73,7 +80,7 @@ class BaseGraphTraverser:
             # v ancestor, u visiting node
             # edge between them is a back edge
             # see p. 151, and p. 159-160
-            unode = g.V[u]
+            unode = V[u]
             for edge in edge_generator(unode):
                 vnode = edge.get_other(unode)
                 vid = vnode.id()
@@ -106,22 +113,24 @@ class BaseGraphTraverser:
         \see dfs_forest() method for more information on parameters.
         """
         time = 0
-        marked: Dict[str, bool] = {n: False for n in g.V}
+        V: Dict[str, AbstractNode] = {n.id(): n for n in g.V}
+        marked: Dict[str, bool] = {n: False for n in V}
         preds: Dict[str, Dict[str, str]] = {}
         Ts: Dict[str, Set[str]] = {}
-        d: Dict[str, int] = {n: math.inf for n in g.V}
-        f: Dict[str, int] = {n: math.inf for n in g.V}
+        d: Dict[str, int] = {n: math.inf for n in V}
+        f: Dict[str, int] = {n: math.inf for n in V}
         cycles: Dict[str, List[Dict[str, Union[str, int]]]] = {
-            n: [] for n in g.V
+            n: [] for n in V
         }
         component_counter = 0
         #
-        for u in g.V:
+        for u in V:
             if marked[u] is False:
-                pred: Dict[str, Optional[str]] = {n: None for n in g.V}
+                pred: Dict[str, Optional[str]] = {n: None for n in V}
                 T: Set[str] = set()
                 BaseGraphTraverser.dfs_forest(
                     g=g,
+                    V=V,
                     u=u,
                     pred=pred,
                     cycles=cycles,
@@ -158,12 +167,13 @@ class BaseGraphTraverser:
         \brief obtain the edge set implied by the predecessor array.
         """
         esets: Dict[str, Set[Edge]] = {}
+        V = {v.id(): v for v in g.V}
         for u, forest in preds.copy().items():
             eset: Set[Edge] = set()
             for child, parent in forest.items():
-                cnode = g.V[child]
+                cnode = V[child]
                 if parent is not None:
-                    pnode = g.V[parent]
+                    pnode = V[parent]
                     eset = eset.union(
                         BaseGraphOps.edge_by_vertices(
                             g, start=pnode, end=cnode
@@ -187,14 +197,15 @@ class BaseGraphTraverser:
             raise ValueError("argument node is not in graph")
         nid = n1.id()
         Q = [nid]
-        l_vs = {v: math.inf for v in g.V}
+        V: Dict[str, AbstractNode] = {v.id(): v for v in g.V}
+        l_vs = {v: math.inf for v in V}
         l_vs[nid] = 0
         T = set([nid])
         P: Dict[str, Dict[str, str]] = {}
         P[nid] = {}
         while Q:
             u = Q.pop(0)
-            unode = g.V[u]
+            unode = V[u]
             for edge in edge_generator(unode):
                 vnode = edge.get_other(unode)
                 vid = vnode.id()
@@ -204,6 +215,6 @@ class BaseGraphTraverser:
                     P[nid][u] = vid
                     Q.append(vid)
         #
-        T = set([g.V[t] for t in T])
+        T = set([V[t] for t in T])
         path_props = {"bfs-tree": P, "path-set": T, "top-sort": l_vs}
         return path_props

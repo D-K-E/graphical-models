@@ -249,13 +249,13 @@ class BaseGraphAlgSetOpsTest(unittest.TestCase):
     def test_subtract_n(self):
         """"""
         gs = BaseGraphAlgOps.subtract(self.graph, self.n2)
-        nodes = set(gs.V.values())
+        nodes = set(gs.V)
         self.assertEqual(nodes, set([self.n1, self.n3, self.n4]))
 
     def test_subtract_e(self):
         """"""
         gs = BaseGraphAlgOps.subtract(self.graph, self.e2)
-        self.assertEqual(set(gs.E.values()), set([self.e1]))
+        self.assertEqual(set(gs.E), set([self.e1]))
 
     def test_subtract_g(self):
         n = Node("n646", {})
@@ -278,10 +278,10 @@ class BaseGraphAlgSetOpsTest(unittest.TestCase):
         """"""
         g = BaseGraphAlgOps.add(self.graph, self.e3)
         #
-        self.assertEqual(set(self.graph.V.values()), set(g.V.values()))
+        self.assertEqual(set(self.graph.V), set(g.V))
 
         #
-        self.assertEqual(set(self.graph_2.E.values()), set(g.E.values()))
+        self.assertEqual(set(self.graph_2.E), set(g.E))
 
     def test_add_node(self):
         n = Node("n646", {})

@@ -252,6 +252,7 @@ class GraphTest(unittest.TestCase):
         p.sort_stats("cumtime")
         if self.verbose is True:
             p.dump_stats("profiles/test_graph.py.prof")
+            p.print_stats()
         p.strip_dirs()
         # p.print_stats()
         # print("\n--------->>>")
@@ -367,23 +368,6 @@ class GraphTest(unittest.TestCase):
             "g1", data={}, nodes=set([n1, n2, n3, n4]), edges=set([e1, e2])
         )
         self.assertEqual(graph, self.graph)
-
-    def test_V(self):
-        """"""
-        V = self.graph.V
-        nodes = {"n1": self.n1, "n2": self.n2, "n3": self.n3, "n4": self.n4}
-        for nid, node in nodes.copy().items():
-            self.assertEqual(nid in V, nid in nodes)
-            self.assertEqual(V[nid], nodes[nid])
-
-    def test_E(self):
-        """"""
-        E = self.graph.E
-
-        edges = {"e1": self.e1, "e2": self.e2}
-        for eid, edge in edges.copy().items():
-            self.assertEqual(eid in E, eid in edges)
-            self.assertEqual(E[eid], edges[eid])
 
     def test_is_connected_false(self):
         """"""

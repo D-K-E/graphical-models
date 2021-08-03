@@ -289,11 +289,12 @@ class PGModel(Graph):
         """
         if len(evidences) == 0:
             return self.factors(), set()
-        if any(e[0] not in self.V for e in evidences):
+        if any(e[0] not in {v.id() for v in self.V} for e in evidences):
             raise ValueError(
                 "evidence set contains variables out of vertices of graph"
             )
-        E = set([self.V[e[0]] for e in evidences])
+        elist = [e[0] for e in evidences]
+        E = set([v for v in self.V if v.id() in elist])
         fs = self.factors()
         factors = set(
             [
@@ -338,8 +339,9 @@ class PGModel(Graph):
         Main conditional product by variable elimination function
         """
         cardinality = self.order_by_greedy_metric(nodes=Zs, s=ordering_fn)
+        V = {v.id(): v for v in self.V}
         ordering = [
-            self.V[n[0]]
+            V[n[0]]
             for n in sorted(list(cardinality.items()), key=lambda x: x[1])
         ]
         phi = self.sum_product_elimination(factors=factors, Zs=ordering)
@@ -387,8 +389,9 @@ class PGModel(Graph):
         cardinality = self.order_by_greedy_metric(
             nodes=Zs, s=min_unmarked_neighbours
         )
+        V = {v.id(): v for v in self.V}
         ordering = [
-            self.V[n[0]]
+            V[n[0]]
             for n in sorted(list(cardinality.items()), key=lambda x: x[1])
         ]
         assignments, factors, z_phi = self.max_product_eliminate_vars(

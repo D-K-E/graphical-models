@@ -25,17 +25,19 @@ class BaseGraph(GraphObject, AbstractGraph):
     def __init__(
         self,
         gid: str,
+        nodes: Union[Set[AbstractNode], FrozenSet[AbstractNode]],
+        edges: Union[Set[AbstractEdge], FrozenSet[AbstractEdge]],
         data={},
-        nodes: Set[Node] = None,
-        edges: Set[Edge] = None,
     ):
         super().__init__(oid=gid, odata=data)
-        self._nodes: Optional[Dict[str, Node]] = None
-        if nodes is not None:
-            self._nodes = BaseGraphOps.get_nodes(ns=nodes, es=edges)
-        self._edges: Optional[Dict[str, Edge]] = None
-        if edges is not None:
-            self._edges = {e.id(): e for e in edges}
+        if not isinstance(nodes, (frozenset, set)):
+            raise TypeError("Nodes must be a set or a frozenset")
+        if not isinstance(edges, (frozenset, set)):
+            raise TypeError("Edges must be a set or a frozenset")
+        self._nodes: FrozenSet[AbstractNode] = BaseGraphOps.get_nodes(
+            ns=nodes, es=edges
+        )
+        self._edges: FrozenSet[AbstractEdge] = frozenset(edges)
         #
         self.gdata: Dict[str, List[str]] = BaseGraphOps.to_edgelist(self)
         if self._nodes is not None:
@@ -47,8 +49,8 @@ class BaseGraph(GraphObject, AbstractGraph):
         if is_trivial:
             msg = "This library is not compatible with computations with trivial graph"
             msg += "\nNodes: "
-            msg += str(self._nodes.keys())
-            msg += "\nEdges: " + str(self._edges.keys())
+            msg += str([n.id() for n in self.V])
+            msg += "\nEdges: " + str([e.id() for e in self.E])
             raise ValueError(msg)
 
     @classmethod
@@ -56,8 +58,8 @@ class BaseGraph(GraphObject, AbstractGraph):
         "Obtain base graph from AbstractGraph implementing object"
         if issubclass(g_, AbstractGraph):
             raise TypeError("Argument must implement AbstractGraph interface")
-        nodes = set(g_.V.values())
-        edges = set(g_.E.values())
+        nodes = set(g_.V)
+        edges = set(g_.E)
         data = g_.data()
         gid = g_.id()
         return BaseGraph(gid=gid, data=data, nodes=nodes, edges=edges)
@@ -132,7 +134,7 @@ class BaseGraph(GraphObject, AbstractGraph):
         return hash(self.__str__())
 
     @property
-    def V(self) -> Dict[str, Node]:
+    def V(self) -> FrozenSet[AbstractNode]:
         """!
         \brief Obtain vertices of the graph
 
@@ -144,7 +146,7 @@ class BaseGraph(GraphObject, AbstractGraph):
         e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
         g = Graph("graph", nodes=set([n1, n2]), edges=set([e1]))
         g.V
-        # {"n1": Node, "n2": Node}
+        # {n1, n2}
 
         \endcode
         """
@@ -153,7 +155,7 @@ class BaseGraph(GraphObject, AbstractGraph):
         return self._nodes
 
     @property
-    def E(self) -> Dict[str, Edge]:
+    def E(self) -> FrozenSet[AbstractEdge]:
         """!
         \brief obtain edges of the graph
         \throws ValueError if edge set is empty for the graph.
@@ -164,7 +166,7 @@ class BaseGraph(GraphObject, AbstractGraph):
         e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
         g = BaseGraph("graph", nodes=set([n1, n2]), edges=set([e1]))
         g.E
-        # {"e1": Edge}
+        # {e1}
 
         \endcode
 
@@ -173,7 +175,7 @@ class BaseGraph(GraphObject, AbstractGraph):
             raise ValueError("Edges are None for this graph")
         return self._edges
 
-    def is_neighbour_of(self, n1: Node, n2: Node) -> bool:
+    def is_neighbour_of(self, n1: AbstractNode, n2: AbstractNode) -> bool:
         """!
         \brief check if two nodes are neighbours
         We define the condition of neighborhood as having a common edge, not
@@ -208,7 +210,9 @@ class BaseGraph(GraphObject, AbstractGraph):
         \endcode
         """
 
-        def cond(n_1: Node, n_2: Node, e: Edge) -> bool:
+        def cond(
+            n_1: AbstractNode, n_2: AbstractNode, e: AbstractEdge
+        ) -> bool:
             """!
             \brief neighborhood condition
             """
@@ -224,11 +228,11 @@ class BaseGraph(GraphObject, AbstractGraph):
         n2_edge_ids = set(gdata[n2.id()])
         edge_ids = n1_edge_ids.intersection(n2_edge_ids)
         # filter self loops
-        edges = set([self.E[e] for e in edge_ids])
+        edges = set([e for e in self.E if e.id() in edge_ids])
         return self.is_related_to(n1=n1, n2=n2, condition=cond, es=edges)
 
     @classmethod
-    def from_edgeset(cls, edges: Set[Edge]):
+    def from_edgeset(cls, edges: Set[AbstractEdge]):
         """!
         \brief We construct the graph from given edge set using a random id.
 
@@ -260,14 +264,14 @@ class BaseGraph(GraphObject, AbstractGraph):
         g = Graph.from_edgeset(eset)
         \endcode
         """
-        nodes: Set[Node] = set()
+        nodes: Set[AbstractNode] = set()
         for e in edges:
             nodes.add(e.start())
             nodes.add(e.end())
         return BaseGraph(gid=str(uuid4()), nodes=nodes, edges=edges)
 
     @classmethod
-    def from_edge_node_set(cls, edges: Set[Edge], nodes: Set[Node]):
+    def from_edge_node_set(cls, edges: Set[AbstractEdge], nodes: Set[Node]):
         """!
         \brief We construct the graph from given node, and edge sets using a random id.
         \see Graph for more information
@@ -296,10 +300,10 @@ class BaseGraph(GraphObject, AbstractGraph):
 
     def is_related_to(
         self,
-        n1: Node,
-        n2: Node,
-        condition: Callable[[Node, Node, Edge], bool],
-        es: FrozenSet[Edge] = None,
+        n1: AbstractNode,
+        n2: AbstractNode,
+        condition: Callable[[AbstractNode, AbstractNode, AbstractEdge], bool],
+        es: FrozenSet[AbstractEdge] = None,
     ):
         """!
         \brief Generic function for applying proximity conditions on a node pair
@@ -313,7 +317,7 @@ class BaseGraph(GraphObject, AbstractGraph):
         We check whether a proximity condition is valid for given two nodes.
         """
         if es is None:
-            es = frozenset(self.E.values())
+            es = frozenset(self.E)
         for e in es:
             if condition(n1, n2, e) is True:
                 return True

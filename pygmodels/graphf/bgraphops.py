@@ -24,7 +24,7 @@ class BaseGraphOps:
     def get_nodes(
         ns: Optional[Set[AbstractNode]],
         es: Optional[Set[AbstractEdge]],
-    ) -> Dict[str, AbstractNode]:
+    ) -> FrozenSet[AbstractNode]:
         """!
         \brief Obtain all nodes in a single set.
 
@@ -48,7 +48,7 @@ class BaseGraphOps:
                 nodes.add(estart)
                 nodes.add(eend)
         #
-        return {n.id(): n for n in nodes}
+        return frozenset(nodes)
 
     @staticmethod
     def to_edgelist(g: AbstractGraph) -> Dict[str, str]:
@@ -57,14 +57,12 @@ class BaseGraphOps:
 
         For each node we register the edges.
         """
-        _nodes = BaseGraphOps.get_nodes(
-            ns=set(g.V.values()), es=set(g.E.values())
-        )
+        _nodes = BaseGraphOps.get_nodes(ns=set(g.V), es=set(g.E))
         gdata = {}
-        for vertex in _nodes.values():
+        for vertex in _nodes:
             gdata[vertex.id()] = []
         #
-        for edge in g.E.values():
+        for edge in g.E:
             for node_id in edge.node_ids():
                 elist = gdata.get(node_id, None)
                 if elist is None:
@@ -90,7 +88,7 @@ class BaseGraphOps:
 
         \endcode
         """
-        return frozenset([n for n in g.V.values()])
+        return frozenset([n for n in g.V])
 
     @staticmethod
     def nodes(g: AbstractGraph) -> FrozenSet[AbstractNode]:
@@ -104,7 +102,7 @@ class BaseGraphOps:
         """!
         \brief obtain edge set of the graph
         """
-        return frozenset([n for n in g.E.values()])
+        return frozenset([n for n in g.E])
 
     @staticmethod
     def neighbours_of(g: AbstractGraph, n1: AbstractEdge) -> Set[AbstractNode]:
@@ -159,9 +157,9 @@ class BaseGraphOps:
         \throws TypeError if the argument is not a node or an edge
         """
         if isinstance(ne, AbstractNode):
-            return ne.id() in g.V
+            return ne.id() in {v.id() for v in g.V}
         elif isinstance(ne, AbstractEdge):
-            return ne.id() in g.E
+            return ne.id() in {e.id() for e in g.E}
         else:
             raise TypeError("Given argument should be either edge or node")
 
@@ -205,7 +203,8 @@ class BaseGraphOps:
             raise ValueError("node not in Graph")
         gdata = BaseGraphOps.to_edgelist(g)
         edge_ids = gdata[n.id()]
-        return set([g.E[eid] for eid in edge_ids])
+        E = {e.id(): e for e in g.E}
+        return set([E[eid] for eid in edge_ids])
 
     @staticmethod
     def outgoing_edges_of(
@@ -252,9 +251,10 @@ class BaseGraphOps:
             raise ValueError("node not in Graph")
 
         eset = set()
+        E = {e.id(): e for e in g.E}
         gdata = BaseGraphOps.to_edgelist(g)
         for eid in gdata[n.id()]:
-            e = g.E[eid]
+            e = E[eid]
             if e.is_start(n):
                 eset.add(e)
         return frozenset(eset)
@@ -298,8 +298,9 @@ class BaseGraphOps:
 
         eset = set()
         gdata = BaseGraphOps.to_edgelist(g)
+        E = {e.id(): e for e in g.E}
         for eid in gdata[n.id()]:
-            e = g.E[eid]
+            e = E[eid]
             if e.is_end(n):
                 eset.add(e)
         return frozenset(eset)
@@ -329,12 +330,10 @@ class BaseGraphOps:
 
         \endcode
         """
-        es: Set[AbstractEdge] = set()
-        for e_id in g.E:
-            edge = g.E[e_id]
-            if edge.is_end(n):
-                es.add(edge)
-        return es
+        if not BaseGraphOps.is_in(g, n):
+            raise ValueError("node not in graph")
+
+        return {e for e in g.E if e.is_end(n)}
 
     @staticmethod
     def vertex_by_id(g: AbstractGraph, node_id: str) -> AbstractNode:
@@ -342,9 +341,10 @@ class BaseGraphOps:
         \brief obtain vertex by using its identifier
         \throws ValueError if the node is not in graph
         """
-        if node_id not in g.V:
+        V = {v.id(): v for v in g.V}
+        if node_id not in V:
             raise ValueError("node id not in graph")
-        return g.V[node_id]
+        return V[node_id]
 
     @staticmethod
     def edge_by_id(g: AbstractGraph, edge_id: str) -> AbstractEdge:
@@ -352,9 +352,10 @@ class BaseGraphOps:
         \brief obtain edge by using its identifier
         \throws ValueError if the edge id is not in graph
         """
-        if edge_id not in g.E:
+        E = {e.id(): e for e in g.E}
+        if edge_id not in E:
             raise ValueError("edge id not in graph")
-        return g.E[edge_id]
+        return E[edge_id]
 
     @staticmethod
     def edge_by_vertices(
@@ -378,7 +379,7 @@ class BaseGraphOps:
         common_edge_ids = first_eset.intersection(second_eset)
         if len(common_edge_ids) == 0:
             raise ValueError("No common edges between given nodes")
-        return set([g.E[e] for e in common_edge_ids])
+        return set([e for e in g.E if e.id() in common_edge_ids])
 
     @staticmethod
     def vertices_of(

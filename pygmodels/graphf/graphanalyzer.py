@@ -161,7 +161,7 @@ class BaseGraphAnalyzer:
         compare_v = comp_val
         gdata = BaseGraphOps.to_edgelist(g)
         for nid in g.V:
-            nb_edges = len(gdata[nid])
+            nb_edges = len(gdata[nid.id()])
             if fn(nb_edges, compare_v):
                 compare_v = nb_edges
         return compare_v
@@ -183,10 +183,7 @@ class BaseGraphAnalyzer:
         """
         md = BaseGraphAnalyzer.max_degree(g)
         gdata = BaseGraphOps.to_edgelist(g)
-        nodes = set()
-        for nid in g.V:
-            if len(gdata[nid]) == md:
-                nodes.add(g.V[nid])
+        nodes = set([v for v in g.V if len(gdata[v.id()]) == md])
         return nodes
 
     @staticmethod
@@ -210,10 +207,7 @@ class BaseGraphAnalyzer:
         """
         md = BaseGraphAnalyzer.min_degree(g)
         gdata = BaseGraphOps.to_edgelist(g)
-        nodes = set()
-        for nid in g.V:
-            if len(gdata[nid]) == md:
-                nodes.add(g.V[nid])
+        nodes = set([v for v in g.V if len(gdata[v.id()]) == md])
         return nodes
 
     @staticmethod
@@ -227,7 +221,7 @@ class BaseGraphAnalyzer:
         It can be found in Diestel 2017, p. 5
         """
         gdata = BaseGraphOps.to_edgelist(g)
-        return sum([len(gdata[nid]) for nid in g.V]) / len(g.V)
+        return sum([len(gdata[v.id()]) for v in g.V]) / len(g.V)
 
     @staticmethod
     def edge_vertex_ratio(g: AbstractGraph) -> float:

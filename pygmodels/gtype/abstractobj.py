@@ -185,12 +185,12 @@ class AbstractGraph(AbstractGraphObj):
 
     @property
     @abstractmethod
-    def V(self) -> Dict[str, AbstractNode]:
+    def V(self) -> FrozenSet[AbstractNode]:
         raise NotImplementedError
 
     @property
     @abstractmethod
-    def E(self) -> Dict[str, AbstractEdge]:
+    def E(self) -> FrozenSet[AbstractEdge]:
         raise NotImplementedError
 
     @abstractmethod
