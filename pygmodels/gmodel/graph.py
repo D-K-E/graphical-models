@@ -14,7 +14,7 @@ from uuid import uuid4
 from pygmodels.graphf.bgraphops import BaseGraphOps
 from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
 from pygmodels.graphf.graphops import BaseGraphAlgOps, BaseGraphSetOps
-from pygmodels.graphf.graphtraverser import BaseGraphTraverser
+from pygmodels.graphf.graphsearcher import BaseGraphSearcher
 from pygmodels.gtype.basegraph import BaseGraph
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.graphobj import GraphObject
@@ -84,7 +84,7 @@ class Graph(BaseGraph):
         Several graph properties computed with dfs passage
         """
         if self._props is None:
-            self._props = BaseGraphTraverser.visit_graph_dfs(
+            self._props = BaseGraphSearcher.depth_first_search(
                 self,
                 edge_generator=lambda node: BaseGraphOps.edges_of(self, node),
                 check_cycle=True,

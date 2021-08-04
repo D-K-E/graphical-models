@@ -8,7 +8,7 @@ from uuid import uuid4
 
 from pygmodels.gmodel.path import Path
 from pygmodels.graphf.bgraphops import BaseGraphOps
-from pygmodels.graphf.graphtraverser import BaseGraphTraverser
+from pygmodels.graphf.graphsearcher import BaseGraphSearcher
 from pygmodels.gtype.abstractobj import AbstractTree
 from pygmodels.gtype.basegraph import BaseGraph
 from pygmodels.gtype.edge import Edge, EdgeType
@@ -46,7 +46,7 @@ class Tree(BaseGraph, AbstractTree):
 
         self.paths: Dict[
             str, Union[dict, set]
-        ] = BaseGraphTraverser.find_shortest_paths(
+        ] = BaseGraphSearcher.breadth_first_search(
             self, n1=self.root, edge_generator=egen
         )
         self.topsort = self.paths["top-sort"]
@@ -188,7 +188,7 @@ class Tree(BaseGraph, AbstractTree):
             [n for n in BaseGraphOps.nodes(self) if self.height_of(n) == level]
         )
 
-    def extract_path_info(
+    def extract_path(
         self,
         start: Node,
         end: Node,
@@ -218,33 +218,16 @@ class Tree(BaseGraph, AbstractTree):
             for e in BaseGraphOps.outgoing_edges_of(self, d):
                 downset_edges.add(e)
         problem_set = upset_edges.intersection(downset_edges)
-        ucs_solution = Path.uniform_cost_search(
+        ucs_path = Path.from_ucs(
+            g=self,
             goal=end,
             start=start,
-            problem_set=problem_set,
             filter_fn=filter_fn,
             costfn=costfn,
             is_min=is_min,
+            problem_set=problem_set,
         )
-        return ucs_solution
-
-    def extract_path(
-        self,
-        start: Node,
-        end: Node,
-        filter_fn: Callable[[Set[Edge], str], Set[Edge]] = lambda es, n: set(
-            [e for e in es if e.start().id() == n]
-        ),
-        costfn: Callable[[Edge, int], int] = lambda x, y: y + 1,
-        is_min=True,
-    ) -> Path:
-        """!
-        Extract path from tree
-        """
-        solution = self.extract_path_info(
-            start, end, filter_fn, costfn, is_min
-        )
-        return Path.from_ucs_result(solution)
+        return ucs_path
 
     @classmethod
     def find_mst_prim(

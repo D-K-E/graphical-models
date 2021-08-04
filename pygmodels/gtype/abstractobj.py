@@ -202,18 +202,8 @@ class AbstractGraph(AbstractGraphObj):
 
     def check_types(self) -> bool:
         """"""
-        vtypes = all(
-            [
-                isinstance(vid, str) and isinstance(v, AbstractNode)
-                for vid, v in self.V.items()
-            ]
-        )
-        etypes = all(
-            [
-                isinstance(vid, str) and isinstance(v, AbstractEdge)
-                for vid, v in self.E.items()
-            ]
-        )
+        vtypes = all([isinstance(v, AbstractNode) for v in self.V])
+        etypes = all([isinstance(v, AbstractEdge) for v in self.E])
         if vtypes is False:
             mes = (
                 "self.V property must return Dict[str, AbstractNode] it fails "
@@ -238,6 +228,7 @@ class AbstractTree(AbstractGraph):
 
     def __init__(self, *args, **kwargs):
         self.check_types()
+        super().__init__(*args, **kwargs)
 
     @property
     @abstractmethod
@@ -256,23 +247,11 @@ class AbstractPath(AbstractGraph):
 
     def __init__(self, *args, **kwargs):
         """"""
+        super().__init__(*args, **kwargs)
         self.check_types()
 
     @abstractmethod
-    def start(self) -> AbstractNode:
-        raise NotImplementedError
-
-    @abstractmethod
-    def end(self) -> AbstractNode:
-        raise NotImplementedError
-
-    @abstractmethod
     def length(self) -> int:
-        """"""
-        raise NotImplementedError
-
-    @abstractmethod
-    def node_list(self) -> List[AbstractNode]:
         """"""
         raise NotImplementedError
 
@@ -297,13 +276,6 @@ class AbstractPath(AbstractGraph):
             mes += "members which subclass AbstractNode. It contains "
             mes += str(type(evs[0])) + " and " + str(type(evs[1]))
             raise TypeError(mes)
-
-        ns = self.node_list()
-        type_check_msg(ns, list, "node_list")
-        if not all(isinstance(n, AbstractNode) for n in ns):
-            mes = "node_list() method must return list containing only "
-            mes += "members which subclass AbstractNode"
-            raise TypeError(mes)
         #
         l_path = self.length()
         type_check_msg(l_path, int, "length")
@@ -312,6 +284,22 @@ class AbstractPath(AbstractGraph):
 class AbstractUndiGraph(AbstractGraph):
     """"""
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for e in self.E:
+            if e.type() != EdgeType.UNDIRECTED:
+                raise ValueError(
+                    "All edges of an undirected graph must have undirected type"
+                )
+
 
 class AbstractDiGraph(AbstractGraph):
     """"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for e in self.E:
+            if e.type() != EdgeType.DIRECTED:
+                raise ValueError(
+                    "All edges of an directed graph must have directed type"
+                )

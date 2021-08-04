@@ -10,11 +10,10 @@ from pygmodels.gtype.abstractobj import (
     AbstractGraph,
     AbstractNode,
 )
-from pygmodels.gtype.edge import Edge
-from pygmodels.gtype.node import Node
+from pygmodels.gtype.queue import PriorityQueue
 
 
-class BaseGraphTraverser:
+class BaseGraphSearcher:
     """!"""
 
     @staticmethod
@@ -59,7 +58,7 @@ class BaseGraphTraverser:
             if marked[v] is False:
                 pred[v] = u
                 T.add(v)
-                BaseGraphTraverser.dfs_forest(
+                BaseGraphSearcher.dfs_forest(
                     g=g,
                     V=V,
                     u=v,
@@ -80,7 +79,7 @@ class BaseGraphTraverser:
             # v ancestor, u visiting node
             # edge between them is a back edge
             # see p. 151, and p. 159-160
-            unode = V[u]
+            # unode = V[u]
             for edge in edge_generator(unode):
                 vnode = edge.get_other(unode)
                 vid = vnode.id()
@@ -101,10 +100,11 @@ class BaseGraphTraverser:
         return None
 
     @staticmethod
-    def visit_graph_dfs(
+    def depth_first_search(
         g: AbstractGraph,
-        edge_generator: Callable[[Node], Set[Node]],
+        edge_generator: Callable[[AbstractNode], Set[AbstractNode]],
         check_cycle: bool = False,
+        start_node: Optional[AbstractNode] = None,
     ):
         """!
         \brief interior visit function for depth first enumeration of graph
@@ -112,6 +112,9 @@ class BaseGraphTraverser:
 
         \see dfs_forest() method for more information on parameters.
         """
+        if start_node is not None:
+            if not BaseGraphOps.is_in(g, start_node):
+                raise ValueError("Specified start node not in graph")
         time = 0
         V: Dict[str, AbstractNode] = {n.id(): n for n in g.V}
         marked: Dict[str, bool] = {n: False for n in V}
@@ -119,16 +122,14 @@ class BaseGraphTraverser:
         Ts: Dict[str, Set[str]] = {}
         d: Dict[str, int] = {n: math.inf for n in V}
         f: Dict[str, int] = {n: math.inf for n in V}
-        cycles: Dict[str, List[Dict[str, Union[str, int]]]] = {
-            n: [] for n in V
-        }
+        cycles: Dict[str, List[Dict[str, Union[str, int]]]] = {n: [] for n in V}
         component_counter = 0
         #
         for u in V:
             if marked[u] is False:
                 pred: Dict[str, Optional[str]] = {n: None for n in V}
                 T: Set[str] = set()
-                BaseGraphTraverser.dfs_forest(
+                BaseGraphSearcher.dfs_forest(
                     g=g,
                     V=V,
                     u=u,
@@ -150,7 +151,8 @@ class BaseGraphTraverser:
                 preds[u] = pred
         #
         res = {
-            "dfs-forest": BaseGraphTraverser.from_preds_to_edgeset(g, preds),
+            "dfs-forest": BaseGraphSearcher.from_preds_to_edgeset(g, preds),
+            "dfs-trees": preds,
             "first-visit-times": d,
             "last-visit-times": f,
             "components": Ts,
@@ -162,29 +164,29 @@ class BaseGraphTraverser:
     @staticmethod
     def from_preds_to_edgeset(
         g: AbstractGraph, preds: Dict[str, Dict[str, str]]
-    ) -> Dict[str, Set[Edge]]:
+    ) -> Dict[str, Set[AbstractEdge]]:
         """!
         \brief obtain the edge set implied by the predecessor array.
         """
-        esets: Dict[str, Set[Edge]] = {}
+        esets: Dict[str, Set[AbstractEdge]] = {}
         V = {v.id(): v for v in g.V}
         for u, forest in preds.copy().items():
-            eset: Set[Edge] = set()
+            eset: Set[AbstractEdge] = set()
             for child, parent in forest.items():
                 cnode = V[child]
                 if parent is not None:
                     pnode = V[parent]
                     eset = eset.union(
-                        BaseGraphOps.edge_by_vertices(
-                            g, start=pnode, end=cnode
-                        )
+                        BaseGraphOps.edge_by_vertices(g, start=pnode, end=cnode)
                     )
             esets[u] = eset
         return esets
 
     @staticmethod
-    def find_shortest_paths(
-        g: AbstractGraph, n1: Node, edge_generator: Callable[[Node], Set[Edge]]
+    def breadth_first_search(
+        g: AbstractGraph,
+        n1: AbstractNode,
+        edge_generator: Callable[[AbstractNode], Set[AbstractEdge]],
     ) -> Dict[str, Union[dict, set]]:
         """!
         \brief find shortest path from given node to all other nodes
@@ -218,3 +220,65 @@ class BaseGraphTraverser:
         T = set([V[t] for t in T])
         path_props = {"bfs-tree": P, "path-set": T, "top-sort": l_vs}
         return path_props
+
+    @staticmethod
+    def uniform_cost_search(
+        g: AbstractGraph,
+        start: AbstractNode,
+        goal: AbstractNode,
+        filter_fn: Callable[
+            [Set[AbstractEdge], str], Set[AbstractEdge]
+        ] = lambda es, n: set([e for e in es if e.start().id() == n]),
+        costfn: Callable[[AbstractEdge, float], float] = lambda x, y: y + 1.0,
+        is_min=True,
+        problem_set: Optional[Set[AbstractEdge]] = None
+    ) -> Tuple[
+        Dict[str, Union[int, AbstractNode, AbstractEdge, str]], Tuple[AbstractEdge]
+    ]:
+        """!
+        Apply uniform cost search to given problem set
+        """
+        if not BaseGraphOps.is_in(g, start) or not BaseGraphOps.is_in(g, goal):
+            raise ValueError("Start node or goal node is not in graph")
+        problem_set = g.E if problem_set is None else problem_set
+        pnode = {"cost": 0, "state": start.id(), "parent": None, "edge": None}
+        frontier = PriorityQueue(is_min=is_min)
+        frontier.insert(key=pnode["cost"], val=pnode)
+        explored: Set[str] = set()
+        while len(frontier) != 0:
+            key, pn = frontier.pop()
+            if pn["state"] == goal.id():
+                return BaseGraphSearcher.from_ucs_result(pn), pn
+            explored.add(pn["state"])
+            for child_edge in filter_fn(problem_set, pn["state"]):
+                child: AbstractNode = child_edge.get_other(pn["state"])
+                cnode = {
+                    "cost": costfn(child_edge, pn["cost"]),
+                    "state": child.id(),
+                    "parent": pn,
+                    "edge": child_edge,
+                }
+                if (child.id() not in explored) or (
+                    frontier.is_in(child, cmp_f=lambda x: x["state"]) is False
+                ):
+                    frontier.insert(cnode["cost"], cnode)
+                elif frontier.is_in(child, cmp_f=lambda x: x["state"]) is True:
+                    # node is already in frontier
+                    ckey = frontier.key(child, f=lambda x: x["state"])
+                    if ckey > cnode["cost"]:
+                        frontier.insert(cnode["cost"], cnode, f=lambda x: x["state"])
+
+    @staticmethod
+    def from_ucs_result(
+        ucs_solution: Dict[str, Union[int, AbstractNode, AbstractEdge, str]]
+    ) -> Tuple[AbstractEdge]:
+        """!
+        parse uniform cost search solution to create a path
+        """
+        edges = [ucs_solution["edge"]]
+        while ucs_solution["parent"] is not None:
+            ucs_solution = ucs_solution["parent"]
+            edges.append(ucs_solution["edge"])
+        edges.pop()  # last element edge is None
+        edges = tuple(reversed(edges))
+        return edges

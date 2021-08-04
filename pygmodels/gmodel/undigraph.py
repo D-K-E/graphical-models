@@ -17,7 +17,7 @@ from pygmodels.gmodel.tree import Tree
 from pygmodels.graphf.bgraphops import BaseGraphOps
 from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
 from pygmodels.graphf.graphops import BaseGraphAlgOps
-from pygmodels.graphf.graphtraverser import BaseGraphTraverser
+from pygmodels.graphf.graphsearcher import BaseGraphSearcher
 from pygmodels.gtype.abstractobj import EdgeType
 from pygmodels.gtype.edge import Edge
 from pygmodels.gtype.node import Node
@@ -80,7 +80,7 @@ class UndiGraph(Graph):
         edge generating function. We consider every edge that is incident with
         nodes not just incoming or outgoing edges.
         """
-        return BaseGraphTraverser.find_shortest_paths(
+        return BaseGraphSearcher.breadth_first_search(
             self,
             n1=n1,
             edge_generator=lambda x: BaseGraphOps.edges_of(self, x),

@@ -19,7 +19,7 @@ from uuid import uuid4
 from pygmodels.gmodel.graph import Graph
 from pygmodels.gmodel.undigraph import UndiGraph
 from pygmodels.graphf.graphops import BaseGraphOps
-from pygmodels.graphf.graphtraverser import BaseGraphTraverser
+from pygmodels.graphf.graphsearcher import BaseGraphSearcher
 from pygmodels.gtype.abstractobj import EdgeType
 from pygmodels.gtype.edge import Edge
 from pygmodels.gtype.node import Node
@@ -60,7 +60,7 @@ class DiGraph(Graph):
             v.id(): self.find_shortest_paths(v)
             for v in BaseGraphOps.nodes(self)
         }
-        self.dprops = BaseGraphTraverser.visit_graph_dfs(
+        self.dprops = BaseGraphSearcher.depth_first_search(
             self,
             edge_generator=lambda x: BaseGraphOps.outgoing_edges_of(self, x),
             check_cycle=True,
@@ -233,7 +233,7 @@ class DiGraph(Graph):
 
     def find_shortest_paths(self, n: Node):
         """!"""
-        return BaseGraphTraverser.find_shortest_paths(
+        return BaseGraphSearcher.breadth_first_search(
             self,
             n1=n,
             edge_generator=lambda x: BaseGraphOps.outgoing_edges_of(self, x),

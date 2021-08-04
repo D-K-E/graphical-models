@@ -5,19 +5,22 @@ import math
 from typing import Callable, Dict, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
-from pygmodels.gmodel.graph import Graph
-from pygmodels.gtype.abstractobj import AbstractEdge, AbstractNode
-from pygmodels.gtype.edge import Edge, EdgeType
-from pygmodels.gtype.node import Node
+from pygmodels.graphf.graphsearcher import BaseGraphSearcher
+from pygmodels.gtype.abstractobj import (
+    AbstractEdge,
+    AbstractNode,
+    AbstractPath,
+)
+from pygmodels.gtype.basegraph import BaseGraph
 from pygmodels.gtype.queue import PriorityQueue
 
 
-class Path(Graph):
+class Path(BaseGraph, AbstractPath):
     """!
     path object as defined in Diestel 2017, p. 6
     """
 
-    def __init__(self, gid: str, data={}, edges: List[Edge] = None):
+    def __init__(self, gid: str, data={}, edges: List[AbstractEdge] = None):
         """"""
         flag, node_groups = Path.is_path(edges)
         if flag is False:
@@ -30,6 +33,26 @@ class Path(Graph):
 
         self._node_list = node_groups["node_list"]
         self._edge_list = edges
+        starts = node_groups["start_node_set"]
+        ends = node_groups["end_node_set"]
+        evertices = []
+        if len(starts) == 2:
+            s1 = starts.pop()
+            s2 = starts.pop()
+            evertices = [s1, s2]
+        elif len(ends) == 2:
+            s1 = ends.pop()
+            s2 = ends.pop()
+            evertices = [s1, s2]
+        elif len(starts) == 1 and len(ends) == 1:
+            s1 = starts.pop()
+            s2 = ends.pop()
+            evertices = [s1, s2]
+        else:
+            raise ValueError(
+                "Start and End node sets do not permit construction of end vertices"
+            )
+        self._end_vertices = evertices
 
     @classmethod
     def get_node_groups(
@@ -110,109 +133,52 @@ class Path(Graph):
         return False, None
 
     @classmethod
-    def from_edgelist(cls, edges: List[Edge]):
+    def from_edgelist(cls, edges: List[AbstractEdge]):
         """!
         create path from edge list
         """
         return Path(gid=str(uuid4()), edges=edges)
 
     def length(self) -> int:
-        if self._edge_list is None:
-            return 0
-        return len(self._edge_list)
+        """!
+        \brief number of edges inside the path, see Diestel 2017, p. 6
+        """
+        return len(self.E)
 
-    def node_list(self) -> List[Node]:
+    def node_list(self) -> List[AbstractNode]:
         "get vertice list"
         if self._node_list is None or len(self._node_list) == 0:
             raise ValueError("there are no vertices in the path")
         return self._node_list
 
-    def endvertices(self) -> Tuple[Node, Node]:
+    def endvertices(self) -> Tuple[AbstractNode, AbstractNode]:
         """"""
-        vs = self.node_list()
-        if len(vs) == 1:
-            return (vs[0], vs[0])
-        return (vs[0], vs[-1])
-
-    @classmethod
-    def uniform_cost_search(
-        cls,
-        goal: Node,
-        start: Node,
-        problem_set: Set[Edge],
-        filter_fn: Callable[[Set[Edge], str], Set[Edge]] = lambda es, n: set(
-            [e for e in es if e.start().id() == n]
-        ),
-        costfn: Callable[[Edge, float], float] = lambda x, y: y + 1.0,
-        is_min=True,
-    ):
-        """!
-        Apply uniform cost search to given problem set
-        """
-        pnode = {"cost": 0, "state": start.id(), "parent": None, "edge": None}
-        frontier = PriorityQueue(is_min=is_min)
-        frontier.insert(key=pnode["cost"], val=pnode)
-        explored: Set[str] = set()
-        while len(frontier) != 0:
-            key, pn = frontier.pop()
-            if pn["state"] == goal.id():
-                return pn
-            explored.add(pn["state"])
-            for child_edge in filter_fn(problem_set, pn["state"]):
-                child: Node = child_edge.get_other(pn["state"])
-                cnode = {
-                    "cost": costfn(child_edge, pn["cost"]),
-                    "state": child.id(),
-                    "parent": pn,
-                    "edge": child_edge,
-                }
-                if (child.id() not in explored) or (
-                    frontier.is_in(child, cmp_f=lambda x: x["state"]) is False
-                ):
-                    frontier.insert(cnode["cost"], cnode)
-                elif frontier.is_in(child, cmp_f=lambda x: x["state"]) is True:
-                    # node is already in frontier
-                    ckey = frontier.key(child, f=lambda x: x["state"])
-                    if ckey > cnode["cost"]:
-                        frontier.insert(
-                            cnode["cost"], cnode, f=lambda x: x["state"]
-                        )
-
-    @classmethod
-    def from_ucs_result(cls, ucs_solution):
-        """!
-        parse uniform cost search solution to create a path
-        """
-        edges = [ucs_solution["edge"]]
-        while ucs_solution["parent"] is not None:
-            ucs_solution = ucs_solution["parent"]
-            edges.append(ucs_solution["edge"])
-        edges.pop()  # last element edge is None
-        edges = list(reversed(edges))
-        return cls.from_edgelist(edges)
+        return tuple(self._end_vertices)
 
     @classmethod
     def from_ucs(
         cls,
-        goal: Node,
-        start: Node,
-        problem_set: Set[Edge],
-        filter_fn: Callable[[Set[Edge], str], Set[Edge]] = lambda es, n: set(
-            [e for e in es if e.start().id() == n]
-        ),
-        costfn: Callable[[Edge, float], float] = lambda x, y: y + 1,
+        g: AbstractPath,
+        goal: AbstractNode,
+        start: AbstractNode,
+        filter_fn: Callable[
+            [Set[AbstractEdge], str], Set[AbstractEdge]
+        ] = lambda es, n: set([e for e in es if e.start().id() == n]),
+        costfn: Callable[[AbstractEdge, float], float] = lambda x, y: y + 1,
         is_min=True,
-    ):
+        problem_set=None,
+    ) -> AbstractPath:
         """"""
-        ucs_solution = cls.uniform_cost_search(
+        elist, pn = BaseGraphSearcher.uniform_cost_search(
             goal=goal,
             start=start,
-            problem_set=problem_set,
+            g=g,
             filter_fn=filter_fn,
             costfn=costfn,
             is_min=is_min,
+            problem_set=problem_set,
         )
-        return cls.from_ucs_result(ucs_solution)
+        return cls.from_edgelist(elist)
 
 
 class Cycle(Path):
@@ -224,12 +190,12 @@ class Cycle(Path):
         self,
         gid: str,
         data={},
-        nodes: List[Node] = None,
-        edges: List[Edge] = None,
+        nodes: List[AbstractNode] = None,
+        edges: List[AbstractEdge] = None,
     ):
         """"""
         super().__init__(gid, data, nodes, edges)
-        vs = self.vertices()
+        vs = self.node_list()
         if vs[0] != vs[-1]:
             raise ValueError(
                 "The first and last vertice of a cycle must be same"

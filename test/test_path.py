@@ -14,90 +14,61 @@ class PathTest(unittest.TestCase):
     """"""
 
     def setUp(self):
+        """"""
+        # From Diestel 2017, p. 7, fig. 1.3.1
         self.n1 = Node("a", {})  # b
         self.n2 = Node("b", {})  # c
         self.n3 = Node("f", {})  # d
         self.n4 = Node("e", {})  # e
+        self.n5 = Node("g", {})  # e
+        self.n6 = Node("h", {})  # e
+        self.n7 = Node("j", {})  # e
+
         self.e1 = Edge(
             "e1",
             start_node=self.n1,
-            end_node=self.n4,
+            end_node=self.n2,
             edge_type=EdgeType.UNDIRECTED,
         )
         self.e2 = Edge(
             "e2",
-            start_node=self.n1,
-            end_node=self.n2,
+            start_node=self.n2,
+            end_node=self.n3,
             edge_type=EdgeType.UNDIRECTED,
         )
         self.e3 = Edge(
             "e3",
-            start_node=self.n1,
-            end_node=self.n3,
+            start_node=self.n3,
+            end_node=self.n4,
             edge_type=EdgeType.UNDIRECTED,
         )
         self.e4 = Edge(
             "e4",
-            start_node=self.n2,
-            end_node=self.n4,
+            start_node=self.n4,
+            end_node=self.n5,
             edge_type=EdgeType.UNDIRECTED,
         )
         self.e5 = Edge(
             "e5",
-            start_node=self.n3,
-            end_node=self.n4,
+            start_node=self.n5,
+            end_node=self.n6,
             edge_type=EdgeType.UNDIRECTED,
         )
-
-        # undirected graph
-        self.ugraph = Graph(
-            "g1",
-            data={"my": "graph", "data": "is", "very": "awesome"},
-            nodes=set([self.n1, self.n2, self.n3, self.n4]),
-            edges=set([self.e1, self.e2, self.e3, self.e4, self.e5]),
-        )
-
-        # make some directed edges
         self.e6 = Edge(
             "e6",
-            start_node=self.n1,
-            end_node=self.n3,
-            edge_type=EdgeType.DIRECTED,
+            start_node=self.n6,
+            end_node=self.n7,
+            edge_type=EdgeType.UNDIRECTED,
         )
-        self.e7 = Edge(
-            "e7",
-            start_node=self.n3,
-            end_node=self.n2,
-            edge_type=EdgeType.DIRECTED,
-        )
-        self.e8 = Edge(
-            "e8",
-            start_node=self.n3,
-            end_node=self.n4,
-            edge_type=EdgeType.DIRECTED,
-        )
-        self.e9 = Edge(
-            "e9",
-            start_node=self.n4,
-            end_node=self.n2,
-            edge_type=EdgeType.DIRECTED,
-        )
-        self.e10 = Edge(
-            "e10",
-            start_node=self.n4,
-            end_node=self.n1,
-            edge_type=EdgeType.DIRECTED,
-        )
-        self.dgraph = Graph(
-            "g1",
-            data={"my": "graph", "data": "is", "very": "awesome"},
-            nodes=set([self.n1, self.n2, self.n3, self.n4]),
-            edges=set([self.e6, self.e7, self.e8, self.e9, self.e10]),
-        )
+        # n1 - n2 - n3 - n4 - n5 - n6 - n7
+        #
+        #
+        #
+
         self.path = Path(
             gid="mpath",
             data={},
-            edges=[self.e2, self.e4, self.e5],
+            edges=[self.e1, self.e2, self.e3, self.e4, self.e5, self.e6],
         )
         # tree
         self.a = Node("a")
@@ -158,45 +129,39 @@ class PathTest(unittest.TestCase):
     def test_length(self):
         """"""
         plen = self.path.length()
-        self.assertEqual(3, plen)
+        self.assertEqual(6, plen)
 
     def test_node_list(self):
         """"""
         nlist = self.path.node_list()
-        self.assertEqual(nlist, [self.n1, self.n2, self.n4])
+        self.assertEqual(
+            nlist,
+            [self.n1, self.n2, self.n3, self.n4, self.n5, self.n6, self.n7],
+        )
 
     def test_node_list_f(self):
         """"""
         nlist = self.path.node_list()
-        self.assertFalse(nlist == [self.n2, self.n1, self.n4])
+        self.assertFalse(
+            nlist
+            == [self.n2, self.n1, self.n3, self.n4, self.n5, self.n6, self.n7]
+        )
 
     def test_endvertices(self):
         """"""
         nlist = self.path.endvertices()
-        self.assertEqual(nlist, (self.n1, self.n4))
-
-    def test_uniform_cost_search(self):
-        """"""
-        start_node = self.b
-        goal_node = self.m
-        problem_set = BaseGraphOps.edges(self.gtree)
-        solution = Path.uniform_cost_search(
-            goal=goal_node, start=start_node, problem_set=problem_set
-        )
-        edges = [solution["edge"]]
-        while solution["parent"] is not None:
-            solution = solution["parent"]
-            edges.append(solution["edge"])
-        edges.pop()  # last element edge is None
-        self.assertEqual(list(reversed(edges)), [self.bf, self.fm])
+        self.assertEqual(nlist, (self.n1, self.n7))
 
     def test_from_ucs(self):
         """"""
         start_node = self.b
         goal_node = self.m
-        problem_set = BaseGraphOps.edges(self.gtree)
+        problem_set = self.gtree.E
         p = Path.from_ucs(
-            goal=goal_node, start=start_node, problem_set=problem_set
+            g=self.gtree,
+            goal=goal_node,
+            start=start_node,
+            problem_set=problem_set,
         )
         self.assertEqual(p.node_list(), [self.b, self.f, self.m])
 
