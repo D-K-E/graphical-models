@@ -66,6 +66,8 @@ class BaseGraphOpsTest(unittest.TestCase):
             edges=set([self.e1, self.e2, self.e3]),
         )
         #
+
+        #
         self.a = Node("a", {})  # b
         self.b = Node("b", {})  # c
         self.f = Node("f", {})  # d
@@ -99,6 +101,21 @@ class BaseGraphOpsTest(unittest.TestCase):
             start_node=self.e,
             end_node=self.f,
             edge_type=EdgeType.UNDIRECTED,
+        )
+        #
+        self.ugraph1 = BaseGraph(
+            "ug1",
+            data={"my": "graph", "data": "is", "very": "awesome"},
+            nodes=set([self.a, self.b, self.e, self.f]),
+            edges=set(
+                [
+                    self.ae,
+                    # self.ab,
+                    self.af,
+                    # self.be,
+                    self.ef,
+                ]
+            ),
         )
 
         # undirected graph
@@ -269,6 +286,60 @@ class BaseGraphOpsTest(unittest.TestCase):
         """"""
         vertices = BaseGraphOps.vertices_of(self.graph, self.e2)
         self.assertEqual(vertices, (self.n2, self.n3))
+
+    def test_adjmat_int(self):
+        """"""
+        mat = BaseGraphOps.to_adjmat(self.ugraph1)
+        self.assertEqual(
+            mat,
+            {
+                ("b", "b"): 0,
+                ("b", "e"): 0,
+                ("b", "f"): 0,
+                ("b", "a"): 0,
+                ("e", "b"): 0,
+                ("e", "e"): 0,
+                ("e", "f"): 1,
+                ("e", "a"): 1,
+                ("f", "b"): 0,
+                ("f", "e"): 1,
+                ("f", "f"): 0,
+                ("f", "a"): 1,
+                ("a", "b"): 0,
+                ("a", "e"): 1,
+                ("a", "f"): 1,
+                ("a", "a"): 0,
+            },
+        )
+
+    def test_adjmat_bool(self):
+        """"""
+        mat = BaseGraphOps.to_adjmat(self.ugraph1, vtype=bool)
+        self.assertEqual(
+            mat,
+            {
+                ("b", "b"): False,
+                ("b", "e"): False,
+                ("b", "f"): False,
+                ("b", "a"): False,
+                ("e", "b"): False,
+                ("e", "e"): False,
+                ("e", "f"): True,
+                ("e", "a"): True,
+                ("f", "b"): False,
+                ("f", "e"): True,
+                ("f", "f"): False,
+                ("f", "a"): True,
+                ("a", "b"): False,
+                ("a", "e"): True,
+                ("a", "f"): True,
+                ("a", "a"): False,
+            },
+        )
+
+    @unittest.skip("Test not yet implemented")
+    def test_get_subgraph_by_vertices(self):
+        raise NotImplementedError
 
 
 if __name__ == "__main__":

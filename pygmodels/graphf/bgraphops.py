@@ -12,6 +12,7 @@ from pygmodels.gtype.abstractobj import (
     AbstractGraph,
     AbstractNode,
     AbstractUndiGraph,
+    EdgeType,
 )
 
 
@@ -394,3 +395,74 @@ class BaseGraphOps:
             return (e.start(), e.end())
         else:
             raise ValueError("edge not in graph")
+
+    @staticmethod
+    def to_adjmat(g: AbstractGraph, vtype=int) -> Dict[Tuple[str, str], int]:
+        """!
+        \brief Transform adjacency list to adjacency matrix representation
+
+        \param vtype the cast type for the entry of adjacency matrix.
+
+        \return adjacency matrix whose keys are identifiers of nodes and values
+        are flags whether there is an edge between them.
+
+        \code{.py}
+
+        >>> a = Node("a", {})  # b
+        >>> b = Node("b", {})  # c
+        >>> f = Node("f", {})  # d
+        >>> e = Node("e", {})  # e
+        >>> ae = Edge(
+        >>>    "ae", start_node=a, end_node=e, edge_type=EdgeType.UNDIRECTED
+        >>> )
+
+        >>> af = Edge(
+        >>>     "af", start_node=a, end_node=f, edge_type=EdgeType.UNDIRECTED
+        >>> )
+
+        >>> ef = Edge(
+        >>>     "ef", start_node=e, end_node=f, edge_type=EdgeType.UNDIRECTED
+        >>> )
+
+        >>> ugraph1 = Graph(
+        >>>     "graph",
+        >>>     data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>   nodes=set([a, b, e, f]),
+        >>>   edges=set([ae, af, ef]),
+        >>> )
+        >>> mat = ugraph1.to_adjmat(vtype=bool)
+        >>> mat == {
+        >>>     ("b", "b"): False,
+        >>>     ("b", "e"): False,
+        >>>     ("b", "f"): False,
+        >>>     ("b", "a"): False,
+        >>>     ("e", "b"): False,
+        >>>     ("e", "e"): False,
+        >>>     ("e", "f"): True,
+        >>>     ("e", "a"): True,
+        >>>     ("f", "b"): False,
+        >>>     ("f", "e"): True,
+        >>>     ("f", "f"): False,
+        >>>     ("f", "a"): True,
+        >>>     ("a", "b"): False,
+        >>>     ("a", "e"): True,
+        >>>     ("a", "f"): True,
+        >>>     ("a", "a"): False
+        >>> }
+        >>> True
+
+        \endcode
+        """
+        gmat = {}
+        for v in g.V:
+            for k in g.V:
+                gmat[(v.id(), k.id())] = vtype(0)
+        for edge in g.E:
+            tpl1 = (edge.start().id(), edge.end().id())
+            tpl2 = (edge.end().id(), edge.start().id())
+            if tpl1 in gmat:
+                gmat[tpl1] = vtype(1)
+            if edge.type() == EdgeType.UNDIRECTED:
+                if tpl2 in gmat:
+                    gmat[tpl2] = vtype(1)
+        return gmat
