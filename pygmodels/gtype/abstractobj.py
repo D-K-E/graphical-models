@@ -174,6 +174,16 @@ class AbstractEdge(AbstractGraphObj):
         return True
 
 
+class AbstractSearchResult(AbstractGraphObj):
+    """"""
+
+    @property
+    @abstractmethod
+    def search_name(self) -> str:
+        "Search method name"
+        raise NotImplementedError
+
+
 class AbstractGraph(AbstractGraphObj):
     """!
     \brief Abstract Graph interface
