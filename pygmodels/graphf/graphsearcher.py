@@ -10,6 +10,10 @@ from pygmodels.gtype.abstractobj import (
     AbstractGraph,
     AbstractNode,
 )
+from pygmodels.gtype.gsearchresult import (
+    BaseGraphBFSResult,
+    BaseGraphDFSResult,
+)
 from pygmodels.gtype.queue import PriorityQueue
 
 
@@ -105,27 +109,36 @@ class BaseGraphSearcher:
         edge_generator: Callable[[AbstractNode], Set[AbstractNode]],
         check_cycle: bool = False,
         start_node: Optional[AbstractNode] = None,
-    ):
+    ) -> BaseGraphDFSResult:
         """!
         \brief interior visit function for depth first enumeration of graph
         instance.
 
         \see dfs_forest() method for more information on parameters.
         """
+        V: Dict[str, AbstractNode] = {n.id(): n for n in g.V}
         if start_node is not None:
             if not BaseGraphOps.is_in(g, start_node):
                 raise ValueError("Specified start node not in graph")
+            #
+            Vlst: List[str] = list(v for v in V.keys() if v != start_node.id())
+            Vlst.insert(0, start_node.id())
+            Vlst.sort()
+        else:
+            Vlst = list(v for v in V.keys())
+            Vlst.sort()
         time = 0
-        V: Dict[str, AbstractNode] = {n.id(): n for n in g.V}
         marked: Dict[str, bool] = {n: False for n in V}
         preds: Dict[str, Dict[str, str]] = {}
         Ts: Dict[str, Set[str]] = {}
         d: Dict[str, int] = {n: math.inf for n in V}
         f: Dict[str, int] = {n: math.inf for n in V}
-        cycles: Dict[str, List[Dict[str, Union[str, int]]]] = {n: [] for n in V}
+        cycles: Dict[str, List[Dict[str, Union[str, int]]]] = {
+            n: [] for n in V
+        }
         component_counter = 0
         #
-        for u in V:
+        for u in Vlst:
             if marked[u] is False:
                 pred: Dict[str, Optional[str]] = {n: None for n in V}
                 T: Set[str] = set()
@@ -159,7 +172,12 @@ class BaseGraphSearcher:
             "cycle-info": cycles,
             "nb-component": component_counter,
         }
-        return res
+        return BaseGraphDFSResult(
+            props=res,
+            result_id="dfs-result-of-" + g.id(),
+            search_name="depth_first_search",
+            data={},
+        )
 
     @staticmethod
     def from_preds_to_edgeset(
@@ -177,7 +195,9 @@ class BaseGraphSearcher:
                 if parent is not None:
                     pnode = V[parent]
                     eset = eset.union(
-                        BaseGraphOps.edge_by_vertices(g, start=pnode, end=cnode)
+                        BaseGraphOps.edge_by_vertices(
+                            g, start=pnode, end=cnode
+                        )
                     )
             esets[u] = eset
         return esets
@@ -187,7 +207,7 @@ class BaseGraphSearcher:
         g: AbstractGraph,
         n1: AbstractNode,
         edge_generator: Callable[[AbstractNode], Set[AbstractEdge]],
-    ) -> Dict[str, Union[dict, set]]:
+    ) -> BaseGraphBFSResult:
         """!
         \brief find shortest path from given node to all other nodes
 
@@ -219,7 +239,12 @@ class BaseGraphSearcher:
         #
         T = set([V[t] for t in T])
         path_props = {"bfs-tree": P, "path-set": T, "top-sort": l_vs}
-        return path_props
+        return BaseGraphBFSResult(
+            props=path_props,
+            result_id="bfs-result-of-" + g.id(),
+            search_name="breadth_first_search",
+            data={},
+        )
 
     @staticmethod
     def uniform_cost_search(
@@ -231,9 +256,10 @@ class BaseGraphSearcher:
         ] = lambda es, n: set([e for e in es if e.start().id() == n]),
         costfn: Callable[[AbstractEdge, float], float] = lambda x, y: y + 1.0,
         is_min=True,
-        problem_set: Optional[Set[AbstractEdge]] = None
+        problem_set: Optional[Set[AbstractEdge]] = None,
     ) -> Tuple[
-        Dict[str, Union[int, AbstractNode, AbstractEdge, str]], Tuple[AbstractEdge]
+        Dict[str, Union[int, AbstractNode, AbstractEdge, str]],
+        Tuple[AbstractEdge],
     ]:
         """!
         Apply uniform cost search to given problem set
@@ -266,7 +292,9 @@ class BaseGraphSearcher:
                     # node is already in frontier
                     ckey = frontier.key(child, f=lambda x: x["state"])
                     if ckey > cnode["cost"]:
-                        frontier.insert(cnode["cost"], cnode, f=lambda x: x["state"])
+                        frontier.insert(
+                            cnode["cost"], cnode, f=lambda x: x["state"]
+                        )
 
     @staticmethod
     def from_ucs_result(

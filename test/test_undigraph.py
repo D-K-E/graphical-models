@@ -323,7 +323,7 @@ class UndiGraphTest(unittest.TestCase):
     def test_find_shortest_path(self):
         """"""
         path_props = self.ugraph4.find_shortest_paths(n1=self.n1)
-        pathl = path_props["top-sort"]
+        pathl = path_props.top_sort
         lpath = [(k, v) for k, v in pathl.items() if v < float("inf")]
         lpath.sort(key=lambda x: x[1])
         nps = [x[0] for x in lpath]

@@ -468,8 +468,8 @@ class GraphTest(unittest.TestCase):
 
     def test_visit_graph_dfs_nb_component(self):
         "test visit graph dfs function"
-        com = self.ugraph1.graph_props["nb-component"]
-        com2 = self.ugraph2.graph_props["nb-component"]
+        com = self.ugraph1.graph_props.nb_component
+        com2 = self.ugraph2.graph_props.nb_component
         self.assertEqual(com, 2)
         self.assertEqual(com2, 1)
 

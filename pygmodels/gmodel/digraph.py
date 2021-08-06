@@ -56,10 +56,7 @@ class DiGraph(Graph):
                         + " undirected edges"
                     )
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
-        self.path_props = {
-            v.id(): self.find_shortest_paths(v)
-            for v in BaseGraphOps.nodes(self)
-        }
+        self.path_props = {v.id(): self.find_shortest_paths(v) for v in self.V}
         self.dprops = BaseGraphSearcher.depth_first_search(
             self,
             edge_generator=lambda x: BaseGraphOps.outgoing_edges_of(self, x),
@@ -242,7 +239,7 @@ class DiGraph(Graph):
     def check_for_path(self, n1: Node, n2: Node) -> bool:
         "check if there is a path between nodes"
         path_props = self.path_props[n1.id()]
-        pset = path_props["path-set"]
+        pset = path_props.path_set
         return n2 in pset
 
     def find_transitive_closure(self) -> Graph:

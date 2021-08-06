@@ -208,7 +208,7 @@ class DiGraphTest(unittest.TestCase):
         """"""
         path_props = self.dgraph4.find_shortest_paths(n=self.n1)
         self.assertEqual(
-            path_props["path-set"], set([self.n1, self.n2, self.n3, self.n4])
+            path_props.path_set, set([self.n1, self.n2, self.n3, self.n4])
         )
 
     def test_check_for_path_false(self):

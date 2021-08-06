@@ -409,7 +409,7 @@ class Graph(BaseGraph):
         algorithm is adapted for that case. It is computed as we are traversing
         the graph in dfs_forest()
         """
-        return self.graph_props["nb-component"]
+        return self.graph_props.nb_component
 
     def is_tree(self) -> bool:
         """!
@@ -430,7 +430,7 @@ class Graph(BaseGraph):
         """
         V = {v.id(): v for v in self.V}
         v = V[root_node_id]
-        Ts = self.graph_props["components"]
+        Ts = self.graph_props.components
         T = Ts[root_node_id]
         T.add(v.id())
         return set([V[v] for v in T])
@@ -462,7 +462,7 @@ class Graph(BaseGraph):
             return set([self])
 
         # Extract component roots
-        component_roots = [k for k in self.graph_props["dfs-forest"].keys()]
+        component_roots = [k for k in self.graph_props.forest.keys()]
         return set(
             [self.get_component(root_node_id=root) for root in component_roots]
         )
@@ -478,7 +478,7 @@ class Graph(BaseGraph):
             return set([frozenset(self.nodes())])
 
         # Extract component roots
-        component_roots = [k for k in self.graph_props["dfs-forest"].keys()]
+        component_roots = [k for k in self.graph_props.forest.keys()]
         return set(
             [frozenset(self.get_component_nodes(k)) for k in component_roots]
         )

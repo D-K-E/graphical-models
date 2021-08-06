@@ -49,8 +49,8 @@ class Tree(BaseGraph, AbstractTree):
         ] = BaseGraphSearcher.breadth_first_search(
             self, n1=self.root, edge_generator=egen
         )
-        self.topsort = self.paths["top-sort"]
-        self.bfs_tree = self.paths["bfs-tree"][self.root.id()]
+        self.topsort = self.paths.top_sort
+        self.bfs_tree = self.paths.tree[self.root.id()]
 
     @classmethod
     def from_node_tuples(cls, ntpls: Set[Tuple[Node, Node, EdgeType]]):
