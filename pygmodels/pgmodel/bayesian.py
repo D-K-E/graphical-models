@@ -186,7 +186,7 @@ class BayesianNetwork(PGModel, DiGraph):
         #
         return BayesianNetwork(
             gid=str(uuid4()),
-            nodes=BaseGraphOps.nodes(dig),
-            edges=BaseGraphOps.edges(dig),
+            nodes=dig.V,
+            edges=dig.E,
             factors=fs,
         )

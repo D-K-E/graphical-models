@@ -6,6 +6,10 @@ from typing import Callable, Dict, FrozenSet, List, Optional, Set, Union
 from uuid import uuid4
 
 from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.graphf.bgraphops import BaseGraphNodeOps
+from pygmodels.graphf.bgraphops import BaseGraphEdgeOps
+from pygmodels.graphf.bgraphops import BaseGraphBoolOps
+
 from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
 from pygmodels.gtype.abstractobj import (
     AbstractEdge,
@@ -34,7 +38,7 @@ class BaseGraph(GraphObject, AbstractGraph):
             raise TypeError("Nodes must be a set or a frozenset")
         if not isinstance(edges, (frozenset, set)):
             raise TypeError("Edges must be a set or a frozenset")
-        self._nodes: FrozenSet[AbstractNode] = BaseGraphOps.get_nodes(
+        self._nodes: FrozenSet[AbstractNode] = BaseGraphNodeOps.get_nodes(
             ns=nodes, es=edges
         )
         self._edges: FrozenSet[AbstractEdge] = frozenset(edges)

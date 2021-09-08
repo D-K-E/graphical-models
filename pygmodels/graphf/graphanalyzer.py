@@ -6,6 +6,7 @@ import math
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 
 from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.graphf.bgraphops import BaseGraphNodeOps
 from pygmodels.gtype.abstractobj import (
     AbstractEdge,
     AbstractGraph,
@@ -38,7 +39,7 @@ class BaseGraphAnalyzer:
         # True
         \endcode
         """
-        for edge in BaseGraphOps.edges(g):
+        for edge in g.E:
             if edge.start() == edge.end():
                 return True
         return False
@@ -119,7 +120,7 @@ class BaseGraphAnalyzer:
 
         \endcode
         """
-        if ns.issubset(BaseGraphOps.nodes(g)) is False:
+        if ns.issubset(g.V) is False:
             raise ValueError("node set is not contained in graph")
         node_list = list(ns)
         while node_list:
@@ -193,9 +194,7 @@ class BaseGraphAnalyzer:
         """
         return int(
             BaseGraphAnalyzer.comp_degree(
-                g,
-                fn=lambda nb_edges, compare: nb_edges < compare,
-                comp_val=math.inf,
+                g, fn=lambda nb_edges, compare: nb_edges < compare, comp_val=math.inf,
             )
         )
 
@@ -233,9 +232,7 @@ class BaseGraphAnalyzer:
         return len(g.E) / len(g.V)
 
     @staticmethod
-    def ev_ratio_from_average_degree(
-        g: AbstractGraph, average_degree: float
-    ) -> float:
+    def ev_ratio_from_average_degree(g: AbstractGraph, average_degree: float) -> float:
         """!
         \brief obtain edge vertex ratio from average degree
 
@@ -323,7 +320,7 @@ class BaseGraphAnalyzer:
 
         \endcode
         """
-        return len(BaseGraphOps.neighbours_of(g, n))
+        return len(BaseGraphNodeOps.neighbours_of(g, n))
 
     @staticmethod
     def nb_edges(g: AbstractGraph) -> int:

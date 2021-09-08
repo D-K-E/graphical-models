@@ -12,6 +12,7 @@ from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
 from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.graphf.bgraphops import BaseGraphEdgeOps
 from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
 from pygmodels.graphf.graphops import BaseGraphAlgOps, BaseGraphSetOps
 from pygmodels.graphf.graphsearcher import BaseGraphSearcher
@@ -86,7 +87,7 @@ class Graph(BaseGraph):
         if self._props is None:
             self._props = BaseGraphSearcher.depth_first_search(
                 self,
-                edge_generator=lambda node: BaseGraphOps.edges_of(self, node),
+                edge_generator=lambda node: BaseGraphEdgeOps.edges_of(self, node),
                 check_cycle=True,
             )
         return self._props
@@ -248,7 +249,7 @@ class Graph(BaseGraph):
         for v in self.V:
             for k in self.V:
                 gmat[(v.id(), k.id())] = vtype(0)
-        for edge in BaseGraphOps.edges(self):
+        for edge in self.E:
             tpl1 = (edge.start().id(), edge.end().id())
             tpl2 = (edge.end().id(), edge.start().id())
             if tpl1 in gmat:
@@ -498,7 +499,7 @@ class Graph(BaseGraph):
         """
         nb_component = self.nb_components()
         points: Set[Node] = set()
-        for node in BaseGraphOps.nodes(self):
+        for node in self.V:
             graph = graph_maker(node)
             if graph.nb_components() > nb_component:
                 points.add(node)
@@ -537,7 +538,7 @@ class Graph(BaseGraph):
         default we conserve edges whose incident nodes are a subset of vs
         """
         es: Set[Edge] = set()
-        for e in BaseGraphOps.edges(self):
+        for e in self.E:
             if edge_policy(e, vs) is True:
                 es.add(e)
         return Graph.from_edge_node_set(edges=es, nodes=vs)

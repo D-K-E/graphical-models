@@ -21,28 +21,16 @@ class UndiGraphTest(unittest.TestCase):
         self.n4 = Node("n4", {})
         self.n5 = Node("n5", {})
         self.e1 = Edge(
-            "e1",
-            start_node=self.n1,
-            end_node=self.n2,
-            edge_type=EdgeType.UNDIRECTED,
+            "e1", start_node=self.n1, end_node=self.n2, edge_type=EdgeType.UNDIRECTED,
         )
         self.e2 = Edge(
-            "e2",
-            start_node=self.n2,
-            end_node=self.n3,
-            edge_type=EdgeType.UNDIRECTED,
+            "e2", start_node=self.n2, end_node=self.n3, edge_type=EdgeType.UNDIRECTED,
         )
         self.e3 = Edge(
-            "e3",
-            start_node=self.n3,
-            end_node=self.n4,
-            edge_type=EdgeType.UNDIRECTED,
+            "e3", start_node=self.n3, end_node=self.n4, edge_type=EdgeType.UNDIRECTED,
         )
         self.e4 = Edge(
-            "e4",
-            start_node=self.n1,
-            end_node=self.n4,
-            edge_type=EdgeType.UNDIRECTED,
+            "e4", start_node=self.n1, end_node=self.n4, edge_type=EdgeType.UNDIRECTED,
         )
         self.graph_2 = UndiGraph(
             "g2",
@@ -60,10 +48,7 @@ class UndiGraphTest(unittest.TestCase):
         self.g = Node("g", {})
         self.h = Node("h", {})
         self.ae = Edge(
-            "ae",
-            start_node=self.a,
-            end_node=self.e,
-            edge_type=EdgeType.UNDIRECTED,
+            "ae", start_node=self.a, end_node=self.e, edge_type=EdgeType.UNDIRECTED,
         )
         self.ab = Edge(
             "ab",
@@ -73,28 +58,16 @@ class UndiGraphTest(unittest.TestCase):
             edge_type=EdgeType.UNDIRECTED,
         )
         self.af = Edge(
-            "af",
-            start_node=self.a,
-            end_node=self.f,
-            edge_type=EdgeType.UNDIRECTED,
+            "af", start_node=self.a, end_node=self.f, edge_type=EdgeType.UNDIRECTED,
         )
         self.ah = Edge(
-            "ah",
-            start_node=self.a,
-            end_node=self.h,
-            edge_type=EdgeType.UNDIRECTED,
+            "ah", start_node=self.a, end_node=self.h, edge_type=EdgeType.UNDIRECTED,
         )
         self.bh = Edge(
-            "bh",
-            start_node=self.b,
-            end_node=self.h,
-            edge_type=EdgeType.UNDIRECTED,
+            "bh", start_node=self.b, end_node=self.h, edge_type=EdgeType.UNDIRECTED,
         )
         self.be = Edge(
-            "be",
-            start_node=self.b,
-            end_node=self.e,
-            edge_type=EdgeType.UNDIRECTED,
+            "be", start_node=self.b, end_node=self.e, edge_type=EdgeType.UNDIRECTED,
         )
         self.ef = Edge(
             "ef",
@@ -125,10 +98,7 @@ class UndiGraphTest(unittest.TestCase):
             edge_type=EdgeType.UNDIRECTED,
         )
         self.cg = Edge(
-            "cg",
-            start_node=self.c,
-            end_node=self.g,
-            edge_type=EdgeType.UNDIRECTED,
+            "cg", start_node=self.c, end_node=self.g, edge_type=EdgeType.UNDIRECTED,
         )
         self.gd = Edge(
             "gd",
@@ -145,10 +115,7 @@ class UndiGraphTest(unittest.TestCase):
             edge_type=EdgeType.UNDIRECTED,
         )
         self.fg = Edge(
-            "fg",
-            start_node=self.f,
-            end_node=self.g,
-            edge_type=EdgeType.UNDIRECTED,
+            "fg", start_node=self.f, end_node=self.g, edge_type=EdgeType.UNDIRECTED,
         )
         self.bc = Edge(
             "bc",
@@ -184,15 +151,7 @@ class UndiGraphTest(unittest.TestCase):
             "ug2",
             data={"my": "graph", "data": "is", "very": "awesome"},
             nodes=set([self.a, self.b, self.e, self.f]),
-            edges=set(
-                [
-                    self.ae,
-                    self.ab,
-                    self.af,
-                    self.be,
-                    self.ef,
-                ]
-            ),
+            edges=set([self.ae, self.ab, self.af, self.be, self.ef,]),
         )
         # ugraph2 :
         #   +-----+
@@ -205,13 +164,7 @@ class UndiGraphTest(unittest.TestCase):
             "ug3",
             data={"my": "graph", "data": "is", "very": "awesome"},
             nodes=set([self.a, self.b, self.e, self.f]),
-            edges=set(
-                [
-                    self.ab,
-                    self.af,
-                    self.be,
-                ]
-            ),
+            edges=set([self.ab, self.af, self.be,]),
         )
         # ugraph3 :
         #
@@ -223,12 +176,8 @@ class UndiGraphTest(unittest.TestCase):
         self.ugraph4 = UndiGraph(
             "ug4",
             data={"my": "graph", "data": "is", "very": "awesome"},
-            nodes=BaseGraphOps.nodes(self.ugraph2).union(
-                BaseGraphOps.nodes(self.graph_2)
-            ),
-            edges=BaseGraphOps.edges(self.ugraph2).union(
-                BaseGraphOps.edges(self.graph_2)
-            ),
+            nodes=set(self.ugraph2.V).union(self.graph_2.V),
+            edges=set(self.ugraph2.E).union(self.graph_2.E),
         )
         # ugraph 4
         #   +-----+     n1 -- n2 -- n3 -- n4
@@ -240,9 +189,7 @@ class UndiGraphTest(unittest.TestCase):
         self.ugraph5 = UndiGraph(
             "ug5",
             data={"my": "graph", "data": "is", "very": "awesome"},
-            nodes=set(
-                [self.a, self.b, self.c, self.d, self.e, self.f, self.g]
-            ),
+            nodes=set([self.a, self.b, self.c, self.d, self.e, self.f, self.g]),
             edges=set(
                 [
                     self.ab,
@@ -267,16 +214,7 @@ class UndiGraphTest(unittest.TestCase):
             "ug6",
             data={"my": "graph", "data": "is", "very": "awesome"},
             nodes=set(
-                [
-                    self.a,
-                    self.b,
-                    self.c,
-                    self.d,
-                    self.e,
-                    self.f,
-                    self.g,
-                    self.h,
-                ]
+                [self.a, self.b, self.c, self.d, self.e, self.f, self.g, self.h,]
             ),
             edges=set(
                 [
@@ -299,10 +237,7 @@ class UndiGraphTest(unittest.TestCase):
         # |   /      \ /
         # h--+        g
         self.ad = Edge(
-            "ad",
-            start_node=self.a,
-            end_node=self.d,
-            edge_type=EdgeType.UNDIRECTED,
+            "ad", start_node=self.a, end_node=self.d, edge_type=EdgeType.UNDIRECTED,
         )
         #
         self.ugraph7 = UndiGraph(
@@ -340,8 +275,7 @@ class UndiGraphTest(unittest.TestCase):
         )
 
         self.assertEqual(
-            [li.id() for li in L],
-            ["ab", "bc", "cd", "de", "ef", "bg", "gd", "df"],
+            [li.id() for li in L], ["ab", "bc", "cd", "de", "ef", "bg", "gd", "df"],
         )
 
     def test_maximum_spanning_tree(self):
@@ -350,8 +284,7 @@ class UndiGraphTest(unittest.TestCase):
             weight_fn=lambda e: e.data()["w"]
         )
         self.assertEqual(
-            [li.id() for li in L],
-            ["df", "gd", "bg", "ef", "de", "cd", "bc", "ab"],
+            [li.id() for li in L], ["df", "gd", "bg", "ef", "de", "cd", "bc", "ab"],
         )
 
     def test_find_articulation_points(self):

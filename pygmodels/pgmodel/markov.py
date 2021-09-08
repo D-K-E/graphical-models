@@ -156,9 +156,7 @@ class MarkovNetwork(PGModel, UndiGraph):
 
         \endcode
         """
-        super().__init__(
-            gid=gid, nodes=nodes, edges=edges, data=data, factors=factors
-        )
+        super().__init__(gid=gid, nodes=nodes, edges=edges, data=data, factors=factors)
 
     @classmethod
     def from_undigraph(cls, udi: UndiGraph):
@@ -215,11 +213,9 @@ class MarkovNetwork(PGModel, UndiGraph):
 
         \endcode
         """
-        for n in BaseGraphOps.nodes(udi):
+        for n in udi.V:
             if not isinstance(n, RandomVariable):
-                raise ValueError(
-                    "Nodes are not an instance of random variable"
-                )
+                raise ValueError("Nodes are not an instance of random variable")
         fs: Set[Factor] = set()
         maximal_cliques = udi.find_maximal_cliques()
         for clique in maximal_cliques:
@@ -232,12 +228,7 @@ class MarkovNetwork(PGModel, UndiGraph):
             if len(evidences) != 0:
                 f = f.reduced_by_value(evidences)
             fs.add(f)
-        return MarkovNetwork(
-            gid=str(uuid4()),
-            nodes=BaseGraphOps.nodes(udi),
-            edges=BaseGraphOps.edges(udi),
-            factors=fs,
-        )
+        return MarkovNetwork(gid=str(uuid4()), nodes=udi.V, edges=udi.E, factors=fs,)
 
 
 class ConditionalRandomField(MarkovNetwork):
@@ -446,11 +437,9 @@ class ConditionalRandomField(MarkovNetwork):
         return self.ovars
 
     @classmethod
-    def from_markov_network(
-        cls, mn: MarkovNetwork, targets: Set[NumCatRVariable]
-    ):
+    def from_markov_network(cls, mn: MarkovNetwork, targets: Set[NumCatRVariable]):
         """"""
-        mnodes = mn.nodes()
+        mnodes = mn.V
         if targets.issubset(mnodes) is False:
             raise ValueError("target variables are not a subset of network")
         factors = mn.factors()
@@ -461,6 +450,6 @@ class ConditionalRandomField(MarkovNetwork):
             gid=str(uuid4()),
             observed_vars=mnodes.difference(targets),
             target_vars=targets,
-            edges=mn.edges(),
+            edges=mn.E,
             factors=crf_factors,
         )

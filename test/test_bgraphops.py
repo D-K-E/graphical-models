@@ -7,6 +7,9 @@ from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
 from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.graphf.bgraphops import BaseGraphNodeOps
+from pygmodels.graphf.bgraphops import BaseGraphEdgeOps
+from pygmodels.graphf.bgraphops import BaseGraphBoolOps
 from pygmodels.gtype.abstractobj import (
     AbstractDiGraph,
     AbstractEdge,
@@ -29,28 +32,16 @@ class BaseGraphOpsTest(unittest.TestCase):
         self.n4 = Node("n4", {})
         self.n5 = Node("n5", {})
         self.e1 = Edge(
-            "e1",
-            start_node=self.n1,
-            end_node=self.n2,
-            edge_type=EdgeType.UNDIRECTED,
+            "e1", start_node=self.n1, end_node=self.n2, edge_type=EdgeType.UNDIRECTED,
         )
         self.e2 = Edge(
-            "e2",
-            start_node=self.n2,
-            end_node=self.n3,
-            edge_type=EdgeType.UNDIRECTED,
+            "e2", start_node=self.n2, end_node=self.n3, edge_type=EdgeType.UNDIRECTED,
         )
         self.e3 = Edge(
-            "e3",
-            start_node=self.n3,
-            end_node=self.n4,
-            edge_type=EdgeType.UNDIRECTED,
+            "e3", start_node=self.n3, end_node=self.n4, edge_type=EdgeType.UNDIRECTED,
         )
         self.e4 = Edge(
-            "e4",
-            start_node=self.n1,
-            end_node=self.n4,
-            edge_type=EdgeType.UNDIRECTED,
+            "e4", start_node=self.n1, end_node=self.n4, edge_type=EdgeType.UNDIRECTED,
         )
 
         self.graph = BaseGraph(
@@ -73,34 +64,19 @@ class BaseGraphOpsTest(unittest.TestCase):
         self.f = Node("f", {})  # d
         self.e = Node("e", {})  # e
         self.ae = Edge(
-            "ae",
-            start_node=self.a,
-            end_node=self.e,
-            edge_type=EdgeType.UNDIRECTED,
+            "ae", start_node=self.a, end_node=self.e, edge_type=EdgeType.UNDIRECTED,
         )
         self.ab = Edge(
-            "ab",
-            start_node=self.a,
-            end_node=self.b,
-            edge_type=EdgeType.UNDIRECTED,
+            "ab", start_node=self.a, end_node=self.b, edge_type=EdgeType.UNDIRECTED,
         )
         self.af = Edge(
-            "af",
-            start_node=self.a,
-            end_node=self.f,
-            edge_type=EdgeType.UNDIRECTED,
+            "af", start_node=self.a, end_node=self.f, edge_type=EdgeType.UNDIRECTED,
         )
         self.be = Edge(
-            "be",
-            start_node=self.b,
-            end_node=self.e,
-            edge_type=EdgeType.UNDIRECTED,
+            "be", start_node=self.b, end_node=self.e, edge_type=EdgeType.UNDIRECTED,
         )
         self.ef = Edge(
-            "ef",
-            start_node=self.e,
-            end_node=self.f,
-            edge_type=EdgeType.UNDIRECTED,
+            "ef", start_node=self.e, end_node=self.f, edge_type=EdgeType.UNDIRECTED,
         )
         #
         self.ugraph1 = BaseGraph(
@@ -123,15 +99,7 @@ class BaseGraphOpsTest(unittest.TestCase):
             "ug2",
             data={"my": "graph", "data": "is", "very": "awesome"},
             nodes=set([self.a, self.b, self.e, self.f]),
-            edges=set(
-                [
-                    self.ae,
-                    self.ab,
-                    self.af,
-                    self.be,
-                    self.ef,
-                ]
-            ),
+            edges=set([self.ae, self.ab, self.af, self.be, self.ef,]),
         )
         # ugraph2 :
         #   +-----+
@@ -162,12 +130,8 @@ class BaseGraphOpsTest(unittest.TestCase):
         self.ugraph4 = BaseGraph(
             "ug4",
             data={"my": "graph", "data": "is", "very": "awesome"},
-            nodes=BaseGraphOps.nodes(self.ugraph2).union(
-                BaseGraphOps.nodes(self.graph_2)
-            ),
-            edges=BaseGraphOps.edges(self.ugraph2).union(
-                BaseGraphOps.edges(self.graph_2)
-            ),
+            nodes=set(self.ugraph2.V).union(self.graph_2.V),
+            edges=set(self.ugraph2.E).union(self.graph_2.E),
         )
         # ugraph 4
         #   +-----+     n1 -- n2 -- n3 -- n4
@@ -183,34 +147,19 @@ class BaseGraphOpsTest(unittest.TestCase):
         self.ee = Node("ee", {})
 
         self.bb_cc = Edge(
-            "bb_cc",
-            start_node=self.bb,
-            end_node=self.cc,
-            edge_type=EdgeType.DIRECTED,
+            "bb_cc", start_node=self.bb, end_node=self.cc, edge_type=EdgeType.DIRECTED,
         )
         self.cc_dd = Edge(
-            "cc_dd",
-            start_node=self.cc,
-            end_node=self.dd,
-            edge_type=EdgeType.DIRECTED,
+            "cc_dd", start_node=self.cc, end_node=self.dd, edge_type=EdgeType.DIRECTED,
         )
         self.dd_ee = Edge(
-            "dd_ee",
-            start_node=self.dd,
-            end_node=self.ee,
-            edge_type=EdgeType.DIRECTED,
+            "dd_ee", start_node=self.dd, end_node=self.ee, edge_type=EdgeType.DIRECTED,
         )
         self.ee_bb = Edge(
-            "ee_bb",
-            start_node=self.ee,
-            end_node=self.bb,
-            edge_type=EdgeType.DIRECTED,
+            "ee_bb", start_node=self.ee, end_node=self.bb, edge_type=EdgeType.DIRECTED,
         )
         self.bb_dd = Edge(
-            "bb_dd",
-            start_node=self.bb,
-            end_node=self.dd,
-            edge_type=EdgeType.DIRECTED,
+            "bb_dd", start_node=self.bb, end_node=self.dd, edge_type=EdgeType.DIRECTED,
         )
 
     def test_to_edgelist(self):
@@ -225,46 +174,46 @@ class BaseGraphOpsTest(unittest.TestCase):
     #
     def test_edges_of(self):
         """"""
-        edges = BaseGraphOps.edges_of(self.graph, self.n2)
+        edges = BaseGraphEdgeOps.edges_of(self.graph, self.n2)
         self.assertEqual(edges, set([self.e1, self.e2]))
 
     def test_outgoing_edges_of(self):
         """"""
-        edges = BaseGraphOps.outgoing_edges_of(self.graph, self.n2)
+        edges = BaseGraphEdgeOps.outgoing_edges_of(self.graph, self.n2)
         self.assertEqual(edges, frozenset([self.e2, self.e1]))
 
     def test_incoming_edges_of(self):
         """"""
-        edges = BaseGraphOps.incoming_edges_of(self.graph, self.n2)
+        edges = BaseGraphEdgeOps.incoming_edges_of(self.graph, self.n2)
         self.assertEqual(edges, frozenset([self.e1, self.e2]))
 
     def test_is_in_true(self):
         """"""
-        b = BaseGraphOps.is_in(self.graph, self.n2)
+        b = BaseGraphBoolOps.is_in(self.graph, self.n2)
         self.assertTrue(b)
 
     def test_is_in_false(self):
         """"""
         n = Node("n86", {})
-        b = BaseGraphOps.is_in(self.graph, n)
+        b = BaseGraphBoolOps.is_in(self.graph, n)
         self.assertFalse(b)
 
     def test_vertex_by_id(self):
-        n = BaseGraphOps.vertex_by_id(self.graph, "n1")
+        n = BaseGraphNodeOps.vertex_by_id(self.graph, "n1")
         self.assertEqual(n, self.n1)
 
     def test_edge_by_id(self):
-        e = BaseGraphOps.edge_by_id(self.graph, "e1")
+        e = BaseGraphEdgeOps.edge_by_id(self.graph, "e1")
         self.assertEqual(e, self.e1)
 
     def test_edge_by_vertices(self):
-        e = BaseGraphOps.edge_by_vertices(self.graph, self.n2, self.n3)
+        e = BaseGraphEdgeOps.edge_by_vertices(self.graph, self.n2, self.n3)
         self.assertEqual(e, set([self.e2]))
 
     def test_edge_by_vertices_n(self):
         check = False
         try:
-            BaseGraphOps.edge_by_vertices(self.graph, self.n1, self.n3)
+            BaseGraphEdgeOps.edge_by_vertices(self.graph, self.n1, self.n3)
         except ValueError:
             check = True
         self.assertTrue(check)
@@ -273,18 +222,14 @@ class BaseGraphOpsTest(unittest.TestCase):
         """"""
         n1 = Node("n1", {})
         n2 = Node("n2", {})
-        e1 = Edge(
-            "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
-        )
-        e2 = Edge(
-            "e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED
-        )
+        e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
+        e2 = Edge("e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED)
         g = BaseGraph("g", nodes=set([n1, n2]), edges=set([e1, e2]))
-        self.assertEqual(BaseGraphOps.edges_by_end(g, n2), set([e1]))
+        self.assertEqual(BaseGraphEdgeOps.edges_by_end(g, n2), set([e1]))
 
     def test_vertices_of(self):
         """"""
-        vertices = BaseGraphOps.vertices_of(self.graph, self.e2)
+        vertices = BaseGraphNodeOps.vertices_of(self.graph, self.e2)
         self.assertEqual(vertices, (self.n2, self.n3))
 
     def test_adjmat_int(self):

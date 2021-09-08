@@ -15,6 +15,8 @@ from uuid import uuid4
 from pygmodels.gmodel.graph import Graph
 from pygmodels.gmodel.tree import Tree
 from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.graphf.bgraphops import BaseGraphEdgeOps
+from pygmodels.graphf.bgraphops import BaseGraphNodeOps
 from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
 from pygmodels.graphf.graphops import BaseGraphAlgOps
 from pygmodels.graphf.graphsearcher import BaseGraphSearcher
@@ -29,11 +31,7 @@ class UndiGraph(Graph):
     """
 
     def __init__(
-        self,
-        gid: str,
-        data={},
-        nodes: Set[Node] = None,
-        edges: Set[Edge] = None,
+        self, gid: str, data={}, nodes: Set[Node] = None, edges: Set[Edge] = None,
     ):
         """!
         \brief constructor for undirected graph
@@ -48,8 +46,7 @@ class UndiGraph(Graph):
             for edge in edges:
                 if edge.type() == EdgeType.DIRECTED:
                     raise ValueError(
-                        "Can not instantiate undirected graph with"
-                        + " directed edges"
+                        "Can not instantiate undirected graph with" + " directed edges"
                     )
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
 
@@ -62,15 +59,10 @@ class UndiGraph(Graph):
 
         \param g source graph
         """
-        for e in BaseGraphOps.edges(g):
+        for e in g.E:
             if e.type() == EdgeType.DIRECTED:
                 raise ValueError("Graph contains directed edges")
-        return UndiGraph(
-            gid=str(uuid4()),
-            data=g.data(),
-            nodes=BaseGraphOps.nodes(g),
-            edges=BaseGraphOps.edges(g),
-        )
+        return UndiGraph(gid=str(uuid4()), data=g.data(), nodes=g.V, edges=g.E)
 
     def find_shortest_paths(self, n1: Node) -> Dict[str, Union[dict, set]]:
         """!
@@ -81,9 +73,7 @@ class UndiGraph(Graph):
         nodes not just incoming or outgoing edges.
         """
         return BaseGraphSearcher.breadth_first_search(
-            self,
-            n1=n1,
-            edge_generator=lambda x: BaseGraphOps.edges_of(self, x),
+            self, n1=n1, edge_generator=lambda x: BaseGraphEdgeOps.edges_of(self, x),
         )
 
     def check_for_path(self, n1: Node, n2: Node) -> bool:
@@ -198,9 +188,9 @@ class UndiGraph(Graph):
             Cs.append(R)
         for v in P:
             self.bron_kerbosch(
-                P=P.intersection(BaseGraphOps.neighbours_of(self, v)),
+                P=P.intersection(BaseGraphNodeOps.neighbours_of(self, v)),
                 R=R.union([v]),
-                X=X.intersection(BaseGraphOps.neighbours_of(self, v)),
+                X=X.intersection(BaseGraphNodeOps.neighbours_of(self, v)),
                 Cs=Cs,
             )
             P = P.difference([v])
@@ -211,7 +201,7 @@ class UndiGraph(Graph):
         find maximal cliques in graph using Bron Kerbosch algorithm
         as per arxiv.org/1006.5440
         """
-        P: Set[Node] = BaseGraphOps.nodes(self)
+        P: Set[Node] = self.V
         X: Set[Node] = set()
         R: Set[Node] = set()
         Cs: List[Set[Node]] = []

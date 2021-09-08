@@ -33,9 +33,7 @@ class LWFChainGraph(PGModel):
         data={},
     ):
         """"""
-        super().__init__(
-            gid=gid, data=data, nodes=nodes, edges=edges, factors=factors
-        )
+        super().__init__(gid=gid, data=data, nodes=nodes, edges=edges, factors=factors)
         self.ccomponents = list(self.get_chain_components())
         self.chain_components: Dict[str, Set[UndiGraph]] = {
             str(uuid4()): c for c in self.ccomponents
@@ -50,7 +48,7 @@ class LWFChainGraph(PGModel):
         Moralize given chain graph: For any \f X,Y \in Pa_{K_i} \f add an edge
         between them if it does not exist. Then drop the direction of edges.
         """
-        edges = set(BaseGraphOps.edges(self))
+        edges = set(self.E)
         enodes = set([frozenset([e.start(), e.end()]) for e in edges])
         # add edges
         for cid in range(len(self.ccomponents)):
@@ -64,8 +62,7 @@ class LWFChainGraph(PGModel):
                     )
                     if (
                         is_n_ind is True
-                        and frozenset([parent_node, pnode]).issubset(enodes)
-                        is False
+                        and frozenset([parent_node, pnode]).issubset(enodes) is False
                     ):
                         e = Edge(
                             edge_id=str(uuid4()),
@@ -92,7 +89,7 @@ class LWFChainGraph(PGModel):
         #
         return MarkovNetwork(
             gid=str(uuid4()),
-            nodes=BaseGraphOps.nodes(self),
+            nodes=self.V,
             edges=nedges,
             factors=self.factors(),
         )
@@ -109,17 +106,12 @@ class LWFChainGraph(PGModel):
             if f.scope_vars().issubset(parents.union(component)) is True:
                 fs.add(f)
         return ConditionalRandomField(
-            gid=str(uuid4()),
-            observed_vars=parents,
-            target_vars=component,
-            factors=fs,
+            gid=str(uuid4()), observed_vars=parents, target_vars=component, factors=fs,
         )
 
     def to_crfs(self) -> Set[ConditionalRandomField]:
         """"""
-        return set(
-            [self.component_to_crf(i) for i in range(len(self.ccomponents))]
-        )
+        return set([self.component_to_crf(i) for i in range(len(self.ccomponents))])
 
     def chain_component(self, dag_id: str) -> Set[UndiGraph]:
         """!"""
@@ -149,7 +141,7 @@ class LWFChainGraph(PGModel):
         K_i: Union[UndiGraph, Set[NumCatRVariable]] = self.K(i)
         Pa_Ki_nodes = set()
         if isinstance(K_i, UndiGraph):
-            knodes = BaseGraphOps.nodes(K_i)
+            knodes = K_i.V
             for kn in knodes:
                 for pa_k in self.parents_of(kn):
                     if pa_k not in knodes:
@@ -159,9 +151,7 @@ class LWFChainGraph(PGModel):
                 for pa_k in self.parents_of(k_i):
                     Pa_Ki_nodes.add(pa_k)
         else:
-            raise TypeError(
-                "Component has an unacceptable type:" + str(type(K_i))
-            )
+            raise TypeError("Component has an unacceptable type:" + str(type(K_i)))
         return Pa_Ki_nodes
 
     def parents_of(self, n: NumCatRVariable) -> Set[NumCatRVariable]:
@@ -169,7 +159,7 @@ class LWFChainGraph(PGModel):
         return set(
             [
                 n_p
-                for n_p in BaseGraphOps.nodes(self)
+                for n_p in self.V
                 if self.is_parent_of(parent=n_p, child=n) is True
             ]
         )
@@ -189,21 +179,17 @@ class LWFChainGraph(PGModel):
         and nodes that are only pointed by directed edges.
         """
         edges = set()
-        for e in BaseGraphOps.edges(self):
+        for e in self.E:
             if e.type() == EdgeType.UNDIRECTED:
                 edges.add(e)
 
         undi = UndiGraph.from_graph(
-            Graph.from_edge_node_set(
-                edges=edges, nodes=BaseGraphOps.nodes(self)
-            )
+            Graph.from_edge_node_set(edges=edges, nodes=self.V)
         )
         chain_components: Set[Union[Set[Node], UndiGraph]] = set()
         for cg in undi.get_components_as_node_sets():
             if len(cg) > 1:
-                component = UndiGraph.from_graph(
-                    undi.get_subgraph_by_vertices(vs=cg)
-                )
+                component = UndiGraph.from_graph(undi.get_subgraph_by_vertices(vs=cg))
                 chain_components.add(component)
             else:
                 chain_components.add(cg)
@@ -232,7 +218,7 @@ class LWFChainGraph(PGModel):
         end_component_id = None
         for cid, component in self.chain_components.items():
             if isinstance(component, UndiGraph) is True:
-                cnodes = BaseGraphOps.nodes(component)
+                cnodes = component.V
                 if estart in cnodes:
                     start_component_id = cid
                 if eend in cnodes:
@@ -261,7 +247,7 @@ class LWFChainGraph(PGModel):
             for cid in self.chain_components
         }
         dag_edges = set()
-        for e in BaseGraphOps.edges(self):
+        for e in self.E:
             if e.type() == EdgeType.DIRECTED:
                 (
                     edge_between_components_check,
@@ -269,8 +255,7 @@ class LWFChainGraph(PGModel):
                     end_component_id,
                 ) = self.check_edge_between_components(e)
                 if edge_between_components_check is True and (
-                    start_component_id is not None
-                    and end_component_id is not None
+                    start_component_id is not None and end_component_id is not None
                 ):
                     dag_edge = Edge(
                         edge_id=str(uuid4()),
