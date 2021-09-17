@@ -211,15 +211,7 @@ class GraphTest(unittest.TestCase):
         self.assertEqual(set(g.V), set([self.n1, self.n2, self.n3, self.n4]))
         self.assertEqual(BaseGraphEdgeOps.edges(g), eset)
 
-    def test_is_node_incident(self):
-        """"""
-        n1 = Node("n1", {})
-        n2 = Node("n2", {})
-        e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
-        e2 = Edge("e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED)
-        self.assertTrue(Graph.is_node_incident(n1, e1))
-        self.assertFalse(Graph.is_node_incident(n2, e2))
-
+   
     def test_adjmat_int(self):
         """"""
         mat = self.ugraph1.to_adjmat()
@@ -309,9 +301,6 @@ class GraphTest(unittest.TestCase):
         """"""
         self.assertTrue(self.graph_2.is_connected())
 
-    def test_is_adjacent_of(self):
-        self.assertTrue(self.graph_2.is_adjacent_of(self.e2, self.e3))
-
     def test_is_neighbour_of_true(self):
         isneighbor = self.graph_2.is_neighbour_of(self.n2, self.n3)
         self.assertTrue(isneighbor)
@@ -334,9 +323,7 @@ class GraphTest(unittest.TestCase):
         """"""
         n = Node("n646", {})
         g = self.graph + n
-        self.assertEqual(
-            set(g.V), set([self.n1, self.n2, self.n3, self.n4, n])
-        )
+        self.assertEqual(set(g.V), set([self.n1, self.n2, self.n3, self.n4, n]))
 
     def test__add__e(self):
         """"""

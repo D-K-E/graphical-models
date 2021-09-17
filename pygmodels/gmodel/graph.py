@@ -31,11 +31,7 @@ class Graph(BaseGraph):
     """
 
     def __init__(
-        self,
-        gid: str,
-        data={},
-        nodes: Set[Node] = None,
-        edges: Set[Edge] = None,
+        self, gid: str, data={}, nodes: Set[Node] = None, edges: Set[Edge] = None,
     ):
         """!
         \brief Graph Constructor
@@ -118,67 +114,6 @@ class Graph(BaseGraph):
     def from_edge_node_set(cls, edges: Set[Edge], nodes: Set[Node]):
         g = BaseGraph.from_edge_node_set(edges=edges, nodes=nodes)
         return cls.from_base_graph(g)
-
-    @classmethod
-    def is_adjacent_of(cls, e1: Edge, e2: Edge) -> bool:
-        """!
-        \brief Check if two edges are adjacent
-
-        \param e1 an edge
-        \param e2 an edge
-
-        \code{.py}
-
-        >>> n1 = Node("n1", {})
-        >>> n2 = Node("n2", {})
-        >>> n3 = Node("n3", {})
-        >>> n4 = Node("n4", {})
-        >>> e1 = Edge(
-        >>>     "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
-        >>> )
-        >>> e2 = Edge(
-        >>>     "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
-        >>> )
-        >>> e3 = Edge(
-        >>>     "e3", start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED
-        >>> )
-        >>> graph_2 = Graph(
-        >>>   "g2",
-        >>>   data={"my": "graph", "data": "is", "very": "awesome"},
-        >>>   nodes=set([n1, n2, n3, n4]),
-        >>>   edges=set([e1, e2, e3]),
-        >>> )
-        >>> graph_2.is_adjacent_of(e2, e3)
-        >>> True
-
-        \endcode
-        """
-        n1_ids = e1.node_ids()
-        n2_ids = e2.node_ids()
-        return len(n1_ids.intersection(n2_ids)) > 0
-
-    @classmethod
-    def is_node_incident(cls, n: Node, e: Edge) -> bool:
-        """!
-        \brief Check if a node is incident of an edge
-
-        \param n node We check if this node is an endvertex of the edge.
-        \param e The queried edge.
-
-        \code{.py}
-
-        >>> n1 = Node("n1", {})
-        >>> n2 = Node("n2", {})
-        >>> e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
-        >>> e2 = Edge("e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED)
-        >>> Graph.is_node_incident(n1, e1)
-        >>> # True
-        >>> Graph.is_node_incident(n2, e2)
-        >>> # False
-
-        \endcode
-        """
-        return e.is_endvertice(n)
 
     def to_base_graph(self):
         """!
@@ -466,9 +401,7 @@ class Graph(BaseGraph):
 
         # Extract component roots
         component_roots = [k for k in self.graph_props.forest.keys()]
-        return set(
-            [self.get_component(root_node_id=root) for root in component_roots]
-        )
+        return set([self.get_component(root_node_id=root) for root in component_roots])
 
     def get_components_as_node_sets(self) -> Set[FrozenSet[Node]]:
         """!
@@ -482,9 +415,7 @@ class Graph(BaseGraph):
 
         # Extract component roots
         component_roots = [k for k in self.graph_props.forest.keys()]
-        return set(
-            [frozenset(self.get_component_nodes(k)) for k in component_roots]
-        )
+        return set([frozenset(self.get_component_nodes(k)) for k in component_roots])
 
     def find_articulation_points(
         self, graph_maker: Callable[[Node], GraphObject]
@@ -507,9 +438,7 @@ class Graph(BaseGraph):
                 points.add(node)
         return points
 
-    def find_bridges(
-        self, graph_maker: Callable[[Edge], GraphObject]
-    ) -> Set[Edge]:
+    def find_bridges(self, graph_maker: Callable[[Edge], GraphObject]) -> Set[Edge]:
         """!
         \brief find bridges of a given graph.
 

@@ -68,17 +68,17 @@ class BaseGraphBoolOps:
 
         \endcode
         """
-        if not BaseGraphBoolOps.is_in(e1):
+        if not BaseGraphBoolOps.is_in(g,e1):
             raise ValueError("edge not in Graph")
 
-        if not BaseGraphBoolOps.is_in(e2):
+        if not BaseGraphBoolOps.is_in(g, e2):
             raise ValueError("edge not in Graph")
 
         n1_ids = e1.node_ids()
         n2_ids = e2.node_ids()
         return len(n1_ids.intersection(n2_ids)) > 0
 
-    @classmethod
+    @staticmethod
     def is_node_incident(g: AbstractGraph, n: AbstractNode, e: AbstractEdge) -> bool:
         """!
         \brief Check if a node is incident of an edge
@@ -99,10 +99,10 @@ class BaseGraphBoolOps:
 
         \endcode
         """
-        if not BaseGraphBoolOps.is_in(e):
+        if not BaseGraphBoolOps.is_in(g, e):
             raise ValueError("edge not in Graph")
 
-        if not BaseGraphBoolOps.is_in(n):
+        if not BaseGraphBoolOps.is_in(g, n):
             raise ValueError("node not in Graph")
 
         return e.is_endvertice(n)

@@ -282,6 +282,18 @@ class BaseGraphOpsTest(unittest.TestCase):
             },
         )
 
+    def test_is_adjacent_of(self):
+        self.assertTrue(BaseGraphBoolOps.is_adjacent_of(self.graph_2, self.e2, self.e3))
+
+    def test_is_node_incident(self):
+        """"""
+        n1 = Node("n1", {})
+        n2 = Node("n2", {})
+        e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
+        e2 = Edge("e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED)
+        self.assertTrue(BaseGraphBoolOps.is_node_incident(self.graph, self.n1, self.e1))
+        self.assertFalse(BaseGraphBoolOps.is_node_incident(self.graph, n2, e2))
+
     @unittest.skip("Test not yet implemented")
     def test_get_subgraph_by_vertices(self):
         raise NotImplementedError
