@@ -22,6 +22,9 @@ from pygmodels.graphf.bgraphops import BaseGraphNodeOps
 from pygmodels.graphf.bgraphops import BaseGraphEdgeOps
 from pygmodels.graphf.bgraphops import BaseGraphBoolOps
 from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
+from pygmodels.graphf.graphanalyzer import BaseGraphBoolAnalyzer
+from pygmodels.graphf.graphanalyzer import BaseGraphNumericAnalyzer
+from pygmodels.graphf.graphanalyzer import BaseGraphNodeAnalyzer
 from pygmodels.graphf.graphops import BaseGraphAlgOps
 from pygmodels.gtype.edge import Edge
 from pygmodels.gtype.node import Node
@@ -33,7 +36,7 @@ def min_unmarked_neighbours(g: Graph, nodes: Set[Node], marked: Dict[str, Node])
     """!
     \brief find an unmarked node with minimum number of neighbours
     """
-    ordered = [(n, BaseGraphAnalyzer.nb_neighbours_of(g, n)) for n in nodes]
+    ordered = [(n, BaseGraphNumericAnalyzer.nb_neighbours_of(g, n)) for n in nodes]
     ordered.sort(key=lambda x: x[1])
     for X, nb in sorted(ordered, key=lambda x: x[1]):
         if marked[X.id()] is False:
@@ -109,7 +112,7 @@ class PGModel(Graph):
         check if two nodes are conditionally independent
         from K. Murphy, 2012, p. 662
         """
-        return BaseGraphAnalyzer.is_node_independent_of(self, n1, n2)
+        return BaseGraphBoolAnalyzer.is_node_independent_of(self, n1, n2)
 
     def scope_of(self, phi: Factor) -> Set[NumCatRVariable]:
         """!"""

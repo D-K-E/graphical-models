@@ -10,6 +10,8 @@ from pygmodels.gmodel.graph import Graph
 from pygmodels.gmodel.tree import Tree
 from pygmodels.gmodel.undigraph import UndiGraph
 from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
+from pygmodels.graphf.graphanalyzer import BaseGraphBoolAnalyzer
+from pygmodels.graphf.graphanalyzer import BaseGraphNumericAnalyzer
 from pygmodels.graphf.graphops import BaseGraphOps
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
@@ -57,7 +59,7 @@ class LWFChainGraph(PGModel):
             while len(pa_k_i_cp) > 0:
                 parent_node = pa_k_i_cp.pop()
                 for pnode in pa_k_i:
-                    is_n_ind = BaseGraphAnalyzer.is_node_independent_of(
+                    is_n_ind = BaseGraphBoolAnalyzer.is_node_independent_of(
                         self, parent_node, pnode
                     )
                     if (

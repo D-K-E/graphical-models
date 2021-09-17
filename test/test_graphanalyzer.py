@@ -9,6 +9,9 @@ from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 from pygmodels.gmodel.graph import Graph
 from pygmodels.graphf.bgraphops import BaseGraphOps
 from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
+from pygmodels.graphf.graphanalyzer import BaseGraphBoolAnalyzer
+from pygmodels.graphf.graphanalyzer import BaseGraphNumericAnalyzer
+from pygmodels.graphf.graphanalyzer import BaseGraphNodeAnalyzer
 from pygmodels.gtype.abstractobj import (
     AbstractEdge,
     AbstractGraph,
@@ -150,70 +153,70 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
         e2 = Edge("e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED)
         g1 = BaseGraph("graph", nodes=set([n1, n2]), edges=set([e1, e2]))
         g2 = BaseGraph("graph", nodes=set([n1, n2]), edges=set([e1]))
-        self.assertTrue(BaseGraphAnalyzer.has_self_loop(g1))
-        self.assertFalse(BaseGraphAnalyzer.has_self_loop(g2))
+        self.assertTrue(BaseGraphBoolAnalyzer.has_self_loop(g1))
+        self.assertFalse(BaseGraphBoolAnalyzer.has_self_loop(g2))
 
     def test_is_node_independant_of(self):
         self.assertTrue(
-            BaseGraphAnalyzer.is_node_independent_of(self.graph_2, self.n1, self.n3)
+            BaseGraphBoolAnalyzer.is_node_independent_of(self.graph_2, self.n1, self.n3)
         )
 
     def test_is_stable(self):
         """"""
         self.assertTrue(
-            BaseGraphAnalyzer.is_stable(self.ugraph4, set([self.a, self.n3, self.n1]))
+            BaseGraphBoolAnalyzer.is_stable(self.ugraph4, set([self.a, self.n3, self.n1]))
         )
 
     def test_nb_edges(self):
         """"""
-        b = BaseGraphAnalyzer.nb_edges(self.graph)
+        b = BaseGraphNumericAnalyzer.nb_edges(self.graph)
         self.assertEqual(b, 2)
 
     def test_max_degree(self):
         """"""
-        md = BaseGraphAnalyzer.max_degree(self.graph)
+        md = BaseGraphNumericAnalyzer.max_degree(self.graph)
         self.assertEqual(md, 2)
 
     def test_max_degree_vs(self):
         """"""
-        mds = BaseGraphAnalyzer.max_degree_vs(self.graph)
+        mds = BaseGraphNodeAnalyzer.max_degree_vs(self.graph)
         self.assertEqual(mds, set([self.n2]))
 
     def test_min_degree(self):
         """"""
-        md = BaseGraphAnalyzer.min_degree(self.graph)
+        md = BaseGraphNumericAnalyzer.min_degree(self.graph)
         self.assertEqual(md, 0)
 
     def test_min_degree_vs(self):
         """"""
-        mds = BaseGraphAnalyzer.min_degree_vs(self.graph)
+        mds = BaseGraphNodeAnalyzer.min_degree_vs(self.graph)
         self.assertEqual(mds, set([self.n4]))
 
     def test_average_degree(self):
         """"""
-        adeg = BaseGraphAnalyzer.average_degree(self.graph)
+        adeg = BaseGraphNumericAnalyzer.average_degree(self.graph)
         self.assertEqual(adeg, 1)
 
     def test_edge_vertex_ratio(self):
-        deg = BaseGraphAnalyzer.edge_vertex_ratio(self.graph)
+        deg = BaseGraphNumericAnalyzer.edge_vertex_ratio(self.graph)
         self.assertEqual(0.5, deg)
 
     def test_ev_ratio_from_average_degree(self):
-        deg = BaseGraphAnalyzer.ev_ratio_from_average_degree(self.graph, 5)
+        deg = BaseGraphNumericAnalyzer.ev_ratio_from_average_degree(self.graph, 5)
         self.assertEqual(2.5, deg)
 
     def test_ev_ratio(self):
-        deg = BaseGraphAnalyzer.ev_ratio(self.graph)
+        deg = BaseGraphNumericAnalyzer.ev_ratio(self.graph)
         self.assertEqual(0.5, deg)
 
     def test_order(self):
         """"""
-        b = BaseGraphAnalyzer.order(self.graph)
+        b = BaseGraphNumericAnalyzer.order(self.graph)
         self.assertEqual(b, 4)
 
     def test_is_trivial_1(self):
         """"""
-        b = BaseGraphAnalyzer.is_trivial(self.graph)
+        b = BaseGraphBoolAnalyzer.is_trivial(self.graph)
         self.assertFalse(b)
 
     def test_is_trivial_2(self):

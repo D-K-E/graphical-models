@@ -18,6 +18,8 @@ from pygmodels.graphf.bgraphops import BaseGraphOps
 from pygmodels.graphf.bgraphops import BaseGraphEdgeOps
 from pygmodels.graphf.bgraphops import BaseGraphNodeOps
 from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
+from pygmodels.graphf.graphanalyzer import BaseGraphBoolAnalyzer
+from pygmodels.graphf.graphanalyzer import BaseGraphNumericAnalyzer
 from pygmodels.graphf.graphops import BaseGraphAlgOps
 from pygmodels.graphf.graphsearcher import BaseGraphSearcher
 from pygmodels.gtype.abstractobj import EdgeType
@@ -97,7 +99,7 @@ class UndiGraph(Graph):
         \brief also known as shortest possible path length
         see proof Diestel 2017, p. 8
         """
-        return BaseGraphAnalyzer.min_degree(self)
+        return BaseGraphNumericAnalyzer.min_degree(self)
 
     def find_minimum_spanning_tree(
         self, weight_fn: Callable[[Edge], int] = lambda x: 1

@@ -14,9 +14,9 @@ from pygmodels.gtype.abstractobj import (
 )
 
 
-class BaseGraphAnalyzer:
+class BaseGraphBoolAnalyzer:
     """!
-    Analyze base graphs
+    Answers boolean questions about base graph objects
     """
 
     @staticmethod
@@ -137,7 +137,86 @@ class BaseGraphAnalyzer:
         This triviality condition is taken from
         Diestel 2017, p. 2
         """
-        return BaseGraphAnalyzer.order(g) < 2
+        return BaseGraphNumericAnalyzer.order(g) < 2
+
+    @staticmethod
+    def has_cycles(g: AbstractGraph) -> bool:
+        """!
+        \brief Check if graph instance contains cycles.
+        This interpretation is from Diestel 2017, p. 8. The
+        proof is provided in the given page.
+        """
+        md = BaseGraphNumericAnalyzer.min_degree(g)
+        if md >= 2:
+            return True
+        return False
+
+    @staticmethod
+    def is_disjoint(g1: AbstractGraph, g2: AbstractGraph) -> bool:
+        "check if g2 is disjoint to g1"
+        ns = BaseGraphOps.nodes(g1)
+        ns_ = g2.vertex_intersection(ns)
+        return len(ns_) == 0
+
+    @staticmethod
+    def is_proper_subgraph(g1: AbstractGraph, g2: AbstractGraph) -> bool:
+        "check if g2 is subgraph of g1"
+        ns = BaseGraphOps.nodes(g2)
+        es = BaseGraphOps.edges(g2)
+        contains_nodes = BaseGraphOps.contains(g1, ns)
+        contains_edges = BaseGraphOps.contains(g1, es)
+        return contains_edges and contains_nodes
+
+    @staticmethod
+    def is_subgraph(g1: AbstractGraph, g2: AbstractGraph) -> bool:
+        "check if g2 is subgraph of g1"
+        # check vertex set includes
+        # check edge set includes
+        if g1 == g2:
+            return True
+        return BaseGraphAnalyzer.is_proper_subgraph(g1, g2)
+
+    @staticmethod
+    def is_induced_subgraph(g1: AbstractGraph, g2: AbstractGraph) -> bool:
+        """
+        check if g2 is induced subgraph of g1
+        induced subgraph:
+        g2 \sub g1 ^ xy \in Edge[g1] with x,y Vertex[g2]
+        """
+        is_subgraph = BaseGraphAnalyzer.is_subgraph(g1, g2)
+        if not is_subgraph:
+            return False
+        g2_vertices = BaseGraphOps.nodes(g2)
+        g1_edges = BaseGraphOps.edges(g1)
+        for g1_edge in g1_edges:
+            has_node_id1 = False
+            has_node_id2 = False
+            edge_node_ids = g1_edge.node_ids()
+            edge_node_id1 = edge_node_ids[0]
+            edge_node_id2 = edge_node_ids[1]
+            for g2_vertex in g2_vertices:
+                vertex_id = g2_vertex.id()
+                if vertex_id == edge_node_id1:
+                    has_node_id1 = True
+                if vertex_id == edge_node_id2:
+                    has_node_id2 = True
+            #
+            if not has_node_id1 and not has_node_id2:
+                return False
+        return True
+
+    @staticmethod
+    def is_spanning_subgraph(g1: AbstractGraph, g2: AbstractGraph) -> bool:
+        "check if g2 is spanning subgraph of g1"
+        if not BaseGraphAnalyzer.is_subgraph(g1, g2):
+            return False
+        return BaseGraphOps.nodes(g1) == BaseGraphOps.nodes(g2)
+
+
+class BaseGraphNumericAnalyzer:
+    """!
+    Analyze base graph for numeric properties
+    """
 
     @staticmethod
     def order(g: AbstractGraph) -> int:
@@ -172,20 +251,10 @@ class BaseGraphAnalyzer:
         """!
         \brief obtain maximum degree of the graph instance
         """
-        v = BaseGraphAnalyzer.comp_degree(
+        v = BaseGraphNumericAnalyzer.comp_degree(
             g, fn=lambda nb_edges, compare: nb_edges > compare, comp_val=0
         )
         return v
-
-    @staticmethod
-    def max_degree_vs(g: AbstractGraph) -> Set[AbstractNode]:
-        """!
-        \brief obtain vertex set of whose degrees are equal to maximum degree.
-        """
-        md = BaseGraphAnalyzer.max_degree(g)
-        gdata = BaseGraphOps.to_edgelist(g)
-        nodes = set([v for v in g.V if len(gdata[v.id()]) == md])
-        return nodes
 
     @staticmethod
     def min_degree(g: AbstractGraph) -> int:
@@ -193,21 +262,10 @@ class BaseGraphAnalyzer:
         \brief obtain minimum degree of graph instance
         """
         return int(
-            BaseGraphAnalyzer.comp_degree(
+            BaseGraphNumericAnalyzer.comp_degree(
                 g, fn=lambda nb_edges, compare: nb_edges < compare, comp_val=math.inf,
             )
         )
-
-    @staticmethod
-    def min_degree_vs(g: AbstractGraph) -> Set[AbstractNode]:
-        """!
-        \brief obtain set of vertices whose degree equal to minimum degree of
-        graph instance
-        """
-        md = BaseGraphAnalyzer.min_degree(g)
-        gdata = BaseGraphOps.to_edgelist(g)
-        nodes = set([v for v in g.V if len(gdata[v.id()]) == md])
-        return nodes
 
     @staticmethod
     def average_degree(g: AbstractGraph) -> float:
@@ -248,20 +306,8 @@ class BaseGraphAnalyzer:
         """!
         \brief shorthand for ev_ratio_from_average_degree()
         """
-        adegree = BaseGraphAnalyzer.average_degree(g)
-        return BaseGraphAnalyzer.ev_ratio_from_average_degree(g, adegree)
-
-    @staticmethod
-    def has_cycles(g: AbstractGraph) -> bool:
-        """!
-        \brief Check if graph instance contains cycles.
-        This interpretation is from Diestel 2017, p. 8. The
-        proof is provided in the given page.
-        """
-        md = BaseGraphAnalyzer.min_degree(g)
-        if md >= 2:
-            return True
-        return False
+        adegree = BaseGraphNumericAnalyzer.average_degree(g)
+        return BaseGraphNumericAnalyzer.ev_ratio_from_average_degree(g, adegree)
 
     @staticmethod
     def shortest_path_length(g: AbstractGraph) -> int:
@@ -332,69 +378,41 @@ class BaseGraphAnalyzer:
         return len(g.E)
 
     @staticmethod
-    def is_disjoint(g1: AbstractGraph, g2: AbstractGraph) -> bool:
-        "check if g2 is disjoint to g1"
-        ns = BaseGraphOps.nodes(g1)
-        ns_ = g2.vertex_intersection(ns)
-        return len(ns_) == 0
-
-    @staticmethod
-    def is_proper_subgraph(g1: AbstractGraph, g2: AbstractGraph) -> bool:
-        "check if g2 is subgraph of g1"
-        ns = BaseGraphOps.nodes(g2)
-        es = BaseGraphOps.edges(g2)
-        contains_nodes = BaseGraphOps.contains(g1, ns)
-        contains_edges = BaseGraphOps.contains(g1, es)
-        return contains_edges and contains_nodes
-
-    @staticmethod
-    def is_subgraph(g1: AbstractGraph, g2: AbstractGraph) -> bool:
-        "check if g2 is subgraph of g1"
-        # check vertex set includes
-        # check edge set includes
-        if g1 == g2:
-            return True
-        return BaseGraphAnalyzer.is_proper_subgraph(g1, g2)
-
-    @staticmethod
-    def is_induced_subgraph(g1: AbstractGraph, g2: AbstractGraph) -> bool:
-        """
-        check if g2 is induced subgraph of g1
-        induced subgraph:
-        g2 \sub g1 ^ xy \in Edge[g1] with x,y Vertex[g2]
-        """
-        is_subgraph = BaseGraphAnalyzer.is_subgraph(g1, g2)
-        if not is_subgraph:
-            return False
-        g2_vertices = BaseGraphOps.nodes(g2)
-        g1_edges = BaseGraphOps.edges(g1)
-        for g1_edge in g1_edges:
-            has_node_id1 = False
-            has_node_id2 = False
-            edge_node_ids = g1_edge.node_ids()
-            edge_node_id1 = edge_node_ids[0]
-            edge_node_id2 = edge_node_ids[1]
-            for g2_vertex in g2_vertices:
-                vertex_id = g2_vertex.id()
-                if vertex_id == edge_node_id1:
-                    has_node_id1 = True
-                if vertex_id == edge_node_id2:
-                    has_node_id2 = True
-            #
-            if not has_node_id1 and not has_node_id2:
-                return False
-        return True
-
-    @staticmethod
-    def is_spanning_subgraph(g1: AbstractGraph, g2: AbstractGraph) -> bool:
-        "check if g2 is spanning subgraph of g1"
-        if not BaseGraphAnalyzer.is_subgraph(g1, g2):
-            return False
-        return BaseGraphOps.nodes(g1) == BaseGraphOps.nodes(g2)
-
-    @staticmethod
     def is_tree(g: AbstractGraph) -> bool:
         raise NotImplementedError
+
+
+class BaseGraphNodeAnalyzer:
+    """!
+    Analyze graphs for properties that are measured with nodes
+    """
+
+    @staticmethod
+    def max_degree_vs(g: AbstractGraph) -> Set[AbstractNode]:
+        """!
+        \brief obtain vertex set of whose degrees are equal to maximum degree.
+        """
+        md = BaseGraphNumericAnalyzer.max_degree(g)
+        gdata = BaseGraphOps.to_edgelist(g)
+        nodes = set([v for v in g.V if len(gdata[v.id()]) == md])
+        return nodes
+
+    @staticmethod
+    def min_degree_vs(g: AbstractGraph) -> Set[AbstractNode]:
+        """!
+        \brief obtain set of vertices whose degree equal to minimum degree of
+        graph instance
+        """
+        md = BaseGraphNumericAnalyzer.min_degree(g)
+        gdata = BaseGraphOps.to_edgelist(g)
+        nodes = set([v for v in g.V if len(gdata[v.id()]) == md])
+        return nodes
+
+
+class BaseGraphAnalyzer:
+    """!
+    Analyze base graphs
+    """
 
     @staticmethod
     def find_articulation_points(

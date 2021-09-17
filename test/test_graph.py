@@ -13,6 +13,8 @@ from pygmodels.graphf.bgraphops import BaseGraphNodeOps
 from pygmodels.graphf.bgraphops import BaseGraphEdgeOps
 from pygmodels.graphf.bgraphops import BaseGraphBoolOps
 from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
+from pygmodels.graphf.graphanalyzer import BaseGraphBoolAnalyzer
+from pygmodels.graphf.graphanalyzer import BaseGraphNumericAnalyzer
 from pygmodels.graphf.graphops import BaseGraphAlgOps, BaseGraphSetOps
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
@@ -325,7 +327,7 @@ class GraphTest(unittest.TestCase):
         self.assertEqual(ndes, set([self.n1.id(), self.n3.id()]))
 
     def test_nb_neighbours_of(self):
-        ndes = BaseGraphAnalyzer.nb_neighbours_of(self.graph_2, self.n2)
+        ndes = BaseGraphNumericAnalyzer.nb_neighbours_of(self.graph_2, self.n2)
         self.assertEqual(ndes, 2)
 
     def test__add__n(self):
@@ -421,12 +423,12 @@ class GraphTest(unittest.TestCase):
 
     def test_visit_graph_dfs_cycles_false(self):
         "test visit graph dfs function"
-        c3 = BaseGraphAnalyzer.has_cycles(self.ugraph3)
+        c3 = BaseGraphBoolAnalyzer.has_cycles(self.ugraph3)
         self.assertFalse(c3)
 
     def test_visit_graph_dfs_cycles_true(self):
         "test visit graph dfs function"
-        c3 = BaseGraphAnalyzer.has_cycles(self.ugraph2)
+        c3 = BaseGraphBoolAnalyzer.has_cycles(self.ugraph2)
         self.assertTrue(c3)
 
 

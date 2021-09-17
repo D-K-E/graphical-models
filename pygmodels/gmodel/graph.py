@@ -14,6 +14,8 @@ from uuid import uuid4
 from pygmodels.graphf.bgraphops import BaseGraphOps
 from pygmodels.graphf.bgraphops import BaseGraphEdgeOps
 from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
+from pygmodels.graphf.graphanalyzer import BaseGraphBoolAnalyzer
+from pygmodels.graphf.graphanalyzer import BaseGraphNumericAnalyzer
 from pygmodels.graphf.graphops import BaseGraphAlgOps, BaseGraphSetOps
 from pygmodels.graphf.graphsearcher import BaseGraphSearcher
 from pygmodels.gtype.basegraph import BaseGraph
@@ -320,7 +322,7 @@ class Graph(BaseGraph):
 
         \endcode
         """
-        if BaseGraphAnalyzer.has_self_loop(self):
+        if BaseGraphBoolAnalyzer.has_self_loop(self):
             raise ValueError("Graph has a self loop")
         #
         T = self.to_adjmat(vtype=bool)
