@@ -34,6 +34,79 @@ class BaseGraphBoolOps:
         else:
             raise TypeError("Given argument should be either edge or node")
 
+    @staticmethod
+    def is_adjacent_of(g: AbstractGraph, e1: AbstractEdge, e2: AbstractEdge) -> bool:
+        """!
+        \brief Check if two edges are adjacent
+
+        \param e1 an edge
+        \param e2 an edge
+
+        \code{.py}
+
+        >>> n1 = Node("n1", {})
+        >>> n2 = Node("n2", {})
+        >>> n3 = Node("n3", {})
+        >>> n4 = Node("n4", {})
+        >>> e1 = Edge(
+        >>>     "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e2 = Edge(
+        >>>     "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e3 = Edge(
+        >>>     "e3", start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> graph_2 = Graph(
+        >>>   "g2",
+        >>>   data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>   nodes=set([n1, n2, n3, n4]),
+        >>>   edges=set([e1, e2, e3]),
+        >>> )
+        >>> graph_2.is_adjacent_of(e2, e3)
+        >>> True
+
+        \endcode
+        """
+        if not BaseGraphBoolOps.is_in(e1):
+            raise ValueError("edge not in Graph")
+
+        if not BaseGraphBoolOps.is_in(e2):
+            raise ValueError("edge not in Graph")
+
+        n1_ids = e1.node_ids()
+        n2_ids = e2.node_ids()
+        return len(n1_ids.intersection(n2_ids)) > 0
+
+    @classmethod
+    def is_node_incident(g: AbstractGraph, n: AbstractNode, e: AbstractEdge) -> bool:
+        """!
+        \brief Check if a node is incident of an edge
+
+        \param n node We check if this node is an endvertex of the edge.
+        \param e The queried edge.
+
+        \code{.py}
+
+        >>> n1 = Node("n1", {})
+        >>> n2 = Node("n2", {})
+        >>> e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
+        >>> e2 = Edge("e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED)
+        >>> Graph.is_node_incident(n1, e1)
+        >>> # True
+        >>> Graph.is_node_incident(n2, e2)
+        >>> # False
+
+        \endcode
+        """
+        if not BaseGraphBoolOps.is_in(e):
+            raise ValueError("edge not in Graph")
+
+        if not BaseGraphBoolOps.is_in(n):
+            raise ValueError("node not in Graph")
+
+        return e.is_endvertice(n)
+
 
 class BaseGraphEdgeOps:
     """
