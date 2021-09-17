@@ -7,6 +7,7 @@ from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 
 from pygmodels.graphf.bgraphops import BaseGraphOps
 from pygmodels.graphf.bgraphops import BaseGraphNodeOps
+from pygmodels.graphf.bgraphops import BaseGraphBoolOps
 from pygmodels.gtype.abstractobj import (
     AbstractEdge,
     AbstractGraph,
@@ -81,7 +82,7 @@ class BaseGraphBoolAnalyzer:
         """
         if n1 == n2:
             return False
-        return True if g.is_neighbour_of(n1, n2) is False else False
+        return True if BaseGraphBoolOps.is_neighbour_of(g, n1, n2) is False else False
 
     @staticmethod
     def is_stable(g: AbstractGraph, ns: FrozenSet[AbstractNode]) -> bool:
@@ -126,7 +127,7 @@ class BaseGraphBoolAnalyzer:
         while node_list:
             n1 = node_list.pop()
             for n2 in node_list:
-                if g.is_neighbour_of(n1=n1, n2=n2):
+                if BaseGraphBoolOps.is_neighbour_of(g, n1=n1, n2=n2):
                     return False
         return True
 

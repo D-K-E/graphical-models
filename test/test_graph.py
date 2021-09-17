@@ -211,7 +211,6 @@ class GraphTest(unittest.TestCase):
         self.assertEqual(set(g.V), set([self.n1, self.n2, self.n3, self.n4]))
         self.assertEqual(BaseGraphEdgeOps.edges(g), eset)
 
-   
     def test_adjmat_int(self):
         """"""
         mat = self.ugraph1.to_adjmat()
@@ -302,11 +301,11 @@ class GraphTest(unittest.TestCase):
         self.assertTrue(self.graph_2.is_connected())
 
     def test_is_neighbour_of_true(self):
-        isneighbor = self.graph_2.is_neighbour_of(self.n2, self.n3)
+        isneighbor = BaseGraphBoolOps.is_neighbour_of(self.graph_2, self.n2, self.n3)
         self.assertTrue(isneighbor)
 
     def test_is_neighbour_of_false(self):
-        isneighbor = self.graph_2.is_neighbour_of(self.n2, self.n2)
+        isneighbor = BaseGraphBoolOps.is_neighbour_of(self.graph_2, self.n2, self.n2)
         self.assertFalse(isneighbor)
 
     def test_neighbours_of(self):

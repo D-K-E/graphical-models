@@ -13,6 +13,8 @@ from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
 from pygmodels.graphf.graphanalyzer import BaseGraphBoolAnalyzer
 from pygmodels.graphf.graphanalyzer import BaseGraphNumericAnalyzer
 from pygmodels.graphf.graphops import BaseGraphOps
+from pygmodels.graphf.graphops import BaseGraphBoolOps
+from pygmodels.graphf.graphops import BaseGraphNodeOps
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
 from pygmodels.pgmodel.markov import ConditionalRandomField, MarkovNetwork
@@ -285,7 +287,7 @@ class LWFChainGraph(PGModel):
                 c2 = n_2 == e.start() and e.end() == n_1
                 return c1 or c2
 
-        return self.is_related_to(n1=parent, n2=child, condition=cond)
+        return BaseGraphBoolOps.is_related_to(self, n1=parent, n2=child, condition=cond)
 
     def is_child_of(self, child: Node, parent: Node):
         """!"""

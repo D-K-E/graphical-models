@@ -18,6 +18,7 @@ from uuid import uuid4
 
 from pygmodels.gmodel.graph import Graph
 from pygmodels.gmodel.undigraph import UndiGraph
+from pygmodels.graphf.digraphops import DiGraphBoolOps
 from pygmodels.graphf.bgraphops import BaseGraphOps
 from pygmodels.graphf.bgraphops import BaseGraphEdgeOps
 from pygmodels.graphf.bgraphops import BaseGraphBoolOps
@@ -111,7 +112,7 @@ class DiGraph(Graph):
             c = n_1 == e.start() and e.end() == n_2
             return c
 
-        return self.is_related_to(n1=parent, n2=child, condition=cond)
+        return BaseGraphBoolOps.is_related_to(self, n1=parent, n2=child, condition=cond)
 
     def is_child_of(self, child: Node, parent: Node) -> bool:
         """!

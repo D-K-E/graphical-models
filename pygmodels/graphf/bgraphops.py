@@ -68,7 +68,7 @@ class BaseGraphBoolOps:
 
         \endcode
         """
-        if not BaseGraphBoolOps.is_in(g,e1):
+        if not BaseGraphBoolOps.is_in(g, e1):
             raise ValueError("edge not in Graph")
 
         if not BaseGraphBoolOps.is_in(g, e2):
@@ -106,6 +106,92 @@ class BaseGraphBoolOps:
             raise ValueError("node not in Graph")
 
         return e.is_endvertice(n)
+
+    @staticmethod
+    def is_related_to(
+        g: AbstractGraph,
+        n1: AbstractNode,
+        n2: AbstractNode,
+        condition: Callable[[AbstractNode, AbstractNode, AbstractEdge], bool],
+        es: FrozenSet[AbstractEdge] = None,
+    ) -> bool:
+        """!
+        \brief Generic function for applying proximity conditions on a node pair
+
+        \param n1 first node subject to proximity condition
+        \param n2 second node subject to proximity condition
+        \param condition proximity condition in the form of a callable.
+        \param es edge set. We query the proximity condition in this set if it
+        is specified
+
+        We check whether a proximity condition is valid for given two nodes.
+        """
+        if es is None:
+            es = frozenset(g.E)
+        for e in es:
+            if condition(n1, n2, e) is True:
+                return True
+        return False
+
+    @staticmethod
+    def is_neighbour_of(g: AbstractGraph, n1: AbstractNode, n2: AbstractNode) -> bool:
+        """!
+        \brief check if two nodes are neighbours
+        We define the condition of neighborhood as having a common edge, not
+        being the same
+
+        \code{.py}
+
+        >>> n1 = Node("n1", {})
+        >>> n2 = Node("n2", {})
+        >>> n3 = Node("n3", {})
+        >>> n4 = Node("n4", {})
+        >>> e1 = Edge(
+        >>>     "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e2 = Edge(
+        >>>     "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e3 = Edge(
+        >>>     "e3", start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> graph_2 = Graph(
+        >>>   "g2",
+        >>>   data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>   nodes=set([n1, n2, n3, n4]),
+        >>>   edges=set([e1, e2, e3]),
+        >>> )
+        >>> graph_2.is_neighbour_of(n2, n3)
+        >>> True
+        >>> graph_2.is_neighbour_of(n2, n2)
+        >>> False
+
+        \endcode
+        """
+        if not BaseGraphBoolOps.is_in(g, n1):
+            raise ValueError("node not in graph")
+
+        if not BaseGraphBoolOps.is_in(g, n2):
+            raise ValueError("node not in graph")
+
+        def cond(n_1: AbstractNode, n_2: AbstractNode, e: AbstractEdge) -> bool:
+            """!
+            \brief neighborhood condition
+            """
+            estart = e.start()
+            eend = e.end()
+            c1 = estart == n_1 and eend == n_2
+            c2 = estart == n_2 and eend == n_1
+            return c1 or c2
+
+        gdata = BaseGraphOps.to_edgelist(g)
+
+        n1_edge_ids = set(gdata[n1.id()])
+        n2_edge_ids = set(gdata[n2.id()])
+        edge_ids = n1_edge_ids.intersection(n2_edge_ids)
+        # filter self loops
+        edges = set([e for e in g.E if e.id() in edge_ids])
+        return BaseGraphBoolOps.is_related_to(g, n1=n1, n2=n2, condition=cond, es=edges)
 
 
 class BaseGraphEdgeOps:
@@ -424,7 +510,7 @@ class BaseGraphNodeOps:
             raise ValueError("node is not in graph")
         neighbours = set()
         for n2 in g.V:
-            if g.is_neighbour_of(n1=n1, n2=n2) is True:
+            if BaseGraphBoolOps.is_neighbour_of(g, n1=n1, n2=n2) is True:
                 neighbours.add(n2)
         return neighbours
 
