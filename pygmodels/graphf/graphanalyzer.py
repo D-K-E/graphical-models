@@ -13,6 +13,11 @@ from pygmodels.gtype.abstractobj import (
     AbstractGraph,
     AbstractNode,
 )
+from pygmodels.gtype.basegraph import BaseGraph
+from pygmodels.gtype.gsearchresult import (
+    BaseGraphBFSResult,
+    BaseGraphDFSResult,
+)
 
 
 class BaseGraphBoolAnalyzer:
@@ -213,6 +218,51 @@ class BaseGraphBoolAnalyzer:
             return False
         return BaseGraphOps.nodes(g1) == BaseGraphOps.nodes(g2)
 
+    @staticmethod
+    def is_connected(
+        g: AbstractGraph,
+        result: Optional[BaseGraphDFSResult] = None,
+        edge_generator: Optional[Callable] = None,
+        check_cycle: Optional[bool] = None,
+    ) -> bool:
+        """!
+        \brief Check if graph is connected
+        If a graph has a single component, then we assume that it is connected
+        graph
+
+        \code{.py}
+
+        >>> n1 = Node("n1", {})
+        >>> n2 = Node("n2", {})
+        >>> n3 = Node("n3", {})
+        >>> n4 = Node("n4", {})
+        >>> e1 = Edge(
+        >>>     "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e2 = Edge(
+        >>>     "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e3 = Edge(
+        >>>     "e3", start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> graph_2 = Graph(
+        >>>   "g2",
+        >>>   data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>   nodes=set([n1, n2, n3, n4]),
+        >>>   edges=set([e1, e2, e3]),
+        >>> )
+        >>> graph_2.is_connected()
+        >>> True
+
+        \endcode
+        """
+        if not isinstance(result, BaseGraphDFSResult):
+            result = BaseGraphAnalyzer.dfs_props(
+                g, edge_generator=edge_generator, check_cycle=check_cycle
+            )
+
+        return BaseGraphNumericAnalyzer.nb_components(g, result=result) == 1
+
 
 class BaseGraphNumericAnalyzer:
     """!
@@ -379,6 +429,27 @@ class BaseGraphNumericAnalyzer:
         return len(g.E)
 
     @staticmethod
+    def nb_components(
+        g: AbstractGraph,
+        result: Optional[BaseGraphDFSResult] = None,
+        edge_generator: Optional[Callable] = None,
+        check_cycle: Optional[bool] = None,
+    ) -> int:
+        """!
+        \brief the number of connected components in the given graph.
+
+        This number makes more sense in the case of undirected graphs as our
+        algorithm is adapted for that case. It is computed as we are traversing
+        the graph in dfs_forest()
+
+        """
+        if not isinstance(result, BaseGraphDFSResult):
+            result = BaseGraphAnalyzer.dfs_props(
+                g, edge_generator=edge_generator, check_cycle=check_cycle
+            )
+        return result.nb_component
+
+    @staticmethod
     def is_tree(g: AbstractGraph) -> bool:
         raise NotImplementedError
 
@@ -409,11 +480,129 @@ class BaseGraphNodeAnalyzer:
         nodes = set([v for v in g.V if len(gdata[v.id()]) == md])
         return nodes
 
+    @staticmethod
+    def get_component_nodes(
+        root_node_id: str,
+        g: AbstractGraph,
+        result: Optional[BaseGraphDFSResult] = None,
+        edge_generator: Optional[Callable] = None,
+        check_cycle: Optional[bool] = None,
+    ):
+        """
+        \brief Get component nodes of a graph
+
+        Given a root node id for a component, obtain its node set.
+        """
+        if not isinstance(result, BaseGraphDFSResult):
+            result = BaseGraphAnalyzer.dfs_props(
+                g, edge_generator=edge_generator, check_cycle=check_cycle
+            )
+        V = {v.id(): v for v in g.V}
+        v = V[root_node_id]
+        Ts = result.components
+        T = Ts[root_node_id]
+        T.add(v.id())
+        return set([V[v] for v in T])
+
+    @staticmethod
+    def get_components_as_node_sets(
+        g: AbstractGraph,
+        result: Optional[BaseGraphDFSResult] = None,
+        edge_generator: Optional[Callable] = None,
+        check_cycle: Optional[bool] = None,
+    ) -> Set[FrozenSet[AbstractNode]]:
+        """!
+        \brief obtain component as a set of node sets.
+
+        The node set members of the returning set are of type frozenset due to
+        set being an unhashable type in python.
+        """
+        if not isinstance(result, BaseGraphDFSResult):
+            result = BaseGraphAnalyzer.dfs_props(
+                g, edge_generator=edge_generator, check_cycle=check_cycle
+            )
+
+        if BaseGraphNumericAnalyzer.nb_components(g, result=result) == 1:
+            return set([frozenset(g.V)])
+
+        # Extract component roots
+        component_roots = [k for k in result.forest.keys()]
+        return set(
+            [
+                frozenset(
+                    BaseGraphNodeAnalyzer.get_component_nodes(k, g=g, result=result)
+                )
+                for k in component_roots
+            ]
+        )
+
 
 class BaseGraphAnalyzer:
     """!
     Analyze base graphs
     """
+
+    @staticmethod
+    def get_component(
+        root_node_id: str,
+        g: AbstractGraph,
+        result: Optional[BaseGraphDFSResult] = None,
+        edge_generator: Optional[Callable] = None,
+        check_cycle: Optional[bool] = None,
+    ) -> BaseGraph:
+        """!
+        \brief get a component graph from graph instance
+
+        As subgraphs are also graphs, components are in the strict sense a
+        graph.
+        """
+        if not isinstance(result, BaseGraphDFSResult):
+            result = BaseGraphAnalyzer.dfs_props(
+                g, edge_generator=edge_generator, check_cycle=check_cycle
+            )
+
+        vertices = BaseGraphNodeAnalyzer.get_component_nodes(
+            root_node_id, g=g, result=result
+        )
+
+        gdata = BaseGraphOps.to_edgelist(g)
+        edges = [gdata[v.id()] for v in vertices]
+        E = {e.id(): e for e in g.E}
+        es: Set[Edge] = set()
+        for elst in edges:
+            for e in elst:
+                es.add(E[e])
+
+        return BaseGraph.from_edge_node_set(nodes=vertices, edges=es)
+
+    @staticmethod
+    def get_components(
+        g: AbstractGraph,
+        result: Optional[BaseGraphDFSResult] = None,
+        edge_generator: Optional[Callable] = None,
+        check_cycle: Optional[bool] = None,
+    ) -> Set[BaseGraph]:
+        """!
+        \brief Get components of graph
+
+        Each component is provided as a graph
+        """
+        if not isinstance(result, BaseGraphDFSResult):
+            result = BaseGraphAnalyzer.dfs_props(
+                g, edge_generator=edge_generator, check_cycle=check_cycle
+            )
+
+        if BaseGraphNumericAnalyzer.nb_components(g, result=result) == 1:
+            return set([g])
+
+        # Extract component roots
+        component_roots = [k for k in result.forest.keys()]
+        return set(
+            [
+                BaseGraphAnalyzer.get_component(root_node_id=root, g=g, result=result)
+                for root in component_roots
+            ]
+        )
 
     @staticmethod
     def find_articulation_points(
@@ -428,3 +617,18 @@ class BaseGraphAnalyzer:
     ):
         """"""
         pass
+
+    @staticmethod
+    def dfs_props(
+        g: AbstractGraph,
+        edge_generator: Optional[Callable] = None,
+        check_cycle: Optional[bool] = None,
+    ) -> BaseGraphDFSResult:
+        ""
+        if edge_generator is None:
+            edge_generator = lambda node: BaseGraphEdgeOps.edges_of(g, node)
+        if check_cycle is None or not isinstance(check_cycle, bool):
+            check_cycle = True
+        return BaseGraphSearcher.depth_first_search(
+            g, edge_generator=edge_generator, check_cycle=check_cycle
+        )

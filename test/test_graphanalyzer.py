@@ -164,7 +164,9 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
     def test_is_stable(self):
         """"""
         self.assertTrue(
-            BaseGraphBoolAnalyzer.is_stable(self.ugraph4, set([self.a, self.n3, self.n1]))
+            BaseGraphBoolAnalyzer.is_stable(
+                self.ugraph4, set([self.a, self.n3, self.n1])
+            )
         )
 
     def test_nb_edges(self):
@@ -223,13 +225,37 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
         """"""
         n = Node("n646", {})
         e = Edge("e8", start_node=n, end_node=n, edge_type=EdgeType.UNDIRECTED)
-        check = False
-        try:
+        check = BaseGraphBoolAnalyzer.is_trivial(
             BaseGraph(gid="temp", data={}, nodes=set([n]), edges=set([e]))
-        except ValueError:
-            check = True
+        )
 
         self.assertTrue(check)
+
+    @unittest.skip("test not implemented")
+    def test_nb_components(self):
+        ""
+        pass
+
+    @unittest.skip("test not implemented")
+    def test_is_connected(self):
+        ""
+        pass
+
+    @unittest.skip("test not implemented")
+    def test_get_component_nodes(self):
+        pass
+
+    @unittest.skip("test not implemented")
+    def test_get_components_as_node_sets(self):
+        pass
+
+    @unittest.skip("test not implemented")
+    def test_get_component(self):
+        pass
+
+    @unittest.skip("test not implemented")
+    def test_get_components(self):
+        pass
 
 
 if __name__ == "__main__":

@@ -76,6 +76,13 @@ class Graph(BaseGraph):
         super().__init__(gid=gid, nodes=nodes, edges=edges, data=data)
         #
         self._props = None
+        is_trivial = BaseGraphBoolAnalyzer.is_trivial(self)
+        if is_trivial:
+            msg = "This library is not compatible with computations with trivial graph"
+            msg += "\nNodes: "
+            msg += str([n.id() for n in self.V])
+            msg += "\nEdges: " + str([e.id() for e in self.E])
+            raise ValueError(msg)
 
     @property
     def graph_props(self):

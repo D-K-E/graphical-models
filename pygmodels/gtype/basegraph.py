@@ -10,10 +10,6 @@ from pygmodels.graphf.bgraphops import BaseGraphNodeOps
 from pygmodels.graphf.bgraphops import BaseGraphEdgeOps
 from pygmodels.graphf.bgraphops import BaseGraphBoolOps
 
-from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
-from pygmodels.graphf.graphanalyzer import BaseGraphBoolAnalyzer
-from pygmodels.graphf.graphanalyzer import BaseGraphNodeAnalyzer
-from pygmodels.graphf.graphanalyzer import BaseGraphNumericAnalyzer
 from pygmodels.gtype.abstractobj import (
     AbstractEdge,
     AbstractGraph,
@@ -51,14 +47,6 @@ class BaseGraph(GraphObject, AbstractGraph):
             self.is_empty = len(self._nodes) == 0
         else:
             self.is_empty = True
-
-        is_trivial = BaseGraphBoolAnalyzer.is_trivial(self)
-        if is_trivial:
-            msg = "This library is not compatible with computations with trivial graph"
-            msg += "\nNodes: "
-            msg += str([n.id() for n in self.V])
-            msg += "\nEdges: " + str([e.id() for e in self.E])
-            raise ValueError(msg)
 
     @classmethod
     def from_abstract_graph(cls, g_: AbstractGraph):
