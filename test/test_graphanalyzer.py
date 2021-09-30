@@ -236,10 +236,25 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
         ""
         pass
 
-    @unittest.skip("test not implemented")
-    def test_is_connected(self):
+    def test_is_connected_false_wo_result(self):
         ""
-        pass
+        self.assertEqual(BaseGraphBoolAnalyzer.is_connected(self.graph), False)
+
+    def test_is_connected_true_wo_result(self):
+        ""
+        self.assertTrue(BaseGraphBoolAnalyzer.is_connected(self.graph_2))
+
+    def test_is_connected_false_w_result(self):
+        ""
+        result = BaseGraphAnalyzer.dfs_props(self.graph)
+        self.assertEqual(
+            BaseGraphBoolAnalyzer.is_connected(self.graph, result=result), False
+        )
+
+    def test_is_connected_true_wo_result(self):
+        ""
+        result = BaseGraphAnalyzer.dfs_props(self.graph_2)
+        self.assertTrue(BaseGraphBoolAnalyzer.is_connected(self.graph_2, result=result))
 
     @unittest.skip("test not implemented")
     def test_get_component_nodes(self):
