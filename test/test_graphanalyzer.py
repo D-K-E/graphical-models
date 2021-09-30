@@ -78,6 +78,41 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
         )
 
         # undirected graph
+        self.a = Node("a", {})  # b
+        self.b = Node("b", {})  # c
+        self.f = Node("f", {})  # d
+        self.e = Node("e", {})  # e
+        self.ae = Edge(
+            "ae", start_node=self.a, end_node=self.e, edge_type=EdgeType.UNDIRECTED,
+        )
+        self.ab = Edge(
+            "ab", start_node=self.a, end_node=self.b, edge_type=EdgeType.UNDIRECTED,
+        )
+        self.af = Edge(
+            "af", start_node=self.a, end_node=self.f, edge_type=EdgeType.UNDIRECTED,
+        )
+        self.be = Edge(
+            "be", start_node=self.b, end_node=self.e, edge_type=EdgeType.UNDIRECTED,
+        )
+        self.ef = Edge(
+            "ef", start_node=self.e, end_node=self.f, edge_type=EdgeType.UNDIRECTED,
+        )
+
+        # undirected graph
+        self.ugraph1 = Graph(
+            "ug1",
+            data={"my": "graph", "data": "is", "very": "awesome"},
+            nodes=set([self.a, self.b, self.e, self.f]),
+            edges=set(
+                [
+                    self.ae,
+                    # self.ab,
+                    self.af,
+                    # self.be,
+                    self.ef,
+                ]
+            ),
+        )
         self.ugraph2 = BaseGraph(
             "ug2",
             data={"my": "graph", "data": "is", "very": "awesome"},
@@ -122,6 +157,26 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
         # a -- b -- e     +--------------+
         #  \       /
         #   +-----f
+        self.ugraph5 = Graph(
+            "ug5",
+            data={"my": "graph", "data": "is", "very": "awesome"},
+            nodes=set(
+                [self.a, self.b, self.e, self.f, self.n1, self.n2, self.n3, self.n4,]
+            ),
+            edges=set(
+                [
+                    self.ab,
+                    self.af,
+                    self.ae,
+                    self.be,
+                    self.ef,
+                    self.e1,
+                    self.e2,
+                    self.e3,
+                    self.e4,
+                ]
+            ),
+        )
 
         # make some directed edges
         self.bb = Node("bb", {})
@@ -231,10 +286,21 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
 
         self.assertTrue(check)
 
-    @unittest.skip("test not implemented")
-    def test_nb_components(self):
-        ""
-        pass
+    def test_nb_components_wo_result(self):
+        "test visit graph dfs function"
+        com = BaseGraphNumericAnalyzer.nb_components(self.ugraph1)
+        com2 = BaseGraphNumericAnalyzer.nb_components(self.ugraph2)
+        self.assertEqual(com, 2)
+        self.assertEqual(com2, 1)
+
+    def test_nb_components_w_result(self):
+        "test visit graph dfs function"
+        r1 = BaseGraphAnalyzer.dfs_props(self.ugraph1)
+        r2 = BaseGraphAnalyzer.dfs_props(self.ugraph2)
+        com = BaseGraphNumericAnalyzer.nb_components(self.ugraph1, result=r1)
+        com2 = BaseGraphNumericAnalyzer.nb_components(self.ugraph2, result=r2)
+        self.assertEqual(com, 2)
+        self.assertEqual(com2, 1)
 
     def test_is_connected_false_wo_result(self):
         ""
@@ -268,9 +334,66 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
     def test_get_component(self):
         pass
 
-    @unittest.skip("test not implemented")
-    def test_get_components(self):
-        pass
+    def test_get_components_wo_result(self):
+        """"""
+        comps = BaseGraphAnalyzer.get_components(self.ugraph5)
+        cs = list(comps)
+        cs0ns = set(cs[0].V)
+        cs0es = set(cs[0].E)
+        #
+        cs1ns = set(cs[1].V)
+        cs1es = set(cs[1].E)
+        #
+        # compare graphs
+        # first component
+        u2nodes = set([self.a, self.b, self.e, self.f])
+        u2edges = set([self.ab, self.af, self.ae, self.be, self.ef])
+
+        # second component
+        g2node = set([self.n1, self.n2, self.n3, self.n4])
+        g2edge = set([self.e1, self.e2, self.e3, self.e4])
+        #
+        cond1 = u2nodes == cs0ns or u2nodes == cs1ns
+        #
+        cond2 = g2node == cs0ns or g2node == cs1ns
+        #
+        cond3 = u2edges == cs0es or u2edges == cs1es
+        cond4 = g2edge == cs0es or g2edge == cs1es
+        self.assertTrue(cond1)
+        self.assertTrue(cond2)
+        self.assertTrue(cond3)
+        self.assertTrue(cond4)
+
+    def test_get_components_w_result(self):
+        """"""
+        r1 = BaseGraphAnalyzer.dfs_props(self.ugraph5)
+        comps = BaseGraphAnalyzer.get_components(self.ugraph5, result=r1)
+        cs = list(comps)
+        cs0ns = set(cs[0].V)
+        cs0es = set(cs[0].E)
+        #
+        cs1ns = set(cs[1].V)
+        cs1es = set(cs[1].E)
+        #
+        # compare graphs
+        # first component
+        u2nodes = set([self.a, self.b, self.e, self.f])
+        u2edges = set([self.ab, self.af, self.ae, self.be, self.ef])
+
+        # second component
+        g2node = set([self.n1, self.n2, self.n3, self.n4])
+        g2edge = set([self.e1, self.e2, self.e3, self.e4])
+        #
+        cond1 = u2nodes == cs0ns or u2nodes == cs1ns
+        #
+        cond2 = g2node == cs0ns or g2node == cs1ns
+        #
+        cond3 = u2edges == cs0es or u2edges == cs1es
+        cond4 = g2edge == cs0es or g2edge == cs1es
+        self.assertTrue(cond1)
+        self.assertTrue(cond2)
+        self.assertTrue(cond3)
+        self.assertTrue(cond4)
 
 
 if __name__ == "__main__":

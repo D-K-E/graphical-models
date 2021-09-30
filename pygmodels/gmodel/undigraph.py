@@ -20,6 +20,8 @@ from pygmodels.graphf.bgraphops import BaseGraphNodeOps
 from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
 from pygmodels.graphf.graphanalyzer import BaseGraphBoolAnalyzer
 from pygmodels.graphf.graphanalyzer import BaseGraphNumericAnalyzer
+from pygmodels.graphf.graphanalyzer import BaseGraphNodeAnalyzer
+from pygmodels.graphf.graphanalyzer import BaseGraphEdgeAnalyzer
 from pygmodels.graphf.graphops import BaseGraphAlgOps
 from pygmodels.graphf.graphsearcher import BaseGraphSearcher
 from pygmodels.gtype.abstractobj import EdgeType
@@ -151,9 +153,11 @@ class UndiGraph(Graph):
         def gmaker(x):
             return self.from_graph(BaseGraphAlgOps.subtract(self, x))
 
-        return super().find_articulation_points(graph_maker=gmaker)
+        return BaseGraphNodeAnalyzer.find_articulation_points(
+            g=self, graph_maker=gmaker, result=self.graph_props
+        )
 
-    def find_bridges(self) -> Set[Node]:
+    def find_bridges(self) -> Set[Edge]:
         """!
         \brief find bridges in the given graph instance
 
@@ -165,7 +169,9 @@ class UndiGraph(Graph):
         def gmaker(x):
             return self.from_graph(BaseGraphAlgOps.subtract(self, x))
 
-        return super().find_bridges(graph_maker=gmaker)
+        return BaseGraphEdgeAnalyzer.find_bridges(
+            g=self, graph_maker=gmaker, result=self.graph_props
+        )
 
     def bron_kerbosch(
         self, P: Set[Node], R: Set[Node], X: Set[Node], Cs: List[Set[Node]]

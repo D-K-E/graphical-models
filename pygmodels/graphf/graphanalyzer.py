@@ -452,8 +452,25 @@ class BaseGraphNumericAnalyzer:
         return result.nb_component
 
     @staticmethod
-    def is_tree(g: AbstractGraph) -> bool:
-        raise NotImplementedError
+    def is_tree(
+        g: AbstractGraph,
+        result: Optional[BaseGraphDFSResult] = None,
+        edge_generator: Optional[Callable] = None,
+        check_cycle: Optional[bool] = None,
+    ) -> bool:
+        """!
+        \brief check if graph instance is a tree.
+
+        This interpretation comes from Diestel 2017, p. 14 - 15.
+        """
+        if not isinstance(result, BaseGraphDFSResult):
+            result = BaseGraphAnalyzer.dfs_props(
+                g, edge_generator=edge_generator, check_cycle=check_cycle
+            )
+        nb_c = BaseGraphNumericAnalyzer.nb_components(g, result=result)
+        nb_vs = len(g.V)
+        nb_es = len(g.E)
+        return nb_c == 1 and nb_vs - 1 == nb_es
 
 
 class BaseGraphNodeAnalyzer:
@@ -538,6 +555,73 @@ class BaseGraphNodeAnalyzer:
             ]
         )
 
+    @staticmethod
+    def find_articulation_points(
+        g: AbstractGraph,
+        graph_maker: Callable[[AbstractNode], AbstractGraph],
+        result: Optional[BaseGraphDFSResult] = None,
+        edge_generator: Optional[Callable] = None,
+        check_cycle: Optional[bool] = None,
+    ) -> Set[AbstractNode]:
+        """!
+        \brief find articulation points of graph.
+
+        Find the articulation points of a graph. An articulation point, also
+        called cut vertex is defined as the vertex that separates two other
+        vertices of the same component.
+
+        The algorithm we implement here is the naive version see, Erciyes 2018,
+        p. 228. For the definition of the cut vertex, see Diestel 2017, p. 11
+        """
+        if not isinstance(result, BaseGraphDFSResult):
+            result = BaseGraphAnalyzer.dfs_props(
+                g, edge_generator=edge_generator, check_cycle=check_cycle
+            )
+
+        nb_component = BaseGraphNumericAnalyzer.nb_components(g, result=result)
+        points: Set[Node] = set()
+        for node in g.V:
+            graph = graph_maker(node)
+            nc = BaseGraphNumericAnalyzer.nb_components(graph)
+            if nc > nb_component:
+                points.add(node)
+        return points
+
+
+class BaseGraphEdgeAnalyzer:
+    """!
+    Base graph analysis methods that output edge or a set of edges
+    """
+
+    @staticmethod
+    def find_bridges(
+        g: AbstractGraph,
+        graph_maker: Callable[[AbstractEdge], AbstractGraph],
+        result: Optional[BaseGraphDFSResult] = None,
+        edge_generator: Optional[Callable] = None,
+        check_cycle: Optional[bool] = None,
+    ) -> Set[AbstractEdge]:
+        """!
+        \brief find bridges of a given graph.
+
+        A bridge is defined as the edge that separates its ends in the same
+        component.
+        The algorithm we implement here is the naive version provided by Erciyes 2018,
+        p. 228. For the definition of the bridge, see Diestel 2017, p. 11
+        """
+        if not isinstance(result, BaseGraphDFSResult):
+            result = BaseGraphAnalyzer.dfs_props(
+                g, edge_generator=edge_generator, check_cycle=check_cycle
+            )
+        nb_component = BaseGraphNumericAnalyzer.nb_components(g=g, result=result)
+        bridges = set()
+        for e in g.E:
+            made_g = graph_maker(e)
+            nc = BaseGraphNumericAnalyzer.nb_components(g=made_g)
+            if nc > nb_component:
+                bridges.add(e)
+        return bridges
+
 
 class BaseGraphAnalyzer:
     """!
@@ -612,13 +696,6 @@ class BaseGraphAnalyzer:
     ):
         """"""
         raise NotImplementedError
-
-    @staticmethod
-    def find_bridges(
-        g: AbstractGraph, graph_maker=Callable[[AbstractNode], AbstractGraph]
-    ):
-        """"""
-        pass
 
     @staticmethod
     def dfs_props(

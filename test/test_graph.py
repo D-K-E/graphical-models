@@ -292,14 +292,6 @@ class GraphTest(unittest.TestCase):
         graph = Graph("g1", data={}, nodes=set([n1, n2, n3, n4]), edges=set([e1, e2]))
         self.assertEqual(graph, self.graph)
 
-    def test_is_connected_false(self):
-        """"""
-        self.assertEqual(self.graph.is_connected(), False)
-
-    def test_is_connected_true(self):
-        """"""
-        self.assertTrue(self.graph_2.is_connected())
-
     def test_is_neighbour_of_true(self):
         isneighbor = BaseGraphBoolOps.is_neighbour_of(self.graph_2, self.n2, self.n3)
         self.assertTrue(isneighbor)
@@ -369,43 +361,6 @@ class GraphTest(unittest.TestCase):
         g = self.graph - gg
         self.assertEqual(set(g.E), set([]))
         self.assertEqual(set(g.V), set([self.n3, self.n4]))
-
-    def test_visit_graph_dfs_nb_component(self):
-        "test visit graph dfs function"
-        com = self.ugraph1.graph_props.nb_component
-        com2 = self.ugraph2.graph_props.nb_component
-        self.assertEqual(com, 2)
-        self.assertEqual(com2, 1)
-
-    def test_get_components(self):
-        """"""
-        comps = self.ugraph4.get_components()
-        cs = list(comps)
-        cs0ns = set(cs[0].V)
-        cs0es = set(cs[0].E)
-        #
-        cs1ns = set(cs[1].V)
-        cs1es = set(cs[1].E)
-        #
-        # compare graphs
-        # first component
-        u2nodes = set([self.a, self.b, self.e, self.f])
-        u2edges = set([self.ab, self.af, self.ae, self.be, self.ef])
-
-        # second component
-        g2node = set([self.n1, self.n2, self.n3, self.n4])
-        g2edge = set([self.e1, self.e2, self.e3, self.e4])
-        #
-        cond1 = u2nodes == cs0ns or u2nodes == cs1ns
-        #
-        cond2 = g2node == cs0ns or g2node == cs1ns
-        #
-        cond3 = u2edges == cs0es or u2edges == cs1es
-        cond4 = g2edge == cs0es or g2edge == cs1es
-        self.assertTrue(cond1)
-        self.assertTrue(cond2)
-        self.assertTrue(cond3)
-        self.assertTrue(cond4)
 
     def test_visit_graph_dfs_cycles_false(self):
         "test visit graph dfs function"

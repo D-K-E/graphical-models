@@ -12,6 +12,7 @@ from pygmodels.gmodel.undigraph import UndiGraph
 from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
 from pygmodels.graphf.graphanalyzer import BaseGraphBoolAnalyzer
 from pygmodels.graphf.graphanalyzer import BaseGraphNumericAnalyzer
+from pygmodels.graphf.graphanalyzer import BaseGraphNodeAnalyzer
 from pygmodels.graphf.graphops import BaseGraphOps
 from pygmodels.graphf.graphops import BaseGraphBoolOps
 from pygmodels.graphf.graphops import BaseGraphNodeOps
@@ -92,10 +93,7 @@ class LWFChainGraph(PGModel):
                 nedges.add(e)
         #
         return MarkovNetwork(
-            gid=str(uuid4()),
-            nodes=self.V,
-            edges=nedges,
-            factors=self.factors(),
+            gid=str(uuid4()), nodes=self.V, edges=nedges, factors=self.factors(),
         )
 
     def component_to_crf(self, i: int) -> ConditionalRandomField:
@@ -161,11 +159,7 @@ class LWFChainGraph(PGModel):
     def parents_of(self, n: NumCatRVariable) -> Set[NumCatRVariable]:
         """"""
         return set(
-            [
-                n_p
-                for n_p in self.V
-                if self.is_parent_of(parent=n_p, child=n) is True
-            ]
+            [n_p for n_p in self.V if self.is_parent_of(parent=n_p, child=n) is True]
         )
 
     def get_chain_components(self) -> Set[Union[UndiGraph, NumCatRVariable]]:
@@ -187,11 +181,11 @@ class LWFChainGraph(PGModel):
             if e.type() == EdgeType.UNDIRECTED:
                 edges.add(e)
 
-        undi = UndiGraph.from_graph(
-            Graph.from_edge_node_set(edges=edges, nodes=self.V)
-        )
+        undi = UndiGraph.from_graph(Graph.from_edge_node_set(edges=edges, nodes=self.V))
         chain_components: Set[Union[Set[Node], UndiGraph]] = set()
-        for cg in undi.get_components_as_node_sets():
+        for cg in BaseGraphNodeAnalyzer.get_components_as_node_sets(
+            g=undi, result=undi.graph_props
+        ):
             if len(cg) > 1:
                 component = UndiGraph.from_graph(undi.get_subgraph_by_vertices(vs=cg))
                 chain_components.add(component)
