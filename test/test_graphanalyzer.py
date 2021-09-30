@@ -200,6 +200,77 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
             "bb_dd", start_node=self.bb, end_node=self.dd, edge_type=EdgeType.DIRECTED,
         )
 
+    def test_adjmat_int(self):
+        """"""
+        mat = BaseGraphAnalyzer.to_adjmat(self.ugraph1)
+        self.assertEqual(
+            mat,
+            {
+                ("b", "b"): 0,
+                ("b", "e"): 0,
+                ("b", "f"): 0,
+                ("b", "a"): 0,
+                ("e", "b"): 0,
+                ("e", "e"): 0,
+                ("e", "f"): 1,
+                ("e", "a"): 1,
+                ("f", "b"): 0,
+                ("f", "e"): 1,
+                ("f", "f"): 0,
+                ("f", "a"): 1,
+                ("a", "b"): 0,
+                ("a", "e"): 1,
+                ("a", "f"): 1,
+                ("a", "a"): 0,
+            },
+        )
+
+    def test_adjmat_bool(self):
+        """"""
+        mat = BaseGraphAnalyzer.to_adjmat(self.ugraph1, vtype=bool)
+        self.assertEqual(
+            mat,
+            {
+                ("b", "b"): False,
+                ("b", "e"): False,
+                ("b", "f"): False,
+                ("b", "a"): False,
+                ("e", "b"): False,
+                ("e", "e"): False,
+                ("e", "f"): True,
+                ("e", "a"): True,
+                ("f", "b"): False,
+                ("f", "e"): True,
+                ("f", "f"): False,
+                ("f", "a"): True,
+                ("a", "b"): False,
+                ("a", "e"): True,
+                ("a", "f"): True,
+                ("a", "a"): False,
+            },
+        )
+
+    def test_transitive_closure_mat(self):
+        """"""
+        mat = BaseGraphAnalyzer.transitive_closure_matrix(self.ugraph1)
+        self.assertEqual(
+            mat,
+            {
+                ("a", "b"): True,
+                ("a", "e"): True,
+                ("a", "f"): True,
+                ("b", "a"): False,
+                ("b", "e"): False,
+                ("b", "f"): False,
+                ("e", "a"): True,
+                ("e", "b"): True,
+                ("e", "f"): True,
+                ("f", "a"): True,
+                ("f", "b"): True,
+                ("f", "e"): True,
+            },
+        )
+
     def test_has_self_loop(self):
         """"""
         n1 = Node("n1", {})

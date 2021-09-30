@@ -14,6 +14,7 @@ from pygmodels.gtype.abstractobj import (
     AbstractEdge,
     AbstractGraph,
     AbstractNode,
+    EdgeType
 )
 from pygmodels.gtype.basegraph import BaseGraph
 from pygmodels.gtype.gsearchresult import (
@@ -691,11 +692,151 @@ class BaseGraphAnalyzer:
         )
 
     @staticmethod
-    def find_articulation_points(
-        g: AbstractGraph, graph_maker=Callable[[AbstractNode], AbstractGraph]
-    ):
-        """"""
-        raise NotImplementedError
+    def to_adjmat(g: AbstractGraph, vtype=int) -> Dict[Tuple[str, str], int]:
+        """!
+        \brief Transform adjacency list to adjacency matrix representation
+
+        \param vtype the cast type for the entry of adjacency matrix.
+
+        \return adjacency matrix whose keys are identifiers of nodes and values
+        are flags whether there is an edge between them.
+
+        \code{.py}
+
+        >>> a = Node("a", {})  # b
+        >>> b = Node("b", {})  # c
+        >>> f = Node("f", {})  # d
+        >>> e = Node("e", {})  # e
+        >>> ae = Edge(
+        >>>    "ae", start_node=a, end_node=e, edge_type=EdgeType.UNDIRECTED
+        >>> )
+
+        >>> af = Edge(
+        >>>     "af", start_node=a, end_node=f, edge_type=EdgeType.UNDIRECTED
+        >>> )
+
+        >>> ef = Edge(
+        >>>     "ef", start_node=e, end_node=f, edge_type=EdgeType.UNDIRECTED
+        >>> )
+
+        >>> ugraph1 = Graph(
+        >>>     "graph",
+        >>>     data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>   nodes=set([a, b, e, f]),
+        >>>   edges=set([ae, af, ef]),
+        >>> )
+        >>> mat = ugraph1.to_adjmat(vtype=bool)
+        >>> mat == {
+        >>>     ("b", "b"): False,
+        >>>     ("b", "e"): False,
+        >>>     ("b", "f"): False,
+        >>>     ("b", "a"): False,
+        >>>     ("e", "b"): False,
+        >>>     ("e", "e"): False,
+        >>>     ("e", "f"): True,
+        >>>     ("e", "a"): True,
+        >>>     ("f", "b"): False,
+        >>>     ("f", "e"): True,
+        >>>     ("f", "f"): False,
+        >>>     ("f", "a"): True,
+        >>>     ("a", "b"): False,
+        >>>     ("a", "e"): True,
+        >>>     ("a", "f"): True,
+        >>>     ("a", "a"): False
+        >>> }
+        >>> True
+
+        \endcode
+        """
+        gmat = {}
+        for v in g.V:
+            for k in g.V:
+                gmat[(v.id(), k.id())] = vtype(0)
+        for edge in g.E:
+            tpl1 = (edge.start().id(), edge.end().id())
+            tpl2 = (edge.end().id(), edge.start().id())
+            if tpl1 in gmat:
+                gmat[tpl1] = vtype(1)
+            if edge.type() == EdgeType.UNDIRECTED:
+                if tpl2 in gmat:
+                    gmat[tpl2] = vtype(1)
+        return gmat
+
+    @staticmethod
+    def transitive_closure_matrix(g: AbstractGraph) -> Dict[Tuple[str, str], bool]:
+        """!
+        \brief Obtain transitive closure matrix of a given graph
+
+        Transitive closure is defined by Joyner, et. al. as:
+
+        - Consider a digraph \f$G = (V, E)\f$ of order \f$n = |V |\f$. The
+          transitive closure of G is defined as the digraph \f$G^{∗} = (V,
+          E^{∗}) \f$ having the same vertex set as G. However, the edge set
+          \f$E^{∗}\f$ of \f$G^{∗}\f$ consists of all edges uv such that there
+          is a u-v path in G and \f$uv \not \in E\f$. The transitive closure
+          \f$G^{*}\f$ answers an important question about G: If u and v are two
+          distinct vertices of G, are they connected by a path with length ≥ 1?
+
+        Variant of the Floyd-Roy-Warshall algorithm taken from Joyner,
+        Phillips, Nguyen, Algorithmic Graph Theory, 2013, p.134
+
+        \throws ValueError we raise a value error if the graph has a self loop.
+
+        \code{.py}
+
+        >>> a = Node("a", {})  # b
+        >>> b = Node("b", {})  # c
+        >>> f = Node("f", {})  # d
+        >>> e = Node("e", {})  # e
+        >>> ae = Edge(
+        >>>    "ae", start_node=a, end_node=e, edge_type=EdgeType.UNDIRECTED
+        >>> )
+
+        >>> af = Edge(
+        >>>     "af", start_node=a, end_node=f, edge_type=EdgeType.UNDIRECTED
+        >>> )
+
+        >>> ef = Edge(
+        >>>     "ef", start_node=e, end_node=f, edge_type=EdgeType.UNDIRECTED
+        >>> )
+
+        >>> ugraph1 = Graph(
+        >>>     "graph",
+        >>>     data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>   nodes=set([a, b, e, f]),
+        >>>   edges=set([ae, af, ef]),
+        >>> )
+        >>> mat == {
+        >>>     ("a", "b"): True,
+        >>>     ("a", "e"): True,
+        >>>     ("a", "f"): True,
+        >>>     ("b", "a"): False,
+        >>>     ("b", "e"): False,
+        >>>     ("b", "f"): False,
+        >>>     ("e", "a"): True,
+        >>>     ("e", "b"): True,
+        >>>     ("e", "f"): True,
+        >>>     ("f", "a"): True,
+        >>>     ("f", "b"): True,
+        >>>     ("f", "e"): True
+        >>>   }
+        >>> True
+
+        \endcode
+        """
+        if BaseGraphBoolAnalyzer.has_self_loop(g):
+            raise ValueError("Graph has a self loop")
+        #
+        T = BaseGraphAnalyzer.to_adjmat(g=g, vtype=bool)
+        for k in g.V.copy():
+            for i in g.V.copy():
+                for j in g.V.copy():
+                    t_ij = T[(i.id(), j.id())]
+                    t_ik = T[(i.id(), k.id())]
+                    t_ki = T[(i.id(), k.id())]
+                    T[(i.id(), j.id())] = t_ij or (t_ik and t_ki)
+        T = {(k, i): v for (k, i), v in T.items() if k != i}
+        return T
 
     @staticmethod
     def dfs_props(
