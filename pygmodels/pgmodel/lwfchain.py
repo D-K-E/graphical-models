@@ -187,7 +187,9 @@ class LWFChainGraph(PGModel):
             g=undi, result=undi.graph_props
         ):
             if len(cg) > 1:
-                component = UndiGraph.from_graph(undi.get_subgraph_by_vertices(vs=cg))
+                (vs, es) = BaseGraphOps.get_subgraph_by_vertices(g=undi,vs=cg)
+                bgraph = UndiGraph.from_edge_node_set(edges=es, nodes=vs)
+                component = UndiGraph.from_graph(bgraph)
                 chain_components.add(component)
             else:
                 chain_components.add(cg)

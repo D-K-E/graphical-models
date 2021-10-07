@@ -221,24 +221,6 @@ class GraphTest(unittest.TestCase):
         graph = Graph("g1", data={}, nodes=set([n1, n2, n3, n4]), edges=set([e1, e2]))
         self.assertEqual(graph, self.graph)
 
-    def test_is_neighbour_of_true(self):
-        isneighbor = BaseGraphBoolOps.is_neighbour_of(self.graph_2, self.n2, self.n3)
-        self.assertTrue(isneighbor)
-
-    def test_is_neighbour_of_false(self):
-        isneighbor = BaseGraphBoolOps.is_neighbour_of(self.graph_2, self.n2, self.n2)
-        self.assertFalse(isneighbor)
-
-    def test_neighbours_of(self):
-        ndes = set(
-            [n.id() for n in BaseGraphNodeOps.neighbours_of(self.graph_2, self.n2)]
-        )
-        self.assertEqual(ndes, set([self.n1.id(), self.n3.id()]))
-
-    def test_nb_neighbours_of(self):
-        ndes = BaseGraphNumericAnalyzer.nb_neighbours_of(self.graph_2, self.n2)
-        self.assertEqual(ndes, 2)
-
     def test__add__n(self):
         """"""
         n = Node("n646", {})

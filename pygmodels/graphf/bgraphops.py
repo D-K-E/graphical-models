@@ -645,7 +645,7 @@ class BaseGraphOps:
             [AbstractEdge, Set[AbstractNode]], bool
         ] = lambda x, ys: set([x.start(), x.end()]).issubset(ys)
         is True,
-    ) -> AbstractGraph:
+    ) -> Tuple[Set[AbstractNode], Set[AbstractEdge]]:
         """!
         Get the subgraph using vertices.
 
@@ -659,4 +659,4 @@ class BaseGraphOps:
         for e in g.E:
             if edge_policy(e, vs) is True:
                 es.add(e)
-        return BaseGraph.from_edge_node_set(edges=es, nodes=vs)
+        return (vs, es)

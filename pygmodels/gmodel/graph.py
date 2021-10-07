@@ -167,27 +167,6 @@ class Graph(BaseGraph):
                 return False
         return True
 
-    def get_subgraph_by_vertices(
-        self,
-        vs: Set[Node],
-        edge_policy: Callable[[Edge, Set[Node]], bool] = lambda x, ys: set(
-            [x.start(), x.end()]
-        ).issubset(ys)
-        is True,
-    ) -> GraphObject:
-        """!
-        Get the subgraph using vertices.
-
-        \param vs set of vertices for the subgraph
-        \param edge_policy determines which edges should be conserved. By
-        default we conserve edges whose incident nodes are a subset of vs
-        """
-        es: Set[Edge] = set()
-        for e in self.E:
-            if edge_policy(e, vs) is True:
-                es.add(e)
-        return Graph.from_edge_node_set(edges=es, nodes=vs)
-
     def __add__(
         self, a: Union[Set[Edge], Set[Node], Node, Edge, GraphObject]
     ) -> GraphObject:

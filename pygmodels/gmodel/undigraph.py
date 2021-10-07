@@ -24,12 +24,13 @@ from pygmodels.graphf.graphanalyzer import BaseGraphNodeAnalyzer
 from pygmodels.graphf.graphanalyzer import BaseGraphEdgeAnalyzer
 from pygmodels.graphf.graphops import BaseGraphAlgOps
 from pygmodels.graphf.graphsearcher import BaseGraphSearcher
-from pygmodels.gtype.abstractobj import EdgeType
+from pygmodels.gtype.abstractobj import EdgeType, AbstractUndiGraph
+from pygmodels.gtype.basegraph import BaseGraph
 from pygmodels.gtype.edge import Edge
 from pygmodels.gtype.node import Node
 
 
-class UndiGraph(Graph):
+class UndiGraph(AbstractUndiGraph, BaseGraph):
     """!
     \brief Unidrected graph whose edges are of type Undirected
     """
@@ -53,9 +54,23 @@ class UndiGraph(Graph):
                         "Can not instantiate undirected graph with" + " directed edges"
                     )
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
+        self._props = None
+
+    @property
+    def graph_props(self):
+        """!
+        Stored graph properties
+        """
+        if self._props is None:
+            self._props = BaseGraphSearcher.depth_first_search(
+                self,
+                edge_generator=lambda node: BaseGraphEdgeOps.edges_of(self, node),
+                check_cycle=True,
+            )
+        return self._props
 
     @classmethod
-    def from_graph(cls, g: Graph):
+    def from_graph(cls, g: BaseGraph):
         """!
         \brief Construct an undirected graph from given graph.
 
