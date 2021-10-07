@@ -5,9 +5,11 @@ import pprint
 import unittest
 
 from pygmodels.gmodel.digraph import DiGraph
-from pygmodels.graphops.bgraphops import BaseGraphOps
-from pygmodels.graphops.bgraphops import BaseGraphEdgeOps
-from pygmodels.graphops.bgraphops import BaseGraphNodeOps
+from pygmodels.graphops.bgraphops import (
+    BaseGraphEdgeOps,
+    BaseGraphNodeOps,
+    BaseGraphOps,
+)
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
 
@@ -88,7 +90,15 @@ class DiGraphTest(unittest.TestCase):
             "dg2",
             data={"my": "graph", "data": "is", "very": "awesome"},
             nodes=set([self.a, self.b, self.e, self.f]),
-            edges=set([self.ae, self.ab, self.af, self.be, self.ef,]),
+            edges=set(
+                [
+                    self.ae,
+                    self.ab,
+                    self.af,
+                    self.be,
+                    self.ef,
+                ]
+            ),
         )
         # dgraph2 :
         #
@@ -100,7 +110,13 @@ class DiGraphTest(unittest.TestCase):
             "dg3",
             data={"my": "graph", "data": "is", "very": "awesome"},
             nodes=set([self.a, self.b, self.e, self.f]),
-            edges=set([self.ab, self.af, self.be,]),
+            edges=set(
+                [
+                    self.ab,
+                    self.af,
+                    self.be,
+                ]
+            ),
         )
         # dgraph3 :
         #
@@ -125,7 +141,9 @@ class DiGraphTest(unittest.TestCase):
         self.dgraph5 = DiGraph(
             "dg5",
             data={"my": "graph", "data": "is", "very": "awesome"},
-            nodes=set([self.a, self.b, self.c, self.d, self.e, self.f, self.g]),
+            nodes=set(
+                [self.a, self.b, self.c, self.d, self.e, self.f, self.g]
+            ),
             edges=set(
                 [
                     self.ab,
@@ -150,7 +168,16 @@ class DiGraphTest(unittest.TestCase):
             "dg6",
             data={"my": "graph", "data": "is", "very": "awesome"},
             nodes=set(
-                [self.a, self.b, self.c, self.d, self.e, self.f, self.g, self.h,]
+                [
+                    self.a,
+                    self.b,
+                    self.c,
+                    self.d,
+                    self.e,
+                    self.f,
+                    self.g,
+                    self.h,
+                ]
             ),
             edges=set(
                 [
@@ -180,7 +207,9 @@ class DiGraphTest(unittest.TestCase):
     def test_find_shortest_path(self):
         """"""
         path_props = self.dgraph4.find_shortest_paths(n=self.n1)
-        self.assertEqual(path_props.path_set, set([self.n1, self.n2, self.n3, self.n4]))
+        self.assertEqual(
+            path_props.path_set, set([self.n1, self.n2, self.n3, self.n4])
+        )
 
     def test_check_for_path_false(self):
         v = self.dgraph4.check_for_path(self.n1, self.a)

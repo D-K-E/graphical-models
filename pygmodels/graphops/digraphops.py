@@ -5,12 +5,15 @@ Basically an operation class for managing edge/node related operations
 involving directed edges
 """
 
-from pygmodels.gtype.abstractobj import EdgeType
-from pygmodels.gtype.abstractobj import AbstractDiGraph
-from pygmodels.gtype.abstractobj import AbstractNode
-from pygmodels.gtype.abstractobj import AbstractEdge
+from typing import Callable, Set
+
 from pygmodels.graphops.bgraphops import BaseGraphBoolOps
-from typing import Set, Callable
+from pygmodels.gtype.abstractobj import (
+    AbstractDiGraph,
+    AbstractEdge,
+    AbstractNode,
+    EdgeType,
+)
 
 
 class DiGraphBoolOps:
@@ -19,7 +22,9 @@ class DiGraphBoolOps:
     """
 
     @staticmethod
-    def is_family_of(g: AbstractDiGraph, src: AbstractNode, dst: AbstractNode) -> bool:
+    def is_family_of(
+        g: AbstractDiGraph, src: AbstractNode, dst: AbstractNode
+    ) -> bool:
         """!
         \brief Check if src is family of dst
 
@@ -62,7 +67,9 @@ class DiGraphBoolOps:
             c = n_1 == e.start() and e.end() == n_2
             return c
 
-        return BaseGraphBoolOps.is_related_to(g, n1=parent, n2=child, condition=cond)
+        return BaseGraphBoolOps.is_related_to(
+            g, n1=parent, n2=child, condition=cond
+        )
 
     @staticmethod
     def is_child_of(
@@ -80,11 +87,15 @@ class DiGraphBoolOps:
         return DiGraphBoolOps.is_parent_of(g, parent=parent, child=child)
 
     @staticmethod
-    def is_adjacent_of(g: AbstractDiGraph, e1: AbstractEdge, e2: AbstractEdge) -> bool:
+    def is_adjacent_of(
+        g: AbstractDiGraph, e1: AbstractEdge, e2: AbstractEdge
+    ) -> bool:
         """!
         \brief check if edges have a common node
         """
-        if not BaseGraphBoolOps.is_in(self, e1) or not BaseGraphBoolOps.is_in(self, e2):
+        if not BaseGraphBoolOps.is_in(g, e1) or not BaseGraphBoolOps.is_in(
+            g, e2
+        ):
             raise ValueError("argument edges are not in graph")
 
         n1_ids = e1.node_ids()
@@ -121,12 +132,12 @@ class DiGraphEdgeOps:
         \throws ValueError If any of the arguments are not found in this graph we
         throw value error.
         """
-        if not BaseGraphBoolOps.is_in(self, start) or not BaseGraphBoolOps.is_in(
-            self, end
+        if not BaseGraphBoolOps.is_in(g, start) or not BaseGraphBoolOps.is_in(
+            g, end
         ):
             raise ValueError("argument nodes are not in graph")
         #
-        eset: Set[Edge] = set()
+        eset: Set[AbstractEdge] = set()
         for e in g.E:
             if e.start().id() == start.id() and e.end().id() == end.id():
                 eset.add(e)

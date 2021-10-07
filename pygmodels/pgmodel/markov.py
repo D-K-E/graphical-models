@@ -156,7 +156,9 @@ class MarkovNetwork(PGModel, UndiGraph):
 
         \endcode
         """
-        super().__init__(gid=gid, nodes=nodes, edges=edges, data=data, factors=factors)
+        super().__init__(
+            gid=gid, nodes=nodes, edges=edges, data=data, factors=factors
+        )
 
     @classmethod
     def from_undigraph(cls, udi: UndiGraph):
@@ -215,7 +217,9 @@ class MarkovNetwork(PGModel, UndiGraph):
         """
         for n in udi.V:
             if not isinstance(n, RandomVariable):
-                raise ValueError("Nodes are not an instance of random variable")
+                raise ValueError(
+                    "Nodes are not an instance of random variable"
+                )
         fs: Set[Factor] = set()
         maximal_cliques = udi.find_maximal_cliques()
         for clique in maximal_cliques:
@@ -228,7 +232,12 @@ class MarkovNetwork(PGModel, UndiGraph):
             if len(evidences) != 0:
                 f = f.reduced_by_value(evidences)
             fs.add(f)
-        return MarkovNetwork(gid=str(uuid4()), nodes=udi.V, edges=udi.E, factors=fs,)
+        return MarkovNetwork(
+            gid=str(uuid4()),
+            nodes=udi.V,
+            edges=udi.E,
+            factors=fs,
+        )
 
 
 class ConditionalRandomField(MarkovNetwork):
@@ -437,7 +446,9 @@ class ConditionalRandomField(MarkovNetwork):
         return self.ovars
 
     @classmethod
-    def from_markov_network(cls, mn: MarkovNetwork, targets: Set[NumCatRVariable]):
+    def from_markov_network(
+        cls, mn: MarkovNetwork, targets: Set[NumCatRVariable]
+    ):
         """"""
         mnodes = mn.V
         if targets.issubset(mnodes) is False:

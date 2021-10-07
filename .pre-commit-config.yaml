@@ -29,7 +29,7 @@
           build|
           dist"""
 
-      language_version: python3.6
+      language_version: python3
 
 
 # flake8

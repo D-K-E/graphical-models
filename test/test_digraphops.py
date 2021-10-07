@@ -6,11 +6,14 @@ import unittest
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
-from pygmodels.graphops.digraphops import DiGraphBoolOps
-from pygmodels.graphops.digraphops import DiGraphNodeOps
-from pygmodels.graphops.digraphops import DiGraphEdgeOps
-from pygmodels.graphops.digraphops import DiGraphNumericOps
+from pygmodels.gmodel.digraph import DiGraph
 from pygmodels.graphops.bgraphops import BaseGraphEdgeOps
+from pygmodels.graphops.digraphops import (
+    DiGraphBoolOps,
+    DiGraphEdgeOps,
+    DiGraphNodeOps,
+    DiGraphNumericOps,
+)
 from pygmodels.gtype.abstractobj import (
     AbstractDiGraph,
     AbstractEdge,
@@ -19,14 +22,12 @@ from pygmodels.gtype.abstractobj import (
     AbstractUndiGraph,
 )
 from pygmodels.gtype.basegraph import BaseGraph
-from pygmodels.gmodel.digraph import DiGraph
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
 
 
 class DiGraphOpsTest(unittest.TestCase):
-    """!
-    """
+    """!"""
 
     def setUp(self):
         #
@@ -101,7 +102,15 @@ class DiGraphOpsTest(unittest.TestCase):
             "dg2",
             data={"my": "graph", "data": "is", "very": "awesome"},
             nodes=set([self.a, self.b, self.e, self.f]),
-            edges=set([self.ae, self.ab, self.af, self.be, self.ef,]),
+            edges=set(
+                [
+                    self.ae,
+                    self.ab,
+                    self.af,
+                    self.be,
+                    self.ef,
+                ]
+            ),
         )
         # dgraph2 :
         #
@@ -113,7 +122,13 @@ class DiGraphOpsTest(unittest.TestCase):
             "dg3",
             data={"my": "graph", "data": "is", "very": "awesome"},
             nodes=set([self.a, self.b, self.e, self.f]),
-            edges=set([self.ab, self.af, self.be,]),
+            edges=set(
+                [
+                    self.ab,
+                    self.af,
+                    self.be,
+                ]
+            ),
         )
         # dgraph3 :
         #
@@ -138,7 +153,9 @@ class DiGraphOpsTest(unittest.TestCase):
         self.dgraph5 = DiGraph(
             "dg5",
             data={"my": "graph", "data": "is", "very": "awesome"},
-            nodes=set([self.a, self.b, self.c, self.d, self.e, self.f, self.g]),
+            nodes=set(
+                [self.a, self.b, self.c, self.d, self.e, self.f, self.g]
+            ),
             edges=set(
                 [
                     self.ab,
@@ -163,7 +180,16 @@ class DiGraphOpsTest(unittest.TestCase):
             "dg6",
             data={"my": "graph", "data": "is", "very": "awesome"},
             nodes=set(
-                [self.a, self.b, self.c, self.d, self.e, self.f, self.g, self.h,]
+                [
+                    self.a,
+                    self.b,
+                    self.c,
+                    self.d,
+                    self.e,
+                    self.f,
+                    self.g,
+                    self.h,
+                ]
             ),
             edges=set(
                 [

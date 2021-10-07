@@ -7,10 +7,12 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
 from pygmodels.gmodel.path import Path
-from pygmodels.graphops.bgraphops import BaseGraphOps
-from pygmodels.graphops.bgraphops import BaseGraphNodeOps
-from pygmodels.graphops.bgraphops import BaseGraphEdgeOps
-from pygmodels.graphops.bgraphops import BaseGraphBoolOps
+from pygmodels.graphops.bgraphops import (
+    BaseGraphBoolOps,
+    BaseGraphEdgeOps,
+    BaseGraphNodeOps,
+    BaseGraphOps,
+)
 from pygmodels.graphops.graphsearcher import BaseGraphSearcher
 from pygmodels.gtype.abstractobj import AbstractTree
 from pygmodels.gtype.basegraph import BaseGraph
@@ -64,7 +66,10 @@ class Tree(BaseGraph, AbstractTree):
             child = e[0]
             parent = e[1]
             edge = Edge(
-                edge_id=str(uuid4()), start_node=parent, end_node=child, edge_type=e[2],
+                edge_id=str(uuid4()),
+                start_node=parent,
+                end_node=child,
+                edge_type=e[2],
             )
             edges.add(edge)
         return Tree(gid=str(uuid4()), edges=edges)
@@ -76,7 +81,9 @@ class Tree(BaseGraph, AbstractTree):
 
     def node_table(self):
         """"""
-        node_table = {v.id(): {"child": False, "parent": False} for v in self.V}
+        node_table = {
+            v.id(): {"child": False, "parent": False} for v in self.V
+        }
         for e in self.E:
             estart_id = e.start().id()
             eend_id = e.end().id()
@@ -121,7 +128,9 @@ class Tree(BaseGraph, AbstractTree):
         nid = n.id()
         return self.topsort[nid]
 
-    def _is_closure_of(self, x: Node, y: Node, fn: Callable[[int, int], bool]) -> bool:
+    def _is_closure_of(
+        self, x: Node, y: Node, fn: Callable[[int, int], bool]
+    ) -> bool:
         """"""
         xheight = self.height_of(x)
         yheight = self.height_of(y)
@@ -161,7 +170,9 @@ class Tree(BaseGraph, AbstractTree):
         """
         return self.is_set_of(n, fn=self.is_downclosure_of)
 
-    def is_set_of(self, n: Node, fn: Callable[[Node, Node], bool]) -> Set[Node]:
+    def is_set_of(
+        self, n: Node, fn: Callable[[Node, Node], bool]
+    ) -> Set[Node]:
         nodes = self.V
         nset = set([y for y in nodes if fn(n, y) is True])
         return nset

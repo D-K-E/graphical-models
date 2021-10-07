@@ -17,7 +17,7 @@ from pygmodels.gtype.abstractobj import (
 
 
 class BaseGraphBoolOps:
-    ""
+    """"""
 
     @staticmethod
     def is_in(g: AbstractGraph, ne: Union[AbstractNode, AbstractEdge]) -> bool:
@@ -35,7 +35,9 @@ class BaseGraphBoolOps:
             raise TypeError("Given argument should be either edge or node")
 
     @staticmethod
-    def is_adjacent_of(g: AbstractGraph, e1: AbstractEdge, e2: AbstractEdge) -> bool:
+    def is_adjacent_of(
+        g: AbstractGraph, e1: AbstractEdge, e2: AbstractEdge
+    ) -> bool:
         """!
         \brief Check if two edges are adjacent
 
@@ -79,7 +81,9 @@ class BaseGraphBoolOps:
         return len(n1_ids.intersection(n2_ids)) > 0
 
     @staticmethod
-    def is_node_incident(g: AbstractGraph, n: AbstractNode, e: AbstractEdge) -> bool:
+    def is_node_incident(
+        g: AbstractGraph, n: AbstractNode, e: AbstractEdge
+    ) -> bool:
         """!
         \brief Check if a node is incident of an edge
 
@@ -134,7 +138,9 @@ class BaseGraphBoolOps:
         return False
 
     @staticmethod
-    def is_neighbour_of(g: AbstractGraph, n1: AbstractNode, n2: AbstractNode) -> bool:
+    def is_neighbour_of(
+        g: AbstractGraph, n1: AbstractNode, n2: AbstractNode
+    ) -> bool:
         """!
         \brief check if two nodes are neighbours
         We define the condition of neighborhood as having a common edge, not
@@ -174,7 +180,9 @@ class BaseGraphBoolOps:
         if not BaseGraphBoolOps.is_in(g, n2):
             raise ValueError("node not in graph")
 
-        def cond(n_1: AbstractNode, n_2: AbstractNode, e: AbstractEdge) -> bool:
+        def cond(
+            n_1: AbstractNode, n_2: AbstractNode, e: AbstractEdge
+        ) -> bool:
             """!
             \brief neighborhood condition
             """
@@ -191,7 +199,9 @@ class BaseGraphBoolOps:
         edge_ids = n1_edge_ids.intersection(n2_edge_ids)
         # filter self loops
         edges = set([e for e in g.E if e.id() in edge_ids])
-        return BaseGraphBoolOps.is_related_to(g, n1=n1, n2=n2, condition=cond, es=edges)
+        return BaseGraphBoolOps.is_related_to(
+            g, n1=n1, n2=n2, condition=cond, es=edges
+        )
 
 
 class BaseGraphEdgeOps:
@@ -243,7 +253,9 @@ class BaseGraphEdgeOps:
         return set([E[eid] for eid in edge_ids])
 
     @staticmethod
-    def outgoing_edges_of(g: AbstractGraph, n: AbstractNode) -> FrozenSet[AbstractEdge]:
+    def outgoing_edges_of(
+        g: AbstractGraph, n: AbstractNode
+    ) -> FrozenSet[AbstractEdge]:
         """!
         \brief obtain the outgoing edge set of a given node.
 
@@ -294,7 +306,9 @@ class BaseGraphEdgeOps:
         return frozenset(eset)
 
     @staticmethod
-    def incoming_edges_of(g: AbstractGraph, n: AbstractNode) -> FrozenSet[AbstractEdge]:
+    def incoming_edges_of(
+        g: AbstractGraph, n: AbstractNode
+    ) -> FrozenSet[AbstractEdge]:
         """!
         \brief obtain incoming edges of a given graph
 
@@ -397,7 +411,9 @@ class BaseGraphEdgeOps:
         \throws ValueError if any of argument nodes are not inside the graph.
         \throws ValueError if there are no edges that consist of argument nodes.
         """
-        if not BaseGraphBoolOps.is_in(g, start) or not BaseGraphBoolOps.is_in(g, end):
+        if not BaseGraphBoolOps.is_in(g, start) or not BaseGraphBoolOps.is_in(
+            g, end
+        ):
             raise ValueError("one of the nodes is not present in graph")
         n1id = start.id()
         n2id = end.id()
@@ -417,7 +433,8 @@ class BaseGraphNodeOps:
 
     @staticmethod
     def get_nodes(
-        ns: Optional[Set[AbstractNode]], es: Optional[Set[AbstractEdge]],
+        ns: Optional[Set[AbstractNode]],
+        es: Optional[Set[AbstractEdge]],
     ) -> FrozenSet[AbstractNode]:
         """!
         \brief Obtain all nodes in a single set.
@@ -655,7 +672,7 @@ class BaseGraphOps:
         """
         if not all(BaseGraphBoolOps.is_in(g, v) for v in vs):
             raise ValueError("Given nodes are not contained in graph")
-        es: Set[Edge] = set()
+        es: Set[AbstractEdge] = set()
         for e in g.E:
             if edge_policy(e, vs) is True:
                 es.add(e)

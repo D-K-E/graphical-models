@@ -12,19 +12,23 @@ along to the parent's method in order to adapt its functionality.
 from typing import Callable, Dict, List, Set, Union
 from uuid import uuid4
 
+from pygmodels.ganalysis.graphanalyzer import (
+    BaseGraphAnalyzer,
+    BaseGraphBoolAnalyzer,
+    BaseGraphEdgeAnalyzer,
+    BaseGraphNodeAnalyzer,
+    BaseGraphNumericAnalyzer,
+)
 from pygmodels.gmodel.graph import Graph
 from pygmodels.gmodel.tree import Tree
-from pygmodels.graphops.bgraphops import BaseGraphOps
-from pygmodels.graphops.bgraphops import BaseGraphEdgeOps
-from pygmodels.graphops.bgraphops import BaseGraphNodeOps
+from pygmodels.graphops.bgraphops import (
+    BaseGraphEdgeOps,
+    BaseGraphNodeOps,
+    BaseGraphOps,
+)
 from pygmodels.graphops.graphops import BaseGraphAlgOps
 from pygmodels.graphops.graphsearcher import BaseGraphSearcher
-from pygmodels.ganalysis.graphanalyzer import BaseGraphAnalyzer
-from pygmodels.ganalysis.graphanalyzer import BaseGraphBoolAnalyzer
-from pygmodels.ganalysis.graphanalyzer import BaseGraphNumericAnalyzer
-from pygmodels.ganalysis.graphanalyzer import BaseGraphNodeAnalyzer
-from pygmodels.ganalysis.graphanalyzer import BaseGraphEdgeAnalyzer
-from pygmodels.gtype.abstractobj import EdgeType, AbstractUndiGraph
+from pygmodels.gtype.abstractobj import AbstractUndiGraph, EdgeType
 from pygmodels.gtype.basegraph import BaseGraph
 from pygmodels.gtype.edge import Edge
 from pygmodels.gtype.node import Node
@@ -36,7 +40,11 @@ class UndiGraph(AbstractUndiGraph, BaseGraph):
     """
 
     def __init__(
-        self, gid: str, data={}, nodes: Set[Node] = None, edges: Set[Edge] = None,
+        self,
+        gid: str,
+        data={},
+        nodes: Set[Node] = None,
+        edges: Set[Edge] = None,
     ):
         """!
         \brief constructor for undirected graph
@@ -51,7 +59,8 @@ class UndiGraph(AbstractUndiGraph, BaseGraph):
             for edge in edges:
                 if edge.type() == EdgeType.DIRECTED:
                     raise ValueError(
-                        "Can not instantiate undirected graph with" + " directed edges"
+                        "Can not instantiate undirected graph with"
+                        + " directed edges"
                     )
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
         self._props = None
@@ -64,7 +73,9 @@ class UndiGraph(AbstractUndiGraph, BaseGraph):
         if self._props is None:
             self._props = BaseGraphSearcher.depth_first_search(
                 self,
-                edge_generator=lambda node: BaseGraphEdgeOps.edges_of(self, node),
+                edge_generator=lambda node: BaseGraphEdgeOps.edges_of(
+                    self, node
+                ),
                 check_cycle=True,
             )
         return self._props
@@ -92,7 +103,9 @@ class UndiGraph(AbstractUndiGraph, BaseGraph):
         nodes not just incoming or outgoing edges.
         """
         return BaseGraphSearcher.breadth_first_search(
-            self, n1=n1, edge_generator=lambda x: BaseGraphEdgeOps.edges_of(self, x),
+            self,
+            n1=n1,
+            edge_generator=lambda x: BaseGraphEdgeOps.edges_of(self, x),
         )
 
     def check_for_path(self, n1: Node, n2: Node) -> bool:

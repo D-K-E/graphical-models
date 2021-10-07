@@ -208,14 +208,18 @@ class AbstractGraph(AbstractGraphObj):
         vtypes = all([isinstance(v, AbstractNode) for v in self.V])
         etypes = all([isinstance(v, AbstractEdge) for v in self.E])
         if vtypes is False:
-            mes = "self.V property must return Dict[str, AbstractNode] it fails "
+            mes = (
+                "self.V property must return Dict[str, AbstractNode] it fails "
+            )
             mes += " for the following test:\n"
             mes += "[isinstance(vid, str) and isinstance(v, AbstractNode) "
             mes += "for vid, v in self.V.items()]"
             raise TypeError(mes)
 
         if etypes is False:
-            mes = "self.E property must return Dict[str, AbstractEdge] it fails "
+            mes = (
+                "self.E property must return Dict[str, AbstractEdge] it fails "
+            )
             mes += " for the following test:\n"
             mes += "[isinstance(vid, str) and isinstance(v, AbstractEdge) "
             mes += "for vid, v in self.E.items()]"

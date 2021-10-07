@@ -5,11 +5,12 @@ functionality for doing graph theoretical operations
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Union
 from uuid import uuid4
 
-from pygmodels.graphops.bgraphops import BaseGraphOps
-from pygmodels.graphops.bgraphops import BaseGraphNodeOps
-from pygmodels.graphops.bgraphops import BaseGraphEdgeOps
-from pygmodels.graphops.bgraphops import BaseGraphBoolOps
-
+from pygmodels.graphops.bgraphops import (
+    BaseGraphBoolOps,
+    BaseGraphEdgeOps,
+    BaseGraphNodeOps,
+    BaseGraphOps,
+)
 from pygmodels.gtype.abstractobj import (
     AbstractEdge,
     AbstractGraph,
@@ -112,7 +113,9 @@ class BaseGraph(GraphObject, AbstractGraph):
             + "--"
             + "!!".join([str(n) for n in self._edges])
             + "--"
-            + "::".join([str(k) + "-" + str(v) for k, v in self.data().items()])
+            + "::".join(
+                [str(k) + "-" + str(v) for k, v in self.data().items()]
+            )
         )
 
     def __hash__(self):
@@ -226,7 +229,9 @@ class BaseGraph(GraphObject, AbstractGraph):
         return BaseGraph(gid=str(uuid4()), nodes=nodes, edges=edges)
 
     @classmethod
-    def based_on_node_set(cls, edges: Set[AbstractEdge], nodes: Set[AbstractNode]):
+    def based_on_node_set(
+        cls, edges: Set[AbstractEdge], nodes: Set[AbstractNode]
+    ):
         """!"""
         eset: Set[AbstractEdge] = set(
             [e for e in edges if set([e.start(), e.end()]).issubset(nodes)]

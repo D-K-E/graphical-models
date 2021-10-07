@@ -4,11 +4,12 @@ Traverse graphs in some fashion
 import math
 from typing import Callable, Dict, List, Optional, Set, Tuple, Union
 
-from pygmodels.graphops.bgraphops import BaseGraphOps
-from pygmodels.graphops.bgraphops import BaseGraphNodeOps
-from pygmodels.graphops.bgraphops import BaseGraphEdgeOps
-from pygmodels.graphops.bgraphops import BaseGraphBoolOps
-
+from pygmodels.graphops.bgraphops import (
+    BaseGraphBoolOps,
+    BaseGraphEdgeOps,
+    BaseGraphNodeOps,
+    BaseGraphOps,
+)
 from pygmodels.gtype.abstractobj import (
     AbstractEdge,
     AbstractGraph,
@@ -268,7 +269,9 @@ class BaseGraphSearcher:
         """!
         Apply uniform cost search to given problem set
         """
-        if not BaseGraphBoolOps.is_in(g, start) or not BaseGraphBoolOps.is_in(g, goal):
+        if not BaseGraphBoolOps.is_in(g, start) or not BaseGraphBoolOps.is_in(
+            g, goal
+        ):
             raise ValueError("Start node or goal node is not in graph")
         problem_set = g.E if problem_set is None else problem_set
         pnode = {"cost": 0, "state": start.id(), "parent": None, "edge": None}

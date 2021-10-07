@@ -6,14 +6,18 @@ import pprint
 import unittest
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 
+from pygmodels.ganalysis.graphanalyzer import (
+    BaseGraphAnalyzer,
+    BaseGraphBoolAnalyzer,
+    BaseGraphNodeAnalyzer,
+    BaseGraphNumericAnalyzer,
+)
 from pygmodels.gmodel.graph import Graph
-from pygmodels.graphops.bgraphops import BaseGraphOps
-from pygmodels.graphops.bgraphops import BaseGraphNodeOps
-from pygmodels.graphops.bgraphops import BaseGraphBoolOps
-from pygmodels.ganalysis.graphanalyzer import BaseGraphAnalyzer
-from pygmodels.ganalysis.graphanalyzer import BaseGraphBoolAnalyzer
-from pygmodels.ganalysis.graphanalyzer import BaseGraphNumericAnalyzer
-from pygmodels.ganalysis.graphanalyzer import BaseGraphNodeAnalyzer
+from pygmodels.graphops.bgraphops import (
+    BaseGraphBoolOps,
+    BaseGraphNodeOps,
+    BaseGraphOps,
+)
 from pygmodels.gtype.abstractobj import (
     AbstractEdge,
     AbstractGraph,
@@ -34,16 +38,28 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
         self.n4 = Node("n4", {})
         self.n5 = Node("n5", {})
         self.e1 = Edge(
-            "e1", start_node=self.n1, end_node=self.n2, edge_type=EdgeType.UNDIRECTED,
+            "e1",
+            start_node=self.n1,
+            end_node=self.n2,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.e2 = Edge(
-            "e2", start_node=self.n2, end_node=self.n3, edge_type=EdgeType.UNDIRECTED,
+            "e2",
+            start_node=self.n2,
+            end_node=self.n3,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.e3 = Edge(
-            "e3", start_node=self.n3, end_node=self.n4, edge_type=EdgeType.UNDIRECTED,
+            "e3",
+            start_node=self.n3,
+            end_node=self.n4,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.e4 = Edge(
-            "e4", start_node=self.n1, end_node=self.n4, edge_type=EdgeType.UNDIRECTED,
+            "e4",
+            start_node=self.n1,
+            end_node=self.n4,
+            edge_type=EdgeType.UNDIRECTED,
         )
 
         self.graph = BaseGraph(
@@ -64,19 +80,34 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
         self.f = Node("f", {})  # d
         self.e = Node("e", {})  # e
         self.ae = Edge(
-            "ae", start_node=self.a, end_node=self.e, edge_type=EdgeType.UNDIRECTED,
+            "ae",
+            start_node=self.a,
+            end_node=self.e,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.ab = Edge(
-            "ab", start_node=self.a, end_node=self.b, edge_type=EdgeType.UNDIRECTED,
+            "ab",
+            start_node=self.a,
+            end_node=self.b,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.af = Edge(
-            "af", start_node=self.a, end_node=self.f, edge_type=EdgeType.UNDIRECTED,
+            "af",
+            start_node=self.a,
+            end_node=self.f,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.be = Edge(
-            "be", start_node=self.b, end_node=self.e, edge_type=EdgeType.UNDIRECTED,
+            "be",
+            start_node=self.b,
+            end_node=self.e,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.ef = Edge(
-            "ef", start_node=self.e, end_node=self.f, edge_type=EdgeType.UNDIRECTED,
+            "ef",
+            start_node=self.e,
+            end_node=self.f,
+            edge_type=EdgeType.UNDIRECTED,
         )
 
         # undirected graph
@@ -85,19 +116,34 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
         self.f = Node("f", {})  # d
         self.e = Node("e", {})  # e
         self.ae = Edge(
-            "ae", start_node=self.a, end_node=self.e, edge_type=EdgeType.UNDIRECTED,
+            "ae",
+            start_node=self.a,
+            end_node=self.e,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.ab = Edge(
-            "ab", start_node=self.a, end_node=self.b, edge_type=EdgeType.UNDIRECTED,
+            "ab",
+            start_node=self.a,
+            end_node=self.b,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.af = Edge(
-            "af", start_node=self.a, end_node=self.f, edge_type=EdgeType.UNDIRECTED,
+            "af",
+            start_node=self.a,
+            end_node=self.f,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.be = Edge(
-            "be", start_node=self.b, end_node=self.e, edge_type=EdgeType.UNDIRECTED,
+            "be",
+            start_node=self.b,
+            end_node=self.e,
+            edge_type=EdgeType.UNDIRECTED,
         )
         self.ef = Edge(
-            "ef", start_node=self.e, end_node=self.f, edge_type=EdgeType.UNDIRECTED,
+            "ef",
+            start_node=self.e,
+            end_node=self.f,
+            edge_type=EdgeType.UNDIRECTED,
         )
 
         # undirected graph
@@ -119,7 +165,15 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
             "ug2",
             data={"my": "graph", "data": "is", "very": "awesome"},
             nodes=set([self.a, self.b, self.e, self.f]),
-            edges=set([self.ae, self.ab, self.af, self.be, self.ef,]),
+            edges=set(
+                [
+                    self.ae,
+                    self.ab,
+                    self.af,
+                    self.be,
+                    self.ef,
+                ]
+            ),
         )
         # ugraph2 :
         #   +-----+
@@ -163,7 +217,16 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
             "ug5",
             data={"my": "graph", "data": "is", "very": "awesome"},
             nodes=set(
-                [self.a, self.b, self.e, self.f, self.n1, self.n2, self.n3, self.n4,]
+                [
+                    self.a,
+                    self.b,
+                    self.e,
+                    self.f,
+                    self.n1,
+                    self.n2,
+                    self.n3,
+                    self.n4,
+                ]
             ),
             edges=set(
                 [
@@ -187,19 +250,34 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
         self.ee = Node("ee", {})
 
         self.bb_cc = Edge(
-            "bb_cc", start_node=self.bb, end_node=self.cc, edge_type=EdgeType.DIRECTED,
+            "bb_cc",
+            start_node=self.bb,
+            end_node=self.cc,
+            edge_type=EdgeType.DIRECTED,
         )
         self.cc_dd = Edge(
-            "cc_dd", start_node=self.cc, end_node=self.dd, edge_type=EdgeType.DIRECTED,
+            "cc_dd",
+            start_node=self.cc,
+            end_node=self.dd,
+            edge_type=EdgeType.DIRECTED,
         )
         self.dd_ee = Edge(
-            "dd_ee", start_node=self.dd, end_node=self.ee, edge_type=EdgeType.DIRECTED,
+            "dd_ee",
+            start_node=self.dd,
+            end_node=self.ee,
+            edge_type=EdgeType.DIRECTED,
         )
         self.ee_bb = Edge(
-            "ee_bb", start_node=self.ee, end_node=self.bb, edge_type=EdgeType.DIRECTED,
+            "ee_bb",
+            start_node=self.ee,
+            end_node=self.bb,
+            edge_type=EdgeType.DIRECTED,
         )
         self.bb_dd = Edge(
-            "bb_dd", start_node=self.bb, end_node=self.dd, edge_type=EdgeType.DIRECTED,
+            "bb_dd",
+            start_node=self.bb,
+            end_node=self.dd,
+            edge_type=EdgeType.DIRECTED,
         )
 
     def test_adjmat_int(self):
@@ -277,8 +355,12 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
         """"""
         n1 = Node("n1", {})
         n2 = Node("n2", {})
-        e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
-        e2 = Edge("e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED)
+        e1 = Edge(
+            "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
+        )
+        e2 = Edge(
+            "e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED
+        )
         g1 = BaseGraph("graph", nodes=set([n1, n2]), edges=set([e1, e2]))
         g2 = BaseGraph("graph", nodes=set([n1, n2]), edges=set([e1]))
         self.assertTrue(BaseGraphBoolAnalyzer.has_self_loop(g1))
@@ -286,7 +368,9 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
 
     def test_is_node_independant_of(self):
         self.assertTrue(
-            BaseGraphBoolAnalyzer.is_node_independent_of(self.graph_2, self.n1, self.n3)
+            BaseGraphBoolAnalyzer.is_node_independent_of(
+                self.graph_2, self.n1, self.n3
+            )
         )
 
     def test_is_stable(self):
@@ -332,7 +416,9 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
         self.assertEqual(0.5, deg)
 
     def test_ev_ratio_from_average_degree(self):
-        deg = BaseGraphNumericAnalyzer.ev_ratio_from_average_degree(self.graph, 5)
+        deg = BaseGraphNumericAnalyzer.ev_ratio_from_average_degree(
+            self.graph, 5
+        )
         self.assertEqual(2.5, deg)
 
     def test_ev_ratio(self):
@@ -375,25 +461,28 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
         self.assertEqual(com, 2)
         self.assertEqual(com2, 1)
 
-    def test_is_connected_false_wo_result(self):
-        ""
+    def test_is_connected_false_wo_result_f(self):
+        """"""
         self.assertEqual(BaseGraphBoolAnalyzer.is_connected(self.graph), False)
 
-    def test_is_connected_true_wo_result(self):
-        ""
+    def test_is_connected_true_wo_result_t(self):
+        """"""
         self.assertTrue(BaseGraphBoolAnalyzer.is_connected(self.graph_2))
 
     def test_is_connected_false_w_result(self):
-        ""
+        """"""
         result = BaseGraphAnalyzer.dfs_props(self.graph)
         self.assertEqual(
-            BaseGraphBoolAnalyzer.is_connected(self.graph, result=result), False
+            BaseGraphBoolAnalyzer.is_connected(self.graph, result=result),
+            False,
         )
 
     def test_is_connected_true_wo_result(self):
-        ""
+        """"""
         result = BaseGraphAnalyzer.dfs_props(self.graph_2)
-        self.assertTrue(BaseGraphBoolAnalyzer.is_connected(self.graph_2, result=result))
+        self.assertTrue(
+            BaseGraphBoolAnalyzer.is_connected(self.graph_2, result=result)
+        )
 
     def test_nb_neighbours_of(self):
         ndes = BaseGraphNumericAnalyzer.nb_neighbours_of(self.graph_2, self.n2)

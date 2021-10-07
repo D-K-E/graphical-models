@@ -5,16 +5,18 @@
 import math
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 
-from pygmodels.graphops.bgraphops import BaseGraphOps
-from pygmodels.graphops.bgraphops import BaseGraphNodeOps
-from pygmodels.graphops.bgraphops import BaseGraphBoolOps
-from pygmodels.graphops.bgraphops import BaseGraphEdgeOps
+from pygmodels.graphops.bgraphops import (
+    BaseGraphBoolOps,
+    BaseGraphEdgeOps,
+    BaseGraphNodeOps,
+    BaseGraphOps,
+)
 from pygmodels.graphops.graphsearcher import BaseGraphSearcher
 from pygmodels.gtype.abstractobj import (
     AbstractEdge,
     AbstractGraph,
     AbstractNode,
-    EdgeType
+    EdgeType,
 )
 from pygmodels.gtype.basegraph import BaseGraph
 from pygmodels.gtype.gsearchresult import (
@@ -90,7 +92,11 @@ class BaseGraphBoolAnalyzer:
         """
         if n1 == n2:
             return False
-        return True if BaseGraphBoolOps.is_neighbour_of(g, n1, n2) is False else False
+        return (
+            True
+            if BaseGraphBoolOps.is_neighbour_of(g, n1, n2) is False
+            else False
+        )
 
     @staticmethod
     def is_stable(g: AbstractGraph, ns: FrozenSet[AbstractNode]) -> bool:
@@ -317,7 +323,9 @@ class BaseGraphNumericAnalyzer:
         """
         return int(
             BaseGraphNumericAnalyzer.comp_degree(
-                g, fn=lambda nb_edges, compare: nb_edges < compare, comp_val=math.inf,
+                g,
+                fn=lambda nb_edges, compare: nb_edges < compare,
+                comp_val=math.inf,
             )
         )
 
@@ -344,7 +352,9 @@ class BaseGraphNumericAnalyzer:
         return len(g.E) / len(g.V)
 
     @staticmethod
-    def ev_ratio_from_average_degree(g: AbstractGraph, average_degree: float) -> float:
+    def ev_ratio_from_average_degree(
+        g: AbstractGraph, average_degree: float
+    ) -> float:
         """!
         \brief obtain edge vertex ratio from average degree
 
@@ -361,7 +371,9 @@ class BaseGraphNumericAnalyzer:
         \brief shorthand for ev_ratio_from_average_degree()
         """
         adegree = BaseGraphNumericAnalyzer.average_degree(g)
-        return BaseGraphNumericAnalyzer.ev_ratio_from_average_degree(g, adegree)
+        return BaseGraphNumericAnalyzer.ev_ratio_from_average_degree(
+            g, adegree
+        )
 
     @staticmethod
     def shortest_path_length(g: AbstractGraph) -> int:
@@ -550,7 +562,9 @@ class BaseGraphNodeAnalyzer:
         return set(
             [
                 frozenset(
-                    BaseGraphNodeAnalyzer.get_component_nodes(k, g=g, result=result)
+                    BaseGraphNodeAnalyzer.get_component_nodes(
+                        k, g=g, result=result
+                    )
                 )
                 for k in component_roots
             ]
@@ -580,7 +594,7 @@ class BaseGraphNodeAnalyzer:
             )
 
         nb_component = BaseGraphNumericAnalyzer.nb_components(g, result=result)
-        points: Set[Node] = set()
+        points: Set[AbstractNode] = set()
         for node in g.V:
             graph = graph_maker(node)
             nc = BaseGraphNumericAnalyzer.nb_components(graph)
@@ -614,7 +628,9 @@ class BaseGraphEdgeAnalyzer:
             result = BaseGraphAnalyzer.dfs_props(
                 g, edge_generator=edge_generator, check_cycle=check_cycle
             )
-        nb_component = BaseGraphNumericAnalyzer.nb_components(g=g, result=result)
+        nb_component = BaseGraphNumericAnalyzer.nb_components(
+            g=g, result=result
+        )
         bridges = set()
         for e in g.E:
             made_g = graph_maker(e)
@@ -655,7 +671,7 @@ class BaseGraphAnalyzer:
         gdata = BaseGraphOps.to_edgelist(g)
         edges = [gdata[v.id()] for v in vertices]
         E = {e.id(): e for e in g.E}
-        es: Set[Edge] = set()
+        es: Set[AbstractEdge] = set()
         for elst in edges:
             for e in elst:
                 es.add(E[e])
@@ -686,7 +702,9 @@ class BaseGraphAnalyzer:
         component_roots = [k for k in result.forest.keys()]
         return set(
             [
-                BaseGraphAnalyzer.get_component(root_node_id=root, g=g, result=result)
+                BaseGraphAnalyzer.get_component(
+                    root_node_id=root, g=g, result=result
+                )
                 for root in component_roots
             ]
         )
@@ -763,7 +781,9 @@ class BaseGraphAnalyzer:
         return gmat
 
     @staticmethod
-    def transitive_closure_matrix(g: AbstractGraph) -> Dict[Tuple[str, str], bool]:
+    def transitive_closure_matrix(
+        g: AbstractGraph,
+    ) -> Dict[Tuple[str, str], bool]:
         """!
         \brief Obtain transitive closure matrix of a given graph
 
@@ -844,9 +864,13 @@ class BaseGraphAnalyzer:
         edge_generator: Optional[Callable] = None,
         check_cycle: Optional[bool] = None,
     ) -> BaseGraphDFSResult:
-        ""
+        """"""
+
+        def default_edge_gen(node):
+            return BaseGraphEdgeOps.edges_of(g, node)
+
         if edge_generator is None:
-            edge_generator = lambda node: BaseGraphEdgeOps.edges_of(g, node)
+            edge_generator = default_edge_gen
         if check_cycle is None or not isinstance(check_cycle, bool):
             check_cycle = True
         return BaseGraphSearcher.depth_first_search(

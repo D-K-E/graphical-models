@@ -6,10 +6,12 @@ import math
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
-from pygmodels.graphops.bgraphops import BaseGraphOps
-from pygmodels.graphops.bgraphops import BaseGraphBoolOps
-from pygmodels.graphops.bgraphops import BaseGraphEdgeOps
-from pygmodels.graphops.bgraphops import BaseGraphNodeOps
+from pygmodels.graphops.bgraphops import (
+    BaseGraphBoolOps,
+    BaseGraphEdgeOps,
+    BaseGraphNodeOps,
+    BaseGraphOps,
+)
 from pygmodels.gtype.abstractobj import (
     AbstractDiGraph,
     AbstractEdge,
@@ -40,7 +42,9 @@ class BaseGraphSetOps:
             return op(edges, obj)
         is_nset = all(isinstance(o, AbstractNode) for o in obj)
         if is_nset is False:
-            raise TypeError("argument type is not supported: " + type(obj).__name__)
+            raise TypeError(
+                "argument type is not supported: " + type(obj).__name__
+            )
         #
         nodes = g.V
         return op(nodes, obj)
@@ -94,7 +98,9 @@ class BaseGraphSetOps:
                 gid=str(uuid4()), nodes=onode_set, edges=oedge_set, data=gdata
             )
         else:
-            raise TypeError("argument type is not supported: " + type(obj).__name__)
+            raise TypeError(
+                "argument type is not supported: " + type(obj).__name__
+            )
 
     @staticmethod
     def intersection(
@@ -128,7 +134,9 @@ class BaseGraphSetOps:
         """!
         \brief obtain union of either node or edge set
         """
-        return BaseGraphSetOps.set_op(g, obj=aset, op=lambda gset, y: gset.union(y))
+        return BaseGraphSetOps.set_op(
+            g, obj=aset, op=lambda gset, y: gset.union(y)
+        )
 
     @staticmethod
     def difference(
@@ -256,10 +264,14 @@ class BaseGraphAlgOps:
             )
         #
         if isinstance(el, (set, frozenset)):
-            return BaseGraphAlgOps.plus_minus_node_edge(g=g, el=el, is_plus=is_plus)
+            return BaseGraphAlgOps.plus_minus_node_edge(
+                g=g, el=el, is_plus=is_plus
+            )
         #
         if isinstance(el, AbstractGraph):
-            return BaseGraphAlgOps.plus_minus_node_edge(g=g, el=el, is_plus=is_plus)
+            return BaseGraphAlgOps.plus_minus_node_edge(
+                g=g, el=el, is_plus=is_plus
+            )
         raise TypeError("argument type is not compatible with operation")
 
     @staticmethod
@@ -280,13 +292,18 @@ class BaseGraphAlgOps:
 
     @staticmethod
     def added_edge_between_if_none(
-        g: AbstractGraph, n1: AbstractNode, n2: AbstractNode, is_directed: bool = False,
+        g: AbstractGraph,
+        n1: AbstractNode,
+        n2: AbstractNode,
+        is_directed: bool = False,
     ) -> BaseGraph:
         """!
         Add edge between nodes. If there are no edges in between.
         The flag is_directed specifies if the edge is directed or not
         """
-        if not BaseGraphBoolOps.is_in(g, n1) or not BaseGraphBoolOps.is_in(g, n2):
+        if not BaseGraphBoolOps.is_in(g, n1) or not BaseGraphBoolOps.is_in(
+            g, n2
+        ):
             raise ValueError("one of the nodes is not present in graph")
         n1id = n1.id()
         n2id = n2.id()
@@ -297,16 +314,24 @@ class BaseGraphAlgOps:
         if len(common_edge_ids) == 0:
             # there are no edges between the nodes
             if isinstance(g, AbstractUndiGraph):
-                edge = Edge.undirected(eid=str(uuid4()), start_node=n1, end_node=n2)
+                edge = Edge.undirected(
+                    eid=str(uuid4()), start_node=n1, end_node=n2
+                )
                 return BaseGraphAlgOps.add(g, edge)
             elif isinstance(g, AbstractDiGraph):
-                edge = Edge.directed(eid=str(uuid4()), start_node=n1, end_node=n2)
+                edge = Edge.directed(
+                    eid=str(uuid4()), start_node=n1, end_node=n2
+                )
                 return BaseGraphAlgOps.add(g, edge)
             elif is_directed is True:
-                edge = Edge.directed(eid=str(uuid4()), start_node=n1, end_node=n2)
+                edge = Edge.directed(
+                    eid=str(uuid4()), start_node=n1, end_node=n2
+                )
                 return BaseGraphAlgOps.add(g, edge)
             elif is_directed is False:
-                edge = Edge.undirected(eid=str(uuid4()), start_node=n1, end_node=n2)
+                edge = Edge.undirected(
+                    eid=str(uuid4()), start_node=n1, end_node=n2
+                )
                 return BaseGraphAlgOps.add(g, edge)
             else:
                 raise ValueError("Must specify an edge type to be added")
