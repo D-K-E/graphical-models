@@ -636,3 +636,27 @@ class BaseGraphOps:
                 if tpl2 in gmat:
                     gmat[tpl2] = vtype(1)
         return gmat
+
+    @staticmethod
+    def get_subgraph_by_vertices(
+        g: AbstractGraph,
+        vs: Set[AbstractNode],
+        edge_policy: Callable[
+            [AbstractEdge, Set[AbstractNode]], bool
+        ] = lambda x, ys: set([x.start(), x.end()]).issubset(ys)
+        is True,
+    ) -> AbstractGraph:
+        """!
+        Get the subgraph using vertices.
+
+        \param vs set of vertices for the subgraph
+        \param edge_policy determines which edges should be conserved. By
+        default we conserve edges whose incident nodes are a subset of vs
+        """
+        if not all(BaseGraphBoolOps.is_in(g, v) for v in vs):
+            raise ValueError("Given nodes are not contained in graph")
+        es: Set[Edge] = set()
+        for e in g.E:
+            if edge_policy(e, vs) is True:
+                es.add(e)
+        return BaseGraph.from_edge_node_set(edges=es, nodes=vs)

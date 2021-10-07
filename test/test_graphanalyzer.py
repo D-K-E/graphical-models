@@ -8,6 +8,8 @@ from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 
 from pygmodels.gmodel.graph import Graph
 from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.graphf.bgraphops import BaseGraphNodeOps
+from pygmodels.graphf.bgraphops import BaseGraphBoolOps
 from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
 from pygmodels.graphf.graphanalyzer import BaseGraphBoolAnalyzer
 from pygmodels.graphf.graphanalyzer import BaseGraphNumericAnalyzer
@@ -392,6 +394,10 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
         ""
         result = BaseGraphAnalyzer.dfs_props(self.graph_2)
         self.assertTrue(BaseGraphBoolAnalyzer.is_connected(self.graph_2, result=result))
+
+    def test_nb_neighbours_of(self):
+        ndes = BaseGraphNumericAnalyzer.nb_neighbours_of(self.graph_2, self.n2)
+        self.assertEqual(ndes, 2)
 
     @unittest.skip("test not implemented")
     def test_get_component_nodes(self):

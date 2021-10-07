@@ -298,6 +298,20 @@ class BaseGraphOpsTest(unittest.TestCase):
     def test_get_subgraph_by_vertices(self):
         raise NotImplementedError
 
+    def test_is_neighbour_of_true(self):
+        isneighbor = BaseGraphBoolOps.is_neighbour_of(self.graph_2, self.n2, self.n3)
+        self.assertTrue(isneighbor)
 
+    def test_is_neighbour_of_false(self):
+        isneighbor = BaseGraphBoolOps.is_neighbour_of(self.graph_2, self.n2, self.n2)
+        self.assertFalse(isneighbor)
+
+    def test_neighbours_of(self):
+        ndes = set(
+            [n.id() for n in BaseGraphNodeOps.neighbours_of(self.graph_2, self.n2)]
+        )
+        self.assertEqual(ndes, set([self.n1.id(), self.n3.id()]))
+
+    
 if __name__ == "__main__":
     unittest.main()
