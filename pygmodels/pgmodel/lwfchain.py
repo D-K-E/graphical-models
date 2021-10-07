@@ -9,13 +9,15 @@ from uuid import uuid4
 from pygmodels.gmodel.graph import Graph
 from pygmodels.gmodel.tree import Tree
 from pygmodels.gmodel.undigraph import UndiGraph
-from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
-from pygmodels.graphf.graphanalyzer import BaseGraphBoolAnalyzer
-from pygmodels.graphf.graphanalyzer import BaseGraphNumericAnalyzer
-from pygmodels.graphf.graphanalyzer import BaseGraphNodeAnalyzer
-from pygmodels.graphf.graphops import BaseGraphOps
-from pygmodels.graphf.graphops import BaseGraphBoolOps
-from pygmodels.graphf.graphops import BaseGraphNodeOps
+
+from pygmodels.graphops.graphops import BaseGraphOps
+from pygmodels.graphops.graphops import BaseGraphBoolOps
+from pygmodels.graphops.graphops import BaseGraphNodeOps
+
+from pygmodels.ganalysis.graphanalyzer import BaseGraphAnalyzer
+from pygmodels.ganalysis.graphanalyzer import BaseGraphBoolAnalyzer
+from pygmodels.ganalysis.graphanalyzer import BaseGraphNumericAnalyzer
+from pygmodels.ganalysis.graphanalyzer import BaseGraphNodeAnalyzer
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
 from pygmodels.pgmodel.markov import ConditionalRandomField, MarkovNetwork
@@ -187,7 +189,7 @@ class LWFChainGraph(PGModel):
             g=undi, result=undi.graph_props
         ):
             if len(cg) > 1:
-                (vs, es) = BaseGraphOps.get_subgraph_by_vertices(g=undi,vs=cg)
+                (vs, es) = BaseGraphOps.get_subgraph_by_vertices(g=undi, vs=cg)
                 bgraph = UndiGraph.from_edge_node_set(edges=es, nodes=vs)
                 component = UndiGraph.from_graph(bgraph)
                 chain_components.add(component)

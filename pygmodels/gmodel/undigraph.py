@@ -14,16 +14,16 @@ from uuid import uuid4
 
 from pygmodels.gmodel.graph import Graph
 from pygmodels.gmodel.tree import Tree
-from pygmodels.graphf.bgraphops import BaseGraphOps
-from pygmodels.graphf.bgraphops import BaseGraphEdgeOps
-from pygmodels.graphf.bgraphops import BaseGraphNodeOps
-from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
-from pygmodels.graphf.graphanalyzer import BaseGraphBoolAnalyzer
-from pygmodels.graphf.graphanalyzer import BaseGraphNumericAnalyzer
-from pygmodels.graphf.graphanalyzer import BaseGraphNodeAnalyzer
-from pygmodels.graphf.graphanalyzer import BaseGraphEdgeAnalyzer
-from pygmodels.graphf.graphops import BaseGraphAlgOps
-from pygmodels.graphf.graphsearcher import BaseGraphSearcher
+from pygmodels.graphops.bgraphops import BaseGraphOps
+from pygmodels.graphops.bgraphops import BaseGraphEdgeOps
+from pygmodels.graphops.bgraphops import BaseGraphNodeOps
+from pygmodels.graphops.graphops import BaseGraphAlgOps
+from pygmodels.graphops.graphsearcher import BaseGraphSearcher
+from pygmodels.ganalysis.graphanalyzer import BaseGraphAnalyzer
+from pygmodels.ganalysis.graphanalyzer import BaseGraphBoolAnalyzer
+from pygmodels.ganalysis.graphanalyzer import BaseGraphNumericAnalyzer
+from pygmodels.ganalysis.graphanalyzer import BaseGraphNodeAnalyzer
+from pygmodels.ganalysis.graphanalyzer import BaseGraphEdgeAnalyzer
 from pygmodels.gtype.abstractobj import EdgeType, AbstractUndiGraph
 from pygmodels.gtype.basegraph import BaseGraph
 from pygmodels.gtype.edge import Edge

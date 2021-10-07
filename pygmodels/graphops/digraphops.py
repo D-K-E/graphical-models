@@ -9,7 +9,7 @@ from pygmodels.gtype.abstractobj import EdgeType
 from pygmodels.gtype.abstractobj import AbstractDiGraph
 from pygmodels.gtype.abstractobj import AbstractNode
 from pygmodels.gtype.abstractobj import AbstractEdge
-from pygmodels.graphf.bgraphops import BaseGraphBoolOps
+from pygmodels.graphops.bgraphops import BaseGraphBoolOps
 from typing import Set, Callable
 
 

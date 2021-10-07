@@ -6,11 +6,11 @@ import unittest
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
-from pygmodels.graphf.digraphops import DiGraphBoolOps
-from pygmodels.graphf.digraphops import DiGraphNodeOps
-from pygmodels.graphf.digraphops import DiGraphEdgeOps
-from pygmodels.graphf.digraphops import DiGraphNumericOps
-from pygmodels.graphf.bgraphops import BaseGraphEdgeOps
+from pygmodels.graphops.digraphops import DiGraphBoolOps
+from pygmodels.graphops.digraphops import DiGraphNodeOps
+from pygmodels.graphops.digraphops import DiGraphEdgeOps
+from pygmodels.graphops.digraphops import DiGraphNumericOps
+from pygmodels.graphops.bgraphops import BaseGraphEdgeOps
 from pygmodels.gtype.abstractobj import (
     AbstractDiGraph,
     AbstractEdge,

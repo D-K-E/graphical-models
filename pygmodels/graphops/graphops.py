@@ -6,10 +6,10 @@ import math
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
-from pygmodels.graphf.bgraphops import BaseGraphOps
-from pygmodels.graphf.bgraphops import BaseGraphBoolOps
-from pygmodels.graphf.bgraphops import BaseGraphEdgeOps
-from pygmodels.graphf.bgraphops import BaseGraphNodeOps
+from pygmodels.graphops.bgraphops import BaseGraphOps
+from pygmodels.graphops.bgraphops import BaseGraphBoolOps
+from pygmodels.graphops.bgraphops import BaseGraphEdgeOps
+from pygmodels.graphops.bgraphops import BaseGraphNodeOps
 from pygmodels.gtype.abstractobj import (
     AbstractDiGraph,
     AbstractEdge,

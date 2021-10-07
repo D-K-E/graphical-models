@@ -5,11 +5,11 @@
 import math
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 
-from pygmodels.graphf.bgraphops import BaseGraphOps
-from pygmodels.graphf.bgraphops import BaseGraphNodeOps
-from pygmodels.graphf.bgraphops import BaseGraphBoolOps
-from pygmodels.graphf.bgraphops import BaseGraphEdgeOps
-from pygmodels.graphf.graphsearcher import BaseGraphSearcher
+from pygmodels.graphops.bgraphops import BaseGraphOps
+from pygmodels.graphops.bgraphops import BaseGraphNodeOps
+from pygmodels.graphops.bgraphops import BaseGraphBoolOps
+from pygmodels.graphops.bgraphops import BaseGraphEdgeOps
+from pygmodels.graphops.graphsearcher import BaseGraphSearcher
 from pygmodels.gtype.abstractobj import (
     AbstractEdge,
     AbstractGraph,

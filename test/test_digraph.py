@@ -5,15 +5,15 @@ import pprint
 import unittest
 
 from pygmodels.gmodel.digraph import DiGraph
-from pygmodels.graphf.bgraphops import BaseGraphOps
-from pygmodels.graphf.bgraphops import BaseGraphEdgeOps
-from pygmodels.graphf.bgraphops import BaseGraphNodeOps
+from pygmodels.graphops.bgraphops import BaseGraphOps
+from pygmodels.graphops.bgraphops import BaseGraphEdgeOps
+from pygmodels.graphops.bgraphops import BaseGraphNodeOps
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
 
 
 class DiGraphTest(unittest.TestCase):
-    """"""
+    """!"""
 
     def setUp(self):
         #
@@ -190,14 +190,6 @@ class DiGraphTest(unittest.TestCase):
         v = self.dgraph4.check_for_path(self.n1, self.n2)
         self.assertTrue(v)
 
-    def test_in_degree_of(self):
-        v = self.dgraph6.in_degree_of(self.a)
-        self.assertEqual(v, 0)
-
-    def test_out_degree_of(self):
-        v = self.dgraph6.out_degree_of(self.a)
-        self.assertEqual(v, 2)
-
     def test_outgoing_edges_of_1(self):
         """"""
         out_edges1 = BaseGraphEdgeOps.outgoing_edges_of(self.graph_2, self.n1)
@@ -221,30 +213,6 @@ class DiGraphTest(unittest.TestCase):
         out_edges2 = BaseGraphEdgeOps.incoming_edges_of(self.graph_2, self.n2)
         comp2 = frozenset([self.e1])
         self.assertEqual(out_edges2, comp2)
-
-    def test_is_parent_of_t(self):
-        v = self.dgraph6.is_parent_of(self.a, self.h)
-        self.assertEqual(v, True)
-
-    def test_is_parent_of_f(self):
-        v = self.dgraph6.is_parent_of(self.a, self.c)
-        self.assertEqual(v, False)
-
-    def test_is_child_of_t(self):
-        v = self.dgraph6.is_child_of(self.h, self.a)
-        self.assertEqual(v, True)
-
-    def test_is_child_of_f(self):
-        v = self.dgraph6.is_parent_of(self.a, self.c)
-        self.assertEqual(v, False)
-
-    def test_children_of(self):
-        vs = self.dgraph6.children_of(self.a)
-        self.assertEqual(vs, set([self.h, self.b]))
-
-    def test_parents_of(self):
-        vs = self.dgraph6.parents_of(self.g)
-        self.assertEqual(vs, set([self.c, self.f]))
 
     @unittest.skip("Reference found but not implemented yet")
     def test_find_transitive_closure(self):

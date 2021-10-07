@@ -7,13 +7,13 @@ import unittest
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 
 from pygmodels.gmodel.graph import Graph
-from pygmodels.graphf.bgraphops import BaseGraphOps
-from pygmodels.graphf.bgraphops import BaseGraphNodeOps
-from pygmodels.graphf.bgraphops import BaseGraphBoolOps
-from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
-from pygmodels.graphf.graphanalyzer import BaseGraphBoolAnalyzer
-from pygmodels.graphf.graphanalyzer import BaseGraphNumericAnalyzer
-from pygmodels.graphf.graphanalyzer import BaseGraphNodeAnalyzer
+from pygmodels.graphops.bgraphops import BaseGraphOps
+from pygmodels.graphops.bgraphops import BaseGraphNodeOps
+from pygmodels.graphops.bgraphops import BaseGraphBoolOps
+from pygmodels.ganalysis.graphanalyzer import BaseGraphAnalyzer
+from pygmodels.ganalysis.graphanalyzer import BaseGraphBoolAnalyzer
+from pygmodels.ganalysis.graphanalyzer import BaseGraphNumericAnalyzer
+from pygmodels.ganalysis.graphanalyzer import BaseGraphNodeAnalyzer
 from pygmodels.gtype.abstractobj import (
     AbstractEdge,
     AbstractGraph,

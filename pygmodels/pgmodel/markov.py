@@ -6,7 +6,7 @@ from typing import Optional, Set, Tuple
 from uuid import uuid4
 
 from pygmodels.gmodel.undigraph import UndiGraph
-from pygmodels.graphf.graphops import BaseGraphOps
+from pygmodels.graphops.graphops import BaseGraphOps
 from pygmodels.gtype.edge import Edge
 from pygmodels.pgmtype.factor import Factor
 from pygmodels.pgmtype.pgmodel import PGModel

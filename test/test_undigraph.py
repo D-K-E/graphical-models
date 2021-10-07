@@ -5,7 +5,7 @@ import unittest
 from random import choice
 
 from pygmodels.gmodel.undigraph import UndiGraph
-from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.graphops.bgraphops import BaseGraphOps
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
 

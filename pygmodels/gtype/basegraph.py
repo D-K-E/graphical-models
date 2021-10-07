@@ -5,10 +5,10 @@ functionality for doing graph theoretical operations
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Union
 from uuid import uuid4
 
-from pygmodels.graphf.bgraphops import BaseGraphOps
-from pygmodels.graphf.bgraphops import BaseGraphNodeOps
-from pygmodels.graphf.bgraphops import BaseGraphEdgeOps
-from pygmodels.graphf.bgraphops import BaseGraphBoolOps
+from pygmodels.graphops.bgraphops import BaseGraphOps
+from pygmodels.graphops.bgraphops import BaseGraphNodeOps
+from pygmodels.graphops.bgraphops import BaseGraphEdgeOps
+from pygmodels.graphops.bgraphops import BaseGraphBoolOps
 
 from pygmodels.gtype.abstractobj import (
     AbstractEdge,

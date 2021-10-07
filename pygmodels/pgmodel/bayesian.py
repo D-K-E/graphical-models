@@ -6,7 +6,7 @@ from typing import Callable, Optional, Set
 from uuid import uuid4
 
 from pygmodels.gmodel.digraph import DiGraph
-from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.graphops.bgraphops import BaseGraphOps
 from pygmodels.gtype.edge import Edge
 from pygmodels.pgmtype.factor import Factor
 from pygmodels.pgmtype.pgmodel import PGModel

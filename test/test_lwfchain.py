@@ -6,7 +6,7 @@ import unittest
 from uuid import uuid4
 
 from pygmodels.gmodel.undigraph import UndiGraph
-from pygmodels.graphf.graphops import BaseGraphOps
+from pygmodels.graphops.graphops import BaseGraphOps
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.pgmodel.lwfchain import LWFChainGraph
 from pygmodels.pgmodel.markov import ConditionalRandomField

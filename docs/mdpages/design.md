@@ -40,6 +40,7 @@ order:
 14. `test_graphsearcher.py`
 15. `test_graphanalyzer.py`
 16. `test_undigraph.py`
+6. `test_digraphops.py`
 17. `test_digraph.py`
 18. `test_pgmodel.py`
 19. `test_markov.py`

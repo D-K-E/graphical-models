@@ -11,13 +11,13 @@ import math
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
-from pygmodels.graphf.bgraphops import BaseGraphOps
-from pygmodels.graphf.bgraphops import BaseGraphEdgeOps
-from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
-from pygmodels.graphf.graphanalyzer import BaseGraphBoolAnalyzer
-from pygmodels.graphf.graphanalyzer import BaseGraphNumericAnalyzer
-from pygmodels.graphf.graphops import BaseGraphAlgOps, BaseGraphSetOps
-from pygmodels.graphf.graphsearcher import BaseGraphSearcher
+from pygmodels.graphops.bgraphops import BaseGraphOps
+from pygmodels.graphops.bgraphops import BaseGraphEdgeOps
+from pygmodels.graphops.graphops import BaseGraphAlgOps, BaseGraphSetOps
+from pygmodels.graphops.graphsearcher import BaseGraphSearcher
+from pygmodels.ganalysis.graphanalyzer import BaseGraphAnalyzer
+from pygmodels.ganalysis.graphanalyzer import BaseGraphBoolAnalyzer
+from pygmodels.ganalysis.graphanalyzer import BaseGraphNumericAnalyzer
 from pygmodels.gtype.basegraph import BaseGraph
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.graphobj import GraphObject

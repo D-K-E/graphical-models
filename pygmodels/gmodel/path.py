@@ -5,7 +5,7 @@ import math
 from typing import Callable, Dict, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
-from pygmodels.graphf.graphsearcher import BaseGraphSearcher
+from pygmodels.graphops.graphsearcher import BaseGraphSearcher
 from pygmodels.gtype.abstractobj import (
     AbstractEdge,
     AbstractNode,

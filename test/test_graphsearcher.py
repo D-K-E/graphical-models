@@ -8,10 +8,10 @@ import unittest
 from pstats import Stats
 
 from pygmodels.gtype.basegraph import BaseGraph
-from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.graphops.bgraphops import BaseGraphOps
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
-from pygmodels.graphf.graphsearcher import BaseGraphSearcher
+from pygmodels.graphops.graphsearcher import BaseGraphSearcher
 
 
 class BaseGraphSearcherTests(unittest.TestCase):
