@@ -24,11 +24,13 @@ from pygmodels.graphf.bgraphops import BaseGraphEdgeOps
 from pygmodels.graphf.bgraphops import BaseGraphBoolOps
 from pygmodels.graphf.graphsearcher import BaseGraphSearcher
 from pygmodels.gtype.abstractobj import EdgeType
+from pygmodels.gtype.abstractobj import AbstractDiGraph
+from pygmodels.gtype.basegraph import BaseGraph
 from pygmodels.gtype.edge import Edge
 from pygmodels.gtype.node import Node
 
 
-class DiGraph(Graph):
+class DiGraph(AbstractDiGraph, BaseGraph):
     """!
     \brief Directed graph implementation
     """
