@@ -18,7 +18,7 @@ from pygmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
 
 class FactorOps:
     """!
-    Analyzes a given factor
+    Operations a given factor
     """
 
     def __init__(self, f):

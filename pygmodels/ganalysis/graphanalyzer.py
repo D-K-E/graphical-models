@@ -92,11 +92,7 @@ class BaseGraphBoolAnalyzer:
         """
         if n1 == n2:
             return False
-        return (
-            True
-            if BaseGraphBoolOps.is_neighbour_of(g, n1, n2) is False
-            else False
-        )
+        return True if BaseGraphBoolOps.is_neighbour_of(g, n1, n2) is False else False
 
     @staticmethod
     def is_stable(g: AbstractGraph, ns: FrozenSet[AbstractNode]) -> bool:
@@ -323,9 +319,7 @@ class BaseGraphNumericAnalyzer:
         """
         return int(
             BaseGraphNumericAnalyzer.comp_degree(
-                g,
-                fn=lambda nb_edges, compare: nb_edges < compare,
-                comp_val=math.inf,
+                g, fn=lambda nb_edges, compare: nb_edges < compare, comp_val=math.inf,
             )
         )
 
@@ -352,9 +346,7 @@ class BaseGraphNumericAnalyzer:
         return len(g.E) / len(g.V)
 
     @staticmethod
-    def ev_ratio_from_average_degree(
-        g: AbstractGraph, average_degree: float
-    ) -> float:
+    def ev_ratio_from_average_degree(g: AbstractGraph, average_degree: float) -> float:
         """!
         \brief obtain edge vertex ratio from average degree
 
@@ -371,9 +363,7 @@ class BaseGraphNumericAnalyzer:
         \brief shorthand for ev_ratio_from_average_degree()
         """
         adegree = BaseGraphNumericAnalyzer.average_degree(g)
-        return BaseGraphNumericAnalyzer.ev_ratio_from_average_degree(
-            g, adegree
-        )
+        return BaseGraphNumericAnalyzer.ev_ratio_from_average_degree(g, adegree)
 
     @staticmethod
     def shortest_path_length(g: AbstractGraph) -> int:
@@ -562,9 +552,7 @@ class BaseGraphNodeAnalyzer:
         return set(
             [
                 frozenset(
-                    BaseGraphNodeAnalyzer.get_component_nodes(
-                        k, g=g, result=result
-                    )
+                    BaseGraphNodeAnalyzer.get_component_nodes(k, g=g, result=result)
                 )
                 for k in component_roots
             ]
@@ -628,9 +616,7 @@ class BaseGraphEdgeAnalyzer:
             result = BaseGraphAnalyzer.dfs_props(
                 g, edge_generator=edge_generator, check_cycle=check_cycle
             )
-        nb_component = BaseGraphNumericAnalyzer.nb_components(
-            g=g, result=result
-        )
+        nb_component = BaseGraphNumericAnalyzer.nb_components(g=g, result=result)
         bridges = set()
         for e in g.E:
             made_g = graph_maker(e)
@@ -702,9 +688,7 @@ class BaseGraphAnalyzer:
         component_roots = [k for k in result.forest.keys()]
         return set(
             [
-                BaseGraphAnalyzer.get_component(
-                    root_node_id=root, g=g, result=result
-                )
+                BaseGraphAnalyzer.get_component(root_node_id=root, g=g, result=result)
                 for root in component_roots
             ]
         )
@@ -781,9 +765,7 @@ class BaseGraphAnalyzer:
         return gmat
 
     @staticmethod
-    def transitive_closure_matrix(
-        g: AbstractGraph,
-    ) -> Dict[Tuple[str, str], bool]:
+    def transitive_closure_matrix(g: AbstractGraph,) -> Dict[Tuple[str, str], bool]:
         """!
         \brief Obtain transitive closure matrix of a given graph
 
@@ -843,20 +825,44 @@ class BaseGraphAnalyzer:
         >>> True
 
         \endcode
+
         """
         if BaseGraphBoolAnalyzer.has_self_loop(g):
             raise ValueError("Graph has a self loop")
         #
         T = BaseGraphAnalyzer.to_adjmat(g=g, vtype=bool)
-        for k in g.V.copy():
-            for i in g.V.copy():
-                for j in g.V.copy():
+        #
+        n = list(g.V)
+        for k in n.copy():
+            for i in n.copy():
+                for j in n.copy():
                     t_ij = T[(i.id(), j.id())]
                     t_ik = T[(i.id(), k.id())]
                     t_ki = T[(i.id(), k.id())]
                     T[(i.id(), j.id())] = t_ij or (t_ik and t_ki)
         T = {(k, i): v for (k, i), v in T.items() if k != i}
         return T
+
+    @staticmethod
+    def transitive_closure(g: AbstractGraph):
+        """!
+        Transitive closure is defined by Nuutila 1995, p. 15 as the following:
+
+        The transitive closure of graph G = (V, E) is a graph G' = (V, E') such that
+        E' contains an edge (v, w) iff G contains a non-null path v -> w.
+
+        Notice that the edge is directed, so we are dealing with only directed
+        graphs.
+
+        The successor set of a vertex v is the set Succ(v) = {w | (v, w) \in E'
+        }, i.e., the set of all vertices that can be reached from vertex v via
+        non-null paths.  The predecessor set of a vertex v is the set Pred(v) =
+        {u | (u, v) \in E' }, i.e., the set of all vertices that v is reachable
+        from via non-null paths. The vertices adjacent from vertex v are the
+        immediate successors of v and the vertices adjacent to v are the
+        immediate predecessors of v.
+        """
+        pass
 
     @staticmethod
     def dfs_props(
