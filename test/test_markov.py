@@ -8,11 +8,11 @@ import unittest
 from random import choice
 from uuid import uuid4
 
-from pygmodels.factorf.factoranalyzer import FactorAnalyzer
+from pygmodels.factor.factorf.factoranalyzer import FactorAnalyzer
 from pygmodels.gmodel.undigraph import UndiGraph
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.pgmodel.markov import ConditionalRandomField, MarkovNetwork
-from pygmodels.pgmtype.factor import Factor
+from pygmodels.factor.factor import Factor
 from pygmodels.pgmtype.randomvariable import NumCatRVariable
 
 

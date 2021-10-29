@@ -23,7 +23,7 @@ from pygmodels.graphops.graphops import (
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
 from pygmodels.pgmodel.markov import ConditionalRandomField, MarkovNetwork
-from pygmodels.pgmtype.factor import Factor
+from pygmodels.factor.factor import Factor
 from pygmodels.pgmtype.pgmodel import PGModel
 from pygmodels.pgmtype.randomvariable import NumCatRVariable
 

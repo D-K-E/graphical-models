@@ -8,7 +8,7 @@ or a set of factors.
 from typing import Callable, FrozenSet, List, Optional, Set, Tuple, Union
 
 from pygmodels.pgmtype.abstractpgm import AbstractFactor
-from pygmodels.pgmtype.factor import BaseFactor, Factor
+from pygmodels.factor.factor import BaseFactor, Factor
 from pygmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
 
 

@@ -6,7 +6,7 @@ import unittest
 from random import choice
 
 from pygmodels.gtype.edge import Edge, EdgeType
-from pygmodels.pgmtype.factor import Factor
+from pygmodels.factor.factor import Factor
 from pygmodels.pgmtype.randomvariable import NumCatRVariable
 
 

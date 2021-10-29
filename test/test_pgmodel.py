@@ -10,9 +10,9 @@ import unittest
 from pstats import Stats
 from uuid import uuid4
 
-from pygmodels.factorf.factorops import FactorOps
+from pygmodels.factor.factorf.factorops import FactorOps
 from pygmodels.gtype.edge import Edge, EdgeType
-from pygmodels.pgmtype.factor import Factor
+from pygmodels.factor.factor import Factor
 from pygmodels.pgmtype.pgmodel import PGModel, min_unmarked_neighbours
 from pygmodels.pgmtype.randomvariable import NumCatRVariable
 

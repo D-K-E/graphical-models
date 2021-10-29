@@ -10,7 +10,7 @@ from pygmodels.graphops.graphops import BaseGraphOps
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.pgmodel.lwfchain import LWFChainGraph
 from pygmodels.pgmodel.markov import ConditionalRandomField
-from pygmodels.pgmtype.factor import Factor
+from pygmodels.factor.factor import Factor
 from pygmodels.pgmtype.pgmodel import PGModel
 from pygmodels.pgmtype.randomvariable import NumCatRVariable
 

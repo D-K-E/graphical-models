@@ -14,8 +14,8 @@ import math
 from typing import Callable, Dict, List, Optional, Set, Tuple
 from uuid import uuid4
 
-from pygmodels.factorf.factoranalyzer import FactorAnalyzer
-from pygmodels.factorf.factorops import FactorOps
+from pygmodels.factor.factorf.factoranalyzer import FactorAnalyzer
+from pygmodels.factor.factorf.factorops import FactorOps
 from pygmodels.ganalysis.graphanalyzer import (
     BaseGraphAnalyzer,
     BaseGraphBoolAnalyzer,
@@ -32,7 +32,7 @@ from pygmodels.graphops.bgraphops import (
 from pygmodels.graphops.graphops import BaseGraphAlgOps
 from pygmodels.gtype.edge import Edge
 from pygmodels.gtype.node import Node
-from pygmodels.pgmtype.factor import Factor
+from pygmodels.factor.factor import Factor
 from pygmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
 
 

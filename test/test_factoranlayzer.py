@@ -5,9 +5,9 @@ import math
 import unittest
 from random import choice
 
-from pygmodels.factorf.factoranalyzer import FactorAnalyzer
+from pygmodels.factor.factorf.factoranalyzer import FactorAnalyzer
 from pygmodels.gtype.edge import Edge, EdgeType
-from pygmodels.pgmtype.factor import BaseFactor, Factor
+from pygmodels.factor.factor import BaseFactor, Factor
 from pygmodels.pgmtype.randomvariable import NumCatRVariable
 
 

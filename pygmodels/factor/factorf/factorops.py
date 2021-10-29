@@ -10,9 +10,9 @@ from itertools import combinations, product
 from typing import Callable, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
-from pygmodels.factorf.factoranalyzer import FactorAnalyzer
+from pygmodels.factor.factorf.factoranalyzer import FactorAnalyzer
+from pygmodels.factor.factor import BaseFactor, Factor
 from pygmodels.pgmtype.abstractpgm import AbstractFactor
-from pygmodels.pgmtype.factor import BaseFactor, Factor
 from pygmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
 
 

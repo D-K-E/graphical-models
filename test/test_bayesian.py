@@ -9,7 +9,7 @@ from uuid import uuid4
 from pygmodels.gmodel.digraph import DiGraph
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.pgmodel.bayesian import BayesianNetwork
-from pygmodels.pgmtype.factor import Factor
+from pygmodels.factor.factor import Factor
 from pygmodels.pgmtype.randomvariable import NumCatRVariable
 
 
