@@ -271,6 +271,21 @@ class FactorOps:
         ]
 
     @staticmethod
+    def phi_normal(f: AbstractFactor, scope_product: DomainSliceSet) -> float:
+        """!
+        \brief normalize a given factor value
+
+        \param scope_product a row in conditional probability table of factor
+
+        \return normalized value preference value
+
+        \see Factor.normalize(phi_result), Factor.phi(scope_product)
+
+        """
+        Z = f.partition_value(FactorOps.factor_domain(f, D=f.scope_vars()))
+        return f.phi(scope_product) / Z
+
+    @staticmethod
     def cartesian(f: AbstractFactor) -> FactorCartesianProduct:
         """!
         \brief Compute cartesian product over factor domain

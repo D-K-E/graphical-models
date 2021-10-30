@@ -6,6 +6,7 @@ import unittest
 from random import choice
 
 from pygmodels.factor.factorf.factoralg import FactorAlgebra
+from pygmodels.factor.factorf.factorops import FactorOps
 from pygmodels.factor.factor import BaseFactor, Factor
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.pgmtype.randomvariable import NumCatRVariable
@@ -176,10 +177,10 @@ class TestFactorAlg(unittest.TestCase):
         Ab_Bc, prod1 = FactorAlgebra.product(f=self.AB, other=self.BC)
         Ab_Bc_Cd, prod2 = FactorAlgebra.product(f=Ab_Bc, other=self.CD)
         result, prod3 = FactorAlgebra.product(f=Ab_Bc_Cd, other=self.DA)
-        for sm in result.scope_products:
+        for sm in FactorOps.cartesian(result):
             sms = set(sm)
             f = result.phi(sms)
-            ff = round(result.phi_normal(sms), 6)
+            ff = round(FactorOps.phi_normal(result, sms), 6)
             if sms == set([("B", 50), ("C", 50), ("A", 50), ("D", 10)]):
                 self.assertEqual(f, 100000)
                 self.assertEqual(ff, 0.013885)
@@ -247,7 +248,7 @@ class TestFactorAlg(unittest.TestCase):
         aB_c, prod = FactorAlgebra.product(f=self.aB, other=self.bc)
         # print(aB_c.scope_products)
         nf = FactorAlgebra.reduced_by_value(aB_c, assignments=red)
-        sps = set([frozenset(s) for s in nf.scope_products])
+        sps = set([frozenset(s) for s in FactorOps.cartesian(nf)])
 
         self.assertEqual(
             sps,
@@ -262,7 +263,7 @@ class TestFactorAlg(unittest.TestCase):
                 ]
             ),
         )
-        for p in nf.scope_products:
+        for p in FactorOps.cartesian(nf):
             ps = set(p)
             f = round(nf.phi(ps), 5)
             if ps == set([("A", 10), ("B", 50), ("C", 10)]):
@@ -284,7 +285,7 @@ class TestFactorAlg(unittest.TestCase):
         aB_c, prod = FactorAlgebra.product(f=self.aB, other=self.bc)
         # print(aB_c.scope_products)
         nf = FactorAlgebra.reduced_by_vars(aB_c, assignments=evidence)
-        sps = set([frozenset(s) for s in nf.scope_products])
+        sps = set([frozenset(s) for s in FactorOps.cartesian(nf)])
 
         self.assertEqual(
             sps,
@@ -305,7 +306,7 @@ class TestFactorAlg(unittest.TestCase):
         aB_c, prod = FactorAlgebra.product(f=self.aB, other=self.bc)
         a_c = FactorAlgebra.sumout_var(aB_c, self.Bf)
         dset = self.Bf.value_set()
-        for p in a_c.scope_products:
+        for p in FactorOps.cartesian(a_c):
             ps = set(p)
             f = round(a_c.phi(ps), 4)
             diff = ps.difference(dset)
@@ -327,7 +328,7 @@ class TestFactorAlg(unittest.TestCase):
         aB_c, prod = FactorAlgebra.product(f=self.aB, other=self.bc)
         a_c = FactorAlgebra.maxout_var(aB_c, self.Bf)
         dset = self.Bf.value_set()
-        for p in a_c.scope_products:
+        for p in FactorOps.cartesian(a_c):
             ps = set(p)
             f = round(a_c.phi(ps), 4)
             diff = ps.difference(dset)

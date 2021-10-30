@@ -45,12 +45,6 @@ class BaseFactor(AbstractFactor, GraphObject):
 
         self.factor_fn = factor_fn
 
-        ## cartesian product of factor domain
-        self.scope_products: List[DomainSliceSet] = list(product(*self.vars_domain()))
-
-        ## constant normalization value
-        self.Z = self.partition_value(self.vars_domain())
-
     def __str__(self):
         """"""
         msg = "Factor: " + self.id() + "\n"
@@ -73,8 +67,25 @@ class BaseFactor(AbstractFactor, GraphObject):
         if not isinstance(n, AbstractFactor):
             return False
         #
-        other_domain = n.vars_domain()
-        this_domain = self.vars_domain()
+        def rvar_filter(x: NumCatRVariable) -> bool:
+            return True
+
+        def value_filter(x: NumericValue) -> bool:
+            return True
+
+        def value_transform(x: NumericValue) -> NumericValue:
+            return x
+
+        other_domain = [
+            s.value_set(value_filter=value_filter, value_transform=value_transform)
+            for s in n.scope_vars()
+            if rvar_filter(s)
+        ]
+        this_domain = [
+            s.value_set(value_filter=value_filter, value_transform=value_transform)
+            for s in self.scope_vars()
+            if rvar_filter(s)
+        ]
         if other_domain != this_domain:
             return False
         #
@@ -111,23 +122,6 @@ class BaseFactor(AbstractFactor, GraphObject):
         \endcode
         """
         return f(self.svars)
-
-    def vars_domain(
-        self,
-        rvar_filter: Callable[[AbstractRandomVariable], bool] = lambda x: True,
-        value_filter: Callable[[NumericValue], bool] = lambda x: True,
-        value_transform: Callable[[NumericValue], NumericValue] = lambda x: x,
-    ) -> FactorDomain:
-        """!
-        \brief Get factor domain
-        \see Factor.fdomain(D, rvar_filter, value_filter, value_transform)
-        """
-        return self.fdomain(
-            D=self.scope_vars(),
-            rvar_filter=rvar_filter,
-            value_filter=value_filter,
-            value_transform=value_transform,
-        )
 
     @classmethod
     def from_abstract_factor(cls, f: AbstractFactor):
@@ -173,52 +167,6 @@ class BaseFactor(AbstractFactor, GraphObject):
         """
         return BaseFactor(gid=str(uuid4()), scope_vars=svars, factor_fn=fn)
 
-    @classmethod
-    def fdomain(
-        cls,
-        D: Set[AbstractRandomVariable],
-        rvar_filter: Callable[[AbstractRandomVariable], bool] = lambda x: True,
-        value_filter: Callable[[NumericValue], bool] = lambda x: True,
-        value_transform: Callable[[NumericValue], NumericValue] = lambda x: x,
-    ) -> FactorDomain:
-        """!
-        \brief Get factor domain Val(D) D being a set of random variables
-
-        \param D set of random variables
-        \param rvar_filter filtering function for random variables
-        \param value_filter filtering values from random variables' codomain
-        \param value_transform apply a certain transformation to values from random variables' codomain.
-
-        \return list of codomain of random variables
-
-        \code
-
-        >>> A = NumCatRVariable("A",
-        >>>                     input_data={"outcome-values": [True, False]},
-        >>>                     marginal_distribution=lambda x: 0.5)
-
-        >>> B = NumCatRVariable("B",
-        >>>                     input_data={"outcome-values": [True, False]},
-        >>>                     marginal_distribution=lambda x: 0.5)
-
-        >>> D = set([A,B])
-
-        >>> fmatches = Factor.fdomain(D=D)
-        >>> print(fmatches)
-
-        >>> [frozenset(("A", True), ("A", True)),
-        >>>  frozenset(("B", True), ("B", False)),
-        >>> ]
-
-        \endcode
-
-        """
-        return [
-            s.value_set(value_filter=value_filter, value_transform=value_transform)
-            for s in D
-            if rvar_filter(s)
-        ]
-
     def phi(self, scope_product: DomainSliceSet) -> float:
         """!
         \brief obtain a factor value for given scope random variables
@@ -243,19 +191,6 @@ class BaseFactor(AbstractFactor, GraphObject):
         \endcode
         """
         return self.factor_fn(scope_product)
-
-    def phi_normal(self, scope_product: DomainSliceSet) -> float:
-        """!
-        \brief normalize a given factor value
-
-        \param scope_product a row in conditional probability table of factor
-
-        \return normalized value preference value
-
-        \see Factor.normalize(phi_result), Factor.phi(scope_product)
-
-        """
-        return self.phi(scope_product) / self.Z
 
     def partition_value(self, domains: FactorDomain):
         """!

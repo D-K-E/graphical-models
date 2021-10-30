@@ -9,6 +9,7 @@ from random import choice
 from uuid import uuid4
 
 from pygmodels.factor.factorf.factoranalyzer import FactorAnalyzer
+from pygmodels.factor.factorf.factorops import FactorOps
 from pygmodels.gmodel.undigraph import UndiGraph
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.pgmodel.markov import ConditionalRandomField, MarkovNetwork
@@ -282,19 +283,19 @@ class MarkovTest(unittest.TestCase):
             queries=query_vars, evidences=set()
         )
         q1 = set([("A", False), ("B", False)])
-        f1 = round(prob.phi_normal(q1), 3)
+        f1 = round(FactorOps.phi_normal(prob, q1), 3)
         self.assertEqual(f1, 0.125)
 
         q2 = set([("A", False), ("B", True)])
-        f2 = round(prob.phi_normal(q2), 2)
+        f2 = round(FactorOps.phi_normal(prob, q2), 2)
         self.assertEqual(f2, 0.69)
 
         q3 = set([("A", True), ("B", False)])
-        f3 = round(prob.phi_normal(q3), 2)
+        f3 = round(FactorOps.phi_normal(prob, q3), 2)
         self.assertEqual(f3, 0.14)
 
         q4 = set([("A", True), ("B", True)])
-        f4 = round(prob.phi_normal(q4), 2)
+        f4 = round(FactorOps.phi_normal(prob, q4), 2)
         self.assertEqual(f4, 0.04)
 
     def test_from_undigraph(self):

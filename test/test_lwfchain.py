@@ -645,7 +645,7 @@ class LWFChainGraphTest(unittest.TestCase):
         s = 0
         for ps in FactorOps.cartesian(p):
             pss = set(ps)
-            f = round(p.phi_normal(pss), 4)
+            f = round(FactorOps.phi_normal(p, pss), 4)
             s += f
             if set([("A", True)]) == pss:
                 self.assertEqual(f, 0.01)
@@ -687,7 +687,7 @@ class LWFChainGraphTest(unittest.TestCase):
                 c_v = cval[1]
                 c_a = cval[2]
                 cs = set([(cname, c_v)])
-                f = round(final_factor.phi_normal(cs), 4)
+                f = round(FactorOps.phi_normal(final_factor, cs), 4)
                 s += f
                 self.assertEqual(c_a, f)
             self.assertEqual(s, 1)
@@ -704,7 +704,7 @@ class LWFChainGraphTest(unittest.TestCase):
         for e_val in comp_vals:
             ename = e_val[0]
             e_v = e_val[1]
-            f = round(final_factor.phi_normal(set([(ename, e_v)])), 4)
+            f = round(FactorOps.phi_normal(final_factor, set([(ename, e_v)])), 4)
             self.assertEqual(f, e_val[2])
 
     def test_cond_prod_by_variable_elimination_evidences_I(self):
@@ -719,7 +719,7 @@ class LWFChainGraphTest(unittest.TestCase):
         for e_val in comp_vals:
             ename = e_val[0]
             e_v = e_val[1]
-            f = round(final_factor.phi_normal(set([(ename, e_v)])), 4)
+            f = round(FactorOps.phi_normal(final_factor, set([(ename, e_v)])), 4)
             self.assertEqual(f, e_val[2])
 
     def test_cond_prod_by_variable_elimination_evidences_H(self):
@@ -734,7 +734,7 @@ class LWFChainGraphTest(unittest.TestCase):
         for e_val in comp_vals:
             ename = e_val[0]
             e_v = e_val[1]
-            f = round(final_factor.phi_normal(set([(ename, e_v)])), 4)
+            f = round(FactorOps.phi_normal(final_factor, set([(ename, e_v)])), 4)
             self.assertEqual(f, e_val[2])
 
     def test_cond_prod_by_variable_elimination_evidences_C(self):
@@ -749,7 +749,7 @@ class LWFChainGraphTest(unittest.TestCase):
         for e_val in comp_vals:
             ename = e_val[0]
             e_v = e_val[1]
-            f = round(final_factor.phi_normal(set([(ename, e_v)])), 4)
+            f = round(FactorOps.phi_normal(final_factor, set([(ename, e_v)])), 4)
             self.assertEqual(f, e_val[2])
 
     def test_cond_prod_by_variable_elimination_evidences_F(self):
@@ -764,7 +764,7 @@ class LWFChainGraphTest(unittest.TestCase):
         for e_val in comp_vals:
             ename = e_val[0]
             e_v = e_val[1]
-            f = round(final_factor.phi_normal(set([(ename, e_v)])), 4)
+            f = round(FactorOps.phi_normal(final_factor, set([(ename, e_v)])), 4)
             self.assertEqual(f, e_val[2])
 
     @unittest.skip("unfinished test")

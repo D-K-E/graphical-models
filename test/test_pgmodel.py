@@ -331,9 +331,9 @@ class PGModelTest(unittest.TestCase):
         self.assertEqual(f, set([self.a_f, self.ba_f]))
         self.assertEqual(of, set([self.cb_f]))
         afbf, v = FactorAlgebra.product(f=self.a_f, other=self.ba_f)
-        for pr in afbf.scope_products:
+        for pr in FactorOps.cartesian(afbf):
             prs = set(pr)
-            for psp in p.scope_products:
+            for psp in FactorOps.cartesian(p):
                 psps = set(psp)
                 if prs.issubset(psps) is True:
                     self.assertEqual(afbf.phi(prs), p.phi(psps))
@@ -344,7 +344,7 @@ class PGModelTest(unittest.TestCase):
         """
         ofacs = self.pgm.sum_prod_var_eliminate(factors=self.pgm.factors(), Z=self.a)
         smf = [o for o in ofacs if o.id() != "cb"][0]
-        for s in smf.scope_products:
+        for s in FactorOps.cartesian(smf):
             ss = set(s)
             f = round(smf.phi(ss), 3)
             if set([("b", True)]).issubset(ss):
@@ -359,7 +359,7 @@ class PGModelTest(unittest.TestCase):
         p = self.pgm.sum_product_elimination(
             factors=self.pgm.factors(), Zs=[self.a, self.b]
         )
-        for sp in p.scope_products:
+        for sp in FactorOps.cartesian(p):
             sps = set(sp)
             res = round(p.phi(sps), 4)
             if set([("c", True)]).issubset(sps):
@@ -383,7 +383,9 @@ class PGModelTest(unittest.TestCase):
         """"""
         ev = set([("a", True), ("b", True)])
         fs, es = self.pgm.reduce_factors_with_evidence(ev)
-        fs_s = set([frozenset([frozenset(s) for s in f.scope_products]) for f in fs])
+        fs_s = set(
+            [frozenset([frozenset(s) for s in FactorOps.cartesian(f)]) for f in fs]
+        )
         self.assertEqual(
             fs_s,
             set(
@@ -391,25 +393,25 @@ class PGModelTest(unittest.TestCase):
                     frozenset(
                         [
                             frozenset(s)
-                            for s in FactorAlgebra.reduced_by_value(
-                                self.ba_f, ev
-                            ).scope_products
+                            for s in FactorOps.cartesian(
+                                FactorAlgebra.reduced_by_value(self.ba_f, ev)
+                            )
                         ]
                     ),
                     frozenset(
                         [
                             frozenset(s)
-                            for s in FactorAlgebra.reduced_by_value(
-                                self.a_f, ev
-                            ).scope_products
+                            for s in FactorOps.cartesian(
+                                FactorAlgebra.reduced_by_value(self.a_f, ev)
+                            )
                         ]
                     ),
                     frozenset(
                         [
                             frozenset(s)
-                            for s in FactorAlgebra.reduced_by_value(
-                                self.cb_f, ev
-                            ).scope_products
+                            for s in FactorOps.cartesian(
+                                FactorAlgebra.reduced_by_value(self.cb_f, ev)
+                            )
                         ]
                     ),
                 ]
@@ -427,7 +429,7 @@ class PGModelTest(unittest.TestCase):
         s = 0
         for ps in FactorOps.cartesian(p):
             pss = set(ps)
-            f = round(p.phi_normal(pss), 4)
+            f = round(FactorOps.phi_normal(p, pss), 4)
             s += f
             if set([("c", True)]) == pss:
                 self.assertEqual(f, 0.32)

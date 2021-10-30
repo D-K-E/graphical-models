@@ -10,6 +10,7 @@ from pygmodels.gmodel.digraph import DiGraph
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.pgmodel.bayesian import BayesianNetwork
 from pygmodels.factor.factor import Factor
+from pygmodels.factor.factorf.factorops import FactorOps
 from pygmodels.pgmtype.randomvariable import NumCatRVariable
 
 
@@ -85,31 +86,19 @@ class BayesianNetworkTest(unittest.TestCase):
             sfs = set(scope_product)
             if sfs == set([("rain", False), ("sprink", False), ("wet", True)]):
                 return 0.0
-            elif sfs == set(
-                [("rain", False), ("sprink", False), ("wet", False)]
-            ):
+            elif sfs == set([("rain", False), ("sprink", False), ("wet", False)]):
                 return 1.0
-            elif sfs == set(
-                [("rain", False), ("sprink", True), ("wet", True)]
-            ):
+            elif sfs == set([("rain", False), ("sprink", True), ("wet", True)]):
                 return 0.8
-            elif sfs == set(
-                [("rain", False), ("sprink", True), ("wet", False)]
-            ):
+            elif sfs == set([("rain", False), ("sprink", True), ("wet", False)]):
                 return 0.2
-            elif sfs == set(
-                [("rain", True), ("sprink", False), ("wet", True)]
-            ):
+            elif sfs == set([("rain", True), ("sprink", False), ("wet", True)]):
                 return 0.9
-            elif sfs == set(
-                [("rain", True), ("sprink", False), ("wet", False)]
-            ):
+            elif sfs == set([("rain", True), ("sprink", False), ("wet", False)]):
                 return 0.1
             elif sfs == set([("rain", True), ("sprink", True), ("wet", True)]):
                 return 0.99
-            elif sfs == set(
-                [("rain", True), ("sprink", True), ("wet", False)]
-            ):
+            elif sfs == set([("rain", True), ("sprink", True), ("wet", False)]):
                 return 0.01
             else:
                 raise ValueError("unknown product")
@@ -271,7 +260,7 @@ class BayesianNetworkTest(unittest.TestCase):
         probs, alpha = self.bayes_n.cond_prod_by_variable_elimination(
             query_vars, evidences=evidences
         )
-        for ps in probs.scope_products:
+        for ps in FactorOps.cartesian(probs):
             pss = set(ps)
             ff = round(probs.phi(pss), 4)
             if set([("E", True)]) == pss:
@@ -297,16 +286,10 @@ class BayesianNetworkTest(unittest.TestCase):
             marginal_distribution=lambda x: 0.624 if x else 0.376,
         )
         AB_Edge = Edge(
-            edge_id="ab_edge",
-            start_node=A,
-            end_node=B,
-            edge_type=EdgeType.DIRECTED,
+            edge_id="ab_edge", start_node=A, end_node=B, edge_type=EdgeType.DIRECTED,
         )
         BC_Edge = Edge(
-            edge_id="bc_edge",
-            start_node=B,
-            end_node=C,
-            edge_type=EdgeType.DIRECTED,
+            edge_id="bc_edge", start_node=B, end_node=C, edge_type=EdgeType.DIRECTED,
         )
 
         def phi_a(scope_product):
@@ -348,9 +331,7 @@ class BayesianNetworkTest(unittest.TestCase):
         A_f = Factor(gid="A_f", scope_vars=set([A]), factor_fn=phi_a)
         AB_f = Factor(gid="AB_f", scope_vars=set([A, B]), factor_fn=phi_ab)
         BC_f = Factor(gid="BC_f", scope_vars=set([C, B]), factor_fn=phi_bc)
-        dig = DiGraph(
-            gid="temp", nodes=set([A, B, C]), edges=set([AB_Edge, BC_Edge])
-        )
+        dig = DiGraph(gid="temp", nodes=set([A, B, C]), edges=set([AB_Edge, BC_Edge]))
         factors = set([A_f, AB_f, BC_f])
         bn = BayesianNetwork(
             gid="temp",
@@ -360,9 +341,7 @@ class BayesianNetworkTest(unittest.TestCase):
         )
         q = set([B])
         evidence = set([])
-        foo, a = bn.cond_prod_by_variable_elimination(
-            queries=q, evidences=evidence
-        )
+        foo, a = bn.cond_prod_by_variable_elimination(queries=q, evidences=evidence)
         bayes = BayesianNetwork.from_digraph(dig, factors)
         foo2, a2 = bayes.cond_prod_by_variable_elimination(
             queries=q, evidences=evidence
