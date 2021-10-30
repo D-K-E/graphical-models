@@ -263,6 +263,7 @@ class FactorAnalyzer:
 
         \return normalized preference value
         """
-        Z = FactorOps.partition_value(FactorOps.factor_domain(f))
+        fdomain = FactorOps.factor_domain(f)
+        Z = FactorOps.partition_value(fdomain)
 
         return phi_result / Z
