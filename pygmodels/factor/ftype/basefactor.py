@@ -16,6 +16,7 @@ from typing import Optional, Callable, Set
 
 from functools import reduce as freduce
 from itertools import combinations, product
+from uuid import uuid4
 
 
 class BaseFactor(AbstractFactor, GraphObject):

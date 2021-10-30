@@ -13,6 +13,8 @@ from pygmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
 
 from pygmodels.value.value import FiniteVSet, OrderedFiniteVSet
 
+ProbabilityValue = NumericValue
+
 
 class FactorAnalyzer:
     """!
@@ -24,7 +26,7 @@ class FactorAnalyzer:
         f: AbstractFactor,
         comp_fn: Callable[[float, float], bool] = lambda phi_s, mx: phi_s > mx,
         comp_v: float = float("-inf"),
-    ):
+    ) -> Tuple[Set[OrderedFiniteVSet], ProbabilityValue]:
         """"""
         if not isinstance(f, AbstractFactor):
             raise TypeError("The object must be of Factor type")
@@ -40,7 +42,9 @@ class FactorAnalyzer:
         return out_val, cval
 
     @staticmethod
-    def _max_prob_value(f: AbstractFactor):
+    def _max_prob_value(
+        f: AbstractFactor,
+    ) -> Tuple[Set[OrderedFiniteVSet], ProbabilityValue]:
         """!
         \brief obtain highest yielding domain value and its associated codomain
         member
@@ -53,7 +57,9 @@ class FactorAnalyzer:
         )
 
     @staticmethod
-    def _min_prob_value(f: AbstractFactor):
+    def _min_prob_value(
+        f: AbstractFactor,
+    ) -> Tuple[Set[OrderedFiniteVSet], ProbabilityValue]:
         """!
         \brief obtain highest yielding domain value and its associated codomain
         member
@@ -66,7 +72,7 @@ class FactorAnalyzer:
         )
 
     @staticmethod
-    def max_probability(f: AbstractFactor) -> float:
+    def max_probability(f: AbstractFactor) -> ProbabilityValue:
         """!
         \brief maximum preference value for this factor
 
@@ -157,7 +163,7 @@ class FactorAnalyzer:
         return mval
 
     @staticmethod
-    def min_probability(f: AbstractFactor) -> float:
+    def min_probability(f: AbstractFactor) -> ProbabilityValue:
         """!
         \brief minimum preference value for this factor
 
