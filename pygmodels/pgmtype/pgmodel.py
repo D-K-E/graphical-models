@@ -16,6 +16,7 @@ from uuid import uuid4
 
 from pygmodels.factor.factorf.factoranalyzer import FactorAnalyzer
 from pygmodels.factor.factorf.factorops import FactorOps
+from pygmodels.factor.factorf.factoralg import FactorAlgebra
 from pygmodels.ganalysis.graphanalyzer import (
     BaseGraphAnalyzer,
     BaseGraphBoolAnalyzer,
@@ -36,15 +37,11 @@ from pygmodels.factor.factor import Factor
 from pygmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
 
 
-def min_unmarked_neighbours(
-    g: Graph, nodes: Set[Node], marked: Dict[str, Node]
-):
+def min_unmarked_neighbours(g: Graph, nodes: Set[Node], marked: Dict[str, Node]):
     """!
     \brief find an unmarked node with minimum number of neighbours
     """
-    ordered = [
-        (n, BaseGraphNumericAnalyzer.nb_neighbours_of(g, n)) for n in nodes
-    ]
+    ordered = [(n, BaseGraphNumericAnalyzer.nb_neighbours_of(g, n)) for n in nodes]
     ordered.sort(key=lambda x: x[1])
     for X, nb in sorted(ordered, key=lambda x: x[1]):
         if marked[X.id()] is False:
@@ -137,13 +134,7 @@ class PGModel(Graph):
         """!
         choose factors using Koller, Friedman 2009, p. 299 as criteria
         """
-        return set(
-            [
-                f
-                for f in self.factors()
-                if self.is_scope_subset_of(f, X) is True
-            ]
-        )
+        return set([f for f in self.factors() if self.is_scope_subset_of(f, X) is True])
 
     def get_factor_product(self, fs: Set[Factor]):
         """!
@@ -157,7 +148,7 @@ class PGModel(Graph):
             return factors[0], None
         prod = factors.pop(0)
         for i in range(0, len(factors)):
-            prod, val = FactorOps.cls_product(
+            prod, val = FactorAlgebra.product(
                 f=prod,
                 other=factors[i],
                 product_fn=lambda x, y: x * y,
@@ -186,9 +177,7 @@ class PGModel(Graph):
         eliminate variables using given strategy. Unites max product and sum
         product
         """
-        (prod, scope_factors, other_factors) = self.get_factor_product_var(
-            factors, Z
-        )
+        (prod, scope_factors, other_factors) = self.get_factor_product_var(factors, Z)
         sum_factor = elimination_strategy(prod, Z)
         other_factors = other_factors.union({sum_factor})
         return other_factors, sum_factor, prod
@@ -203,7 +192,7 @@ class PGModel(Graph):
         res = self.eliminate_variable_by(
             factors=factors,
             Z=Z,
-            elimination_strategy=lambda x, y: FactorOps.cls_sumout_var(x, y),
+            elimination_strategy=lambda x, y: FactorAlgebra.sumout_var(x, y),
         )
         return res[0]
 
@@ -279,9 +268,7 @@ class PGModel(Graph):
         return cardinality
 
     def reduce_queries_with_evidence(
-        self,
-        queries: Set[NumCatRVariable],
-        evidences: Set[Tuple[str, NumericValue]],
+        self, queries: Set[NumCatRVariable], evidences: Set[Tuple[str, NumericValue]],
     ) -> Set[NumCatRVariable]:
         """"""
         reduced_queries = set()
@@ -293,26 +280,19 @@ class PGModel(Graph):
             reduced_queries.add(q)
         return reduced_queries
 
-    def reduce_factors_with_evidence(
-        self, evidences: Set[Tuple[str, NumericValue]]
-    ):
+    def reduce_factors_with_evidence(self, evidences: Set[Tuple[str, NumericValue]]):
         """!
         reduce factors if there is evidence
         """
         if len(evidences) == 0:
             return self.factors(), set()
         if any(e[0] not in {v.id() for v in self.V} for e in evidences):
-            raise ValueError(
-                "evidence set contains variables out of vertices of graph"
-            )
+            raise ValueError("evidence set contains variables out of vertices of graph")
         elist = [e[0] for e in evidences]
         E = set([v for v in self.V if v.id() in elist])
         fs = self.factors()
         factors = set(
-            [
-                FactorOps.cls_reduced_by_value(f, assignments=evidences)
-                for f in fs
-            ]
+            [FactorAlgebra.reduced_by_value(f, assignments=evidences) for f in fs]
         )
         return factors, E
 
@@ -327,9 +307,7 @@ class PGModel(Graph):
         from Koller and Friedman 2009, p. 304
         """
         if queries.issubset(self.V) is False:
-            raise ValueError(
-                "Query variables must be a subset of vertices of graph"
-            )
+            raise ValueError("Query variables must be a subset of vertices of graph")
         queries = self.reduce_queries_with_evidence(queries, evidences)
         factors, E = self.reduce_factors_with_evidence(evidences)
         Zs = set()
@@ -353,11 +331,10 @@ class PGModel(Graph):
         cardinality = self.order_by_greedy_metric(nodes=Zs, s=ordering_fn)
         V = {v.id(): v for v in self.V}
         ordering = [
-            V[n[0]]
-            for n in sorted(list(cardinality.items()), key=lambda x: x[1])
+            V[n[0]] for n in sorted(list(cardinality.items()), key=lambda x: x[1])
         ]
         phi = self.sum_product_elimination(factors=factors, Zs=ordering)
-        alpha = FactorOps.cls_sumout_vars(phi, queries)
+        alpha = FactorAlgebra.sumout_vars(phi, queries)
         return phi, alpha
 
     def max_product_eliminate_var(
@@ -369,21 +346,17 @@ class PGModel(Graph):
         return self.eliminate_variable_by(
             factors=factors,
             Z=Z,
-            elimination_strategy=lambda x, y: FactorOps.cls_maxout_var(x, y),
+            elimination_strategy=lambda x, y: FactorAlgebra.maxout_var(x, y),
         )
 
-    def max_product_eliminate_vars(
-        self, factors: Set[Edge], Zs: List[NumCatRVariable]
-    ):
+    def max_product_eliminate_vars(self, factors: Set[Edge], Zs: List[NumCatRVariable]):
         """!
         from Koller and Friedman 2009, p. 557
         """
         Z_potential: List[Tuple[Factor, int]] = []
         for i in range(len(Zs)):
             Z = Zs[i]
-            factors, maxed_out, z_phi = self.max_product_eliminate_var(
-                factors, Z=Z
-            )
+            factors, maxed_out, z_phi = self.max_product_eliminate_var(factors, Z=Z)
             Z_potential.append(z_phi)
         #
         values = self.traceback_map(potentials=Z_potential, X_is=Zs)
@@ -398,13 +371,10 @@ class PGModel(Graph):
         for z in self.V:
             if z not in E:
                 Zs.add(z)
-        cardinality = self.order_by_greedy_metric(
-            nodes=Zs, s=min_unmarked_neighbours
-        )
+        cardinality = self.order_by_greedy_metric(nodes=Zs, s=min_unmarked_neighbours)
         V = {v.id(): v for v in self.V}
         ordering = [
-            V[n[0]]
-            for n in sorted(list(cardinality.items()), key=lambda x: x[1])
+            V[n[0]] for n in sorted(list(cardinality.items()), key=lambda x: x[1])
         ]
         assignments, factors, z_phi = self.max_product_eliminate_vars(
             factors=factors, Zs=ordering
@@ -418,7 +388,7 @@ class PGModel(Graph):
         """
         assignments, factors, z_phi = self.max_product_ve(evidences=evidences)
         probs = set()
-        for f in z_phi.factor_domain():
+        for f in FactorOps.cartesian(z_phi):
             probs.add(z_phi.phi(f))
         return max(probs)
 
@@ -438,7 +408,7 @@ class PGModel(Graph):
         """
         max_assignments = {}
         for i in range(len(potentials) - 1, -1, -1):
-            pmax = FactorAnalyzer.cls_max_value(potentials[i])
+            pmax = FactorAnalyzer.max_value(potentials[i])
             diff = set([p for p in pmax if p[0] not in max_assignments])
             max_assign = diff.pop()
             max_assignments[max_assign[0]] = max_assign[1]

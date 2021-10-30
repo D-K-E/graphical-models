@@ -1,10 +1,12 @@
 """!
-Different types or aliases for codomains of pgm objects
+\file codomain.py Represents a codomain of a function. Since we are dealing
+with probabilities and related concepts the codomain should be a measurable
+value
 """
 
 from typing import Any, Callable, Dict, FrozenSet, List, Set, Tuple
 
-NumericValue = float
+from pygmodels.value.value import SetValue
 
 
 class Outcome:
@@ -12,9 +14,12 @@ class Outcome:
         self.data = v
 
 
-class CodomainValue:
-    def __init__(self, v):
-        self.data = v
+CodomainValue = SetValue
+Codomain = Set[CodomainValue]
+OrderedCodomain = List[CodomainValue]
+
+FiniteCodomain = FrozenSet[CodomainValue]
+OrderedFiniteCodomain = Tuple[CodomainValue]
 
 
 class PossibleOutcomes:

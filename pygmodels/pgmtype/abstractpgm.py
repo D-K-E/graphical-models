@@ -12,54 +12,12 @@ from pygmodels.gtype.abstractobj import (
     AbstractGraphObj,
     AbstractNode,
 )
-from pygmodels.pgmtype.codomaintype import NumericValue, Outcome
+from pygmodels.value.codomain import Outcome
+from pygmodels.value.value import NumericValue
+from pygmodels.factor.ftype.abstractfactor import AbstractFactor
+from pygmodels.randvar.rtype.abstractrandvar import AbstractRandomVariable
 
 
-class AbstractRandomVariable(AbstractNode):
-    """!
-    Abstract random variable
-    """
-
-    @abstractmethod
-    def p(self, out: Outcome) -> NumericValue:
-        """!
-        Measure the probability of the given outcome
-        """
-        raise NotImplementedError
-
-
-class AbstractFactor(AbstractGraphObj):
-    """"""
-
-    @abstractmethod
-    def scope_vars(self, f: Callable[[Set[AbstractNode]], Set[AbstractNode]]):
-        """"""
-        raise NotImplementedError
-
-    @abstractmethod
-    def vars_domain(
-        self,
-        rvar_filter: Callable[[AbstractNode], bool] = lambda x: True,
-        value_filter: Callable[[NumericValue], bool] = lambda x: True,
-        value_transform: Callable[[NumericValue], NumericValue] = lambda x: x,
-    ) -> List[FrozenSet[Tuple[str, NumericValue]]]:
-        """"""
-        raise NotImplementedError
-
-    @abstractmethod
-    def partition_value(self, vd: List[FrozenSet[Tuple[str, NumericValue]]]):
-        """"""
-        raise NotImplementedError
-
-    @abstractmethod
-    def phi(self, scope_product: Set[Tuple[str, float]]):
-        """"""
-        raise NotImplementedError
-
-    @abstractmethod
-    def phi_normal(self, scope_product: Set[Tuple[str, float]]):
-        """"""
-        raise NotImplementedError
 
 
 class AbstractPGM(AbstractGraph):

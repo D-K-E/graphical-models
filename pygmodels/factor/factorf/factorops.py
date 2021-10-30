@@ -10,9 +10,14 @@ from itertools import combinations, product
 from typing import Callable, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
-from pygmodels.factor.factorf.factoranalyzer import FactorAnalyzer
-from pygmodels.factor.factor import BaseFactor, Factor
 from pygmodels.pgmtype.abstractpgm import AbstractFactor
+from pygmodels.factor.ftype.abstractfactor import FactorScope
+from pygmodels.factor.ftype.abstractfactor import FactorDomain
+from pygmodels.factor.ftype.abstractfactor import DomainSliceSet
+from pygmodels.factor.ftype.abstractfactor import DomainSubset
+from pygmodels.factor.ftype.abstractfactor import FactorCartesianProduct
+
+
 from pygmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
 
 
@@ -21,26 +26,13 @@ class FactorOps:
     Operations a given factor
     """
 
-    def __init__(self, f):
-        """"""
-        if isinstance(f, AbstractFactor):
-            fac = Factor.from_abstract_factor(f)
-        elif isinstance(f, BaseFactor):
-            fac = Factor.from_base_factor(f)
-        elif isinstance(f, Factor):
-            fac = f
-        else:
-            raise TypeError("argument must inherit from AbstractFactor object")
-        self.factor = fac
-
-    @classmethod
-    def cls_product(
-        cls,
-        f: Factor,
-        other: Factor,
+    @staticmethod
+    def product(
+        f: AbstractFactor,
+        other: AbstractFactor,
         product_fn=lambda x, y: x * y,
         accumulator=lambda added, accumulated: added * accumulated,
-    ) -> Tuple[Factor, float]:
+    ) -> Tuple[Tuple[FactorScope, Callable], float]:
         """!
         \brief Factor product operation from Koller, Friedman 2009, p. 107
         \f$ \psi(X,Y,Z) =  \phi(X,Y) \cdot \phi(Y,Z) \f$
@@ -64,10 +56,10 @@ class FactorOps:
         \return tuple whose first element is the resulting factor and second
         element is the accumulated product.
         """
-        if not isinstance(f, Factor):
+        if not isinstance(f, AbstractFactor):
             raise TypeError("f argument needs to be a factor")
 
-        if not isinstance(other, Factor):
+        if not isinstance(other, AbstractFactor):
             raise TypeError("other needs to be a factor")
         #
         svar = f.scope_vars()
@@ -76,8 +68,8 @@ class FactorOps:
         var_inter = list(var_inter)
         vsets = [v.value_set() for v in var_inter]
         inter_products = list(product(*vsets))
-        smatch = f.factor_domain()
-        omatch = other.factor_domain()
+        smatch = FactorOps.cartesian(f)
+        omatch = FactorOps.cartesian(other)
         prod = 1.0
         common_match = set()
         for iproduct in inter_products:
@@ -88,9 +80,7 @@ class FactorOps:
                     prod_s = set(iproduct)
                     if prod_s.issubset(ss) and prod_s.issubset(ost):
                         common = ss.union(ost)
-                        multi = product_fn(
-                            f.factor_fn(ss), other.factor_fn(ost)
-                        )
+                        multi = product_fn(f.factor_fn(ss), other.factor_fn(ost))
                         common_match.add((multi, tuple(common)))
                         prod = accumulator(multi, prod)
 
@@ -100,13 +90,13 @@ class FactorOps:
                 if set(match) == set(scope_product):
                     return multip
 
-        f = Factor(gid=str(uuid4()), scope_vars=svar.union(ovar), factor_fn=fx)
+        f = tuple([frozenset(svar.union(ovar)), fx])
         return f, prod
 
-    @classmethod
-    def cls_reduced(
-        cls, f: Factor, assignments: Set[Tuple[str, NumericValue]]
-    ) -> Factor:
+    @staticmethod
+    def reduced(
+        f: AbstractFactor, assignments: DomainSubset
+    ) -> Tuple[FactorScope, Callable]:
         """!
         \brief reduce factor using given context
 
@@ -142,26 +132,23 @@ class FactorOps:
                 if sv.id() == k:
                     sv.reduce_to_value(value)
             svars.add(sv)
-        return Factor(gid=str(uuid4()), scope_vars=svars, factor_fn=f.phi)
+        return tuple([svars, f.phi])
 
-    @classmethod
-    def cls_reduced_by_value(
-        cls, f: Factor, assignments: Set[Tuple[str, NumericValue]]
-    ):
+    @staticmethod
+    def reduced_by_value(
+        f: AbstractFactor, assignments: DomainSubset
+    ) -> Tuple[FactorScope, Callable]:
         """!
         \brief \see Factor.reduced(context)
 
         \return Factor
         """
-        return cls.cls_reduced(f, assignments)
+        return FactorOps.reduced(f, assignments)
 
-    @classmethod
-    def cls_filter_assignments(
-        cls,
-        f: Factor,
-        assignments: Set[Tuple[str, NumericValue]],
-        context: Set[NumCatRVariable],
-    ) -> Set[Tuple[str, NumericValue]]:
+    @staticmethod
+    def filter_assignments(
+        f: AbstractFactor, assignments: DomainSubset, context: FactorScope,
+    ) -> DomainSubset:
         """!
         \brief filter out assignments that do not belong to context domain
 
@@ -183,12 +170,10 @@ class FactorOps:
                 assignment_d.pop(a)
         return set([(k, v) for k, v in assignment_d.items()])
 
-    @classmethod
-    def cls_reduced_by_vars(
-        cls,
-        f: Factor,
-        assignments: Set[Tuple[str, NumericValue]],
-    ):
+    @staticmethod
+    def reduced_by_vars(
+        f: AbstractFactor, assignments: DomainSubset
+    ) -> Tuple[FactorScope, Callable]:
         """!
         Koller, Friedman 2009, p. 111 follows the definition 4.5
 
@@ -199,10 +184,12 @@ class FactorOps:
 
         \return Factor
         """
-        return cls.cls_reduced(f=f, assignments=assignments)
+        return FactorOps.reduced(f=f, assignments=assignments)
 
-    @classmethod
-    def cls_maxout_var(cls, f: Factor, Y: NumCatRVariable):
+    @staticmethod
+    def maxout_var(
+        f: AbstractFactor, Y: NumCatRVariable
+    ) -> Tuple[FactorScope, Callable]:
         """!
         \brief max the variable out of factor as per Koller, Friedman 2009, p. 555
 
@@ -222,27 +209,104 @@ class FactorOps:
 
         \return Factor
         """
-        if Y not in f:
+        if Y not in f.scope_vars():
             raise ValueError("argument is not in scope of this factor")
 
         # Y_vals = Y.value_set()
-        products = f.factor_domain()
-        fn = f.factor_fn
+        products = FactorOps.cartesian(f)
+        fn = f.phi
 
-        def psi(scope_product: Set[Tuple[str, NumericValue]]):
+        def psi(scope_product: DomainSliceSet):
             """"""
             s = set(scope_product)
             diffs = set([p for p in products if s.issubset(p) is True])
             return max([fn(d) for d in diffs])
 
-        return Factor(
-            gid=str(uuid4()),
-            scope_vars=f.scope_vars().difference({Y}),
-            factor_fn=psi,
-        )
+        return tuple([frozenset(f.scope_vars().difference({Y})), psi])
 
-    @classmethod
-    def cls_sumout_var(cls, f: Factor, Y: NumCatRVariable):
+    @staticmethod
+    def factor_domain(
+        f: AbstractFactor,
+        D: Set[NumCatRVariable],
+        rvar_filter: Callable[[NumCatRVariable], bool] = lambda x: True,
+        value_filter: Callable[[NumericValue], bool] = lambda x: True,
+        value_transform: Callable[[NumericValue], NumericValue] = lambda x: x,
+    ) -> FactorDomain:
+        """!
+        \brief Get factor domain Val(D) D being a set of random variables
+
+        \param D set of random variables
+        \param rvar_filter filtering function for random variables
+        \param value_filter filtering values from random variables' codomain
+        \param value_transform apply a certain transformation to values from random variables' codomain.
+
+        \return list of codomain of random variables
+
+        \code
+
+        >>> A = NumCatRVariable("A",
+        >>>                     input_data={"outcome-values": [True, False]},
+        >>>                     marginal_distribution=lambda x: 0.5)
+
+        >>> B = NumCatRVariable("B",
+        >>>                     input_data={"outcome-values": [True, False]},
+        >>>                     marginal_distribution=lambda x: 0.5)
+
+        >>> D = set([A,B])
+
+        >>> fmatches = FactorOps.factor_domain(D=D)
+        >>> print(fmatches)
+
+        >>> [frozenset(("A", True), ("A", True)),
+        >>>  frozenset(("B", True), ("B", False)),
+        >>> ]
+
+        \endcode
+
+        """
+        return [
+            s.value_set(value_filter=value_filter, value_transform=value_transform)
+            for s in D
+            if rvar_filter(s)
+        ]
+
+    @staticmethod
+    def cartesian(f: AbstractFactor) -> FactorCartesianProduct:
+        """!
+        \brief Compute cartesian product over factor domain
+
+        The arguments are there for filtering or manipulating factor domain:
+        \see FactorOps.factor_domain
+
+        \code{.py}
+
+        >>> A = NumCatRVariable("A",
+        >>>                     input_data={"outcome-values": [True, False]},
+        >>>                     marginal_distribution=lambda x: 0.5)
+
+        >>> B = NumCatRVariable("B",
+        >>>                     input_data={"outcome-values": [True, False]},
+        >>>                     marginal_distribution=lambda x: 0.5)
+
+        >>> D = set([A,B])
+
+        >>> fmatches = Factor.matches(D=D)
+        >>> print(fmatches)
+
+        >>> [frozenset([("A", True), ("B", True)]),
+        >>>  frozenset([("A", True), ("B", False)]),
+        >>>  frozenset([("A", False), ("B", True)]),
+        >>>  frozenset([("A", False), ("B", False)])]
+
+        \endcode
+        """
+        domain_values = FactorOps.factor_domain(f, D=f.scope_vars())
+        return [frozenset(s) for s in list(product(*domain_values))]
+
+    @staticmethod
+    def sumout_var(
+        f: AbstractFactor, Y: NumCatRVariable
+    ) -> Tuple[FactorScope, Callable]:
         """!
         \brief Sum the variable out of factor as per Koller, Friedman 2009, p. 297
 
@@ -266,106 +330,20 @@ class FactorOps:
 
         \return Factor
         """
-        if Y not in f:
+        if Y not in f.scope_vars():
             msg = "Argument " + str(Y)
             msg += " is not in scope of this factor: "
             msg += " ".join(f.scope_vars())
             raise ValueError(msg)
 
         # Y_vals = Y.value_set()
-        products = f.factor_domain()
-        fn = f.factor_fn
+        products = FactorOps.cartesian(f)
+        fn = f.phi
 
-        def psi(scope_product: Set[Tuple[str, NumericValue]]):
+        def psi(scope_product: DomainSliceSet):
             """"""
             s = set(scope_product)
             diffs = set([p for p in products if s.issubset(p) is True])
             return sum([fn(d) for d in diffs])
 
-        return Factor(
-            gid=str(uuid4()),
-            scope_vars=f.scope_vars().difference({Y}),
-            factor_fn=psi,
-        )
-
-    @classmethod
-    def cls_sumout_vars(cls, f: Factor, Ys: Set[NumCatRVariable]):
-        """!
-        \brief Sum the variable out of factor as per Koller, Friedman 2009, p. 297
-
-        \see Factor.sumout_var(Y)
-
-        \return Factor
-        """
-        if len(Ys) == 0:
-            raise ValueError("variables not be an empty set")
-        if len(Ys) == 1:
-            v = Ys.pop()
-            return FactorOps.cls_sumout_var(f, v)
-        ylst = list(Ys)
-        fac = FactorOps.cls_sumout_var(f, ylst[0])
-        for i in range(1, len(ylst)):
-            fac = FactorOps.cls_sumout_var(fac, ylst[i])
-        return fac
-
-    def product(
-        self,
-        other: Factor,
-        product_fn=lambda x, y: x * y,
-        accumulator=lambda added, accumulated: added * accumulated,
-    ) -> Tuple[Factor, float]:
-        """!
-        Wrapper of FactorOps.cls_product
-        """
-        return self.cls_product(
-            f=self.factor,
-            other=other,
-            product_fn=product_fn,
-            accumulator=accumulator,
-        )
-
-    def reduced(self, assignments):
-        """!
-        Wrapper of FactorOps.cls_reduced
-        """
-        return self.cls_reduced(f=self.factor, assignments=assignments)
-
-    def reduced_by_value(self, assignments):
-        """!
-        Wrapper of FactorOps.cls_reduced_by_value
-        """
-        return self.cls_reduced_by_value(
-            f=self.factor, assignments=assignments
-        )
-
-    def filter_assignments(self, assignments):
-        """!
-        Wrapper of FactorOps.cls_filter_assignments
-        """
-        return self.cls_filter_assignments(
-            f=self.factor, assignments=assignments
-        )
-
-    def reduced_by_vars(self, assignments):
-        """!
-        Wrapper of FactorOps.cls_reduced_by_vars
-        """
-        return self.cls_reduced_by_vars(f=self.factor, assignments=assignments)
-
-    def maxout_var(self, Y: NumCatRVariable):
-        """!
-        Wrapper of FactorOps.cls_maxout_var
-        """
-        return self.cls_maxout_var(f=self.factor, Y=Y)
-
-    def sumout_var(self, Y: NumCatRVariable):
-        """!
-        Wrapper of FactorOps.cls_sumout_var
-        """
-        return self.cls_sumout_var(f=self.factor, Y=Y)
-
-    def sumout_vars(self, Ys: Set[NumCatRVariable]):
-        """!
-        Wrapper of FactorOps.cls_sumout_var
-        """
-        return self.cls_sumout_vars(f=self.factor, Y=Ys)
+        return tuple([frozenset(f.scope_vars().difference({Y})), psi])

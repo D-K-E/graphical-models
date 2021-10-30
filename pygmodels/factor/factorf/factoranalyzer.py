@@ -7,9 +7,11 @@ or a set of factors.
 
 from typing import Callable, FrozenSet, List, Optional, Set, Tuple, Union
 
-from pygmodels.pgmtype.abstractpgm import AbstractFactor
-from pygmodels.factor.factor import BaseFactor, Factor
+from pygmodels.factor.ftype.abstractfactor import AbstractFactor
+from pygmodels.factor.factorf.factorops import FactorOps
 from pygmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
+
+from pygmodels.value.value import FiniteVSet, OrderedFiniteVSet
 
 
 class FactorAnalyzer:
@@ -17,32 +19,19 @@ class FactorAnalyzer:
     Analyzes a given factor
     """
 
-    def __init__(self, f):
-        """"""
-        if isinstance(f, AbstractFactor):
-            fac = Factor.from_abstract_factor(f)
-        elif isinstance(f, BaseFactor):
-            fac = Factor.from_base_factor(f)
-        elif isinstance(f, Factor):
-            fac = f
-        else:
-            raise TypeError("argument must inherit from AbstractFactor object")
-        self.factor = fac
-
-    @classmethod
+    @staticmethod
     def _compare_prob_value(
-        cls,
-        f: Factor,
+        f: AbstractFactor,
         comp_fn: Callable[[float, float], bool] = lambda phi_s, mx: phi_s > mx,
         comp_v: float = float("-inf"),
     ):
         """"""
-        if not isinstance(f, Factor):
+        if not isinstance(f, AbstractFactor):
             raise TypeError("The object must be of Factor type")
 
         cval = comp_v
         out_val = None
-        for sp in f.factor_domain():
+        for sp in FactorOps.cartesian(f):
             ss = frozenset(sp)
             phi_s = f.phi(ss)
             if comp_fn(phi_s, cval):
@@ -50,8 +39,8 @@ class FactorAnalyzer:
                 out_val = ss
         return out_val, cval
 
-    @classmethod
-    def _max_prob_value(cls, f: Factor):
+    @staticmethod
+    def _max_prob_value(f: AbstractFactor):
         """!
         \brief obtain highest yielding domain value and its associated codomain
         member
@@ -59,12 +48,12 @@ class FactorAnalyzer:
         Obtain the highest preference value yielding domain member of this
         factor with its associated value.
         """
-        return cls._compare_prob_value(
+        return FactorAnalyzer._compare_prob_value(
             f=f, comp_fn=lambda phi_s, mx: phi_s > mx, comp_v=float("-inf")
         )
 
-    @classmethod
-    def _min_prob_value(cls, f: Factor):
+    @staticmethod
+    def _min_prob_value(f: AbstractFactor):
         """!
         \brief obtain highest yielding domain value and its associated codomain
         member
@@ -72,12 +61,12 @@ class FactorAnalyzer:
         Obtain the highest preference value yielding domain member of this
         factor with its associated value.
         """
-        return cls._compare_prob_value(
+        return FactorAnalyzer._compare_prob_value(
             f=f, comp_fn=lambda phi_s, mx: phi_s < mx, comp_v=float("inf")
         )
 
-    @classmethod
-    def cls_max_probability(cls, f: Factor) -> float:
+    @staticmethod
+    def max_probability(f: AbstractFactor) -> float:
         """!
         \brief maximum preference value for this factor
 
@@ -115,14 +104,14 @@ class FactorAnalyzer:
 
         \endcode
         """
-        if not isinstance(f, Factor):
+        if not isinstance(f, AbstractFactor):
             raise TypeError("The object must be of Factor type")
 
-        mval, mprob = cls._max_prob_value(f)
+        mval, mprob = FactorAnalyzer._max_prob_value(f)
         return mprob
 
-    @classmethod
-    def cls_max_value(cls, f: Factor) -> Set[Tuple[str, NumericValue]]:
+    @staticmethod
+    def max_value(f: AbstractFactor) -> Set[OrderedFiniteVSet]:
         """!
         \brief maximum factor value for this factor
 
@@ -164,11 +153,11 @@ class FactorAnalyzer:
 
         \endcode
         """
-        mval, mrob = cls._max_prob_value(f)
+        mval, mrob = FactorAnalyzer._max_prob_value(f)
         return mval
 
-    @classmethod
-    def cls_min_probability(cls, f: Factor) -> float:
+    @staticmethod
+    def min_probability(f: AbstractFactor) -> float:
         """!
         \brief minimum preference value for this factor
 
@@ -206,14 +195,14 @@ class FactorAnalyzer:
 
         \endcode
         """
-        if not isinstance(f, Factor):
+        if not isinstance(f, AbstractFactor):
             raise TypeError("The object must be of Factor type")
 
-        mval, mprob = cls._min_prob_value(f)
+        mval, mprob = FactorAnalyzer._min_prob_value(f)
         return mprob
 
-    @classmethod
-    def cls_min_value(cls, f: Factor) -> Set[Tuple[str, NumericValue]]:
+    @staticmethod
+    def min_value(f: AbstractFactor) -> Set[OrderedFiniteVSet]:
         """!
         \brief minimum factor value for this factor
 
@@ -255,11 +244,11 @@ class FactorAnalyzer:
 
         \endcode
         """
-        mval, mrob = cls._min_prob_value(f)
+        mval, mrob = FactorAnalyzer._min_prob_value(f)
         return mval
 
-    @classmethod
-    def cls_normalize(cls, f: Factor, phi_result: float) -> float:
+    @staticmethod
+    def normalize(f: AbstractFactor, phi_result: float) -> float:
         """!
         \brief Normalize a given factorization result by dividing it to the
         value of partition function value Z
@@ -269,34 +258,6 @@ class FactorAnalyzer:
 
         \return normalized preference value
         """
+        Z = FactorOps.partition_value(self.vars_domain())
+
         return phi_result / f.Z
-
-    def max_value(self):
-        """!
-        Wrapper of FactorAnalyzer.cls_max_value
-        """
-        return self.cls_max_value(self.factor)
-
-    def max_probability(self):
-        """!
-        Wrapper of FactorAnalyzer.cls_max_probability
-        """
-        return self.cls_max_probability(self.factor)
-
-    def min_value(self):
-        """!
-        Wrapper of FactorAnalyzer.cls_min_value
-        """
-        return self.cls_min_value(self.factor)
-
-    def min_probability(self):
-        """!
-        Wrapper of FactorAnalyzer.cls_min_probability
-        """
-        return self.cls_min_probability(self.factor)
-
-    def normalize(self, phi_result: float) -> float:
-        """!
-        Wrapper of FactorAnalyzer.cls_normalize
-        """
-        return self.cls_normalize(f=self.factor, phi_result=phi_result)

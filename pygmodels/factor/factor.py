@@ -11,8 +11,13 @@ from typing import Callable, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
 from pygmodels.gtype.graphobj import GraphObject
-from pygmodels.pgmtype.abstractpgm import AbstractFactor
-from pygmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
+from pygmodels.pgmtype.randomvariable import NumCatRVariable
+from pygmodels.value.value import NumericValue
+from pygmodels.factor.ftype.abstractfactor import AbstractFactor
+from pygmodels.factor.ftype.abstractfactor import FactorScope
+from pygmodels.factor.ftype.abstractfactor import FactorDomain
+from pygmodels.factor.ftype.abstractfactor import DomainSliceSet
+from pygmodels.factor.ftype.abstractfactor import DomainSubset
 
 
 class BaseFactor(AbstractFactor, GraphObject):
@@ -21,10 +26,8 @@ class BaseFactor(AbstractFactor, GraphObject):
     def __init__(
         self,
         gid: str,
-        scope_vars: Set[NumCatRVariable],
-        factor_fn: Optional[
-            Callable[[Set[Tuple[str, NumCatRVariable]]], float]
-        ] = None,
+        scope_vars: FactorScope,
+        factor_fn: Optional[Callable[[DomainSliceSet], NumericValue]] = None,
         data={},
     ):
         """"""
@@ -94,7 +97,7 @@ class BaseFactor(AbstractFactor, GraphObject):
             return False
         return self.id() == n.id()
 
-    def scope_vars(self, f=lambda x: x) -> Set[NumCatRVariable]:
+    def scope_vars(self, f=lambda x: x) -> FactorScope:
         """!
         \brief get variables that are inside the scope of this factor
 
@@ -118,7 +121,7 @@ class BaseFactor(AbstractFactor, GraphObject):
         rvar_filter: Callable[[NumCatRVariable], bool] = lambda x: True,
         value_filter: Callable[[NumericValue], bool] = lambda x: True,
         value_transform: Callable[[NumericValue], NumericValue] = lambda x: x,
-    ) -> List[FrozenSet[Tuple[str, NumericValue]]]:
+    ) -> FactorDomain:
         """!
         \brief Get factor domain
         \see Factor.fdomain(D, rvar_filter, value_filter, value_transform)
@@ -137,12 +140,10 @@ class BaseFactor(AbstractFactor, GraphObject):
         """
         svar = f.scope_vars()
         fn = f.phi
-        return BaseFactor(
-            gid=f.id(), data=f.data(), factor_fn=fn, scope_vars=svar
-        )
+        return BaseFactor(gid=f.id(), data=f.data(), factor_fn=fn, scope_vars=svar)
 
     @classmethod
-    def from_joint_vars(cls, svars: Set[NumCatRVariable]):
+    def from_joint_vars(cls, svars: FactorScope):
         """!
         \brief Make factor from joint variables
 
@@ -169,9 +170,7 @@ class BaseFactor(AbstractFactor, GraphObject):
 
     @classmethod
     def from_scope_variables_with_fn(
-        cls,
-        svars: Set[NumCatRVariable],
-        fn: Callable[[Set[Tuple[str, NumericValue]]], float],
+        cls, svars: FactorScope, fn: Callable[[DomainSubset], float],
     ):
         """!
         \brief Make a factor from scope variables and a preference function
@@ -185,7 +184,7 @@ class BaseFactor(AbstractFactor, GraphObject):
         rvar_filter: Callable[[NumCatRVariable], bool] = lambda x: True,
         value_filter: Callable[[NumericValue], bool] = lambda x: True,
         value_transform: Callable[[NumericValue], NumericValue] = lambda x: x,
-    ) -> List[FrozenSet[Tuple[str, NumericValue]]]:
+    ) -> FactorDomain:
         """!
         \brief Get factor domain Val(D) D being a set of random variables
 
@@ -219,14 +218,12 @@ class BaseFactor(AbstractFactor, GraphObject):
 
         """
         return [
-            s.value_set(
-                value_filter=value_filter, value_transform=value_transform
-            )
+            s.value_set(value_filter=value_filter, value_transform=value_transform)
             for s in D
             if rvar_filter(s)
         ]
 
-    def phi(self, scope_product: Set[Tuple[str, NumericValue]]) -> float:
+    def phi(self, scope_product: DomainSliceSet) -> float:
         """!
         \brief obtain a factor value for given scope random variables
 
@@ -251,9 +248,7 @@ class BaseFactor(AbstractFactor, GraphObject):
         """
         return self.factor_fn(scope_product)
 
-    def phi_normal(
-        self, scope_product: Set[Tuple[str, NumericValue]]
-    ) -> float:
+    def phi_normal(self, scope_product: DomainSliceSet) -> float:
         """!
         \brief normalize a given factor value
 
@@ -266,9 +261,7 @@ class BaseFactor(AbstractFactor, GraphObject):
         """
         return self.phi(scope_product) / self.Z
 
-    def partition_value(
-        self, domains: List[FrozenSet[Tuple[str, NumericValue]]]
-    ):
+    def partition_value(self, domains: FactorDomain):
         """!
         \brief compute partition value aka normalizing value for the factor
         from Koller, Friedman 2009 p. 105
@@ -324,7 +317,7 @@ class BaseFactor(AbstractFactor, GraphObject):
 
         """
         scope_matches = list(product(*domains))
-        return sum([self.factor_fn(scope_product=sv) for sv in scope_matches])
+        return sum([self.phi(scope_product=sv) for sv in scope_matches])
 
 
 class Factor(BaseFactor):
@@ -337,9 +330,7 @@ class Factor(BaseFactor):
         self,
         gid: str,
         scope_vars: Set[NumCatRVariable],
-        factor_fn: Optional[
-            Callable[[Set[Tuple[str, NumCatRVariable]]], float]
-        ] = None,
+        factor_fn: Optional[Callable[[Set[Tuple[str, NumCatRVariable]]], float]] = None,
         data={},
     ):
         """!
@@ -404,9 +395,7 @@ class Factor(BaseFactor):
             factor_fn = self.marginal_joint
 
         # check all values are positive
-        super().__init__(
-            gid=gid, scope_vars=scope_vars, factor_fn=factor_fn, data=data
-        )
+        super().__init__(gid=gid, scope_vars=scope_vars, factor_fn=factor_fn, data=data)
 
     @classmethod
     def from_abstract_factor(cls, f: AbstractFactor):
@@ -607,7 +596,9 @@ class Factor(BaseFactor):
         # check for values out of domain of this factor
         scope_ids = set([s.id() for s in self.scope_vars()])
         if sids.issubset(scope_ids) is False:
-            msg = "Given argument domain include values out of the domain of this factor"
+            msg = (
+                "Given argument domain include values out of the domain of this factor"
+            )
             raise ValueError(msg)
         svars = set([s for s in self.scope_vars() if s.id() in sids])
         return svars
@@ -640,9 +631,7 @@ class Factor(BaseFactor):
         else:
             vs = [s for s in self.svars if s.id() == ids]
             if len(vs) > 1:
-                raise ValueError(
-                    "more than one variable matches the id string"
-                )
+                raise ValueError("more than one variable matches the id string")
 
     def __call__(self, scope_product: Set[Tuple[str, NumericValue]]) -> float:
         """!
@@ -660,13 +649,9 @@ class Factor(BaseFactor):
         """
         domains = self.vars_domain()
         self.scope_products = list(product(*domains))
-        return sum(
-            [self.factor_fn(scope_product=sv) for sv in self.factor_domain()]
-        )
+        return sum([self.factor_fn(scope_product=sv) for sv in self.factor_domain()])
 
-    def marginal_joint(
-        self, scope_product: Set[Tuple[str, NumericValue]]
-    ) -> float:
+    def marginal_joint(self, scope_product: Set[Tuple[str, NumericValue]]) -> float:
         """!
         \brief marginal joint function.
         Default factor function when none is provided.
@@ -684,9 +669,7 @@ class Factor(BaseFactor):
             var_value = sv[1]
             hasv, var = self.has_var(var_id)
             if hasv is False:
-                raise ValueError(
-                    "Unknown variable id among arguments: " + var_id
-                )
+                raise ValueError("Unknown variable id among arguments: " + var_id)
             p *= var.marginal(var_value)
         return p
 

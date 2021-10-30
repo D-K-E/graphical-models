@@ -42,51 +42,29 @@ class TestFactorAnalyzer(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.bc = Factor(
-            gid="bc", scope_vars=set([self.Bf, self.Cf]), factor_fn=phibc
-        )
+        self.bc = Factor(gid="bc", scope_vars=set([self.Bf, self.Cf]), factor_fn=phibc)
         self.bc_b = BaseFactor(
             gid="bc", scope_vars=set([self.Bf, self.Cf]), factor_fn=phibc
         )
 
-    def test_cls_max_value(self):
-        """"""
-        mval = FactorAnalyzer.cls_max_value(self.bc)
-        self.assertEqual(mval, set([("B", 10), ("C", 50)]))
-
-    def test_cls_max_probability(self):
-        """"""
-        mval = FactorAnalyzer.cls_max_probability(self.bc)
-        self.assertEqual(mval, 0.7)
-
-    def test_cls_min_value(self):
-        """"""
-        mval = FactorAnalyzer.cls_min_value(self.bc)
-        self.assertEqual(mval, set([("B", 50), ("C", 10)]))
-
-    def test_cls_min_probability(self):
-        """"""
-        mval = FactorAnalyzer.cls_min_probability(self.bc)
-        self.assertEqual(mval, 0.1)
-
     def test_max_value(self):
         """"""
-        mval = FactorAnalyzer(self.bc_b).max_value()
+        mval = FactorAnalyzer.max_value(self.bc)
         self.assertEqual(mval, set([("B", 10), ("C", 50)]))
 
     def test_max_probability(self):
         """"""
-        mval = FactorAnalyzer(self.bc_b).max_probability()
+        mval = FactorAnalyzer.max_probability(self.bc)
         self.assertEqual(mval, 0.7)
 
     def test_min_value(self):
         """"""
-        mval = FactorAnalyzer(self.bc_b).min_value()
+        mval = FactorAnalyzer.min_value(self.bc)
         self.assertEqual(mval, set([("B", 50), ("C", 10)]))
 
     def test_min_probability(self):
         """"""
-        mval = FactorAnalyzer(self.bc_b).min_probability()
+        mval = FactorAnalyzer.min_probability(self.bc)
         self.assertEqual(mval, 0.1)
 
     @unittest.skip("FactorAnalyzer.normalize not yet implemented")
