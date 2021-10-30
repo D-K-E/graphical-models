@@ -6,6 +6,7 @@ Partially Directed Acyclic Graph as in Koller, Friedman 2009, p. 37
 from typing import Dict, Set, Tuple, Union
 from uuid import uuid4
 
+from pygmodels.factor.factor import Factor
 from pygmodels.ganalysis.graphanalyzer import (
     BaseGraphAnalyzer,
     BaseGraphBoolAnalyzer,
@@ -23,7 +24,6 @@ from pygmodels.graphops.graphops import (
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
 from pygmodels.pgmodel.markov import ConditionalRandomField, MarkovNetwork
-from pygmodels.factor.factor import Factor
 from pygmodels.pgmtype.pgmodel import PGModel
 from pygmodels.pgmtype.randomvariable import NumCatRVariable
 

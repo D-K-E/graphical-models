@@ -10,18 +10,18 @@ from pprint import pprint
 from typing import Callable, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
+from pygmodels.factor.factorf.factorops import FactorOps
+from pygmodels.factor.ftype.abstractfactor import (
+    AbstractFactor,
+    DomainSliceSet,
+    DomainSubset,
+    FactorDomain,
+    FactorScope,
+)
+from pygmodels.factor.ftype.basefactor import BaseFactor
 from pygmodels.gtype.graphobj import GraphObject
 from pygmodels.pgmtype.randomvariable import NumCatRVariable
 from pygmodels.value.value import NumericValue
-
-from pygmodels.factor.ftype.abstractfactor import AbstractFactor
-from pygmodels.factor.ftype.abstractfactor import FactorScope
-from pygmodels.factor.ftype.abstractfactor import FactorDomain
-from pygmodels.factor.ftype.abstractfactor import DomainSliceSet
-from pygmodels.factor.ftype.abstractfactor import DomainSubset
-
-from pygmodels.factor.ftype.basefactor import BaseFactor
-from pygmodels.factor.factorf.factorops import FactorOps
 
 
 class Factor(BaseFactor):
@@ -34,7 +34,9 @@ class Factor(BaseFactor):
         self,
         gid: str,
         scope_vars: Set[NumCatRVariable],
-        factor_fn: Optional[Callable[[Set[Tuple[str, NumCatRVariable]]], float]] = None,
+        factor_fn: Optional[
+            Callable[[Set[Tuple[str, NumCatRVariable]]], float]
+        ] = None,
         data={},
     ):
         """!
@@ -99,7 +101,9 @@ class Factor(BaseFactor):
             factor_fn = self.marginal_joint
 
         # check all values are positive
-        super().__init__(gid=gid, scope_vars=scope_vars, factor_fn=factor_fn, data=data)
+        super().__init__(
+            gid=gid, scope_vars=scope_vars, factor_fn=factor_fn, data=data
+        )
 
     @classmethod
     def from_abstract_factor(cls, f: AbstractFactor):
@@ -227,9 +231,7 @@ class Factor(BaseFactor):
         # check for values out of domain of this factor
         scope_ids = set([s.id() for s in self.scope_vars()])
         if sids.issubset(scope_ids) is False:
-            msg = (
-                "Given argument domain include values out of the domain of this factor"
-            )
+            msg = "Given argument domain include values out of the domain of this factor"
             raise ValueError(msg)
         svars = set([s for s in self.scope_vars() if s.id() in sids])
         return svars
@@ -262,7 +264,9 @@ class Factor(BaseFactor):
         else:
             vs = [s for s in self.svars if s.id() == ids]
             if len(vs) > 1:
-                raise ValueError("more than one variable matches the id string")
+                raise ValueError(
+                    "more than one variable matches the id string"
+                )
 
     def __call__(self, scope_product: Set[Tuple[str, NumericValue]]) -> float:
         """!
@@ -280,9 +284,13 @@ class Factor(BaseFactor):
         """
         domains = FactorOps.factor_domain(self, D=self.scope_vars())
         self.scope_products = list(product(*domains))
-        return sum([self.phi(scope_product=sv) for sv in FactorOps.cartesian(self)])
+        return sum(
+            [self.phi(scope_product=sv) for sv in FactorOps.cartesian(self)]
+        )
 
-    def marginal_joint(self, scope_product: Set[Tuple[str, NumericValue]]) -> float:
+    def marginal_joint(
+        self, scope_product: Set[Tuple[str, NumericValue]]
+    ) -> float:
         """!
         \brief marginal joint function.
         Default factor function when none is provided.
@@ -300,7 +308,9 @@ class Factor(BaseFactor):
             var_value = sv[1]
             hasv, var = self.has_var(var_id)
             if hasv is False:
-                raise ValueError("Unknown variable id among arguments: " + var_id)
+                raise ValueError(
+                    "Unknown variable id among arguments: " + var_id
+                )
             p *= var.marginal(var_value)
         return p
 

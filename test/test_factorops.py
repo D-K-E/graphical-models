@@ -5,8 +5,8 @@ import math
 import unittest
 from random import choice
 
-from pygmodels.factor.factorf.factorops import FactorOps
 from pygmodels.factor.factor import BaseFactor, Factor
+from pygmodels.factor.factorf.factorops import FactorOps
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.pgmtype.randomvariable import NumCatRVariable
 
@@ -52,7 +52,9 @@ class TestFactorOps(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.AB = Factor(gid="AB", scope_vars=set([self.Af, self.Bf]), factor_fn=phiAB)
+        self.AB = Factor(
+            gid="AB", scope_vars=set([self.Af, self.Bf]), factor_fn=phiAB
+        )
         self.AB_b = BaseFactor(
             gid="AB", scope_vars=set([self.Af, self.Bf]), factor_fn=phiAB
         )
@@ -71,7 +73,9 @@ class TestFactorOps(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.BC = Factor(gid="BC", scope_vars=set([self.Bf, self.Cf]), factor_fn=phiBC)
+        self.BC = Factor(
+            gid="BC", scope_vars=set([self.Bf, self.Cf]), factor_fn=phiBC
+        )
         self.BC_b = BaseFactor(
             gid="BC", scope_vars=set([self.Bf, self.Cf]), factor_fn=phiBC
         )
@@ -93,7 +97,9 @@ class TestFactorOps(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.CD = Factor(gid="CD", scope_vars=set([self.Cf, self.Df]), factor_fn=phiCD)
+        self.CD = Factor(
+            gid="CD", scope_vars=set([self.Cf, self.Df]), factor_fn=phiCD
+        )
         self.CD_b = BaseFactor(
             gid="CD", scope_vars=set([self.Cf, self.Df]), factor_fn=phiCD
         )
@@ -112,7 +118,9 @@ class TestFactorOps(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.DA = Factor(gid="DA", scope_vars=set([self.Df, self.Af]), factor_fn=phiDA)
+        self.DA = Factor(
+            gid="DA", scope_vars=set([self.Df, self.Af]), factor_fn=phiDA
+        )
         self.DA_b = BaseFactor(
             gid="DA", scope_vars=set([self.Df, self.Af]), factor_fn=phiDA
         )
@@ -147,7 +155,9 @@ class TestFactorOps(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.aB = Factor(gid="ab", scope_vars=set([self.af, self.Bf]), factor_fn=phiaB)
+        self.aB = Factor(
+            gid="ab", scope_vars=set([self.af, self.Bf]), factor_fn=phiaB
+        )
         self.aB_b = BaseFactor(
             gid="ab", scope_vars=set([self.af, self.Bf]), factor_fn=phiaB
         )
@@ -166,7 +176,9 @@ class TestFactorOps(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.bc = Factor(gid="bc", scope_vars=set([self.Bf, self.Cf]), factor_fn=phibc)
+        self.bc = Factor(
+            gid="bc", scope_vars=set([self.Bf, self.Cf]), factor_fn=phibc
+        )
         self.bc_b = BaseFactor(
             gid="bc", scope_vars=set([self.Bf, self.Cf]), factor_fn=phibc
         )

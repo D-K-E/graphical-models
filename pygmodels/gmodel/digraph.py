@@ -16,6 +16,7 @@ the parent's algorithm.
 from typing import Callable, Set
 from uuid import uuid4
 
+from pygmodels.ganalysis.graphanalyzer import BaseGraphAnalyzer
 from pygmodels.gmodel.graph import Graph
 from pygmodels.gmodel.undigraph import UndiGraph
 from pygmodels.graphops.bgraphops import (
@@ -25,7 +26,6 @@ from pygmodels.graphops.bgraphops import (
 )
 from pygmodels.graphops.digraphops import DiGraphBoolOps
 from pygmodels.graphops.graphsearcher import BaseGraphSearcher
-from pygmodels.ganalysis.graphanalyzer import BaseGraphAnalyzer
 from pygmodels.gtype.abstractobj import AbstractDiGraph, EdgeType
 from pygmodels.gtype.basegraph import BaseGraph
 from pygmodels.gtype.edge import Edge

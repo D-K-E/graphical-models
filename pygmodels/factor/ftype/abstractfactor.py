@@ -2,12 +2,12 @@
 """!
 \file abstractfactor.py Contains abstract class for the factor
 """
+from abc import ABC, abstractmethod
+from typing import Callable, FrozenSet, List, Set, Tuple
+
 from pygmodels.gtype.abstractobj import AbstractGraphObj
 from pygmodels.randvar.rtype.abstractrandvar import AbstractRandomVariable
 from pygmodels.value.value import NumericValue, OrderedFiniteVSet
-
-from abc import ABC, abstractmethod
-from typing import Callable, Tuple, Set, FrozenSet, List
 
 FactorScope = Set[AbstractRandomVariable]
 OrderedSubset = OrderedFiniteVSet

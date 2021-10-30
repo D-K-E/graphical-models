@@ -5,10 +5,10 @@ import pdb
 from typing import Optional, Set, Tuple
 from uuid import uuid4
 
+from pygmodels.factor.factor import Factor
 from pygmodels.gmodel.undigraph import UndiGraph
 from pygmodels.graphops.graphops import BaseGraphOps
 from pygmodels.gtype.edge import Edge
-from pygmodels.factor.factor import Factor
 from pygmodels.pgmtype.pgmodel import PGModel
 from pygmodels.pgmtype.randomvariable import (
     NumCatRVariable,

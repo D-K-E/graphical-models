@@ -331,8 +331,7 @@ class BaseGraphAnalyzerTest(unittest.TestCase):
         )
 
     def test_transitive_closure_mat(self):
-        """
-        """
+        """ """
         mat = BaseGraphAnalyzer.transitive_closure_matrix(self.ugraph1)
         self.assertEqual(
             mat,

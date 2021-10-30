@@ -5,10 +5,10 @@ Bayesian Network model
 from typing import Callable, Optional, Set
 from uuid import uuid4
 
+from pygmodels.factor.factor import Factor
 from pygmodels.gmodel.digraph import DiGraph
 from pygmodels.graphops.bgraphops import BaseGraphOps
 from pygmodels.gtype.edge import Edge
-from pygmodels.factor.factor import Factor
 from pygmodels.pgmtype.pgmodel import PGModel
 from pygmodels.pgmtype.randomvariable import NumCatRVariable
 

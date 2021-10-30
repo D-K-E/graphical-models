@@ -2,21 +2,21 @@
 \file basefactor.py Basic factor that implements an AbstractFactor
 """
 
-from pygmodels.factor.ftype.abstractfactor import AbstractFactor
-from pygmodels.factor.ftype.abstractfactor import FactorScope
-from pygmodels.factor.ftype.abstractfactor import FactorDomain
-from pygmodels.factor.ftype.abstractfactor import DomainSliceSet
-from pygmodels.factor.ftype.abstractfactor import DomainSubset
-
-
-from pygmodels.gtype.graphobj import GraphObject
-from pygmodels.value.value import NumericValue
-from pygmodels.randvar.rtype.abstractrandvar import AbstractRandomVariable
-from typing import Optional, Callable, Set
-
 from functools import reduce as freduce
 from itertools import combinations, product
+from typing import Callable, Optional, Set
 from uuid import uuid4
+
+from pygmodels.factor.ftype.abstractfactor import (
+    AbstractFactor,
+    DomainSliceSet,
+    DomainSubset,
+    FactorDomain,
+    FactorScope,
+)
+from pygmodels.gtype.graphobj import GraphObject
+from pygmodels.randvar.rtype.abstractrandvar import AbstractRandomVariable
+from pygmodels.value.value import NumericValue
 
 
 class BaseFactor(AbstractFactor, GraphObject):
@@ -68,7 +68,7 @@ class BaseFactor(AbstractFactor, GraphObject):
         if not isinstance(n, AbstractFactor):
             return False
         #
-        def rvar_filter(x: NumCatRVariable) -> bool:
+        def rvar_filter(x: AbstractRandomVariable) -> bool:
             return True
 
         def value_filter(x: NumericValue) -> bool:
@@ -78,12 +78,16 @@ class BaseFactor(AbstractFactor, GraphObject):
             return x
 
         other_domain = [
-            s.value_set(value_filter=value_filter, value_transform=value_transform)
+            s.value_set(
+                value_filter=value_filter, value_transform=value_transform
+            )
             for s in n.scope_vars()
             if rvar_filter(s)
         ]
         this_domain = [
-            s.value_set(value_filter=value_filter, value_transform=value_transform)
+            s.value_set(
+                value_filter=value_filter, value_transform=value_transform
+            )
             for s in self.scope_vars()
             if rvar_filter(s)
         ]
@@ -131,7 +135,9 @@ class BaseFactor(AbstractFactor, GraphObject):
         """
         svar = f.scope_vars()
         fn = f.phi
-        return BaseFactor(gid=f.id(), data=f.data(), factor_fn=fn, scope_vars=svar)
+        return BaseFactor(
+            gid=f.id(), data=f.data(), factor_fn=fn, scope_vars=svar
+        )
 
     @classmethod
     def from_joint_vars(cls, svars: FactorScope):
@@ -161,7 +167,9 @@ class BaseFactor(AbstractFactor, GraphObject):
 
     @classmethod
     def from_scope_variables_with_fn(
-        cls, svars: FactorScope, fn: Callable[[DomainSubset], float],
+        cls,
+        svars: FactorScope,
+        fn: Callable[[DomainSubset], float],
     ):
         """!
         \brief Make a factor from scope variables and a preference function

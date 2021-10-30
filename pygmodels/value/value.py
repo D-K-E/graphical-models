@@ -2,8 +2,9 @@
 \file value.py Represents the value of functions in the case of PGMs
 """
 
+from typing import Callable, FrozenSet, List, Optional, Set, Tuple, Union
+
 from pygmodels.value.abstractvalue import AbstractSetValue
-from typing import Union, Callable, Optional, Set, FrozenSet, Tuple, List
 
 NumericValue = float
 DiscreteValue = str
@@ -28,7 +29,7 @@ class SetValue(AbstractSetValue):
         self._set = set_id
 
     def belongs_to(self) -> str:
-        ""
+        """"""
         if self._set is None:
             raise ValueError("Value not associated to any set")
         return self._set

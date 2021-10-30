@@ -2,8 +2,7 @@
 \file domain.py Represents the domain of a function. It can be anything.
 """
 
-from typing import Any, Optional, Tuple, Set, FrozenSet, List
-
+from typing import Any, FrozenSet, List, Optional, Set, Tuple
 
 from pygmodels.value.abstractvalue import AbstractSetValue
 

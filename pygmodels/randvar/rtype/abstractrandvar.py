@@ -1,10 +1,11 @@
 """!
 \file abstractrandvar.py Represents an abstract random variable
 """
-from pygmodels.gtype.abstractobj import AbstractNode
-from pygmodels.value.value import NumericValue
-from pygmodels.value.codomain import Outcome
 from abc import ABC, abstractmethod
+
+from pygmodels.gtype.abstractobj import AbstractNode
+from pygmodels.value.codomain import Outcome
+from pygmodels.value.value import NumericValue
 
 
 class AbstractRandomVariable(AbstractNode):
