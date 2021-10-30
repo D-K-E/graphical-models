@@ -12,18 +12,29 @@ along to the parent's method in order to adapt its functionality.
 from typing import Callable, Dict, List, Set, Union
 from uuid import uuid4
 
+from pygmodels.ganalysis.graphanalyzer import (
+    BaseGraphAnalyzer,
+    BaseGraphBoolAnalyzer,
+    BaseGraphEdgeAnalyzer,
+    BaseGraphNodeAnalyzer,
+    BaseGraphNumericAnalyzer,
+)
 from pygmodels.gmodel.graph import Graph
 from pygmodels.gmodel.tree import Tree
-from pygmodels.graphf.bgraphops import BaseGraphOps
-from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
-from pygmodels.graphf.graphops import BaseGraphAlgOps
-from pygmodels.graphf.graphsearcher import BaseGraphSearcher
-from pygmodels.gtype.abstractobj import EdgeType
+from pygmodels.graphops.bgraphops import (
+    BaseGraphEdgeOps,
+    BaseGraphNodeOps,
+    BaseGraphOps,
+)
+from pygmodels.graphops.graphops import BaseGraphAlgOps
+from pygmodels.graphops.graphsearcher import BaseGraphSearcher
+from pygmodels.gtype.abstractobj import AbstractUndiGraph, EdgeType
+from pygmodels.gtype.basegraph import BaseGraph
 from pygmodels.gtype.edge import Edge
 from pygmodels.gtype.node import Node
 
 
-class UndiGraph(Graph):
+class UndiGraph(AbstractUndiGraph, BaseGraph):
     """!
     \brief Unidrected graph whose edges are of type Undirected
     """
@@ -52,9 +63,25 @@ class UndiGraph(Graph):
                         + " directed edges"
                     )
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
+        self._props = None
+
+    @property
+    def graph_props(self):
+        """!
+        Stored graph properties
+        """
+        if self._props is None:
+            self._props = BaseGraphSearcher.depth_first_search(
+                self,
+                edge_generator=lambda node: BaseGraphEdgeOps.edges_of(
+                    self, node
+                ),
+                check_cycle=True,
+            )
+        return self._props
 
     @classmethod
-    def from_graph(cls, g: Graph):
+    def from_graph(cls, g: BaseGraph):
         """!
         \brief Construct an undirected graph from given graph.
 
@@ -62,15 +89,10 @@ class UndiGraph(Graph):
 
         \param g source graph
         """
-        for e in BaseGraphOps.edges(g):
+        for e in g.E:
             if e.type() == EdgeType.DIRECTED:
                 raise ValueError("Graph contains directed edges")
-        return UndiGraph(
-            gid=str(uuid4()),
-            data=g.data(),
-            nodes=BaseGraphOps.nodes(g),
-            edges=BaseGraphOps.edges(g),
-        )
+        return UndiGraph(gid=str(uuid4()), data=g.data(), nodes=g.V, edges=g.E)
 
     def find_shortest_paths(self, n1: Node) -> Dict[str, Union[dict, set]]:
         """!
@@ -83,7 +105,7 @@ class UndiGraph(Graph):
         return BaseGraphSearcher.breadth_first_search(
             self,
             n1=n1,
-            edge_generator=lambda x: BaseGraphOps.edges_of(self, x),
+            edge_generator=lambda x: BaseGraphEdgeOps.edges_of(self, x),
         )
 
     def check_for_path(self, n1: Node, n2: Node) -> bool:
@@ -107,7 +129,7 @@ class UndiGraph(Graph):
         \brief also known as shortest possible path length
         see proof Diestel 2017, p. 8
         """
-        return BaseGraphAnalyzer.min_degree(self)
+        return BaseGraphNumericAnalyzer.min_degree(self)
 
     def find_minimum_spanning_tree(
         self, weight_fn: Callable[[Edge], int] = lambda x: 1
@@ -159,9 +181,11 @@ class UndiGraph(Graph):
         def gmaker(x):
             return self.from_graph(BaseGraphAlgOps.subtract(self, x))
 
-        return super().find_articulation_points(graph_maker=gmaker)
+        return BaseGraphNodeAnalyzer.find_articulation_points(
+            g=self, graph_maker=gmaker, result=self.graph_props
+        )
 
-    def find_bridges(self) -> Set[Node]:
+    def find_bridges(self) -> Set[Edge]:
         """!
         \brief find bridges in the given graph instance
 
@@ -173,7 +197,9 @@ class UndiGraph(Graph):
         def gmaker(x):
             return self.from_graph(BaseGraphAlgOps.subtract(self, x))
 
-        return super().find_bridges(graph_maker=gmaker)
+        return BaseGraphEdgeAnalyzer.find_bridges(
+            g=self, graph_maker=gmaker, result=self.graph_props
+        )
 
     def bron_kerbosch(
         self, P: Set[Node], R: Set[Node], X: Set[Node], Cs: List[Set[Node]]
@@ -198,9 +224,9 @@ class UndiGraph(Graph):
             Cs.append(R)
         for v in P:
             self.bron_kerbosch(
-                P=P.intersection(BaseGraphOps.neighbours_of(self, v)),
+                P=P.intersection(BaseGraphNodeOps.neighbours_of(self, v)),
                 R=R.union([v]),
-                X=X.intersection(BaseGraphOps.neighbours_of(self, v)),
+                X=X.intersection(BaseGraphNodeOps.neighbours_of(self, v)),
                 Cs=Cs,
             )
             P = P.difference([v])
@@ -211,7 +237,7 @@ class UndiGraph(Graph):
         find maximal cliques in graph using Bron Kerbosch algorithm
         as per arxiv.org/1006.5440
         """
-        P: Set[Node] = BaseGraphOps.nodes(self)
+        P: Set[Node] = self.V
         X: Set[Node] = set()
         R: Set[Node] = set()
         Cs: List[Set[Node]] = []

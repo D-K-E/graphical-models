@@ -7,11 +7,11 @@ import unittest
 # profiler related
 from pstats import Stats
 
+from pygmodels.graphops.bgraphops import BaseGraphOps
+from pygmodels.graphops.graphsearcher import BaseGraphSearcher
 from pygmodels.gtype.basegraph import BaseGraph
-from pygmodels.graphf.bgraphops import BaseGraphOps
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
-from pygmodels.graphf.graphsearcher import BaseGraphSearcher
 
 
 class BaseGraphSearcherTests(unittest.TestCase):
@@ -187,7 +187,7 @@ class BaseGraphSearcherTests(unittest.TestCase):
 
     @unittest.skip("Implementation is not finished yet")
     def test_depth_first_search(self):
-        ""
+        """"""
 
         def egen(node):
             return BaseGraphOps.edges_of(self.ugraph, node)
@@ -214,7 +214,10 @@ class BaseGraphSearcherTests(unittest.TestCase):
         goal_node = self.m
         problem_set = self.gtree.E
         elist, solution = BaseGraphSearcher.uniform_cost_search(
-            g=self.gtree, goal=goal_node, start=start_node, problem_set=problem_set
+            g=self.gtree,
+            goal=goal_node,
+            start=start_node,
+            problem_set=problem_set,
         )
         edges = [solution["edge"]]
         while solution["parent"] is not None:

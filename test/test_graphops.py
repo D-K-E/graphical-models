@@ -6,8 +6,8 @@ import pprint
 import unittest
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 
-from pygmodels.graphf.bgraphops import BaseGraphOps
-from pygmodels.graphf.graphops import BaseGraphAlgOps, BaseGraphSetOps
+from pygmodels.graphops.bgraphops import BaseGraphOps
+from pygmodels.graphops.graphops import BaseGraphAlgOps, BaseGraphSetOps
 from pygmodels.gtype.abstractobj import (
     AbstractEdge,
     AbstractGraph,
@@ -144,12 +144,8 @@ class BaseGraphAlgSetOpsTest(unittest.TestCase):
         self.ugraph4 = BaseGraph(
             "ug4",
             data={"my": "graph", "data": "is", "very": "awesome"},
-            nodes=set(BaseGraphOps.nodes(self.ugraph2)).union(
-                BaseGraphOps.nodes(self.graph_2)
-            ),
-            edges=BaseGraphOps.edges(self.ugraph2).union(
-                BaseGraphOps.edges(self.graph_2)
-            ),
+            nodes=set(self.ugraph2.V).union(self.graph_2.V),
+            edges=set(self.ugraph2.E).union(self.graph_2.E),
         )
         # ugraph 4
         #   +-----+     n1 -- n2 -- n3 -- n4
@@ -271,8 +267,8 @@ class BaseGraphAlgSetOpsTest(unittest.TestCase):
             edges=set([e, self.e1]),
         )
         g = BaseGraphAlgOps.subtract(self.graph, gg)
-        self.assertEqual(BaseGraphOps.edges(g), set([]))
-        self.assertEqual(BaseGraphOps.nodes(g), set([self.n3, self.n4]))
+        self.assertEqual(set(g.E), set([]))
+        self.assertEqual(set(g.V), set([self.n3, self.n4]))
 
     def test_add_edge(self):
         """"""
@@ -287,7 +283,7 @@ class BaseGraphAlgSetOpsTest(unittest.TestCase):
         n = Node("n646", {})
         g = BaseGraphAlgOps.add(self.graph, n)
         self.assertEqual(
-            BaseGraphOps.nodes(g), set([self.n1, self.n2, self.n3, self.n4, n])
+            set(g.V), set([self.n1, self.n2, self.n3, self.n4, n])
         )
 
     def test_add_graph(self):
@@ -302,10 +298,10 @@ class BaseGraphAlgSetOpsTest(unittest.TestCase):
         )
         g = BaseGraphAlgOps.add(self.graph, gg)
         self.assertEqual(
-            BaseGraphOps.nodes(g),
+            set(g.V),
             set([self.n1, self.n2, self.n3, self.n4, n, n1, n2]),
         )
-        self.assertEqual(BaseGraphOps.edges(g), set([e, self.e1, self.e2]))
+        self.assertEqual(set(g.E), set([e, self.e1, self.e2]))
 
 
 if __name__ == "__main__":

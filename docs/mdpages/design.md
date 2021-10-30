@@ -21,6 +21,32 @@ The suffix `f` indicates that the module implements operations. The `type`
 suffix indicate that the module contains objects that implement required
 properties.
 
+For each added functionality the unit tests must be tried at the following
+order:
+
+1. `test_node.py`
+2. `test_randomvariable.py`
+3. `test_edge.py`
+4. `test_queue.py`
+5. `test_basegraph.py`
+6. `test_bgraphops.py`
+7. `test_factor.py`
+8. `test_factorops.py`
+9. `test_factoranalyzer.py`
+10. `test_graph.py`
+11. `test_tree.py`
+12. `test_path.py`
+13. `test_graphops.py`
+14. `test_graphsearcher.py`
+15. `test_graphanalyzer.py`
+16. `test_undigraph.py`
+6. `test_digraphops.py`
+17. `test_digraph.py`
+18. `test_pgmodel.py`
+19. `test_markov.py`
+20. `test_bayesian.py`
+21. `test_lwfchain.py`
+
 
 ### Extension by Inheritance
 

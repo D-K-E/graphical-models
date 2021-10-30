@@ -4,7 +4,12 @@ Traverse graphs in some fashion
 import math
 from typing import Callable, Dict, List, Optional, Set, Tuple, Union
 
-from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.graphops.bgraphops import (
+    BaseGraphBoolOps,
+    BaseGraphEdgeOps,
+    BaseGraphNodeOps,
+    BaseGraphOps,
+)
 from pygmodels.gtype.abstractobj import (
     AbstractEdge,
     AbstractGraph,
@@ -118,7 +123,7 @@ class BaseGraphSearcher:
         """
         V: Dict[str, AbstractNode] = {n.id(): n for n in g.V}
         if start_node is not None:
-            if not BaseGraphOps.is_in(g, start_node):
+            if not BaseGraphBoolOps.is_in(g, start_node):
                 raise ValueError("Specified start node not in graph")
             #
             Vlst: List[str] = list(v for v in V.keys() if v != start_node.id())
@@ -195,7 +200,7 @@ class BaseGraphSearcher:
                 if parent is not None:
                     pnode = V[parent]
                     eset = eset.union(
-                        BaseGraphOps.edge_by_vertices(
+                        BaseGraphEdgeOps.edge_by_vertices(
                             g, start=pnode, end=cnode
                         )
                     )
@@ -215,7 +220,7 @@ class BaseGraphSearcher:
 
         \throws ValueError if given node is not found in graph instance
         """
-        if not BaseGraphOps.is_in(g, n1):
+        if not BaseGraphBoolOps.is_in(g, n1):
             raise ValueError("argument node is not in graph")
         nid = n1.id()
         Q = [nid]
@@ -264,7 +269,9 @@ class BaseGraphSearcher:
         """!
         Apply uniform cost search to given problem set
         """
-        if not BaseGraphOps.is_in(g, start) or not BaseGraphOps.is_in(g, goal):
+        if not BaseGraphBoolOps.is_in(g, start) or not BaseGraphBoolOps.is_in(
+            g, goal
+        ):
             raise ValueError("Start node or goal node is not in graph")
         problem_set = g.E if problem_set is None else problem_set
         pnode = {"cost": 0, "state": start.id(), "parent": None, "edge": None}

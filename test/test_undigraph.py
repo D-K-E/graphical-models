@@ -5,7 +5,7 @@ import unittest
 from random import choice
 
 from pygmodels.gmodel.undigraph import UndiGraph
-from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.graphops.bgraphops import BaseGraphOps
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
 
@@ -223,12 +223,8 @@ class UndiGraphTest(unittest.TestCase):
         self.ugraph4 = UndiGraph(
             "ug4",
             data={"my": "graph", "data": "is", "very": "awesome"},
-            nodes=BaseGraphOps.nodes(self.ugraph2).union(
-                BaseGraphOps.nodes(self.graph_2)
-            ),
-            edges=BaseGraphOps.edges(self.ugraph2).union(
-                BaseGraphOps.edges(self.graph_2)
-            ),
+            nodes=set(self.ugraph2.V).union(self.graph_2.V),
+            edges=set(self.ugraph2.E).union(self.graph_2.E),
         )
         # ugraph 4
         #   +-----+     n1 -- n2 -- n3 -- n4

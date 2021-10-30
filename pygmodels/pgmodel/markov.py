@@ -6,7 +6,7 @@ from typing import Optional, Set, Tuple
 from uuid import uuid4
 
 from pygmodels.gmodel.undigraph import UndiGraph
-from pygmodels.graphf.graphops import BaseGraphOps
+from pygmodels.graphops.graphops import BaseGraphOps
 from pygmodels.gtype.edge import Edge
 from pygmodels.pgmtype.factor import Factor
 from pygmodels.pgmtype.pgmodel import PGModel
@@ -215,7 +215,7 @@ class MarkovNetwork(PGModel, UndiGraph):
 
         \endcode
         """
-        for n in BaseGraphOps.nodes(udi):
+        for n in udi.V:
             if not isinstance(n, RandomVariable):
                 raise ValueError(
                     "Nodes are not an instance of random variable"
@@ -234,8 +234,8 @@ class MarkovNetwork(PGModel, UndiGraph):
             fs.add(f)
         return MarkovNetwork(
             gid=str(uuid4()),
-            nodes=BaseGraphOps.nodes(udi),
-            edges=BaseGraphOps.edges(udi),
+            nodes=udi.V,
+            edges=udi.E,
             factors=fs,
         )
 
@@ -450,7 +450,7 @@ class ConditionalRandomField(MarkovNetwork):
         cls, mn: MarkovNetwork, targets: Set[NumCatRVariable]
     ):
         """"""
-        mnodes = mn.nodes()
+        mnodes = mn.V
         if targets.issubset(mnodes) is False:
             raise ValueError("target variables are not a subset of network")
         factors = mn.factors()
@@ -461,6 +461,6 @@ class ConditionalRandomField(MarkovNetwork):
             gid=str(uuid4()),
             observed_vars=mnodes.difference(targets),
             target_vars=targets,
-            edges=mn.edges(),
+            edges=mn.E,
             factors=crf_factors,
         )

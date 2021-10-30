@@ -5,8 +5,12 @@ functionality for doing graph theoretical operations
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Union
 from uuid import uuid4
 
-from pygmodels.graphf.bgraphops import BaseGraphOps
-from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
+from pygmodels.graphops.bgraphops import (
+    BaseGraphBoolOps,
+    BaseGraphEdgeOps,
+    BaseGraphNodeOps,
+    BaseGraphOps,
+)
 from pygmodels.gtype.abstractobj import (
     AbstractEdge,
     AbstractGraph,
@@ -34,7 +38,7 @@ class BaseGraph(GraphObject, AbstractGraph):
             raise TypeError("Nodes must be a set or a frozenset")
         if not isinstance(edges, (frozenset, set)):
             raise TypeError("Edges must be a set or a frozenset")
-        self._nodes: FrozenSet[AbstractNode] = BaseGraphOps.get_nodes(
+        self._nodes: FrozenSet[AbstractNode] = BaseGraphNodeOps.get_nodes(
             ns=nodes, es=edges
         )
         self._edges: FrozenSet[AbstractEdge] = frozenset(edges)
@@ -44,14 +48,6 @@ class BaseGraph(GraphObject, AbstractGraph):
             self.is_empty = len(self._nodes) == 0
         else:
             self.is_empty = True
-
-        is_trivial = BaseGraphAnalyzer.is_trivial(self)
-        if is_trivial:
-            msg = "This library is not compatible with computations with trivial graph"
-            msg += "\nNodes: "
-            msg += str([n.id() for n in self.V])
-            msg += "\nEdges: " + str([e.id() for e in self.E])
-            raise ValueError(msg)
 
     @classmethod
     def from_abstract_graph(cls, g_: AbstractGraph):
@@ -175,62 +171,6 @@ class BaseGraph(GraphObject, AbstractGraph):
             raise ValueError("Edges are None for this graph")
         return self._edges
 
-    def is_neighbour_of(self, n1: AbstractNode, n2: AbstractNode) -> bool:
-        """!
-        \brief check if two nodes are neighbours
-        We define the condition of neighborhood as having a common edge, not
-        being the same
-
-        \code{.py}
-
-        >>> n1 = Node("n1", {})
-        >>> n2 = Node("n2", {})
-        >>> n3 = Node("n3", {})
-        >>> n4 = Node("n4", {})
-        >>> e1 = Edge(
-        >>>     "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
-        >>> )
-        >>> e2 = Edge(
-        >>>     "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
-        >>> )
-        >>> e3 = Edge(
-        >>>     "e3", start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED
-        >>> )
-        >>> graph_2 = Graph(
-        >>>   "g2",
-        >>>   data={"my": "graph", "data": "is", "very": "awesome"},
-        >>>   nodes=set([n1, n2, n3, n4]),
-        >>>   edges=set([e1, e2, e3]),
-        >>> )
-        >>> graph_2.is_neighbour_of(n2, n3)
-        >>> True
-        >>> graph_2.is_neighbour_of(n2, n2)
-        >>> False
-
-        \endcode
-        """
-
-        def cond(
-            n_1: AbstractNode, n_2: AbstractNode, e: AbstractEdge
-        ) -> bool:
-            """!
-            \brief neighborhood condition
-            """
-            estart = e.start()
-            eend = e.end()
-            c1 = estart == n_1 and eend == n_2
-            c2 = estart == n_2 and eend == n_1
-            return c1 or c2
-
-        gdata = BaseGraphOps.to_edgelist(self)
-
-        n1_edge_ids = set(gdata[n1.id()])
-        n2_edge_ids = set(gdata[n2.id()])
-        edge_ids = n1_edge_ids.intersection(n2_edge_ids)
-        # filter self loops
-        edges = set([e for e in self.E if e.id() in edge_ids])
-        return self.is_related_to(n1=n1, n2=n2, condition=cond, es=edges)
-
     @classmethod
     def from_edgeset(cls, edges: Set[AbstractEdge]):
         """!
@@ -297,28 +237,3 @@ class BaseGraph(GraphObject, AbstractGraph):
             [e for e in edges if set([e.start(), e.end()]).issubset(nodes)]
         )
         return cls.from_edge_node_set(edges=eset, nodes=nodes)
-
-    def is_related_to(
-        self,
-        n1: AbstractNode,
-        n2: AbstractNode,
-        condition: Callable[[AbstractNode, AbstractNode, AbstractEdge], bool],
-        es: FrozenSet[AbstractEdge] = None,
-    ):
-        """!
-        \brief Generic function for applying proximity conditions on a node pair
-
-        \param n1 first node subject to proximity condition
-        \param n2 second node subject to proximity condition
-        \param condition proximity condition in the form of a callable.
-        \param es edge set. We query the proximity condition in this set if it
-        is specified
-
-        We check whether a proximity condition is valid for given two nodes.
-        """
-        if es is None:
-            es = frozenset(self.E)
-        for e in es:
-            if condition(n1, n2, e) is True:
-                return True
-        return False

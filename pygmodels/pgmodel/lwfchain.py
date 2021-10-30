@@ -6,11 +6,20 @@ Partially Directed Acyclic Graph as in Koller, Friedman 2009, p. 37
 from typing import Dict, Set, Tuple, Union
 from uuid import uuid4
 
+from pygmodels.ganalysis.graphanalyzer import (
+    BaseGraphAnalyzer,
+    BaseGraphBoolAnalyzer,
+    BaseGraphNodeAnalyzer,
+    BaseGraphNumericAnalyzer,
+)
 from pygmodels.gmodel.graph import Graph
 from pygmodels.gmodel.tree import Tree
 from pygmodels.gmodel.undigraph import UndiGraph
-from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
-from pygmodels.graphf.graphops import BaseGraphOps
+from pygmodels.graphops.graphops import (
+    BaseGraphBoolOps,
+    BaseGraphNodeOps,
+    BaseGraphOps,
+)
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
 from pygmodels.pgmodel.markov import ConditionalRandomField, MarkovNetwork
@@ -50,7 +59,7 @@ class LWFChainGraph(PGModel):
         Moralize given chain graph: For any \f X,Y \in Pa_{K_i} \f add an edge
         between them if it does not exist. Then drop the direction of edges.
         """
-        edges = set(BaseGraphOps.edges(self))
+        edges = set(self.E)
         enodes = set([frozenset([e.start(), e.end()]) for e in edges])
         # add edges
         for cid in range(len(self.ccomponents)):
@@ -59,7 +68,7 @@ class LWFChainGraph(PGModel):
             while len(pa_k_i_cp) > 0:
                 parent_node = pa_k_i_cp.pop()
                 for pnode in pa_k_i:
-                    is_n_ind = BaseGraphAnalyzer.is_node_independent_of(
+                    is_n_ind = BaseGraphBoolAnalyzer.is_node_independent_of(
                         self, parent_node, pnode
                     )
                     if (
@@ -92,7 +101,7 @@ class LWFChainGraph(PGModel):
         #
         return MarkovNetwork(
             gid=str(uuid4()),
-            nodes=BaseGraphOps.nodes(self),
+            nodes=self.V,
             edges=nedges,
             factors=self.factors(),
         )
@@ -149,7 +158,7 @@ class LWFChainGraph(PGModel):
         K_i: Union[UndiGraph, Set[NumCatRVariable]] = self.K(i)
         Pa_Ki_nodes = set()
         if isinstance(K_i, UndiGraph):
-            knodes = BaseGraphOps.nodes(K_i)
+            knodes = K_i.V
             for kn in knodes:
                 for pa_k in self.parents_of(kn):
                     if pa_k not in knodes:
@@ -169,7 +178,7 @@ class LWFChainGraph(PGModel):
         return set(
             [
                 n_p
-                for n_p in BaseGraphOps.nodes(self)
+                for n_p in self.V
                 if self.is_parent_of(parent=n_p, child=n) is True
             ]
         )
@@ -189,21 +198,21 @@ class LWFChainGraph(PGModel):
         and nodes that are only pointed by directed edges.
         """
         edges = set()
-        for e in BaseGraphOps.edges(self):
+        for e in self.E:
             if e.type() == EdgeType.UNDIRECTED:
                 edges.add(e)
 
         undi = UndiGraph.from_graph(
-            Graph.from_edge_node_set(
-                edges=edges, nodes=BaseGraphOps.nodes(self)
-            )
+            Graph.from_edge_node_set(edges=edges, nodes=self.V)
         )
         chain_components: Set[Union[Set[Node], UndiGraph]] = set()
-        for cg in undi.get_components_as_node_sets():
+        for cg in BaseGraphNodeAnalyzer.get_components_as_node_sets(
+            g=undi, result=undi.graph_props
+        ):
             if len(cg) > 1:
-                component = UndiGraph.from_graph(
-                    undi.get_subgraph_by_vertices(vs=cg)
-                )
+                (vs, es) = BaseGraphOps.get_subgraph_by_vertices(g=undi, vs=cg)
+                bgraph = UndiGraph.from_edge_node_set(edges=es, nodes=vs)
+                component = UndiGraph.from_graph(bgraph)
                 chain_components.add(component)
             else:
                 chain_components.add(cg)
@@ -232,7 +241,7 @@ class LWFChainGraph(PGModel):
         end_component_id = None
         for cid, component in self.chain_components.items():
             if isinstance(component, UndiGraph) is True:
-                cnodes = BaseGraphOps.nodes(component)
+                cnodes = component.V
                 if estart in cnodes:
                     start_component_id = cid
                 if eend in cnodes:
@@ -261,7 +270,7 @@ class LWFChainGraph(PGModel):
             for cid in self.chain_components
         }
         dag_edges = set()
-        for e in BaseGraphOps.edges(self):
+        for e in self.E:
             if e.type() == EdgeType.DIRECTED:
                 (
                     edge_between_components_check,
@@ -298,7 +307,9 @@ class LWFChainGraph(PGModel):
                 c2 = n_2 == e.start() and e.end() == n_1
                 return c1 or c2
 
-        return self.is_related_to(n1=parent, n2=child, condition=cond)
+        return BaseGraphBoolOps.is_related_to(
+            self, n1=parent, n2=child, condition=cond
+        )
 
     def is_child_of(self, child: Node, parent: Node):
         """!"""

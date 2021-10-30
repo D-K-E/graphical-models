@@ -6,7 +6,7 @@ from typing import Callable, Optional, Set
 from uuid import uuid4
 
 from pygmodels.gmodel.digraph import DiGraph
-from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.graphops.bgraphops import BaseGraphOps
 from pygmodels.gtype.edge import Edge
 from pygmodels.pgmtype.factor import Factor
 from pygmodels.pgmtype.pgmodel import PGModel
@@ -186,7 +186,7 @@ class BayesianNetwork(PGModel, DiGraph):
         #
         return BayesianNetwork(
             gid=str(uuid4()),
-            nodes=BaseGraphOps.nodes(dig),
-            edges=BaseGraphOps.edges(dig),
+            nodes=dig.V,
+            edges=dig.E,
             factors=fs,
         )

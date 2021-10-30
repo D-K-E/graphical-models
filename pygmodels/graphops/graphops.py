@@ -6,7 +6,12 @@ import math
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
-from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.graphops.bgraphops import (
+    BaseGraphBoolOps,
+    BaseGraphEdgeOps,
+    BaseGraphNodeOps,
+    BaseGraphOps,
+)
 from pygmodels.gtype.abstractobj import (
     AbstractDiGraph,
     AbstractEdge,
@@ -33,7 +38,7 @@ class BaseGraphSetOps:
         """!"""
         is_eset = all(isinstance(o, AbstractEdge) for o in obj)
         if is_eset:
-            edges = BaseGraphOps.edges(g)
+            edges = g.E
             return op(edges, obj)
         is_nset = all(isinstance(o, AbstractNode) for o in obj)
         if is_nset is False:
@@ -41,7 +46,7 @@ class BaseGraphSetOps:
                 "argument type is not supported: " + type(obj).__name__
             )
         #
-        nodes = BaseGraphOps.nodes(g)
+        nodes = g.V
         return op(nodes, obj)
 
     @staticmethod
@@ -296,7 +301,9 @@ class BaseGraphAlgOps:
         Add edge between nodes. If there are no edges in between.
         The flag is_directed specifies if the edge is directed or not
         """
-        if not BaseGraphOps.is_in(g, n1) or not BaseGraphOps.is_in(g, n2):
+        if not BaseGraphBoolOps.is_in(g, n1) or not BaseGraphBoolOps.is_in(
+            g, n2
+        ):
             raise ValueError("one of the nodes is not present in graph")
         n1id = n1.id()
         n2id = n2.id()

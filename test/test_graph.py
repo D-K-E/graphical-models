@@ -7,10 +7,19 @@ import unittest
 # profiler related
 from pstats import Stats
 
+from pygmodels.ganalysis.graphanalyzer import (
+    BaseGraphAnalyzer,
+    BaseGraphBoolAnalyzer,
+    BaseGraphNumericAnalyzer,
+)
 from pygmodels.gmodel.graph import Graph
-from pygmodels.graphf.bgraphops import BaseGraphOps
-from pygmodels.graphf.graphanalyzer import BaseGraphAnalyzer
-from pygmodels.graphf.graphops import BaseGraphAlgOps, BaseGraphSetOps
+from pygmodels.graphops.bgraphops import (
+    BaseGraphBoolOps,
+    BaseGraphEdgeOps,
+    BaseGraphNodeOps,
+    BaseGraphOps,
+)
+from pygmodels.graphops.graphops import BaseGraphAlgOps, BaseGraphSetOps
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
 
@@ -264,94 +273,8 @@ class GraphTest(unittest.TestCase):
         """"""
         eset = set([self.e1, self.e2, self.e3, self.e4])
         g = Graph.from_edgeset(eset)
-        self.assertEqual(
-            BaseGraphOps.nodes(g), set([self.n1, self.n2, self.n3, self.n4])
-        )
-        self.assertEqual(BaseGraphOps.edges(g), eset)
-
-    def test_is_node_incident(self):
-        """"""
-        n1 = Node("n1", {})
-        n2 = Node("n2", {})
-        e1 = Edge(
-            "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
-        )
-        e2 = Edge(
-            "e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED
-        )
-        self.assertTrue(Graph.is_node_incident(n1, e1))
-        self.assertFalse(Graph.is_node_incident(n2, e2))
-
-    def test_adjmat_int(self):
-        """"""
-        mat = self.ugraph1.to_adjmat()
-        self.assertEqual(
-            mat,
-            {
-                ("b", "b"): 0,
-                ("b", "e"): 0,
-                ("b", "f"): 0,
-                ("b", "a"): 0,
-                ("e", "b"): 0,
-                ("e", "e"): 0,
-                ("e", "f"): 1,
-                ("e", "a"): 1,
-                ("f", "b"): 0,
-                ("f", "e"): 1,
-                ("f", "f"): 0,
-                ("f", "a"): 1,
-                ("a", "b"): 0,
-                ("a", "e"): 1,
-                ("a", "f"): 1,
-                ("a", "a"): 0,
-            },
-        )
-
-    def test_adjmat_bool(self):
-        """"""
-        mat = self.ugraph1.to_adjmat(vtype=bool)
-        self.assertEqual(
-            mat,
-            {
-                ("b", "b"): False,
-                ("b", "e"): False,
-                ("b", "f"): False,
-                ("b", "a"): False,
-                ("e", "b"): False,
-                ("e", "e"): False,
-                ("e", "f"): True,
-                ("e", "a"): True,
-                ("f", "b"): False,
-                ("f", "e"): True,
-                ("f", "f"): False,
-                ("f", "a"): True,
-                ("a", "b"): False,
-                ("a", "e"): True,
-                ("a", "f"): True,
-                ("a", "a"): False,
-            },
-        )
-
-    def test_transitive_closure_mat(self):
-        """"""
-        mat = self.ugraph1.transitive_closure_matrix()
-        self.assertEqual(
-            mat,
-            {
-                ("a", "b"): True,
-                ("a", "e"): True,
-                ("a", "f"): True,
-                ("b", "a"): False,
-                ("b", "e"): False,
-                ("b", "f"): False,
-                ("e", "a"): True,
-                ("e", "b"): True,
-                ("e", "f"): True,
-                ("f", "a"): True,
-                ("f", "b"): True,
-                ("f", "e"): True,
-            },
-        )
+        self.assertEqual(set(g.V), set([self.n1, self.n2, self.n3, self.n4]))
+        self.assertEqual(BaseGraphEdgeOps.edges(g), eset)
 
     def test_equal(self):
         n1 = Node("n1", {})
@@ -369,41 +292,12 @@ class GraphTest(unittest.TestCase):
         )
         self.assertEqual(graph, self.graph)
 
-    def test_is_connected_false(self):
-        """"""
-        self.assertEqual(self.graph.is_connected(), False)
-
-    def test_is_connected_true(self):
-        """"""
-        self.assertTrue(self.graph_2.is_connected())
-
-    def test_is_adjacent_of(self):
-        self.assertTrue(self.graph_2.is_adjacent_of(self.e2, self.e3))
-
-    def test_is_neighbour_of_true(self):
-        isneighbor = self.graph_2.is_neighbour_of(self.n2, self.n3)
-        self.assertTrue(isneighbor)
-
-    def test_is_neighbour_of_false(self):
-        isneighbor = self.graph_2.is_neighbour_of(self.n2, self.n2)
-        self.assertFalse(isneighbor)
-
-    def test_neighbours_of(self):
-        ndes = set(
-            [n.id() for n in BaseGraphOps.neighbours_of(self.graph_2, self.n2)]
-        )
-        self.assertEqual(ndes, set([self.n1.id(), self.n3.id()]))
-
-    def test_nb_neighbours_of(self):
-        ndes = BaseGraphAnalyzer.nb_neighbours_of(self.graph_2, self.n2)
-        self.assertEqual(ndes, 2)
-
     def test__add__n(self):
         """"""
         n = Node("n646", {})
         g = self.graph + n
         self.assertEqual(
-            BaseGraphOps.nodes(g), set([self.n1, self.n2, self.n3, self.n4, n])
+            set(g.V), set([self.n1, self.n2, self.n3, self.n4, n])
         )
 
     def test__add__e(self):
@@ -413,7 +307,7 @@ class GraphTest(unittest.TestCase):
             "e8", start_node=self.n1, end_node=n, edge_type=EdgeType.UNDIRECTED
         )
         g = self.graph + e
-        self.assertEqual(BaseGraphOps.edges(g), set([e, self.e1, self.e2]))
+        self.assertEqual(set(g.E), set([e, self.e1, self.e2]))
 
     def test__add__g(self):
         """"""
@@ -426,18 +320,16 @@ class GraphTest(unittest.TestCase):
         gg = Graph(gid="temp", data={}, nodes=set([n, n1, n2]), edges=set([e]))
         g = self.graph + gg
         self.assertEqual(
-            BaseGraphOps.nodes(g),
+            set(g.V),
             set([self.n1, self.n2, self.n3, self.n4, n, n1, n2]),
         )
-        self.assertEqual(BaseGraphOps.edges(g), set([e, self.e1, self.e2]))
+        self.assertEqual(set(g.E), set([e, self.e1, self.e2]))
 
     def test__sub__n(self):
         """"""
         n = Node("n646", {})
         g = self.graph - n
-        self.assertEqual(
-            BaseGraphOps.nodes(g), set([self.n1, self.n2, self.n3, self.n4])
-        )
+        self.assertEqual(set(g.V), set([self.n1, self.n2, self.n3, self.n4]))
 
     def test__sub__e(self):
         """"""
@@ -446,7 +338,7 @@ class GraphTest(unittest.TestCase):
             "e8", start_node=self.n1, end_node=n, edge_type=EdgeType.UNDIRECTED
         )
         g = self.graph - e
-        self.assertEqual(BaseGraphOps.edges(g), set([self.e1, self.e2]))
+        self.assertEqual(set(g.E), set([self.e1, self.e2]))
 
     def test__sub__g(self):
         """"""
@@ -463,54 +355,17 @@ class GraphTest(unittest.TestCase):
             edges=set([e, self.e1]),
         )
         g = self.graph - gg
-        self.assertEqual(BaseGraphOps.edges(g), set([]))
-        self.assertEqual(BaseGraphOps.nodes(g), set([self.n3, self.n4]))
-
-    def test_visit_graph_dfs_nb_component(self):
-        "test visit graph dfs function"
-        com = self.ugraph1.graph_props.nb_component
-        com2 = self.ugraph2.graph_props.nb_component
-        self.assertEqual(com, 2)
-        self.assertEqual(com2, 1)
-
-    def test_get_components(self):
-        """"""
-        comps = self.ugraph4.get_components()
-        cs = list(comps)
-        cs0ns = BaseGraphOps.nodes(cs[0])
-        cs0es = BaseGraphOps.edges(cs[0])
-        #
-        cs1ns = BaseGraphOps.nodes(cs[1])
-        cs1es = BaseGraphOps.edges(cs[1])
-        #
-        # compare graphs
-        # first component
-        u2nodes = set([self.a, self.b, self.e, self.f])
-        u2edges = set([self.ab, self.af, self.ae, self.be, self.ef])
-
-        # second component
-        g2node = set([self.n1, self.n2, self.n3, self.n4])
-        g2edge = set([self.e1, self.e2, self.e3, self.e4])
-        #
-        cond1 = u2nodes == cs0ns or u2nodes == cs1ns
-        #
-        cond2 = g2node == cs0ns or g2node == cs1ns
-        #
-        cond3 = u2edges == cs0es or u2edges == cs1es
-        cond4 = g2edge == cs0es or g2edge == cs1es
-        self.assertTrue(cond1)
-        self.assertTrue(cond2)
-        self.assertTrue(cond3)
-        self.assertTrue(cond4)
+        self.assertEqual(set(g.E), set([]))
+        self.assertEqual(set(g.V), set([self.n3, self.n4]))
 
     def test_visit_graph_dfs_cycles_false(self):
         "test visit graph dfs function"
-        c3 = BaseGraphAnalyzer.has_cycles(self.ugraph3)
+        c3 = BaseGraphBoolAnalyzer.has_cycles(self.ugraph3)
         self.assertFalse(c3)
 
     def test_visit_graph_dfs_cycles_true(self):
         "test visit graph dfs function"
-        c3 = BaseGraphAnalyzer.has_cycles(self.ugraph2)
+        c3 = BaseGraphBoolAnalyzer.has_cycles(self.ugraph2)
         self.assertTrue(c3)
 
 

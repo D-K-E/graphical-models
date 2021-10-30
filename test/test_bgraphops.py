@@ -6,7 +6,12 @@ import unittest
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
-from pygmodels.graphf.bgraphops import BaseGraphOps
+from pygmodels.graphops.bgraphops import (
+    BaseGraphBoolOps,
+    BaseGraphEdgeOps,
+    BaseGraphNodeOps,
+    BaseGraphOps,
+)
 from pygmodels.gtype.abstractobj import (
     AbstractDiGraph,
     AbstractEdge,
@@ -162,12 +167,8 @@ class BaseGraphOpsTest(unittest.TestCase):
         self.ugraph4 = BaseGraph(
             "ug4",
             data={"my": "graph", "data": "is", "very": "awesome"},
-            nodes=BaseGraphOps.nodes(self.ugraph2).union(
-                BaseGraphOps.nodes(self.graph_2)
-            ),
-            edges=BaseGraphOps.edges(self.ugraph2).union(
-                BaseGraphOps.edges(self.graph_2)
-            ),
+            nodes=set(self.ugraph2.V).union(self.graph_2.V),
+            edges=set(self.ugraph2.E).union(self.graph_2.E),
         )
         # ugraph 4
         #   +-----+     n1 -- n2 -- n3 -- n4
@@ -225,46 +226,46 @@ class BaseGraphOpsTest(unittest.TestCase):
     #
     def test_edges_of(self):
         """"""
-        edges = BaseGraphOps.edges_of(self.graph, self.n2)
+        edges = BaseGraphEdgeOps.edges_of(self.graph, self.n2)
         self.assertEqual(edges, set([self.e1, self.e2]))
 
     def test_outgoing_edges_of(self):
         """"""
-        edges = BaseGraphOps.outgoing_edges_of(self.graph, self.n2)
+        edges = BaseGraphEdgeOps.outgoing_edges_of(self.graph, self.n2)
         self.assertEqual(edges, frozenset([self.e2, self.e1]))
 
     def test_incoming_edges_of(self):
         """"""
-        edges = BaseGraphOps.incoming_edges_of(self.graph, self.n2)
+        edges = BaseGraphEdgeOps.incoming_edges_of(self.graph, self.n2)
         self.assertEqual(edges, frozenset([self.e1, self.e2]))
 
     def test_is_in_true(self):
         """"""
-        b = BaseGraphOps.is_in(self.graph, self.n2)
+        b = BaseGraphBoolOps.is_in(self.graph, self.n2)
         self.assertTrue(b)
 
     def test_is_in_false(self):
         """"""
         n = Node("n86", {})
-        b = BaseGraphOps.is_in(self.graph, n)
+        b = BaseGraphBoolOps.is_in(self.graph, n)
         self.assertFalse(b)
 
     def test_vertex_by_id(self):
-        n = BaseGraphOps.vertex_by_id(self.graph, "n1")
+        n = BaseGraphNodeOps.vertex_by_id(self.graph, "n1")
         self.assertEqual(n, self.n1)
 
     def test_edge_by_id(self):
-        e = BaseGraphOps.edge_by_id(self.graph, "e1")
+        e = BaseGraphEdgeOps.edge_by_id(self.graph, "e1")
         self.assertEqual(e, self.e1)
 
     def test_edge_by_vertices(self):
-        e = BaseGraphOps.edge_by_vertices(self.graph, self.n2, self.n3)
+        e = BaseGraphEdgeOps.edge_by_vertices(self.graph, self.n2, self.n3)
         self.assertEqual(e, set([self.e2]))
 
     def test_edge_by_vertices_n(self):
         check = False
         try:
-            BaseGraphOps.edge_by_vertices(self.graph, self.n1, self.n3)
+            BaseGraphEdgeOps.edge_by_vertices(self.graph, self.n1, self.n3)
         except ValueError:
             check = True
         self.assertTrue(check)
@@ -280,11 +281,11 @@ class BaseGraphOpsTest(unittest.TestCase):
             "e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED
         )
         g = BaseGraph("g", nodes=set([n1, n2]), edges=set([e1, e2]))
-        self.assertEqual(BaseGraphOps.edges_by_end(g, n2), set([e1]))
+        self.assertEqual(BaseGraphEdgeOps.edges_by_end(g, n2), set([e1]))
 
     def test_vertices_of(self):
         """"""
-        vertices = BaseGraphOps.vertices_of(self.graph, self.e2)
+        vertices = BaseGraphNodeOps.vertices_of(self.graph, self.e2)
         self.assertEqual(vertices, (self.n2, self.n3))
 
     def test_adjmat_int(self):
@@ -337,9 +338,50 @@ class BaseGraphOpsTest(unittest.TestCase):
             },
         )
 
+    def test_is_adjacent_of(self):
+        self.assertTrue(
+            BaseGraphBoolOps.is_adjacent_of(self.graph_2, self.e2, self.e3)
+        )
+
+    def test_is_node_incident(self):
+        """"""
+        n1 = Node("n1", {})
+        n2 = Node("n2", {})
+        e1 = Edge(
+            "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
+        )
+        e2 = Edge(
+            "e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED
+        )
+        self.assertTrue(
+            BaseGraphBoolOps.is_node_incident(self.graph, self.n1, self.e1)
+        )
+        self.assertFalse(BaseGraphBoolOps.is_node_incident(self.graph, n2, e2))
+
     @unittest.skip("Test not yet implemented")
     def test_get_subgraph_by_vertices(self):
         raise NotImplementedError
+
+    def test_is_neighbour_of_true(self):
+        isneighbor = BaseGraphBoolOps.is_neighbour_of(
+            self.graph_2, self.n2, self.n3
+        )
+        self.assertTrue(isneighbor)
+
+    def test_is_neighbour_of_false(self):
+        isneighbor = BaseGraphBoolOps.is_neighbour_of(
+            self.graph_2, self.n2, self.n2
+        )
+        self.assertFalse(isneighbor)
+
+    def test_neighbours_of(self):
+        ndes = set(
+            [
+                n.id()
+                for n in BaseGraphNodeOps.neighbours_of(self.graph_2, self.n2)
+            ]
+        )
+        self.assertEqual(ndes, set([self.n1.id(), self.n3.id()]))
 
 
 if __name__ == "__main__":

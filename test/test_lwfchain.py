@@ -6,7 +6,7 @@ import unittest
 from uuid import uuid4
 
 from pygmodels.gmodel.undigraph import UndiGraph
-from pygmodels.graphf.graphops import BaseGraphOps
+from pygmodels.graphops.graphops import BaseGraphOps
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.pgmodel.lwfchain import LWFChainGraph
 from pygmodels.pgmodel.markov import ConditionalRandomField
@@ -582,14 +582,12 @@ class LWFChainGraphTest(unittest.TestCase):
             ccomps_nds,
             set([self.A, self.B, self.C, self.E, self.F, self.D, self.G]),
         )
-        self.assertEqual(
-            BaseGraphOps.nodes(ccomps_undi), set([self.H, self.Irvar])
-        )
+        self.assertEqual(set(ccomps_undi.V), set([self.H, self.Irvar]))
 
     def test_get_chain_dag(self):
         """"""
         dag_comps = self.cowell.dag_components
-        self.assertEqual(len(BaseGraphOps.nodes(dag_comps)), 8)
+        self.assertEqual(len(dag_comps.V), 8)
 
     def test_parents_of_K(self):
         """"""
@@ -632,7 +630,7 @@ class LWFChainGraphTest(unittest.TestCase):
             if isinstance(s[1], UndiGraph)
         ]
         hi = self.cowell.K(ccomps_undi[0][0])
-        self.assertEqual(BaseGraphOps.nodes(hi), set([self.H, self.Irvar]))
+        self.assertEqual(hi.V, set([self.H, self.Irvar]))
 
     def test_moralize(self):
         """!
@@ -658,7 +656,7 @@ class LWFChainGraphTest(unittest.TestCase):
                 frozenset([self.H.id(), self.Irvar.id()]),
             ]
         )
-        medges = BaseGraphOps.edges(moral)
+        medges = moral.E
         ms = set([frozenset([m.start().id(), m.end().id()]) for m in medges])
         # [print(m) for m in ms]
 

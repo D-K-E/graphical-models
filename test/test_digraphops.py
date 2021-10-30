@@ -1,20 +1,32 @@
 """!
-Test directed graph object
+\file test_digraphops.py Test DiGraph operation objects
 """
-import pprint
+import math
 import unittest
+from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
+from uuid import uuid4
 
 from pygmodels.gmodel.digraph import DiGraph
-from pygmodels.graphops.bgraphops import (
-    BaseGraphEdgeOps,
-    BaseGraphNodeOps,
-    BaseGraphOps,
+from pygmodels.graphops.bgraphops import BaseGraphEdgeOps
+from pygmodels.graphops.digraphops import (
+    DiGraphBoolOps,
+    DiGraphEdgeOps,
+    DiGraphNodeOps,
+    DiGraphNumericOps,
 )
+from pygmodels.gtype.abstractobj import (
+    AbstractDiGraph,
+    AbstractEdge,
+    AbstractGraph,
+    AbstractNode,
+    AbstractUndiGraph,
+)
+from pygmodels.gtype.basegraph import BaseGraph
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.gtype.node import Node
 
 
-class DiGraphTest(unittest.TestCase):
+class DiGraphOpsTest(unittest.TestCase):
     """!"""
 
     def setUp(self):
@@ -204,20 +216,13 @@ class DiGraphTest(unittest.TestCase):
     def test_id(self):
         return self.assertEqual(self.dgraph1.id(), "dg1")
 
-    def test_find_shortest_path(self):
-        """"""
-        path_props = self.dgraph4.find_shortest_paths(n=self.n1)
-        self.assertEqual(
-            path_props.path_set, set([self.n1, self.n2, self.n3, self.n4])
-        )
+    def test_in_degree_of(self):
+        v = DiGraphNumericOps.in_degree_of(g=self.dgraph6, n=self.a)
+        self.assertEqual(v, 0)
 
-    def test_check_for_path_false(self):
-        v = self.dgraph4.check_for_path(self.n1, self.a)
-        self.assertFalse(v)
-
-    def test_check_for_path_true(self):
-        v = self.dgraph4.check_for_path(self.n1, self.n2)
-        self.assertTrue(v)
+    def test_out_degree_of(self):
+        v = DiGraphNumericOps.out_degree_of(g=self.dgraph6, n=self.a)
+        self.assertEqual(v, 2)
 
     def test_outgoing_edges_of_1(self):
         """"""
@@ -243,10 +248,26 @@ class DiGraphTest(unittest.TestCase):
         comp2 = frozenset([self.e1])
         self.assertEqual(out_edges2, comp2)
 
-    @unittest.skip("Reference found but not implemented yet")
-    def test_find_transitive_closure(self):
-        "Nuutila 1995 p. 14 - 15"
+    def test_is_parent_of_t(self):
+        v = DiGraphBoolOps.is_parent_of(self.dgraph6, self.a, self.h)
+        self.assertEqual(v, True)
 
+    def test_is_parent_of_f(self):
+        v = DiGraphBoolOps.is_parent_of(self.dgraph6, self.a, self.c)
+        self.assertEqual(v, False)
 
-if __name__ == "__main__":
-    unittest.main()
+    def test_is_child_of_t(self):
+        v = DiGraphBoolOps.is_child_of(self.dgraph6, self.h, self.a)
+        self.assertEqual(v, True)
+
+    def test_is_child_of_f(self):
+        v = DiGraphBoolOps.is_parent_of(self.dgraph6, self.a, self.c)
+        self.assertEqual(v, False)
+
+    def test_children_of(self):
+        vs = DiGraphNodeOps.children_of(self.dgraph6, self.a)
+        self.assertEqual(vs, set([self.h, self.b]))
+
+    def test_parents_of(self):
+        vs = DiGraphNodeOps.parents_of(self.dgraph6, self.g)
+        self.assertEqual(vs, set([self.c, self.f]))

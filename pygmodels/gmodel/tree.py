@@ -7,8 +7,13 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
 from pygmodels.gmodel.path import Path
-from pygmodels.graphf.bgraphops import BaseGraphOps
-from pygmodels.graphf.graphsearcher import BaseGraphSearcher
+from pygmodels.graphops.bgraphops import (
+    BaseGraphBoolOps,
+    BaseGraphEdgeOps,
+    BaseGraphNodeOps,
+    BaseGraphOps,
+)
+from pygmodels.graphops.graphsearcher import BaseGraphSearcher
 from pygmodels.gtype.abstractobj import AbstractTree
 from pygmodels.gtype.basegraph import BaseGraph
 from pygmodels.gtype.edge import Edge, EdgeType
@@ -37,12 +42,12 @@ class Tree(BaseGraph, AbstractTree):
         if es[0] == EdgeType.DIRECTED:
 
             def egen(x):
-                return BaseGraphOps.outgoing_edges_of(self, x)
+                return BaseGraphEdgeOps.outgoing_edges_of(self, x)
 
         else:
 
             def egen(x):
-                return BaseGraphOps.edges_of(self, x)
+                return BaseGraphEdgeOps.edges_of(self, x)
 
         self.paths: Dict[
             str, Union[dict, set]
@@ -118,7 +123,7 @@ class Tree(BaseGraph, AbstractTree):
 
     def height_of(self, n: Node) -> int:
         """!"""
-        if not BaseGraphOps.is_in(self, n):
+        if not BaseGraphBoolOps.is_in(self, n):
             raise ValueError("node not in tree")
         nid = n.id()
         return self.topsort[nid]
@@ -168,7 +173,7 @@ class Tree(BaseGraph, AbstractTree):
     def is_set_of(
         self, n: Node, fn: Callable[[Node, Node], bool]
     ) -> Set[Node]:
-        nodes = BaseGraphOps.nodes(self)
+        nodes = self.V
         nset = set([y for y in nodes if fn(n, y) is True])
         return nset
 
@@ -184,9 +189,7 @@ class Tree(BaseGraph, AbstractTree):
         """!
         extract nodes of certain level in tree
         """
-        return set(
-            [n for n in BaseGraphOps.nodes(self) if self.height_of(n) == level]
-        )
+        return set([n for n in self.V if self.height_of(n) == level])
 
     def extract_path(
         self,
@@ -200,8 +203,8 @@ class Tree(BaseGraph, AbstractTree):
     ):
         """"""
         if (
-            BaseGraphOps.is_in(self, start) is False
-            or BaseGraphOps.is_in(self, end) is False
+            BaseGraphBoolOps.is_in(self, start) is False
+            or BaseGraphBoolOps.is_in(self, end) is False
         ):
             raise ValueError("start or end node is not inside tree")
         #
@@ -211,11 +214,11 @@ class Tree(BaseGraph, AbstractTree):
         downset = self.downset_of(end)
         upset_edges = set()
         for u in upset:
-            for e in BaseGraphOps.outgoing_edges_of(self, u):
+            for e in BaseGraphEdgeOps.outgoing_edges_of(self, u):
                 upset_edges.add(e)
         downset_edges = set()
         for d in downset:
-            for e in BaseGraphOps.outgoing_edges_of(self, d):
+            for e in BaseGraphEdgeOps.outgoing_edges_of(self, d):
                 downset_edges.add(e)
         problem_set = upset_edges.intersection(downset_edges)
         ucs_path = Path.from_ucs(

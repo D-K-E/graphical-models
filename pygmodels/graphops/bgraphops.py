@@ -16,103 +16,33 @@ from pygmodels.gtype.abstractobj import (
 )
 
 
-class BaseGraphOps:
-    """!
-    \brief Basic operations defined for all (directed/undirected) graphs
-    """
+class BaseGraphBoolOps:
+    """"""
 
     @staticmethod
-    def get_nodes(
-        ns: Optional[Set[AbstractNode]],
-        es: Optional[Set[AbstractEdge]],
-    ) -> FrozenSet[AbstractNode]:
+    def is_in(g: AbstractGraph, ne: Union[AbstractNode, AbstractEdge]) -> bool:
         """!
-        \brief Obtain all nodes in a single set.
+        \brief check if given edge or node is in graph
 
-        \param ns set of nodes
-        \param es set of edges
-
-        We assume that node set and edge set might contain different nodes,
-        that is \f$ V[G] = V[ns] \cup V[es] \f$
-        We combine nodes given in both sets to create a final set of nodes
-        for the graph
+        We check if given graph object is in the graph.
+        \throws TypeError if the argument is not a node or an edge
         """
-        nodes = set()
-        if ns is None:
-            return
-        for n in ns:
-            nodes.add(n)
-        if es is not None:
-            for e in es:
-                estart = e.start()
-                eend = e.end()
-                nodes.add(estart)
-                nodes.add(eend)
-        #
-        return frozenset(nodes)
+        if isinstance(ne, AbstractNode):
+            return ne.id() in {v.id() for v in g.V}
+        elif isinstance(ne, AbstractEdge):
+            return ne.id() in {e.id() for e in g.E}
+        else:
+            raise TypeError("Given argument should be either edge or node")
 
     @staticmethod
-    def to_edgelist(g: AbstractGraph) -> Dict[str, str]:
+    def is_adjacent_of(
+        g: AbstractGraph, e1: AbstractEdge, e2: AbstractEdge
+    ) -> bool:
         """!
-        \brief Create edge list representation of graph
+        \brief Check if two edges are adjacent
 
-        For each node we register the edges.
-        """
-        _nodes = BaseGraphOps.get_nodes(ns=set(g.V), es=set(g.E))
-        gdata = {}
-        for vertex in _nodes:
-            gdata[vertex.id()] = []
-        #
-        for edge in g.E:
-            for node_id in edge.node_ids():
-                elist = gdata.get(node_id, None)
-                if elist is None:
-                    gdata[node_id] = []
-                else:
-                    gdata[node_id].append(edge.id())
-        return gdata
-
-    @staticmethod
-    def vertices(g: AbstractGraph) -> FrozenSet[AbstractNode]:
-        """!
-        \brief obtain vertex set of the given graph
-
-        \code{.py}
-
-        >>> n1 = Node("n1", {})
-        >>> n2 = Node("n2", {})
-        >>> e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
-        >>> e2 = Edge("e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED)
-        >>> g = Graph("g", nodes=set([n1, n2]), edges=set([e1,e2]))
-        >>> g.vertices()
-        >>> # set([n1, n2])
-
-        \endcode
-        """
-        return frozenset([n for n in g.V])
-
-    @staticmethod
-    def nodes(g: AbstractGraph) -> FrozenSet[AbstractNode]:
-        """!
-        \brief obtain vertex set of the graph
-        """
-        return BaseGraphOps.vertices(g)
-
-    @staticmethod
-    def edges(g: AbstractGraph) -> FrozenSet[AbstractEdge]:
-        """!
-        \brief obtain edge set of the graph
-        """
-        return frozenset([n for n in g.E])
-
-    @staticmethod
-    def neighbours_of(g: AbstractGraph, n1: AbstractEdge) -> Set[AbstractNode]:
-        """!
-        \brief obtain neighbour set of a given node.
-
-        \param n1 the node whose neighbour set we are searching for
-
-        \throws ValueError if node is not inside the graph
+        \param e1 an edge
+        \param e2 an edge
 
         \code{.py}
 
@@ -135,34 +65,149 @@ class BaseGraphOps:
         >>>   nodes=set([n1, n2, n3, n4]),
         >>>   edges=set([e1, e2, e3]),
         >>> )
-        >>> neighbours = graph_2.neighbours_of(n2)
-        >>> [n.id() for n in neighbours]
-        >>> ["n1", "n3"]
+        >>> graph_2.is_adjacent_of(e2, e3)
+        >>> True
 
         \endcode
         """
-        if not BaseGraphOps.is_in(g, n1):
-            raise ValueError("node is not in graph")
-        neighbours = set()
-        for n2 in BaseGraphOps.nodes(g):
-            if g.is_neighbour_of(n1=n1, n2=n2) is True:
-                neighbours.add(n2)
-        return neighbours
+        if not BaseGraphBoolOps.is_in(g, e1):
+            raise ValueError("edge not in Graph")
+
+        if not BaseGraphBoolOps.is_in(g, e2):
+            raise ValueError("edge not in Graph")
+
+        n1_ids = e1.node_ids()
+        n2_ids = e2.node_ids()
+        return len(n1_ids.intersection(n2_ids)) > 0
 
     @staticmethod
-    def is_in(g: AbstractGraph, ne: Union[AbstractNode, AbstractEdge]) -> bool:
+    def is_node_incident(
+        g: AbstractGraph, n: AbstractNode, e: AbstractEdge
+    ) -> bool:
         """!
-        \brief check if given edge or node is in graph
+        \brief Check if a node is incident of an edge
 
-        We check if given graph object is in the graph.
-        \throws TypeError if the argument is not a node or an edge
+        \param n node We check if this node is an endvertex of the edge.
+        \param e The queried edge.
+
+        \code{.py}
+
+        >>> n1 = Node("n1", {})
+        >>> n2 = Node("n2", {})
+        >>> e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
+        >>> e2 = Edge("e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED)
+        >>> Graph.is_node_incident(n1, e1)
+        >>> # True
+        >>> Graph.is_node_incident(n2, e2)
+        >>> # False
+
+        \endcode
         """
-        if isinstance(ne, AbstractNode):
-            return ne.id() in {v.id() for v in g.V}
-        elif isinstance(ne, AbstractEdge):
-            return ne.id() in {e.id() for e in g.E}
-        else:
-            raise TypeError("Given argument should be either edge or node")
+        if not BaseGraphBoolOps.is_in(g, e):
+            raise ValueError("edge not in Graph")
+
+        if not BaseGraphBoolOps.is_in(g, n):
+            raise ValueError("node not in Graph")
+
+        return e.is_endvertice(n)
+
+    @staticmethod
+    def is_related_to(
+        g: AbstractGraph,
+        n1: AbstractNode,
+        n2: AbstractNode,
+        condition: Callable[[AbstractNode, AbstractNode, AbstractEdge], bool],
+        es: FrozenSet[AbstractEdge] = None,
+    ) -> bool:
+        """!
+        \brief Generic function for applying proximity conditions on a node pair
+
+        \param n1 first node subject to proximity condition
+        \param n2 second node subject to proximity condition
+        \param condition proximity condition in the form of a callable.
+        \param es edge set. We query the proximity condition in this set if it
+        is specified
+
+        We check whether a proximity condition is valid for given two nodes.
+        """
+        if es is None:
+            es = frozenset(g.E)
+        for e in es:
+            if condition(n1, n2, e) is True:
+                return True
+        return False
+
+    @staticmethod
+    def is_neighbour_of(
+        g: AbstractGraph, n1: AbstractNode, n2: AbstractNode
+    ) -> bool:
+        """!
+        \brief check if two nodes are neighbours
+        We define the condition of neighborhood as having a common edge, not
+        being the same
+
+        \code{.py}
+
+        >>> n1 = Node("n1", {})
+        >>> n2 = Node("n2", {})
+        >>> n3 = Node("n3", {})
+        >>> n4 = Node("n4", {})
+        >>> e1 = Edge(
+        >>>     "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e2 = Edge(
+        >>>     "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e3 = Edge(
+        >>>     "e3", start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> graph_2 = Graph(
+        >>>   "g2",
+        >>>   data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>   nodes=set([n1, n2, n3, n4]),
+        >>>   edges=set([e1, e2, e3]),
+        >>> )
+        >>> graph_2.is_neighbour_of(n2, n3)
+        >>> True
+        >>> graph_2.is_neighbour_of(n2, n2)
+        >>> False
+
+        \endcode
+        """
+        if not BaseGraphBoolOps.is_in(g, n1):
+            raise ValueError("node not in graph")
+
+        if not BaseGraphBoolOps.is_in(g, n2):
+            raise ValueError("node not in graph")
+
+        def cond(
+            n_1: AbstractNode, n_2: AbstractNode, e: AbstractEdge
+        ) -> bool:
+            """!
+            \brief neighborhood condition
+            """
+            estart = e.start()
+            eend = e.end()
+            c1 = estart == n_1 and eend == n_2
+            c2 = estart == n_2 and eend == n_1
+            return c1 or c2
+
+        gdata = BaseGraphOps.to_edgelist(g)
+
+        n1_edge_ids = set(gdata[n1.id()])
+        n2_edge_ids = set(gdata[n2.id()])
+        edge_ids = n1_edge_ids.intersection(n2_edge_ids)
+        # filter self loops
+        edges = set([e for e in g.E if e.id() in edge_ids])
+        return BaseGraphBoolOps.is_related_to(
+            g, n1=n1, n2=n2, condition=cond, es=edges
+        )
+
+
+class BaseGraphEdgeOps:
+    """
+    \brief Operations that output edge or set of edges involving base graphs
+    """
 
     @staticmethod
     def edges_of(g: AbstractGraph, n: AbstractNode) -> Set[AbstractEdge]:
@@ -200,7 +245,7 @@ class BaseGraphOps:
         \endcode
         """
 
-        if not BaseGraphOps.is_in(g, n):
+        if not BaseGraphBoolOps.is_in(g, n):
             raise ValueError("node not in Graph")
         gdata = BaseGraphOps.to_edgelist(g)
         edge_ids = gdata[n.id()]
@@ -248,7 +293,7 @@ class BaseGraphOps:
 
         \endcode
         """
-        if not BaseGraphOps.is_in(g, n):
+        if not BaseGraphBoolOps.is_in(g, n):
             raise ValueError("node not in Graph")
 
         eset = set()
@@ -294,7 +339,7 @@ class BaseGraphOps:
 
         \endcode
         """
-        if not BaseGraphOps.is_in(g, n):
+        if not BaseGraphBoolOps.is_in(g, n):
             raise ValueError("node not in Graph")
 
         eset = set()
@@ -331,21 +376,17 @@ class BaseGraphOps:
 
         \endcode
         """
-        if not BaseGraphOps.is_in(g, n):
+        if not BaseGraphBoolOps.is_in(g, n):
             raise ValueError("node not in graph")
 
         return {e for e in g.E if e.is_end(n)}
 
     @staticmethod
-    def vertex_by_id(g: AbstractGraph, node_id: str) -> AbstractNode:
+    def edges(g: AbstractGraph) -> FrozenSet[AbstractEdge]:
         """!
-        \brief obtain vertex by using its identifier
-        \throws ValueError if the node is not in graph
+        \brief obtain edge set of the graph
         """
-        V = {v.id(): v for v in g.V}
-        if node_id not in V:
-            raise ValueError("node id not in graph")
-        return V[node_id]
+        return frozenset([n for n in g.E])
 
     @staticmethod
     def edge_by_id(g: AbstractGraph, edge_id: str) -> AbstractEdge:
@@ -370,7 +411,9 @@ class BaseGraphOps:
         \throws ValueError if any of argument nodes are not inside the graph.
         \throws ValueError if there are no edges that consist of argument nodes.
         """
-        if not BaseGraphOps.is_in(g, start) or not BaseGraphOps.is_in(g, end):
+        if not BaseGraphBoolOps.is_in(g, start) or not BaseGraphBoolOps.is_in(
+            g, end
+        ):
             raise ValueError("one of the nodes is not present in graph")
         n1id = start.id()
         n2id = end.id()
@@ -382,6 +425,123 @@ class BaseGraphOps:
             raise ValueError("No common edges between given nodes")
         return set([e for e in g.E if e.id() in common_edge_ids])
 
+
+class BaseGraphNodeOps:
+    """
+    \brief Operations that output a node or a set of nodes involving graphs
+    """
+
+    @staticmethod
+    def get_nodes(
+        ns: Optional[Set[AbstractNode]],
+        es: Optional[Set[AbstractEdge]],
+    ) -> FrozenSet[AbstractNode]:
+        """!
+        \brief Obtain all nodes in a single set.
+
+        \param ns set of nodes
+        \param es set of edges
+
+        We assume that node set and edge set might contain different nodes,
+        that is \f$ V[G] = V[ns] \cup V[es] \f$
+        We combine nodes given in both sets to create a final set of nodes
+        for the graph
+        """
+        nodes = set()
+        if ns is None:
+            return
+        for n in ns:
+            nodes.add(n)
+        if es is not None:
+            for e in es:
+                estart = e.start()
+                eend = e.end()
+                nodes.add(estart)
+                nodes.add(eend)
+        #
+        return frozenset(nodes)
+
+    @staticmethod
+    def vertices(g: AbstractGraph) -> FrozenSet[AbstractNode]:
+        """!
+        \brief obtain vertex set of the given graph
+
+        \code{.py}
+
+        >>> n1 = Node("n1", {})
+        >>> n2 = Node("n2", {})
+        >>> e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
+        >>> e2 = Edge("e2", start_node=n1, end_node=n1, edge_type=EdgeType.UNDIRECTED)
+        >>> g = Graph("g", nodes=set([n1, n2]), edges=set([e1,e2]))
+        >>> g.vertices()
+        >>> # set([n1, n2])
+
+        \endcode
+        """
+        return frozenset([n for n in g.V])
+
+    @staticmethod
+    def nodes(g: AbstractGraph) -> FrozenSet[AbstractNode]:
+        """!
+        \brief obtain vertex set of the graph
+        """
+        return BaseGraphOps.vertices(g)
+
+    @staticmethod
+    def neighbours_of(g: AbstractGraph, n1: AbstractEdge) -> Set[AbstractNode]:
+        """!
+        \brief obtain neighbour set of a given node.
+
+        \param n1 the node whose neighbour set we are searching for
+
+        \throws ValueError if node is not inside the graph
+
+        \code{.py}
+
+        >>> n1 = Node("n1", {})
+        >>> n2 = Node("n2", {})
+        >>> n3 = Node("n3", {})
+        >>> n4 = Node("n4", {})
+        >>> e1 = Edge(
+        >>>     "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e2 = Edge(
+        >>>     "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> e3 = Edge(
+        >>>     "e3", start_node=n3, end_node=n4, edge_type=EdgeType.UNDIRECTED
+        >>> )
+        >>> graph_2 = Graph(
+        >>>   "g2",
+        >>>   data={"my": "graph", "data": "is", "very": "awesome"},
+        >>>   nodes=set([n1, n2, n3, n4]),
+        >>>   edges=set([e1, e2, e3]),
+        >>> )
+        >>> neighbours = graph_2.neighbours_of(n2)
+        >>> [n.id() for n in neighbours]
+        >>> ["n1", "n3"]
+
+        \endcode
+        """
+        if not BaseGraphBoolOps.is_in(g, n1):
+            raise ValueError("node is not in graph")
+        neighbours = set()
+        for n2 in g.V:
+            if BaseGraphBoolOps.is_neighbour_of(g, n1=n1, n2=n2) is True:
+                neighbours.add(n2)
+        return neighbours
+
+    @staticmethod
+    def vertex_by_id(g: AbstractGraph, node_id: str) -> AbstractNode:
+        """!
+        \brief obtain vertex by using its identifier
+        \throws ValueError if the node is not in graph
+        """
+        V = {v.id(): v for v in g.V}
+        if node_id not in V:
+            raise ValueError("node id not in graph")
+        return V[node_id]
+
     @staticmethod
     def vertices_of(
         g: AbstractGraph, e: AbstractEdge
@@ -391,10 +551,37 @@ class BaseGraphOps:
 
         \throws ValueError if edge is not inside the graph
         """
-        if BaseGraphOps.is_in(g, e):
+        if BaseGraphBoolOps.is_in(g, e):
             return (e.start(), e.end())
         else:
             raise ValueError("edge not in graph")
+
+
+class BaseGraphOps:
+    """!
+    \brief Basic operations defined for all (directed/undirected) graphs
+    """
+
+    @staticmethod
+    def to_edgelist(g: AbstractGraph) -> Dict[str, str]:
+        """!
+        \brief Create edge list representation of graph
+
+        For each node we register the edges.
+        """
+        _nodes = BaseGraphNodeOps.get_nodes(ns=set(g.V), es=set(g.E))
+        gdata = {}
+        for vertex in _nodes:
+            gdata[vertex.id()] = []
+        #
+        for edge in g.E:
+            for node_id in edge.node_ids():
+                elist = gdata.get(node_id, None)
+                if elist is None:
+                    gdata[node_id] = []
+                else:
+                    gdata[node_id].append(edge.id())
+        return gdata
 
     @staticmethod
     def to_adjmat(g: AbstractGraph, vtype=int) -> Dict[Tuple[str, str], int]:
@@ -466,3 +653,27 @@ class BaseGraphOps:
                 if tpl2 in gmat:
                     gmat[tpl2] = vtype(1)
         return gmat
+
+    @staticmethod
+    def get_subgraph_by_vertices(
+        g: AbstractGraph,
+        vs: Set[AbstractNode],
+        edge_policy: Callable[
+            [AbstractEdge, Set[AbstractNode]], bool
+        ] = lambda x, ys: set([x.start(), x.end()]).issubset(ys)
+        is True,
+    ) -> Tuple[Set[AbstractNode], Set[AbstractEdge]]:
+        """!
+        Get the subgraph using vertices.
+
+        \param vs set of vertices for the subgraph
+        \param edge_policy determines which edges should be conserved. By
+        default we conserve edges whose incident nodes are a subset of vs
+        """
+        if not all(BaseGraphBoolOps.is_in(g, v) for v in vs):
+            raise ValueError("Given nodes are not contained in graph")
+        es: Set[AbstractEdge] = set()
+        for e in g.E:
+            if edge_policy(e, vs) is True:
+                es.add(e)
+        return (vs, es)
