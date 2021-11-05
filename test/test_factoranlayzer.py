@@ -6,7 +6,10 @@ import unittest
 from random import choice
 
 from pygmodels.factor.factor import BaseFactor, Factor
-from pygmodels.factor.factorf.factoranalyzer import FactorAnalyzer
+from pygmodels.factor.factorf.factoranalyzer import (
+    FactorAnalyzer,
+    FactorNumericAnalyzer,
+)
 from pygmodels.gtype.edge import Edge, EdgeType
 from pygmodels.pgmtype.randomvariable import NumCatRVariable
 
@@ -42,9 +45,7 @@ class TestFactorAnalyzer(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.bc = Factor(
-            gid="bc", scope_vars=set([self.Bf, self.Cf]), factor_fn=phibc
-        )
+        self.bc = Factor(gid="bc", scope_vars=set([self.Bf, self.Cf]), factor_fn=phibc)
         self.bc_b = BaseFactor(
             gid="bc", scope_vars=set([self.Bf, self.Cf]), factor_fn=phibc
         )
@@ -56,7 +57,7 @@ class TestFactorAnalyzer(unittest.TestCase):
 
     def test_max_probability(self):
         """"""
-        mval = FactorAnalyzer.max_probability(self.bc)
+        mval = FactorNumericAnalyzer.max_probability(self.bc)
         self.assertEqual(mval, 0.7)
 
     def test_min_value(self):
@@ -66,7 +67,7 @@ class TestFactorAnalyzer(unittest.TestCase):
 
     def test_min_probability(self):
         """"""
-        mval = FactorAnalyzer.min_probability(self.bc)
+        mval = FactorNumericAnalyzer.min_probability(self.bc)
         self.assertEqual(mval, 0.1)
 
     @unittest.skip("FactorAnalyzer.normalize not yet implemented")

@@ -7,7 +7,7 @@ from itertools import combinations
 from typing import Callable, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
-from pygmodels.factor.factorf.factorops import FactorOps, Factor2FactorableOps
+from pygmodels.factor.factorf.factorops import FactorOps, FactorFactorableOps
 from pygmodels.factor.ftype.abstractfactor import (
     AbstractFactor,
     DomainSliceSet,
@@ -58,7 +58,9 @@ class FactorAlgebra:
         """!
         Wrapper of FactorOps.reduced_by_value
         """
-        (scope, phi) = Factor2FactorableOps.reduced_by_value(f=f, assignments=assignments)
+        (scope, phi) = FactorFactorableOps.reduced_by_value(
+            f=f, assignments=assignments
+        )
         return BaseFactor(gid=str(uuid4()), scope_vars=scope, factor_fn=phi)
 
     @staticmethod
@@ -76,7 +78,7 @@ class FactorAlgebra:
         """!
         Wrapper of FactorOps.reduced_by_vars
         """
-        (scope, phi) = Factor2FactorableOps.reduced_by_vars(f=f, assignments=assignments)
+        (scope, phi) = FactorFactorableOps.reduced_by_vars(f=f, assignments=assignments)
         return BaseFactor(gid=str(uuid4()), scope_vars=scope, factor_fn=phi)
 
     @staticmethod
@@ -84,7 +86,7 @@ class FactorAlgebra:
         """!
         Wrapper of FactorOps.maxout_var
         """
-        (scope, phi) = Factor2FactorableOps.maxout_var(f=f, Y=Y)
+        (scope, phi) = FactorFactorableOps.maxout_var(f=f, Y=Y)
         return BaseFactor(gid=str(uuid4()), scope_vars=scope, factor_fn=phi)
 
     @staticmethod
@@ -92,7 +94,7 @@ class FactorAlgebra:
         """!
         Wrapper of FactorOps.cls_sumout_var
         """
-        (scope, phi) = Factor2FactorableOps.sumout_var(f=f, Y=Y)
+        (scope, phi) = FactorFactorableOps.sumout_var(f=f, Y=Y)
         return BaseFactor(gid=str(uuid4()), scope_vars=scope, factor_fn=phi)
 
     @staticmethod

@@ -15,6 +15,118 @@ from pygmodels.value.value import FiniteVSet, OrderedFiniteVSet
 ProbabilityValue = NumericValue
 
 
+class FactorNumericAnalyzer:
+    """!
+    Operations that take factor as an input and output a numeric value
+    representing a property of the factor
+    """
+
+    @staticmethod
+    def max_probability(f: AbstractFactor) -> ProbabilityValue:
+        """!
+        \brief maximum preference value for this factor
+
+        \code{.py}
+
+        >>> #
+        >>> Bf = NumCatRVariable(
+        >>>     node_id="B",
+        >>>     input_data={"outcome-values": [10, 50]},
+        >>>     marginal_distribution=lambda x: 0.5,
+        >>> )
+        >>> Cf = NumCatRVariable(
+        >>>     node_id="C",
+        >>>     input_data={"outcome-values": [10, 50]},
+        >>>     marginal_distribution=lambda x: 0.5,
+        >>> )
+        >>> def phibc(scope_product):
+        >>>     ""
+        >>>     sfs = set(scope_product)
+        >>>     if sfs == set([("B", 10), ("C", 10)]):
+        >>>         return 0.5
+        >>>     elif sfs == set([("B", 10), ("C", 50)]):
+        >>>         return 0.7
+        >>>     elif sfs == set([("B", 50), ("C", 10)]):
+        >>>         return 0.1
+        >>>     elif sfs == set([("B", 50), ("C", 50)]):
+        >>>         return 0.2
+        >>>     else:
+        >>>         raise ValueError("unknown arg")
+
+        >>> bc = Factor(gid="bc", scope_vars=set([Bf, Cf]), factor_fn=phibc)
+        >>> mval = self.bc.max_probability()
+        >>> print(mval)
+        >>> 0.7
+
+        \endcode
+        """
+        if not isinstance(f, AbstractFactor):
+            raise TypeError("The object must be of Factor type")
+
+        mval, mprob = FactorAnalyzer._max_prob_value(f)
+        return mprob
+
+    @staticmethod
+    def normalize(f: AbstractFactor, phi_result: float) -> float:
+        """!
+        \brief Normalize a given factorization result by dividing it to the
+        value of partition function value Z
+
+        \param phi_result the preference value to be normalized with partition
+        constant
+
+        \return normalized preference value
+        """
+        fdomain = FactorOps.factor_domain(f)
+        Z = FactorOps.partition_value(fdomain)
+        return phi_result / Z
+
+    @staticmethod
+    def min_probability(f: AbstractFactor) -> ProbabilityValue:
+        """!
+        \brief minimum preference value for this factor
+
+        \code{.py}
+
+        >>> #
+        >>> Bf = NumCatRVariable(
+        >>>     node_id="B",
+        >>>     input_data={"outcome-values": [10, 50]},
+        >>>     marginal_distribution=lambda x: 0.5,
+        >>> )
+        >>> Cf = NumCatRVariable(
+        >>>     node_id="C",
+        >>>     input_data={"outcome-values": [10, 50]},
+        >>>     marginal_distribution=lambda x: 0.5,
+        >>> )
+        >>> def phibc(scope_product):
+        >>>     ""
+        >>>     sfs = set(scope_product)
+        >>>     if sfs == set([("B", 10), ("C", 10)]):
+        >>>         return 0.5
+        >>>     elif sfs == set([("B", 10), ("C", 50)]):
+        >>>         return 0.7
+        >>>     elif sfs == set([("B", 50), ("C", 10)]):
+        >>>         return 0.1
+        >>>     elif sfs == set([("B", 50), ("C", 50)]):
+        >>>         return 0.2
+        >>>     else:
+        >>>         raise ValueError("unknown arg")
+
+        >>> bc = Factor(gid="bc", scope_vars=set([Bf, Cf]), factor_fn=phibc)
+        >>> mval = self.bc.min_probability()
+        >>> print(mval)
+        >>> 0.1
+
+        \endcode
+        """
+        if not isinstance(f, AbstractFactor):
+            raise TypeError("The object must be of Factor type")
+
+        mval, mprob = FactorAnalyzer._min_prob_value(f)
+        return mprob
+
+
 class FactorAnalyzer:
     """!
     Analyzes a given factor
@@ -71,51 +183,6 @@ class FactorAnalyzer:
         )
 
     @staticmethod
-    def max_probability(f: AbstractFactor) -> ProbabilityValue:
-        """!
-        \brief maximum preference value for this factor
-
-        \code{.py}
-
-        >>> #
-        >>> Bf = NumCatRVariable(
-        >>>     node_id="B",
-        >>>     input_data={"outcome-values": [10, 50]},
-        >>>     marginal_distribution=lambda x: 0.5,
-        >>> )
-        >>> Cf = NumCatRVariable(
-        >>>     node_id="C",
-        >>>     input_data={"outcome-values": [10, 50]},
-        >>>     marginal_distribution=lambda x: 0.5,
-        >>> )
-        >>> def phibc(scope_product):
-        >>>     ""
-        >>>     sfs = set(scope_product)
-        >>>     if sfs == set([("B", 10), ("C", 10)]):
-        >>>         return 0.5
-        >>>     elif sfs == set([("B", 10), ("C", 50)]):
-        >>>         return 0.7
-        >>>     elif sfs == set([("B", 50), ("C", 10)]):
-        >>>         return 0.1
-        >>>     elif sfs == set([("B", 50), ("C", 50)]):
-        >>>         return 0.2
-        >>>     else:
-        >>>         raise ValueError("unknown arg")
-
-        >>> bc = Factor(gid="bc", scope_vars=set([Bf, Cf]), factor_fn=phibc)
-        >>> mval = self.bc.max_probability()
-        >>> print(mval)
-        >>> 0.7
-
-        \endcode
-        """
-        if not isinstance(f, AbstractFactor):
-            raise TypeError("The object must be of Factor type")
-
-        mval, mprob = FactorAnalyzer._max_prob_value(f)
-        return mprob
-
-    @staticmethod
     def max_value(f: AbstractFactor) -> Set[OrderedFiniteVSet]:
         """!
         \brief maximum factor value for this factor
@@ -162,51 +229,6 @@ class FactorAnalyzer:
         return mval
 
     @staticmethod
-    def min_probability(f: AbstractFactor) -> ProbabilityValue:
-        """!
-        \brief minimum preference value for this factor
-
-        \code{.py}
-
-        >>> #
-        >>> Bf = NumCatRVariable(
-        >>>     node_id="B",
-        >>>     input_data={"outcome-values": [10, 50]},
-        >>>     marginal_distribution=lambda x: 0.5,
-        >>> )
-        >>> Cf = NumCatRVariable(
-        >>>     node_id="C",
-        >>>     input_data={"outcome-values": [10, 50]},
-        >>>     marginal_distribution=lambda x: 0.5,
-        >>> )
-        >>> def phibc(scope_product):
-        >>>     ""
-        >>>     sfs = set(scope_product)
-        >>>     if sfs == set([("B", 10), ("C", 10)]):
-        >>>         return 0.5
-        >>>     elif sfs == set([("B", 10), ("C", 50)]):
-        >>>         return 0.7
-        >>>     elif sfs == set([("B", 50), ("C", 10)]):
-        >>>         return 0.1
-        >>>     elif sfs == set([("B", 50), ("C", 50)]):
-        >>>         return 0.2
-        >>>     else:
-        >>>         raise ValueError("unknown arg")
-
-        >>> bc = Factor(gid="bc", scope_vars=set([Bf, Cf]), factor_fn=phibc)
-        >>> mval = self.bc.min_probability()
-        >>> print(mval)
-        >>> 0.1
-
-        \endcode
-        """
-        if not isinstance(f, AbstractFactor):
-            raise TypeError("The object must be of Factor type")
-
-        mval, mprob = FactorAnalyzer._min_prob_value(f)
-        return mprob
-
-    @staticmethod
     def min_value(f: AbstractFactor) -> Set[OrderedFiniteVSet]:
         """!
         \brief minimum factor value for this factor
@@ -251,19 +273,3 @@ class FactorAnalyzer:
         """
         mval, mrob = FactorAnalyzer._min_prob_value(f)
         return mval
-
-    @staticmethod
-    def normalize(f: AbstractFactor, phi_result: float) -> float:
-        """!
-        \brief Normalize a given factorization result by dividing it to the
-        value of partition function value Z
-
-        \param phi_result the preference value to be normalized with partition
-        constant
-
-        \return normalized preference value
-        """
-        fdomain = FactorOps.factor_domain(f)
-        Z = FactorOps.partition_value(fdomain)
-
-        return phi_result / Z

@@ -34,9 +34,7 @@ class Factor(BaseFactor):
         self,
         gid: str,
         scope_vars: Set[NumCatRVariable],
-        factor_fn: Optional[
-            Callable[[Set[Tuple[str, NumCatRVariable]]], float]
-        ] = None,
+        factor_fn: Optional[Callable[[Set[Tuple[str, NumCatRVariable]]], float]] = None,
         data={},
     ):
         """!
@@ -100,10 +98,10 @@ class Factor(BaseFactor):
         if factor_fn is None:
             factor_fn = self.marginal_joint
 
-        # check all values are positive
-        super().__init__(
-            gid=gid, scope_vars=scope_vars, factor_fn=factor_fn, data=data
-        )
+        super().__init__(gid=gid, scope_vars=scope_vars, factor_fn=factor_fn, data=data)
+
+        ## scope variable hash table
+        self.domain_table = {s.id(): s for s in self.scope_vars()}
 
     @classmethod
     def from_abstract_factor(cls, f: AbstractFactor):
@@ -162,80 +160,6 @@ class Factor(BaseFactor):
         bfac = BaseFactor.from_scope_variables_with_fn(svars, fn)
         return cls.from_base_factor(bfac)
 
-    def domain_scope(
-        self, domain: List[Set[Tuple[str, NumericValue]]]
-    ) -> Set[NumCatRVariable]:
-        """!
-        \brief Given a domain of values obtain scope variables implied
-
-        Obtain random variables from given factor domain.
-        Each value in domain comes with an identifier of its random variable.
-        From these identifiers, we obtain set of random variables attested in
-        factor domain.
-
-        \param domain list of arbitrary domain values
-
-        \throw ValueError
-        \parblock
-
-        We raise value error when the argument domain
-        value array is not a subset of the domain of the factor, since we have
-        no way of obtaining random variable that is not inside the scope of
-        this factor.
-
-        \endparblock
-
-        \return set of random variables implied by the given list of domain
-        values
-
-        \code{.py}
-
-        >>> Af = NumCatRVariable(
-        >>>    node_id="A",
-        >>>    input_data={"outcome-values": [10, 50]},
-        >>>    marginal_distribution=lambda x: 0.5,
-        >>> )
-        >>> Bf = NumCatRVariable(
-        >>>    node_id="B",
-        >>>    input_data={"outcome-values": [10, 50]},
-        >>>    marginal_distribution=lambda x: 0.5,
-        >>> )
-        >>>
-        >>> def phiAB(scope_product):
-        >>>     ""
-        >>>     sfs = set(scope_product)
-        >>>     if sfs == set([("A", 10), ("B", 10)]):
-        >>>         return 30
-        >>>     elif sfs == set([("A", 10), ("B", 50)]):
-        >>>       return 5
-        >>>   elif sfs == set([("A", 50), ("B", 10)]):
-        >>>       return 1
-        >>>   elif sfs == set([("A", 50), ("B", 50)]):
-        >>>       return 10
-        >>>   else:
-        >>>      raise ValueError("unknown arg")
-
-        >>> AB = Factor(gid="AB", scope_vars=set([Af, Bf]), factor_fn=phiAB)
-        >>> d = AB.domain_scope(domain=[set([("A", 50), ("B", 50)]),
-        >>>                             set([("A",10), ("B", 10)])
-        >>>                            ])
-        >>> set(d) == set([Af, Bf])
-        >>> True
-
-        \endcode
-        """
-        sids = set()
-        for vs in domain:
-            for vtpl in vs:
-                sids.add(vtpl[0])
-        # check for values out of domain of this factor
-        scope_ids = set([s.id() for s in self.scope_vars()])
-        if sids.issubset(scope_ids) is False:
-            msg = "Given argument domain include values out of the domain of this factor"
-            raise ValueError(msg)
-        svars = set([s for s in self.scope_vars() if s.id() in sids])
-        return svars
-
     def has_var(self, ids: str) -> Tuple[bool, Optional[NumCatRVariable]]:
         """!
         \brief check if given id belongs to variable of this scope
@@ -264,9 +188,7 @@ class Factor(BaseFactor):
         else:
             vs = [s for s in self.svars if s.id() == ids]
             if len(vs) > 1:
-                raise ValueError(
-                    "more than one variable matches the id string"
-                )
+                raise ValueError("more than one variable matches the id string")
 
     def __call__(self, scope_product: Set[Tuple[str, NumericValue]]) -> float:
         """!
@@ -284,13 +206,9 @@ class Factor(BaseFactor):
         """
         domains = FactorOps.factor_domain(self, D=self.scope_vars())
         self.scope_products = list(product(*domains))
-        return sum(
-            [self.phi(scope_product=sv) for sv in FactorOps.cartesian(self)]
-        )
+        return sum([self.phi(scope_product=sv) for sv in FactorOps.cartesian(self)])
 
-    def marginal_joint(
-        self, scope_product: Set[Tuple[str, NumericValue]]
-    ) -> float:
+    def marginal_joint(self, scope_product: Set[Tuple[str, NumericValue]]) -> float:
         """!
         \brief marginal joint function.
         Default factor function when none is provided.
@@ -308,9 +226,7 @@ class Factor(BaseFactor):
             var_value = sv[1]
             hasv, var = self.has_var(var_id)
             if hasv is False:
-                raise ValueError(
-                    "Unknown variable id among arguments: " + var_id
-                )
+                raise ValueError("Unknown variable id among arguments: " + var_id)
             p *= var.marginal(var_value)
         return p
 

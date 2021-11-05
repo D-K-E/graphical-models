@@ -16,12 +16,13 @@ from pygmodels.factor.ftype.abstractfactor import (
     FactorCartesianProduct,
     FactorDomain,
     FactorScope,
+    AbstractFactor,
 )
-from pygmodels.pgmtype.abstractpgm import AbstractFactor
-from pygmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
+from pygmodels.randvar.rtype.abstractrandvar import AbstractRandomVariable
+from pygmodels.value.value import NumericValue
 
 
-class Factor2FactorableOps:
+class FactorFactorableOps:
     """!
     Operations that give take a factor and give Tuple[FactorScope, Callable]
 
@@ -79,7 +80,7 @@ class Factor2FactorableOps:
 
         \return a set of random variables and a factor function
         """
-        return Factor2FactorableOps.reduced(f, assignments)
+        return FactorFactorableOps.reduced(f, assignments)
 
     @staticmethod
     def reduced_by_vars(
@@ -95,11 +96,11 @@ class Factor2FactorableOps:
 
         \return Factor
         """
-        return Factor2FactorableOps.reduced(f=f, assignments=assignments)
+        return FactorFactorableOps.reduced(f=f, assignments=assignments)
 
     @staticmethod
     def maxout_var(
-        f: AbstractFactor, Y: NumCatRVariable
+        f: AbstractFactor, Y: AbstractRandomVariable
     ) -> Tuple[FactorScope, Callable]:
         """!
         \brief max the variable out of factor as per Koller, Friedman 2009, p. 555
@@ -137,7 +138,7 @@ class Factor2FactorableOps:
 
     @staticmethod
     def sumout_var(
-        f: AbstractFactor, Y: NumCatRVariable
+        f: AbstractFactor, Y: AbstractRandomVariable
     ) -> Tuple[FactorScope, Callable]:
         """!
         \brief Sum the variable out of factor as per Koller, Friedman 2009, p. 297
@@ -181,10 +182,53 @@ class Factor2FactorableOps:
         return tuple([frozenset(f.scope_vars().difference({Y})), psi])
 
 
+class FactorBoolOps:
+    """!
+    Operations that take factor as input and boolean as output
+    """
+
+    @staticmethod
+    def has_var(f: AbstractFactor, ids: str) -> bool:
+        """!
+        \brief check if given id belongs to variable of this scope
+        Check if given random variable id is contained in scope of factor.
+
+        \param ids identifier of random variable
+
+        \throw ValueError Value error is raised if there are more than one
+        random variable associated to id string
+
+        \return Tuple
+        \parblock
+
+        a tuple whose first element is a boolean flag indicating if
+        there is indeed a variable associated to identifier and whose second
+        element is either None if the operation has failed or the random
+        variable associated to given identifier.
+
+        \endparblock
+
+        """
+        return any(ids == s.id() for s in f.scope_vars())
+
+
 class FactorOps:
     """!
     Operations a given factor
     """
+
+    @staticmethod
+    def get_var(f: AbstractFactor, ids: str) -> AbstractRandomVariable:
+        """!
+        Get random variable using its identifier string
+        """
+        vs = [s for s in f.scope_vars() if s.id() == ids]
+        if len(vs) > 1:
+            raise ValueError("more than one variable matches the id string")
+        elif len(vs) == 0:
+            raise ValueError("Id does not exist in factor domain")
+        else:
+            return vs[0]
 
     @staticmethod
     def product(
@@ -281,8 +325,8 @@ class FactorOps:
     @staticmethod
     def factor_domain(
         f: AbstractFactor,
-        D: Set[NumCatRVariable],
-        rvar_filter: Callable[[NumCatRVariable], bool] = lambda x: True,
+        D: Set[AbstractRandomVariable],
+        rvar_filter: Callable[[AbstractRandomVariable], bool] = lambda x: True,
         value_filter: Callable[[NumericValue], bool] = lambda x: True,
         value_transform: Callable[[NumericValue], NumericValue] = lambda x: x,
     ) -> FactorDomain:
@@ -371,3 +415,78 @@ class FactorOps:
         """
         domain_values = FactorOps.factor_domain(f, D=f.scope_vars())
         return [frozenset(s) for s in list(product(*domain_values))]
+
+    @staticmethod
+    def domain_scope(f: AbstractFactor, domain: FactorDomain) -> FactorScope:
+        """!
+        \brief Given a domain of values obtain scope variables implied
+
+        Obtain random variables from given factor domain.
+        Each value in domain comes with an identifier of its random variable.
+        From these identifiers, we obtain set of random variables attested in
+        factor domain.
+
+        \param domain list of arbitrary domain values
+
+        \throw ValueError
+        \parblock
+
+        We raise value error when the argument domain
+        value array is not a subset of the domain of the factor, since we have
+        no way of obtaining random variable that is not inside the scope of
+        this factor.
+
+        \endparblock
+
+        \return set of random variables implied by the given list of domain
+        values
+
+        \code{.py}
+
+        >>> Af = NumCatRVariable(
+        >>>    node_id="A",
+        >>>    input_data={"outcome-values": [10, 50]},
+        >>>    marginal_distribution=lambda x: 0.5,
+        >>> )
+        >>> Bf = NumCatRVariable(
+        >>>    node_id="B",
+        >>>    input_data={"outcome-values": [10, 50]},
+        >>>    marginal_distribution=lambda x: 0.5,
+        >>> )
+        >>>
+        >>> def phiAB(scope_product):
+        >>>     ""
+        >>>     sfs = set(scope_product)
+        >>>     if sfs == set([("A", 10), ("B", 10)]):
+        >>>         return 30
+        >>>     elif sfs == set([("A", 10), ("B", 50)]):
+        >>>       return 5
+        >>>   elif sfs == set([("A", 50), ("B", 10)]):
+        >>>       return 1
+        >>>   elif sfs == set([("A", 50), ("B", 50)]):
+        >>>       return 10
+        >>>   else:
+        >>>      raise ValueError("unknown arg")
+
+        >>> AB = Factor(gid="AB", scope_vars=set([Af, Bf]), factor_fn=phiAB)
+        >>> d = AB.domain_scope(domain=[set([("A", 50), ("B", 50)]),
+        >>>                             set([("A",10), ("B", 10)])
+        >>>                            ])
+        >>> set(d) == set([Af, Bf])
+        >>> True
+
+        \endcode
+        """
+        sids = set()
+        for vs in domain:
+            for vtpl in vs:
+                sids.add(vtpl[0])
+        # check for values out of domain of this factor
+        scope_ids = set([s.id() for s in f.scope_vars()])
+        if sids.issubset(scope_ids) is False:
+            msg = (
+                "Given argument domain include values out of the domain of this factor"
+            )
+            raise ValueError(msg)
+        svars = set([s for s in f.scope_vars() if s.id() in sids])
+        return svars

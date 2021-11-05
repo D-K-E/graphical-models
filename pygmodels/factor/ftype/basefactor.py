@@ -41,15 +41,12 @@ class BaseFactor(AbstractFactor, GraphObject):
         ## random variables belonging to this factor
         self.svars = scope_vars
 
-        ## scope variable hash table
-        self.domain_table = {s.id(): s for s in self.scope_vars()}
-
         self.factor_fn = factor_fn
 
     def __str__(self):
         """"""
         msg = "Factor: " + self.id() + "\n"
-        msg += "Scope variables: " + str(self.domain_table)
+        msg += "Scope variables: " + str({s.id(): s for s in self.scope_vars()})
         msg += "Factor function: " + str(self.factor_fn)
         return msg
 
@@ -78,16 +75,12 @@ class BaseFactor(AbstractFactor, GraphObject):
             return x
 
         other_domain = [
-            s.value_set(
-                value_filter=value_filter, value_transform=value_transform
-            )
+            s.value_set(value_filter=value_filter, value_transform=value_transform)
             for s in n.scope_vars()
             if rvar_filter(s)
         ]
         this_domain = [
-            s.value_set(
-                value_filter=value_filter, value_transform=value_transform
-            )
+            s.value_set(value_filter=value_filter, value_transform=value_transform)
             for s in self.scope_vars()
             if rvar_filter(s)
         ]
@@ -135,9 +128,7 @@ class BaseFactor(AbstractFactor, GraphObject):
         """
         svar = f.scope_vars()
         fn = f.phi
-        return BaseFactor(
-            gid=f.id(), data=f.data(), factor_fn=fn, scope_vars=svar
-        )
+        return BaseFactor(gid=f.id(), data=f.data(), factor_fn=fn, scope_vars=svar)
 
     @classmethod
     def from_joint_vars(cls, svars: FactorScope):
@@ -167,9 +158,7 @@ class BaseFactor(AbstractFactor, GraphObject):
 
     @classmethod
     def from_scope_variables_with_fn(
-        cls,
-        svars: FactorScope,
-        fn: Callable[[DomainSubset], float],
+        cls, svars: FactorScope, fn: Callable[[DomainSubset], float],
     ):
         """!
         \brief Make a factor from scope variables and a preference function
