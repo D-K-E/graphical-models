@@ -21,6 +21,166 @@ from pygmodels.pgmtype.abstractpgm import AbstractFactor
 from pygmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
 
 
+class Factor2FactorableOps:
+    """!
+    Operations that give take a factor and give Tuple[FactorScope, Callable]
+
+    The output is all that is required to make a factor, that is a set of
+    random variables and a factor function.
+    """
+
+    @staticmethod
+    def reduced(
+        f: AbstractFactor, assignments: DomainSubset
+    ) -> Tuple[FactorScope, Callable]:
+        """!
+        \brief reduce factor using given context
+
+        \param assignments values that are assigned to random variables of this
+        factor.
+
+        \return Factor whose conditional probability table rows are shrink to
+        rows that contain assignment values.
+
+        Koller, Friedman 2009, p. 111 reduction by value example
+
+        \f$phi(A,B,C)\f$
+
+         A      B      C
+        ---- | ---- | ----
+         a1  |  b1  |  c1
+         a1  |  b1  |  c2
+         a2  |  b1  |  c1
+         a2  |  b1  |  c2
+
+        reduction C=c1 \f$\phi(A,B,C=c_1)\f$
+
+           A      B      C
+          ---- | ---- | ----
+           a1  |  b1  |  c1
+           a2  |  b1  |  c1
+
+        """
+        svars = set()
+        for sv in f.scope_vars():
+            for kval in assignments:
+                k, value = kval
+                if sv.id() == k:
+                    sv.reduce_to_value(value)
+            svars.add(sv)
+        return tuple([svars, f.phi])
+
+    @staticmethod
+    def reduced_by_value(
+        f: AbstractFactor, assignments: DomainSubset
+    ) -> Tuple[FactorScope, Callable]:
+        """!
+        \brief \see Factor.reduced(context)
+
+        \return a set of random variables and a factor function
+        """
+        return Factor2FactorableOps.reduced(f, assignments)
+
+    @staticmethod
+    def reduced_by_vars(
+        f: AbstractFactor, assignments: DomainSubset
+    ) -> Tuple[FactorScope, Callable]:
+        """!
+        Koller, Friedman 2009, p. 111 follows the definition 4.5
+
+        For \f$ U \not \subset Y \f$, we define \f$phi[u]\f$ to be
+        \f$phi[U'=u']\f$, where \f$ U' = U \cap Y \f$ , and \f$u' = u<U>\f$,
+        where \f$u<U>\f$ denotes the assignment in \f$u\f$ to the variables in
+        \f$U'\f$.
+
+        \return Factor
+        """
+        return Factor2FactorableOps.reduced(f=f, assignments=assignments)
+
+    @staticmethod
+    def maxout_var(
+        f: AbstractFactor, Y: NumCatRVariable
+    ) -> Tuple[FactorScope, Callable]:
+        """!
+        \brief max the variable out of factor as per Koller, Friedman 2009, p. 555
+
+        Maxing out a variable, or factor maximization is defined by Koller,
+        Friedman as:
+        <blockquote>
+        Let X be a set of variables, and Y \f$ \not \in \f$ X, a random
+        variable. Let \f$ \phi(X, Y) \f$ be a factor. We define the factor
+        maximization of Y in \f$ \phi \f$ to be factor \f$ \psi \f$ over X such
+        that: \f$ \psi(X) = max_{Y}\phi(X, Y) \f$
+        </blockquote>
+
+        \param Y random variable who is going to be maxed out.
+
+        \throw ValueError If the argument is not in scope of this factor, we
+        throw a value error
+
+        \return Factor
+        """
+        if Y not in f.scope_vars():
+            raise ValueError("argument is not in scope of this factor")
+
+        # Y_vals = Y.value_set()
+        products = FactorOps.cartesian(f)
+        fn = f.phi
+
+        def psi(scope_product: DomainSliceSet):
+            """"""
+            s = set(scope_product)
+            diffs = set([p for p in products if s.issubset(p) is True])
+            return max([fn(d) for d in diffs])
+
+        return tuple([frozenset(f.scope_vars().difference({Y})), psi])
+
+    @staticmethod
+    def sumout_var(
+        f: AbstractFactor, Y: NumCatRVariable
+    ) -> Tuple[FactorScope, Callable]:
+        """!
+        \brief Sum the variable out of factor as per Koller, Friedman 2009, p. 297
+
+        Summing out, or factor marginalization, is defined as the following by
+        Koller, Friedman:
+
+        <blockquote>
+
+        Let X be a set of variables and Y \f$\not \in \f$ X a variable. Let
+        \f$\phi(X, Y)\f] be a factor. We define the factor marginalization of Y
+        in phi, denoted \f$ \sum_Y \phi \f$, to be a factor psi over X such
+        that: \f$ \psi(X) = \sum_Y \phi(X,Y) \f$
+
+        </blockquote>
+
+
+        \param Y the variable that we are going to sum out.
+
+        \throw ValueError We raise a value error if the argument is not in
+        the scope of this factor
+
+        \return Factor
+        """
+        if Y not in f.scope_vars():
+            msg = "Argument " + str(Y)
+            msg += " is not in scope of this factor: "
+            msg += " ".join(f.scope_vars())
+            raise ValueError(msg)
+
+        # Y_vals = Y.value_set()
+        products = FactorOps.cartesian(f)
+        fn = f.phi
+
+        def psi(scope_product: DomainSliceSet):
+            """"""
+            s = set(scope_product)
+            diffs = set([p for p in products if s.issubset(p) is True])
+            return sum([fn(d) for d in diffs])
+
+        return tuple([frozenset(f.scope_vars().difference({Y})), psi])
+
+
 class FactorOps:
     """!
     Operations a given factor
@@ -80,9 +240,7 @@ class FactorOps:
                     prod_s = set(iproduct)
                     if prod_s.issubset(ss) and prod_s.issubset(ost):
                         common = ss.union(ost)
-                        multi = product_fn(
-                            f.factor_fn(ss), other.factor_fn(ost)
-                        )
+                        multi = product_fn(f.factor_fn(ss), other.factor_fn(ost))
                         common_match.add((multi, tuple(common)))
                         prod = accumulator(multi, prod)
 
@@ -96,62 +254,8 @@ class FactorOps:
         return f, prod
 
     @staticmethod
-    def reduced(
-        f: AbstractFactor, assignments: DomainSubset
-    ) -> Tuple[FactorScope, Callable]:
-        """!
-        \brief reduce factor using given context
-
-        \param assignments values that are assigned to random variables of this
-        factor.
-
-        \return Factor whose conditional probability table rows are shrink to
-        rows that contain assignment values.
-
-        Koller, Friedman 2009, p. 111 reduction by value example
-
-        \f$phi(A,B,C)\f$
-
-         A      B      C
-        ---- | ---- | ----
-         a1  |  b1  |  c1
-         a1  |  b1  |  c2
-         a2  |  b1  |  c1
-         a2  |  b1  |  c2
-
-        reduction C=c1 \f$\phi(A,B,C=c_1)\f$
-
-           A      B      C
-          ---- | ---- | ----
-           a1  |  b1  |  c1
-           a2  |  b1  |  c1
-
-        """
-        svars = set()
-        for sv in f.scope_vars():
-            for kval in assignments:
-                k, value = kval
-                if sv.id() == k:
-                    sv.reduce_to_value(value)
-            svars.add(sv)
-        return tuple([svars, f.phi])
-
-    @staticmethod
-    def reduced_by_value(
-        f: AbstractFactor, assignments: DomainSubset
-    ) -> Tuple[FactorScope, Callable]:
-        """!
-        \brief \see Factor.reduced(context)
-
-        \return Factor
-        """
-        return FactorOps.reduced(f, assignments)
-
-    @staticmethod
     def filter_assignments(
-        f: AbstractFactor,
-        assignments: DomainSubset,
-        context: FactorScope,
+        f: AbstractFactor, assignments: DomainSubset, context: FactorScope,
     ) -> DomainSubset:
         """!
         \brief filter out assignments that do not belong to context domain
@@ -173,60 +277,6 @@ class FactorOps:
             if a not in context_ids:
                 assignment_d.pop(a)
         return set([(k, v) for k, v in assignment_d.items()])
-
-    @staticmethod
-    def reduced_by_vars(
-        f: AbstractFactor, assignments: DomainSubset
-    ) -> Tuple[FactorScope, Callable]:
-        """!
-        Koller, Friedman 2009, p. 111 follows the definition 4.5
-
-        For \f$ U \not \subset Y \f$, we define \f$phi[u]\f$ to be
-        \f$phi[U'=u']\f$, where \f$ U' = U \cap Y \f$ , and \f$u' = u<U>\f$,
-        where \f$u<U>\f$ denotes the assignment in \f$u\f$ to the variables in
-        \f$U'\f$.
-
-        \return Factor
-        """
-        return FactorOps.reduced(f=f, assignments=assignments)
-
-    @staticmethod
-    def maxout_var(
-        f: AbstractFactor, Y: NumCatRVariable
-    ) -> Tuple[FactorScope, Callable]:
-        """!
-        \brief max the variable out of factor as per Koller, Friedman 2009, p. 555
-
-        Maxing out a variable, or factor maximization is defined by Koller,
-        Friedman as:
-        <blockquote>
-        Let X be a set of variables, and Y \f$ \not \in \f$ X, a random
-        variable. Let \f$ \phi(X, Y) \f$ be a factor. We define the factor
-        maximization of Y in \f$ \phi \f$ to be factor \f$ \psi \f$ over X such
-        that: \f$ \psi(X) = max_{Y}\phi(X, Y) \f$
-        </blockquote>
-
-        \param Y random variable who is going to be maxed out.
-
-        \throw ValueError If the argument is not in scope of this factor, we
-        throw a value error
-
-        \return Factor
-        """
-        if Y not in f.scope_vars():
-            raise ValueError("argument is not in scope of this factor")
-
-        # Y_vals = Y.value_set()
-        products = FactorOps.cartesian(f)
-        fn = f.phi
-
-        def psi(scope_product: DomainSliceSet):
-            """"""
-            s = set(scope_product)
-            diffs = set([p for p in products if s.issubset(p) is True])
-            return max([fn(d) for d in diffs])
-
-        return tuple([frozenset(f.scope_vars().difference({Y})), psi])
 
     @staticmethod
     def factor_domain(
@@ -269,9 +319,7 @@ class FactorOps:
 
         """
         return [
-            s.value_set(
-                value_filter=value_filter, value_transform=value_transform
-            )
+            s.value_set(value_filter=value_filter, value_transform=value_transform)
             for s in D
             if rvar_filter(s)
         ]
@@ -323,48 +371,3 @@ class FactorOps:
         """
         domain_values = FactorOps.factor_domain(f, D=f.scope_vars())
         return [frozenset(s) for s in list(product(*domain_values))]
-
-    @staticmethod
-    def sumout_var(
-        f: AbstractFactor, Y: NumCatRVariable
-    ) -> Tuple[FactorScope, Callable]:
-        """!
-        \brief Sum the variable out of factor as per Koller, Friedman 2009, p. 297
-
-        Summing out, or factor marginalization, is defined as the following by
-        Koller, Friedman:
-
-        <blockquote>
-
-        Let X be a set of variables and Y \f$\not \in \f$ X a variable. Let
-        \f$\phi(X, Y)\f] be a factor. We define the factor marginalization of Y
-        in phi, denoted \f$ \sum_Y \phi \f$, to be a factor psi over X such
-        that: \f$ \psi(X) = \sum_Y \phi(X,Y) \f$
-
-        </blockquote>
-
-
-        \param Y the variable that we are going to sum out.
-
-        \throw ValueError We raise a value error if the argument is not in
-        the scope of this factor
-
-        \return Factor
-        """
-        if Y not in f.scope_vars():
-            msg = "Argument " + str(Y)
-            msg += " is not in scope of this factor: "
-            msg += " ".join(f.scope_vars())
-            raise ValueError(msg)
-
-        # Y_vals = Y.value_set()
-        products = FactorOps.cartesian(f)
-        fn = f.phi
-
-        def psi(scope_product: DomainSliceSet):
-            """"""
-            s = set(scope_product)
-            diffs = set([p for p in products if s.issubset(p) is True])
-            return sum([fn(d) for d in diffs])
-
-        return tuple([frozenset(f.scope_vars().difference({Y})), psi])

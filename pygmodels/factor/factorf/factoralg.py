@@ -7,7 +7,7 @@ from itertools import combinations
 from typing import Callable, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
-from pygmodels.factor.factorf.factorops import FactorOps
+from pygmodels.factor.factorf.factorops import FactorOps, Factor2FactorableOps
 from pygmodels.factor.ftype.abstractfactor import (
     AbstractFactor,
     DomainSliceSet,
@@ -36,10 +36,7 @@ class FactorAlgebra:
         Wrapper of FactorOps.cls_product
         """
         ((scope, phi), prod) = FactorOps.product(
-            f=f,
-            other=other,
-            product_fn=product_fn,
-            accumulator=accumulator,
+            f=f, other=other, product_fn=product_fn, accumulator=accumulator,
         )
         return (
             BaseFactor(gid=str(uuid4()), scope_vars=scope, factor_fn=phi),
@@ -47,9 +44,7 @@ class FactorAlgebra:
         )
 
     @staticmethod
-    def reduced(
-        f: AbstractFactor, assignments: DomainSubset
-    ) -> AbstractFactor:
+    def reduced(f: AbstractFactor, assignments: DomainSubset) -> AbstractFactor:
         """!
         Wrapper of FactorOps.cls_reduced
         """
@@ -63,7 +58,7 @@ class FactorAlgebra:
         """!
         Wrapper of FactorOps.reduced_by_value
         """
-        (scope, phi) = FactorOps.reduced_by_value(f=f, assignments=assignments)
+        (scope, phi) = Factor2FactorableOps.reduced_by_value(f=f, assignments=assignments)
         return BaseFactor(gid=str(uuid4()), scope_vars=scope, factor_fn=phi)
 
     @staticmethod
@@ -73,39 +68,31 @@ class FactorAlgebra:
         """!
         Wrapper of FactorOps.cls_filter_assignments
         """
-        (scope, phi) = FactorOps.filter_assignments(
-            f=f, assignments=assignments
-        )
+        (scope, phi) = FactorOps.filter_assignments(f=f, assignments=assignments)
         return BaseFactor(gid=str(uuid4()), scope_vars=scope, factor_fn=phi)
 
     @staticmethod
-    def reduced_by_vars(
-        f: AbstractFactor, assignments: DomainSubset
-    ) -> AbstractFactor:
+    def reduced_by_vars(f: AbstractFactor, assignments: DomainSubset) -> AbstractFactor:
         """!
         Wrapper of FactorOps.reduced_by_vars
         """
-        (scope, phi) = FactorOps.reduced_by_vars(f=f, assignments=assignments)
+        (scope, phi) = Factor2FactorableOps.reduced_by_vars(f=f, assignments=assignments)
         return BaseFactor(gid=str(uuid4()), scope_vars=scope, factor_fn=phi)
 
     @staticmethod
-    def maxout_var(
-        f: AbstractFactor, Y: AbstractRandomVariable
-    ) -> AbstractFactor:
+    def maxout_var(f: AbstractFactor, Y: AbstractRandomVariable) -> AbstractFactor:
         """!
         Wrapper of FactorOps.maxout_var
         """
-        (scope, phi) = FactorOps.maxout_var(f=f, Y=Y)
+        (scope, phi) = Factor2FactorableOps.maxout_var(f=f, Y=Y)
         return BaseFactor(gid=str(uuid4()), scope_vars=scope, factor_fn=phi)
 
     @staticmethod
-    def sumout_var(
-        f: AbstractFactor, Y: AbstractRandomVariable
-    ) -> AbstractFactor:
+    def sumout_var(f: AbstractFactor, Y: AbstractRandomVariable) -> AbstractFactor:
         """!
         Wrapper of FactorOps.cls_sumout_var
         """
-        (scope, phi) = FactorOps.sumout_var(f=f, Y=Y)
+        (scope, phi) = Factor2FactorableOps.sumout_var(f=f, Y=Y)
         return BaseFactor(gid=str(uuid4()), scope_vars=scope, factor_fn=phi)
 
     @staticmethod
