@@ -8,9 +8,9 @@ import unittest
 # profiler related
 from pstats import Stats
 
-from pygmodels.gtype.basegraph import BaseGraph
-from pygmodels.gtype.edge import Edge, EdgeType
-from pygmodels.gtype.node import Node
+from pygmodels.graph.gtype.basegraph import BaseGraph
+from pygmodels.graph.gtype.edge import Edge, EdgeType
+from pygmodels.graph.gtype.node import Node
 
 
 class BaseGraphTest(unittest.TestCase):

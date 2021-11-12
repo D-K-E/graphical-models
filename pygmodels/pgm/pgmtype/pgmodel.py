@@ -18,23 +18,23 @@ from pygmodels.factor.factor import Factor
 from pygmodels.factor.factorf.factoralg import FactorAlgebra
 from pygmodels.factor.factorf.factoranalyzer import FactorAnalyzer
 from pygmodels.factor.factorf.factorops import FactorOps
-from pygmodels.ganalysis.graphanalyzer import (
+from pygmodels.graph.ganalysis.graphanalyzer import (
     BaseGraphAnalyzer,
     BaseGraphBoolAnalyzer,
     BaseGraphNodeAnalyzer,
     BaseGraphNumericAnalyzer,
 )
-from pygmodels.gmodel.graph import Graph
-from pygmodels.graphops.bgraphops import (
+from pygmodels.graph.gmodel.graph import Graph
+from pygmodels.graph.graphops.bgraphops import (
     BaseGraphBoolOps,
     BaseGraphEdgeOps,
     BaseGraphNodeOps,
     BaseGraphOps,
 )
-from pygmodels.graphops.graphops import BaseGraphAlgOps
-from pygmodels.gtype.edge import Edge
-from pygmodels.gtype.node import Node
-from pygmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
+from pygmodels.graph.graphops.graphops import BaseGraphAlgOps
+from pygmodels.graph.gtype.edge import Edge
+from pygmodels.graph.gtype.node import Node
+from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable, NumericValue
 
 
 def min_unmarked_neighbours(

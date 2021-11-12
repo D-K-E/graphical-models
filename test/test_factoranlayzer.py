@@ -10,8 +10,8 @@ from pygmodels.factor.factorf.factoranalyzer import (
     FactorAnalyzer,
     FactorNumericAnalyzer,
 )
-from pygmodels.gtype.edge import Edge, EdgeType
-from pygmodels.pgmtype.randomvariable import NumCatRVariable
+from pygmodels.graph.gtype.edge import Edge, EdgeType
+from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable
 
 
 class TestFactorAnalyzer(unittest.TestCase):
@@ -45,7 +45,9 @@ class TestFactorAnalyzer(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.bc = Factor(gid="bc", scope_vars=set([self.Bf, self.Cf]), factor_fn=phibc)
+        self.bc = Factor(
+            gid="bc", scope_vars=set([self.Bf, self.Cf]), factor_fn=phibc
+        )
         self.bc_b = BaseFactor(
             gid="bc", scope_vars=set([self.Bf, self.Cf]), factor_fn=phibc
         )

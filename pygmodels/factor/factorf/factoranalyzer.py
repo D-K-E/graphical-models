@@ -9,7 +9,7 @@ from typing import Callable, FrozenSet, List, Optional, Set, Tuple, Union
 
 from pygmodels.factor.factorf.factorops import FactorOps
 from pygmodels.factor.ftype.abstractfactor import AbstractFactor
-from pygmodels.pgmtype.randomvariable import NumCatRVariable, NumericValue
+from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable, NumericValue
 from pygmodels.value.value import FiniteVSet, OrderedFiniteVSet
 
 ProbabilityValue = NumericValue

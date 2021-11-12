@@ -3,11 +3,11 @@ Test path object
 """
 import unittest
 
-from pygmodels.gmodel.graph import Graph
-from pygmodels.gmodel.path import Path
-from pygmodels.graphops.bgraphops import BaseGraphOps
-from pygmodels.gtype.edge import Edge, EdgeType
-from pygmodels.gtype.node import Node
+from pygmodels.graph.gmodel.graph import Graph
+from pygmodels.graph.gmodel.path import Path
+from pygmodels.graph.graphops.bgraphops import BaseGraphOps
+from pygmodels.graph.gtype.edge import Edge, EdgeType
+from pygmodels.graph.gtype.node import Node
 
 
 class PathTest(unittest.TestCase):

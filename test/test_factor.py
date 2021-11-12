@@ -7,8 +7,8 @@ from random import choice
 
 from pygmodels.factor.factor import Factor
 from pygmodels.factor.factorf.factorops import FactorOps
-from pygmodels.gtype.edge import Edge, EdgeType
-from pygmodels.pgmtype.randomvariable import NumCatRVariable
+from pygmodels.graph.gtype.edge import Edge, EdgeType
+from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable
 
 
 class TestFactor(unittest.TestCase):
@@ -19,7 +19,10 @@ class TestFactor(unittest.TestCase):
         input_data = {
             "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
             "grade": {"outcome-values": [0.2, 0.4, 0.6], "evidence": 0.2},
-            "dice": {"outcome-values": [i for i in range(1, 7)], "evidence": 1.0 / 6,},
+            "dice": {
+                "outcome-values": [i for i in range(1, 7)],
+                "evidence": 1.0 / 6,
+            },
             "fdice": {"outcome-values": [i for i in range(1, 7)]},
         }
 
@@ -121,7 +124,9 @@ class TestFactor(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.AB = Factor(gid="AB", scope_vars=set([self.Af, self.Bf]), factor_fn=phiAB)
+        self.AB = Factor(
+            gid="AB", scope_vars=set([self.Af, self.Bf]), factor_fn=phiAB
+        )
 
         def phiBC(scope_product):
             """"""
@@ -137,7 +142,9 @@ class TestFactor(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.BC = Factor(gid="BC", scope_vars=set([self.Bf, self.Cf]), factor_fn=phiBC)
+        self.BC = Factor(
+            gid="BC", scope_vars=set([self.Bf, self.Cf]), factor_fn=phiBC
+        )
 
     def data_3(self):
         """"""
@@ -156,7 +163,9 @@ class TestFactor(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.CD = Factor(gid="CD", scope_vars=set([self.Cf, self.Df]), factor_fn=phiCD)
+        self.CD = Factor(
+            gid="CD", scope_vars=set([self.Cf, self.Df]), factor_fn=phiCD
+        )
 
         def phiDA(scope_product):
             """"""
@@ -172,7 +181,9 @@ class TestFactor(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.DA = Factor(gid="DA", scope_vars=set([self.Df, self.Af]), factor_fn=phiDA)
+        self.DA = Factor(
+            gid="DA", scope_vars=set([self.Df, self.Af]), factor_fn=phiDA
+        )
 
     def setUp(self):
         """"""
@@ -205,7 +216,9 @@ class TestFactor(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.aB = Factor(gid="ab", scope_vars=set([self.af, self.Bf]), factor_fn=phiaB)
+        self.aB = Factor(
+            gid="ab", scope_vars=set([self.af, self.Bf]), factor_fn=phiaB
+        )
 
         def phibc(scope_product):
             """"""
@@ -221,7 +234,9 @@ class TestFactor(unittest.TestCase):
             else:
                 raise ValueError("unknown arg")
 
-        self.bc = Factor(gid="bc", scope_vars=set([self.Bf, self.Cf]), factor_fn=phibc)
+        self.bc = Factor(
+            gid="bc", scope_vars=set([self.Bf, self.Cf]), factor_fn=phibc
+        )
 
     def test_id(self):
         """"""
@@ -230,7 +245,8 @@ class TestFactor(unittest.TestCase):
     def test_domain_scope(self):
         """"""
         d = FactorOps.domain_scope(
-            self.AB, domain=[set([("A", 50), ("B", 50)]), set([("A", 10), ("B", 10)])]
+            self.AB,
+            domain=[set([("A", 50), ("B", 50)]), set([("A", 10), ("B", 10)])],
         )
         self.assertEqual(set(d), set([self.Af, self.Bf]))
 
@@ -254,12 +270,15 @@ class TestFactor(unittest.TestCase):
 
     def test_scope_vars(self):
         self.assertTrue(
-            self.f.scope_vars(), set([self.dice, self.intelligence, self.grade]),
+            self.f.scope_vars(),
+            set([self.dice, self.intelligence, self.grade]),
         )
 
     def test_marginal_joint(self):
         """ """
-        mjoint = self.f.marginal_joint(set([("int", 0.1), ("grade", 0.4), ("dice", 2)]))
+        mjoint = self.f.marginal_joint(
+            set([("int", 0.1), ("grade", 0.4), ("dice", 2)])
+        )
         dmarg = self.dice.marginal(2)
         imarg = self.intelligence.marginal(0.1)
         gmarg = self.grade.marginal(0.4)

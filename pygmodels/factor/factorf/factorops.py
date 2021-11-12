@@ -11,12 +11,12 @@ from typing import Callable, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
 from pygmodels.factor.ftype.abstractfactor import (
+    AbstractFactor,
     DomainSliceSet,
     DomainSubset,
     FactorCartesianProduct,
     FactorDomain,
     FactorScope,
-    AbstractFactor,
 )
 from pygmodels.randvar.rtype.abstractrandvar import AbstractRandomVariable
 from pygmodels.value.value import NumericValue
@@ -284,7 +284,9 @@ class FactorOps:
                     prod_s = set(iproduct)
                     if prod_s.issubset(ss) and prod_s.issubset(ost):
                         common = ss.union(ost)
-                        multi = product_fn(f.factor_fn(ss), other.factor_fn(ost))
+                        multi = product_fn(
+                            f.factor_fn(ss), other.factor_fn(ost)
+                        )
                         common_match.add((multi, tuple(common)))
                         prod = accumulator(multi, prod)
 
@@ -299,7 +301,9 @@ class FactorOps:
 
     @staticmethod
     def filter_assignments(
-        f: AbstractFactor, assignments: DomainSubset, context: FactorScope,
+        f: AbstractFactor,
+        assignments: DomainSubset,
+        context: FactorScope,
     ) -> DomainSubset:
         """!
         \brief filter out assignments that do not belong to context domain
@@ -363,7 +367,9 @@ class FactorOps:
 
         """
         return [
-            s.value_set(value_filter=value_filter, value_transform=value_transform)
+            s.value_set(
+                value_filter=value_filter, value_transform=value_transform
+            )
             for s in D
             if rvar_filter(s)
         ]
@@ -484,9 +490,7 @@ class FactorOps:
         # check for values out of domain of this factor
         scope_ids = set([s.id() for s in f.scope_vars()])
         if sids.issubset(scope_ids) is False:
-            msg = (
-                "Given argument domain include values out of the domain of this factor"
-            )
+            msg = "Given argument domain include values out of the domain of this factor"
             raise ValueError(msg)
         svars = set([s for s in f.scope_vars() if s.id() in sids])
         return svars

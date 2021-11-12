@@ -7,8 +7,8 @@ from random import choice
 
 from pygmodels.factor.factor import BaseFactor, Factor
 from pygmodels.factor.factorf.factorops import FactorOps
-from pygmodels.gtype.edge import Edge, EdgeType
-from pygmodels.pgmtype.randomvariable import NumCatRVariable
+from pygmodels.graph.gtype.edge import Edge, EdgeType
+from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable
 
 
 class TestFactorOps(unittest.TestCase):

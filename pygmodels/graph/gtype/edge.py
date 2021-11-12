@@ -7,9 +7,9 @@
 """
 from typing import FrozenSet, Set, Union
 
-from pygmodels.gtype.abstractobj import AbstractEdge, EdgeType
-from pygmodels.gtype.graphobj import GraphObject
-from pygmodels.gtype.node import Node
+from pygmodels.graph.gtype.abstractobj import AbstractEdge, EdgeType
+from pygmodels.graph.gtype.graphobj import GraphObject
+from pygmodels.graph.gtype.node import Node
 
 
 class Edge(GraphObject, AbstractEdge):

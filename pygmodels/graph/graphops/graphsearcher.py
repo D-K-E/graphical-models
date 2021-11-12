@@ -4,22 +4,22 @@ Traverse graphs in some fashion
 import math
 from typing import Callable, Dict, List, Optional, Set, Tuple, Union
 
-from pygmodels.graphops.bgraphops import (
+from pygmodels.graph.graphops.bgraphops import (
     BaseGraphBoolOps,
     BaseGraphEdgeOps,
     BaseGraphNodeOps,
     BaseGraphOps,
 )
-from pygmodels.gtype.abstractobj import (
+from pygmodels.graph.gtype.abstractobj import (
     AbstractEdge,
     AbstractGraph,
     AbstractNode,
 )
-from pygmodels.gtype.gsearchresult import (
+from pygmodels.graph.gtype.gsearchresult import (
     BaseGraphBFSResult,
     BaseGraphDFSResult,
 )
-from pygmodels.gtype.queue import PriorityQueue
+from pygmodels.graph.gtype.queue import PriorityQueue
 
 
 class BaseGraphSearcher:

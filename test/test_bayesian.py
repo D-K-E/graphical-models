@@ -8,10 +8,10 @@ from uuid import uuid4
 
 from pygmodels.factor.factor import Factor
 from pygmodels.factor.factorf.factorops import FactorOps
-from pygmodels.gmodel.digraph import DiGraph
-from pygmodels.gtype.edge import Edge, EdgeType
-from pygmodels.pgmodel.bayesian import BayesianNetwork
-from pygmodels.pgmtype.randomvariable import NumCatRVariable
+from pygmodels.graph.gmodel.digraph import DiGraph
+from pygmodels.graph.gtype.edge import Edge, EdgeType
+from pygmodels.pgm.pgmodel.bayesian import BayesianNetwork
+from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable
 
 
 class BayesianNetworkTest(unittest.TestCase):

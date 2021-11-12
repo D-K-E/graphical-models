@@ -6,11 +6,11 @@ from typing import Optional, Set, Tuple
 from uuid import uuid4
 
 from pygmodels.factor.factor import Factor
-from pygmodels.gmodel.undigraph import UndiGraph
-from pygmodels.graphops.graphops import BaseGraphOps
-from pygmodels.gtype.edge import Edge
-from pygmodels.pgmtype.pgmodel import PGModel
-from pygmodels.pgmtype.randomvariable import (
+from pygmodels.graph.gmodel.undigraph import UndiGraph
+from pygmodels.graph.graphops.graphops import BaseGraphOps
+from pygmodels.graph.gtype.edge import Edge
+from pygmodels.pgm.pgmtype.pgmodel import PGModel
+from pygmodels.pgm.pgmtype.randomvariable import (
     NumCatRVariable,
     NumericValue,
     RandomVariable,

@@ -4,7 +4,7 @@
 import math
 import unittest
 
-from pygmodels.pgmtype.randomvariable import (
+from pygmodels.pgm.pgmtype.randomvariable import (
     CatRandomVariable,
     NumCatRVariable,
     PossibleOutcomes,

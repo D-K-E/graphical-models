@@ -5,7 +5,7 @@
 from abc import ABC, abstractmethod
 from typing import Callable, FrozenSet, List, Set, Tuple
 
-from pygmodels.gtype.abstractobj import AbstractGraphObj
+from pygmodels.graph.gtype.abstractobj import AbstractGraphObj
 from pygmodels.randvar.rtype.abstractrandvar import AbstractRandomVariable
 from pygmodels.value.value import NumericValue, OrderedFiniteVSet
 

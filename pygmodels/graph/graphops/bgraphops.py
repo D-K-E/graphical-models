@@ -6,7 +6,7 @@ import math
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
-from pygmodels.gtype.abstractobj import (
+from pygmodels.graph.gtype.abstractobj import (
     AbstractDiGraph,
     AbstractEdge,
     AbstractGraph,

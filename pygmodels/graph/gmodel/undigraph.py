@@ -12,26 +12,26 @@ along to the parent's method in order to adapt its functionality.
 from typing import Callable, Dict, List, Set, Union
 from uuid import uuid4
 
-from pygmodels.ganalysis.graphanalyzer import (
+from pygmodels.graph.ganalysis.graphanalyzer import (
     BaseGraphAnalyzer,
     BaseGraphBoolAnalyzer,
     BaseGraphEdgeAnalyzer,
     BaseGraphNodeAnalyzer,
     BaseGraphNumericAnalyzer,
 )
-from pygmodels.gmodel.graph import Graph
-from pygmodels.gmodel.tree import Tree
-from pygmodels.graphops.bgraphops import (
+from pygmodels.graph.gmodel.graph import Graph
+from pygmodels.graph.gmodel.tree import Tree
+from pygmodels.graph.graphops.bgraphops import (
     BaseGraphEdgeOps,
     BaseGraphNodeOps,
     BaseGraphOps,
 )
-from pygmodels.graphops.graphops import BaseGraphAlgOps
-from pygmodels.graphops.graphsearcher import BaseGraphSearcher
-from pygmodels.gtype.abstractobj import AbstractUndiGraph, EdgeType
-from pygmodels.gtype.basegraph import BaseGraph
-from pygmodels.gtype.edge import Edge
-from pygmodels.gtype.node import Node
+from pygmodels.graph.graphops.graphops import BaseGraphAlgOps
+from pygmodels.graph.graphops.graphsearcher import BaseGraphSearcher
+from pygmodels.graph.gtype.abstractobj import AbstractUndiGraph, EdgeType
+from pygmodels.graph.gtype.basegraph import BaseGraph
+from pygmodels.graph.gtype.edge import Edge
+from pygmodels.graph.gtype.node import Node
 
 
 class UndiGraph(AbstractUndiGraph, BaseGraph):

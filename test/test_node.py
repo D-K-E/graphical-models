@@ -3,7 +3,7 @@ Node unit tests
 """
 import unittest
 
-from pygmodels.gtype.node import Node
+from pygmodels.graph.gtype.node import Node
 
 
 class NodeTest(unittest.TestCase):

@@ -7,7 +7,7 @@ from random import choice
 from typing import Any, Callable, Dict, FrozenSet, List, Set, Tuple
 from uuid import uuid4
 
-from pygmodels.gtype.node import Node
+from pygmodels.graph.gtype.node import Node
 from pygmodels.value.codomain import CodomainValue, Outcome, PossibleOutcomes
 from pygmodels.value.domain import DomainValue
 from pygmodels.value.value import NumericValue

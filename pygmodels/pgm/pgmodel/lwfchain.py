@@ -7,25 +7,25 @@ from typing import Dict, Set, Tuple, Union
 from uuid import uuid4
 
 from pygmodels.factor.factor import Factor
-from pygmodels.ganalysis.graphanalyzer import (
+from pygmodels.graph.ganalysis.graphanalyzer import (
     BaseGraphAnalyzer,
     BaseGraphBoolAnalyzer,
     BaseGraphNodeAnalyzer,
     BaseGraphNumericAnalyzer,
 )
-from pygmodels.gmodel.graph import Graph
-from pygmodels.gmodel.tree import Tree
-from pygmodels.gmodel.undigraph import UndiGraph
-from pygmodels.graphops.graphops import (
+from pygmodels.graph.gmodel.graph import Graph
+from pygmodels.graph.gmodel.tree import Tree
+from pygmodels.graph.gmodel.undigraph import UndiGraph
+from pygmodels.graph.graphops.graphops import (
     BaseGraphBoolOps,
     BaseGraphNodeOps,
     BaseGraphOps,
 )
-from pygmodels.gtype.edge import Edge, EdgeType
-from pygmodels.gtype.node import Node
-from pygmodels.pgmodel.markov import ConditionalRandomField, MarkovNetwork
-from pygmodels.pgmtype.pgmodel import PGModel
-from pygmodels.pgmtype.randomvariable import NumCatRVariable
+from pygmodels.graph.gtype.edge import Edge, EdgeType
+from pygmodels.graph.gtype.node import Node
+from pygmodels.pgm.pgmodel.markov import ConditionalRandomField, MarkovNetwork
+from pygmodels.pgm.pgmtype.pgmodel import PGModel
+from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable
 
 
 class LWFChainGraph(PGModel):

@@ -6,16 +6,16 @@ import pprint
 import unittest
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 
-from pygmodels.graphops.bgraphops import BaseGraphOps
-from pygmodels.graphops.graphops import BaseGraphAlgOps, BaseGraphSetOps
-from pygmodels.gtype.abstractobj import (
+from pygmodels.graph.graphops.bgraphops import BaseGraphOps
+from pygmodels.graph.graphops.graphops import BaseGraphAlgOps, BaseGraphSetOps
+from pygmodels.graph.gtype.abstractobj import (
     AbstractEdge,
     AbstractGraph,
     AbstractNode,
 )
-from pygmodels.gtype.basegraph import BaseGraph
-from pygmodels.gtype.edge import Edge, EdgeType
-from pygmodels.gtype.node import Node
+from pygmodels.graph.gtype.basegraph import BaseGraph
+from pygmodels.graph.gtype.edge import Edge, EdgeType
+from pygmodels.graph.gtype.node import Node
 
 
 class BaseGraphAlgSetOpsTest(unittest.TestCase):

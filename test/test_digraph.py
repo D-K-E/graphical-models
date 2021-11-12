@@ -5,14 +5,14 @@ import pdb
 import pprint
 import unittest
 
-from pygmodels.gmodel.digraph import DiGraph
-from pygmodels.graphops.bgraphops import (
+from pygmodels.graph.gmodel.digraph import DiGraph
+from pygmodels.graph.graphops.bgraphops import (
     BaseGraphEdgeOps,
     BaseGraphNodeOps,
     BaseGraphOps,
 )
-from pygmodels.gtype.edge import Edge, EdgeType
-from pygmodels.gtype.node import Node
+from pygmodels.graph.gtype.edge import Edge, EdgeType
+from pygmodels.graph.gtype.node import Node
 
 
 class DiGraphTest(unittest.TestCase):

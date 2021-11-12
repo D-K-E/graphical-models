@@ -6,11 +6,11 @@ from typing import Callable, Optional, Set
 from uuid import uuid4
 
 from pygmodels.factor.factor import Factor
-from pygmodels.gmodel.digraph import DiGraph
-from pygmodels.graphops.bgraphops import BaseGraphOps
-from pygmodels.gtype.edge import Edge
-from pygmodels.pgmtype.pgmodel import PGModel
-from pygmodels.pgmtype.randomvariable import NumCatRVariable
+from pygmodels.graph.gmodel.digraph import DiGraph
+from pygmodels.graph.graphops.bgraphops import BaseGraphOps
+from pygmodels.graph.gtype.edge import Edge
+from pygmodels.pgm.pgmtype.pgmodel import PGModel
+from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable
 
 
 class BayesianNetwork(PGModel, DiGraph):

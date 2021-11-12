@@ -7,13 +7,13 @@ from uuid import uuid4
 
 from pygmodels.factor.factor import Factor
 from pygmodels.factor.factorf.factorops import FactorOps
-from pygmodels.gmodel.undigraph import UndiGraph
-from pygmodels.graphops.graphops import BaseGraphOps
-from pygmodels.gtype.edge import Edge, EdgeType
-from pygmodels.pgmodel.lwfchain import LWFChainGraph
-from pygmodels.pgmodel.markov import ConditionalRandomField
-from pygmodels.pgmtype.pgmodel import PGModel
-from pygmodels.pgmtype.randomvariable import NumCatRVariable
+from pygmodels.graph.gmodel.undigraph import UndiGraph
+from pygmodels.graph.graphops.graphops import BaseGraphOps
+from pygmodels.graph.gtype.edge import Edge, EdgeType
+from pygmodels.pgm.pgmodel.lwfchain import LWFChainGraph
+from pygmodels.pgm.pgmodel.markov import ConditionalRandomField
+from pygmodels.pgm.pgmtype.pgmodel import PGModel
+from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable
 
 
 class LWFChainGraphTest(unittest.TestCase):

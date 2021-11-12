@@ -7,11 +7,11 @@ import unittest
 # profiler related
 from pstats import Stats
 
-from pygmodels.graphops.bgraphops import BaseGraphOps
-from pygmodels.graphops.graphsearcher import BaseGraphSearcher
-from pygmodels.gtype.basegraph import BaseGraph
-from pygmodels.gtype.edge import Edge, EdgeType
-from pygmodels.gtype.node import Node
+from pygmodels.graph.graphops.bgraphops import BaseGraphOps
+from pygmodels.graph.graphops.graphsearcher import BaseGraphSearcher
+from pygmodels.graph.gtype.basegraph import BaseGraph
+from pygmodels.graph.gtype.edge import Edge, EdgeType
+from pygmodels.graph.gtype.node import Node
 
 
 class BaseGraphSearcherTests(unittest.TestCase):

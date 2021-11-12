@@ -13,9 +13,9 @@ from uuid import uuid4
 from pygmodels.factor.factor import Factor
 from pygmodels.factor.factorf.factoralg import FactorAlgebra
 from pygmodels.factor.factorf.factorops import FactorOps
-from pygmodels.gtype.edge import Edge, EdgeType
-from pygmodels.pgmtype.pgmodel import PGModel, min_unmarked_neighbours
-from pygmodels.pgmtype.randomvariable import NumCatRVariable
+from pygmodels.graph.gtype.edge import Edge, EdgeType
+from pygmodels.pgm.pgmtype.pgmodel import PGModel, min_unmarked_neighbours
+from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable
 
 
 class PGModelTest(unittest.TestCase):
