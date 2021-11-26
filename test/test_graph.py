@@ -13,13 +13,12 @@ from pygmodels.graph.ganalysis.graphanalyzer import (
     BaseGraphNumericAnalyzer,
 )
 from pygmodels.graph.gmodel.graph import Graph
-from pygmodels.graph.graphops.graphalg import BaseGraphAlgOps
+from pygmodels.graph.graphops.graphalg import BaseGraphAlgOps, BaseGraphSetOps
 from pygmodels.graph.graphops.graphops import (
     BaseGraphBoolOps,
     BaseGraphEdgeOps,
     BaseGraphNodeOps,
     BaseGraphOps,
-    BaseGraphSetOps,
 )
 from pygmodels.graph.gtype.edge import Edge, EdgeType
 from pygmodels.graph.gtype.node import Node

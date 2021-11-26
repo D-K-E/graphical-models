@@ -16,12 +16,8 @@ from pygmodels.graph.ganalysis.graphanalyzer import (
     BaseGraphBoolAnalyzer,
     BaseGraphNumericAnalyzer,
 )
-from pygmodels.graph.graphops.graphalg import BaseGraphAlgOps
-from pygmodels.graph.graphops.graphops import (
-    BaseGraphEdgeOps,
-    BaseGraphOps,
-    BaseGraphSetOps,
-)
+from pygmodels.graph.graphops.graphalg import BaseGraphAlgOps, BaseGraphSetOps
+from pygmodels.graph.graphops.graphops import BaseGraphEdgeOps, BaseGraphOps
 from pygmodels.graph.graphops.graphsearcher import BaseGraphSearcher
 from pygmodels.graph.gtype.basegraph import BaseGraph
 from pygmodels.graph.gtype.edge import Edge, EdgeType
