@@ -6,7 +6,7 @@ import pprint
 import unittest
 
 from pygmodels.graph.gmodel.digraph import DiGraph
-from pygmodels.graph.graphops.bgraphops import (
+from pygmodels.graph.graphops.graphops import (
     BaseGraphEdgeOps,
     BaseGraphNodeOps,
     BaseGraphOps,

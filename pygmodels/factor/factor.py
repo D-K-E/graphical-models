@@ -10,7 +10,7 @@ from pprint import pprint
 from typing import Callable, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
-from pygmodels.factor.factorf.factorops import FactorOps
+from pygmodels.factor.factorf.factorops import FactorBoolOps, FactorOps
 from pygmodels.factor.ftype.abstractfactor import (
     AbstractFactor,
     DomainSliceSet,
@@ -164,38 +164,6 @@ class Factor(BaseFactor):
         bfac = BaseFactor.from_scope_variables_with_fn(svars, fn)
         return cls.from_base_factor(bfac)
 
-    def has_var(self, ids: str) -> Tuple[bool, Optional[NumCatRVariable]]:
-        """!
-        \brief check if given id belongs to variable of this scope
-        Check if given random variable id is contained in scope of factor.
-
-        \param ids identifier of random variable
-
-        \throw ValueError Value error is raised if there are more than one
-        random variable associated to id string
-
-        \return Tuple
-        \parblock
-
-        a tuple whose first element is a boolean flag indicating if
-        there is indeed a variable associated to identifier and whose second
-        element is either None if the operation has failed or the random
-        variable associated to given identifier.
-
-        \endparblock
-
-        """
-        if ids in self.domain_table:
-            return True, self.domain_table[ids]
-        elif ids not in self.domain_table:
-            return False, None
-        else:
-            vs = [s for s in self.svars if s.id() == ids]
-            if len(vs) > 1:
-                raise ValueError(
-                    "more than one variable matches the id string"
-                )
-
     def __call__(self, scope_product: Set[Tuple[str, NumericValue]]) -> float:
         """!
         \brief Make a factor callable to reproduce more function like behavior
@@ -203,18 +171,6 @@ class Factor(BaseFactor):
         \see Factor.phi(scope_product)
         """
         return self.phi(scope_product)
-
-    def zval(self) -> float:
-        """!
-        \brief compute value of partition function for this factor
-
-        \see Factor.partition_value(domains)
-        """
-        domains = FactorOps.factor_domain(self, D=self.scope_vars())
-        self.scope_products = list(product(*domains))
-        return sum(
-            [self.phi(scope_product=sv) for sv in FactorOps.cartesian(self)]
-        )
 
     def marginal_joint(
         self, scope_product: Set[Tuple[str, NumericValue]]
@@ -234,7 +190,7 @@ class Factor(BaseFactor):
         for sv in scope_product:
             var_id = sv[0]
             var_value = sv[1]
-            hasv, var = self.has_var(var_id)
+            hasv, var = FactorOps.find_var(self, var_id)
             if hasv is False:
                 raise ValueError(
                     "Unknown variable id among arguments: " + var_id

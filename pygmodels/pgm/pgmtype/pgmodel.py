@@ -14,10 +14,11 @@ import math
 from typing import Callable, Dict, List, Optional, Set, Tuple
 from uuid import uuid4
 
-from pygmodels.factor.factor import Factor
 from pygmodels.factor.factorf.factoralg import FactorAlgebra
 from pygmodels.factor.factorf.factoranalyzer import FactorAnalyzer
 from pygmodels.factor.factorf.factorops import FactorOps
+from pygmodels.factor.ftype.abstractfactor import AbstractFactor
+from pygmodels.factor.ftype.basefactor import BaseFactor
 from pygmodels.graph.ganalysis.graphanalyzer import (
     BaseGraphAnalyzer,
     BaseGraphBoolAnalyzer,
@@ -25,13 +26,13 @@ from pygmodels.graph.ganalysis.graphanalyzer import (
     BaseGraphNumericAnalyzer,
 )
 from pygmodels.graph.gmodel.graph import Graph
-from pygmodels.graph.graphops.bgraphops import (
+from pygmodels.graph.graphops.graphalg import BaseGraphAlgOps
+from pygmodels.graph.graphops.graphops import (
     BaseGraphBoolOps,
     BaseGraphEdgeOps,
     BaseGraphNodeOps,
     BaseGraphOps,
 )
-from pygmodels.graph.graphops.graphops import BaseGraphAlgOps
 from pygmodels.graph.gtype.edge import Edge
 from pygmodels.graph.gtype.node import Node
 from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable, NumericValue
@@ -61,7 +62,7 @@ class PGModel(Graph):
         gid: str,
         nodes: Set[NumCatRVariable],
         edges: Set[Edge],
-        factors: Optional[Set[Factor]] = None,
+        factors: Optional[Set[AbstractFactor]] = None,
         data={},
     ):
         """!
@@ -73,7 +74,7 @@ class PGModel(Graph):
         """
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
         if factors is None:
-            fs: Set[Factor] = set()
+            fs: Set[BaseFactor] = set()
             for e in self.E:
                 estart = e.start()
                 eend = e.end()
@@ -84,9 +85,11 @@ class PGModel(Graph):
                     evidences.add((estart.id(), sdata["evidence"]))
                 if "evidence" in edata:
                     evidences.add((eend.id(), edata["evidence"]))
-                f = Factor(gid=str(uuid4()), scope_vars=set([estart, eend]))
+                f = BaseFactor(
+                    gid=str(uuid4()), scope_vars=set([estart, eend])
+                )
                 if len(evidences) != 0:
-                    f = f.reduced_by_value(evidences)
+                    f = FactorOps.reduced_by_value(f, evidences)
                 fs.add(f)
             self.Fs = fs
         else:
@@ -123,18 +126,20 @@ class PGModel(Graph):
         """
         return BaseGraphBoolAnalyzer.is_node_independent_of(self, n1, n2)
 
-    def scope_of(self, phi: Factor) -> Set[NumCatRVariable]:
+    def scope_of(self, phi: AbstractFactor) -> Set[NumCatRVariable]:
         """!"""
         return phi.scope_vars()
 
-    def is_scope_subset_of(self, phi: Factor, X: Set[NumCatRVariable]) -> bool:
+    def is_scope_subset_of(
+        self, phi: BaseFactor, X: Set[NumCatRVariable]
+    ) -> bool:
         """!
         filter factors using Koller, Friedman 2009, p. 299 as criteria
         """
         s: Set[NumCatRVariable] = self.scope_of(phi)
         return s.intersection(X) == s
 
-    def scope_subset_factors(self, X: Set[NumCatRVariable]) -> Set[Factor]:
+    def scope_subset_factors(self, X: Set[NumCatRVariable]) -> Set[BaseFactor]:
         """!
         choose factors using Koller, Friedman 2009, p. 299 as criteria
         """
@@ -146,7 +151,7 @@ class PGModel(Graph):
             ]
         )
 
-    def get_factor_product(self, fs: Set[Factor]):
+    def get_factor_product(self, fs: Set[BaseFactor]):
         """!
         Multiply a set of factors.
         \f \prod_{i} \phi_i \f
@@ -167,8 +172,8 @@ class PGModel(Graph):
         return prod, val
 
     def get_factor_product_var(
-        self, fs: Set[Factor], Z: NumCatRVariable
-    ) -> Tuple[Factor, Set[Factor], Set[Factor]]:
+        self, fs: Set[BaseFactor], Z: NumCatRVariable
+    ) -> Tuple[BaseFactor, Set[BaseFactor], Set[BaseFactor]]:
         """!
         Get products of factors whose scope involves variable Z.
         """
@@ -179,7 +184,7 @@ class PGModel(Graph):
 
     def eliminate_variable_by(
         self,
-        factors: Set[Factor],
+        factors: Set[BaseFactor],
         Z: NumCatRVariable,
         elimination_strategy=lambda x, y: x.sumout_var(y),
     ):
@@ -194,7 +199,9 @@ class PGModel(Graph):
         other_factors = other_factors.union({sum_factor})
         return other_factors, sum_factor, prod
 
-    def sum_prod_var_eliminate(self, factors: Set[Factor], Z: NumCatRVariable):
+    def sum_prod_var_eliminate(
+        self, factors: Set[BaseFactor], Z: NumCatRVariable
+    ):
         """!
         Koller and Friedman 2009, p. 298
         multiply factors and sum out the given variable
@@ -209,8 +216,8 @@ class PGModel(Graph):
         return res[0]
 
     def sum_product_elimination(
-        self, factors: Set[Factor], Zs: List[NumCatRVariable]
-    ) -> Factor:
+        self, factors: Set[BaseFactor], Zs: List[NumCatRVariable]
+    ) -> BaseFactor:
         """!
         sum product variable elimination
         Koller and Friedman 2009, p. 298
@@ -345,9 +352,9 @@ class PGModel(Graph):
         self,
         queries: Set[NumCatRVariable],
         Zs: Set[NumCatRVariable],
-        factors: Set[Factor],
+        factors: Set[AbstractFactor],
         ordering_fn=min_unmarked_neighbours,
-    ) -> Tuple[Factor, Factor]:
+    ) -> Tuple[AbstractFactor, AbstractFactor]:
         """!
         Main conditional product by variable elimination function
         """
@@ -363,7 +370,7 @@ class PGModel(Graph):
 
     def max_product_eliminate_var(
         self, factors: Set[Edge], Z: NumCatRVariable
-    ) -> Tuple[Set[Factor], Factor]:
+    ) -> Tuple[Set[AbstractFactor], AbstractFactor]:
         """!
         from Koller and Friedman 2009, p. 557
         """
@@ -379,7 +386,7 @@ class PGModel(Graph):
         """!
         from Koller and Friedman 2009, p. 557
         """
-        Z_potential: List[Tuple[Factor, int]] = []
+        Z_potential: List[Tuple[AbstractFactor, int]] = []
         for i in range(len(Zs)):
             Z = Zs[i]
             factors, maxed_out, z_phi = self.max_product_eliminate_var(
@@ -424,7 +431,7 @@ class PGModel(Graph):
         return max(probs)
 
     def traceback_map(
-        self, potentials: List[Factor], X_is: List[NumCatRVariable]
+        self, potentials: List[AbstractFactor], X_is: List[NumCatRVariable]
     ) -> List[Tuple[str, NumericValue]]:
         """!
         from Koller and Friedman 2009, p. 557

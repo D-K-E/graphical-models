@@ -19,12 +19,12 @@ from uuid import uuid4
 from pygmodels.graph.ganalysis.graphanalyzer import BaseGraphAnalyzer
 from pygmodels.graph.gmodel.graph import Graph
 from pygmodels.graph.gmodel.undigraph import UndiGraph
-from pygmodels.graph.graphops.bgraphops import (
+from pygmodels.graph.graphops.digraphops import DiGraphBoolOps
+from pygmodels.graph.graphops.graphops import (
     BaseGraphBoolOps,
     BaseGraphEdgeOps,
     BaseGraphOps,
 )
-from pygmodels.graph.graphops.digraphops import DiGraphBoolOps
 from pygmodels.graph.graphops.graphsearcher import BaseGraphSearcher
 from pygmodels.graph.gtype.abstractobj import AbstractDiGraph, EdgeType
 from pygmodels.graph.gtype.basegraph import BaseGraph

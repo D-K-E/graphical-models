@@ -6,7 +6,8 @@ import unittest
 from random import choice
 
 from pygmodels.factor.factor import Factor
-from pygmodels.factor.factorf.factorops import FactorOps
+from pygmodels.factor.factorf.factoranalyzer import FactorNumericAnalyzer
+from pygmodels.factor.factorf.factorops import FactorBoolOps, FactorOps
 from pygmodels.graph.gtype.edge import Edge, EdgeType
 from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable
 
@@ -250,14 +251,27 @@ class TestFactor(unittest.TestCase):
         )
         self.assertEqual(set(d), set([self.Af, self.Bf]))
 
-    def test_has_var(self):
+    def test_find_var(self):
         """"""
-        intuple = self.f.has_var(ids="dice")
-        nottuple = self.f.has_var(ids="dice22")
+        intuple = FactorOps.find_var(self.f, ids="dice")
+        nottuple = FactorOps.find_var(self.f, ids="dice22")
         self.assertTrue(intuple[0])
         self.assertEqual(intuple[1], self.dice)
         self.assertFalse(nottuple[0])
         self.assertEqual(nottuple[1], None)
+
+    def test_has_var(self):
+        """"""
+        intuple = FactorBoolOps.has_var(self.f, ids="dice")
+        nottuple = FactorBoolOps.has_var(self.f, ids="dice22")
+        self.assertTrue(intuple)
+        self.assertFalse(nottuple)
+
+    def test_get_var(self):
+        """"""
+        intuple = FactorOps.get_var(self.f, ids="dice")
+        self.assertEqual(intuple, self.dice)
+        self.assertRaises(ValueError, FactorOps.get_var, self.f, ids="dice22")
 
     def test_in_scope_t_num(self):
         self.assertTrue(self.dice in self.f)
@@ -304,7 +318,10 @@ class TestFactor(unittest.TestCase):
         dmarg = self.dice.marginal(2)
         imarg = self.intelligence.marginal(0.1)
         gmarg = self.grade.marginal(0.4)
-        self.assertTrue(mjoint, (dmarg * imarg * gmarg) / self.f.zval())
+        self.assertTrue(
+            mjoint,
+            (dmarg * imarg * gmarg) / FactorNumericAnalyzer.zval(self.f),
+        )
 
     def test_from_scope_variables_with_fn(self):
         """"""

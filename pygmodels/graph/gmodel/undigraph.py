@@ -21,12 +21,12 @@ from pygmodels.graph.ganalysis.graphanalyzer import (
 )
 from pygmodels.graph.gmodel.graph import Graph
 from pygmodels.graph.gmodel.tree import Tree
-from pygmodels.graph.graphops.bgraphops import (
+from pygmodels.graph.graphops.graphalg import BaseGraphAlgOps
+from pygmodels.graph.graphops.graphops import (
     BaseGraphEdgeOps,
     BaseGraphNodeOps,
     BaseGraphOps,
 )
-from pygmodels.graph.graphops.graphops import BaseGraphAlgOps
 from pygmodels.graph.graphops.graphsearcher import BaseGraphSearcher
 from pygmodels.graph.gtype.abstractobj import AbstractUndiGraph, EdgeType
 from pygmodels.graph.gtype.basegraph import BaseGraph

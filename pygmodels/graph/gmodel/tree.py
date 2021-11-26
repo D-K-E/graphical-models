@@ -7,7 +7,7 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
 from pygmodels.graph.gmodel.path import Path
-from pygmodels.graph.graphops.bgraphops import (
+from pygmodels.graph.graphops.graphops import (
     BaseGraphBoolOps,
     BaseGraphEdgeOps,
     BaseGraphNodeOps,

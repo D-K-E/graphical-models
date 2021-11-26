@@ -6,8 +6,8 @@ import pprint
 import unittest
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 
-from pygmodels.graph.graphops.bgraphops import BaseGraphOps
-from pygmodels.graph.graphops.graphops import BaseGraphAlgOps, BaseGraphSetOps
+from pygmodels.graph.graphops.graphalg import BaseGraphAlgOps
+from pygmodels.graph.graphops.graphops import BaseGraphOps, BaseGraphSetOps
 from pygmodels.graph.gtype.abstractobj import (
     AbstractEdge,
     AbstractGraph,

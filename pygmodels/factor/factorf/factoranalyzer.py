@@ -126,6 +126,15 @@ class FactorNumericAnalyzer:
         mval, mprob = FactorAnalyzer._min_prob_value(f)
         return mprob
 
+    @staticmethod
+    def zval(f: AbstractFactor) -> float:
+        """!
+        \brief compute value of partition function for this factor
+
+        \see Factor.partition_value(domains)
+        """
+        return sum([f.phi(scope_product=sv) for sv in FactorOps.cartesian(f)])
+
 
 class FactorAnalyzer:
     """!

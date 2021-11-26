@@ -7,7 +7,7 @@ involving directed edges
 
 from typing import Callable, Set
 
-from pygmodels.graph.graphops.bgraphops import BaseGraphBoolOps
+from pygmodels.graph.graphops.graphops import BaseGraphBoolOps
 from pygmodels.graph.gtype.abstractobj import (
     AbstractDiGraph,
     AbstractEdge,

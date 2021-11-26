@@ -374,7 +374,7 @@ class MarkovTest(unittest.TestCase):
                 self.assertEqual(mval, fmax)
                 self.assertEqual(c_d_max, fmax_prob)
 
-            self.assertEqual(round(f.zval(), 3), 1.0)
+            self.assertEqual(round(FactorNumericAnalyzer.zval(f), 3), 1.0)
 
     def test_crf_target_zero(self):
         """!

@@ -4,7 +4,7 @@ Traverse graphs in some fashion
 import math
 from typing import Callable, Dict, List, Optional, Set, Tuple, Union
 
-from pygmodels.graph.graphops.bgraphops import (
+from pygmodels.graph.graphops.graphops import (
     BaseGraphBoolOps,
     BaseGraphEdgeOps,
     BaseGraphNodeOps,

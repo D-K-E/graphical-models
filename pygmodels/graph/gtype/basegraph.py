@@ -5,7 +5,7 @@ functionality for doing graph theoretical operations
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Union
 from uuid import uuid4
 
-from pygmodels.graph.graphops.bgraphops import (
+from pygmodels.graph.graphops.graphops import (
     BaseGraphBoolOps,
     BaseGraphEdgeOps,
     BaseGraphNodeOps,

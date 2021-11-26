@@ -195,10 +195,7 @@ class FactorBoolOps:
 
         \param ids identifier of random variable
 
-        \throw ValueError Value error is raised if there are more than one
-        random variable associated to id string
-
-        \return Tuple
+        \return bool
         \parblock
 
         a tuple whose first element is a boolean flag indicating if
@@ -209,7 +206,8 @@ class FactorBoolOps:
         \endparblock
 
         """
-        return any(ids == s.id() for s in f.scope_vars())
+        has, var = FactorOps.find_var(f, ids)
+        return has
 
 
 class FactorOps:
@@ -218,17 +216,30 @@ class FactorOps:
     """
 
     @staticmethod
-    def get_var(f: AbstractFactor, ids: str) -> AbstractRandomVariable:
+    def find_var(
+        f: AbstractFactor, ids: str
+    ) -> Tuple[bool, Optional[AbstractRandomVariable]]:
         """!
-        Get random variable using its identifier string
+        Find given random variable using its identifier string
         """
         vs = [s for s in f.scope_vars() if s.id() == ids]
         if len(vs) > 1:
             raise ValueError("more than one variable matches the id string")
-        elif len(vs) == 0:
-            raise ValueError("Id does not exist in factor domain")
+        if vs:
+            return True, vs[0]
         else:
-            return vs[0]
+            return False, None
+
+    @staticmethod
+    def get_var(f: AbstractFactor, ids: str) -> AbstractRandomVariable:
+        """!
+        Get random variable using its identifier string
+        """
+        has, var = FactorOps.find_var(f, ids)
+        if has:
+            return var
+        else:
+            raise ValueError("Id does not exist in factor domain")
 
     @staticmethod
     def product(

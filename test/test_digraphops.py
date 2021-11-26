@@ -7,13 +7,13 @@ from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
 from pygmodels.graph.gmodel.digraph import DiGraph
-from pygmodels.graph.graphops.bgraphops import BaseGraphEdgeOps
 from pygmodels.graph.graphops.digraphops import (
     DiGraphBoolOps,
     DiGraphEdgeOps,
     DiGraphNodeOps,
     DiGraphNumericOps,
 )
+from pygmodels.graph.graphops.graphops import BaseGraphEdgeOps
 from pygmodels.graph.gtype.abstractobj import (
     AbstractDiGraph,
     AbstractEdge,

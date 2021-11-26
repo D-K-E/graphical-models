@@ -13,7 +13,7 @@ from pygmodels.graph.ganalysis.graphanalyzer import (
     BaseGraphNumericAnalyzer,
 )
 from pygmodels.graph.gmodel.graph import Graph
-from pygmodels.graph.graphops.bgraphops import (
+from pygmodels.graph.graphops.graphops import (
     BaseGraphBoolOps,
     BaseGraphNodeOps,
     BaseGraphOps,
