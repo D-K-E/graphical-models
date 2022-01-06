@@ -6,11 +6,11 @@ import unittest
 from random import choice
 
 from pygmodels.factor.factor import BaseFactor, Factor
-from pygmodels.factor.factorf.factoranalyzer import (
+from pygmodels.factor.factorfunc.factoranalyzer import (
     FactorAnalyzer,
     FactorNumericAnalyzer,
 )
-from pygmodels.graph.gtype.edge import Edge, EdgeType
+from pygmodels.graph.graphtype.edge import Edge, EdgeType
 from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable
 
 

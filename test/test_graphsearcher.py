@@ -9,9 +9,9 @@ from pstats import Stats
 
 from pygmodels.graph.graphops.graphops import BaseGraphOps
 from pygmodels.graph.graphops.graphsearcher import BaseGraphSearcher
-from pygmodels.graph.gtype.basegraph import BaseGraph
-from pygmodels.graph.gtype.edge import Edge, EdgeType
-from pygmodels.graph.gtype.node import Node
+from pygmodels.graph.graphtype.basegraph import BaseGraph
+from pygmodels.graph.graphtype.edge import Edge, EdgeType
+from pygmodels.graph.graphtype.node import Node
 
 
 class BaseGraphSearcherTests(unittest.TestCase):

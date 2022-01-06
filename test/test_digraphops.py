@@ -6,7 +6,7 @@ import unittest
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
-from pygmodels.graph.gmodel.digraph import DiGraph
+from pygmodels.graph.graphmodel.digraph import DiGraph
 from pygmodels.graph.graphops.digraphops import (
     DiGraphBoolOps,
     DiGraphEdgeOps,
@@ -14,16 +14,16 @@ from pygmodels.graph.graphops.digraphops import (
     DiGraphNumericOps,
 )
 from pygmodels.graph.graphops.graphops import BaseGraphEdgeOps
-from pygmodels.graph.gtype.abstractobj import (
+from pygmodels.graph.graphtype.abstractobj import (
     AbstractDiGraph,
     AbstractEdge,
     AbstractGraph,
     AbstractNode,
     AbstractUndiGraph,
 )
-from pygmodels.graph.gtype.basegraph import BaseGraph
-from pygmodels.graph.gtype.edge import Edge, EdgeType
-from pygmodels.graph.gtype.node import Node
+from pygmodels.graph.graphtype.basegraph import BaseGraph
+from pygmodels.graph.graphtype.edge import Edge, EdgeType
+from pygmodels.graph.graphtype.node import Node
 
 
 class DiGraphOpsTest(unittest.TestCase):

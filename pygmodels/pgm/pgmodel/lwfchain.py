@@ -13,16 +13,16 @@ from pygmodels.graph.ganalysis.graphanalyzer import (
     BaseGraphNodeAnalyzer,
     BaseGraphNumericAnalyzer,
 )
-from pygmodels.graph.gmodel.graph import Graph
-from pygmodels.graph.gmodel.tree import Tree
-from pygmodels.graph.gmodel.undigraph import UndiGraph
+from pygmodels.graph.graphmodel.graph import Graph
+from pygmodels.graph.graphmodel.tree import Tree
+from pygmodels.graph.graphmodel.undigraph import UndiGraph
 from pygmodels.graph.graphops.graphops import (
     BaseGraphBoolOps,
     BaseGraphNodeOps,
     BaseGraphOps,
 )
-from pygmodels.graph.gtype.edge import Edge, EdgeType
-from pygmodels.graph.gtype.node import Node
+from pygmodels.graph.graphtype.edge import Edge, EdgeType
+from pygmodels.graph.graphtype.node import Node
 from pygmodels.pgm.pgmodel.markov import ConditionalRandomField, MarkovNetwork
 from pygmodels.pgm.pgmtype.pgmodel import PGModel
 from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable

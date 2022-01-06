@@ -19,8 +19,8 @@ from pygmodels.graph.ganalysis.graphanalyzer import (
     BaseGraphNodeAnalyzer,
     BaseGraphNumericAnalyzer,
 )
-from pygmodels.graph.gmodel.graph import Graph
-from pygmodels.graph.gmodel.tree import Tree
+from pygmodels.graph.graphmodel.graph import Graph
+from pygmodels.graph.graphmodel.tree import Tree
 from pygmodels.graph.graphops.graphalg import BaseGraphAlgOps
 from pygmodels.graph.graphops.graphops import (
     BaseGraphEdgeOps,
@@ -28,10 +28,10 @@ from pygmodels.graph.graphops.graphops import (
     BaseGraphOps,
 )
 from pygmodels.graph.graphops.graphsearcher import BaseGraphSearcher
-from pygmodels.graph.gtype.abstractobj import AbstractUndiGraph, EdgeType
-from pygmodels.graph.gtype.basegraph import BaseGraph
-from pygmodels.graph.gtype.edge import Edge
-from pygmodels.graph.gtype.node import Node
+from pygmodels.graph.graphtype.abstractobj import AbstractUndiGraph, EdgeType
+from pygmodels.graph.graphtype.basegraph import BaseGraph
+from pygmodels.graph.graphtype.edge import Edge
+from pygmodels.graph.graphtype.node import Node
 
 
 class UndiGraph(AbstractUndiGraph, BaseGraph):

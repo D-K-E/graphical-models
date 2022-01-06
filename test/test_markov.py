@@ -9,13 +9,13 @@ from random import choice
 from uuid import uuid4
 
 from pygmodels.factor.factor import Factor
-from pygmodels.factor.factorf.factoranalyzer import (
+from pygmodels.factor.factorfunc.factoranalyzer import (
     FactorAnalyzer,
     FactorNumericAnalyzer,
 )
-from pygmodels.factor.factorf.factorops import FactorOps
-from pygmodels.graph.gmodel.undigraph import UndiGraph
-from pygmodels.graph.gtype.edge import Edge, EdgeType
+from pygmodels.factor.factorfunc.factorops import FactorOps
+from pygmodels.graph.graphmodel.undigraph import UndiGraph
+from pygmodels.graph.graphtype.edge import Edge, EdgeType
 from pygmodels.pgm.pgmodel.markov import ConditionalRandomField, MarkovNetwork
 from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable
 

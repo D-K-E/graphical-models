@@ -11,8 +11,8 @@ For more theoretical explanation \see nodegroup
 from abc import ABC, abstractmethod
 from typing import Dict, Optional, Set, Tuple
 
-from pygmodels.graph.gtype.abstractobj import AbstractNode
-from pygmodels.graph.gtype.graphobj import GraphObject
+from pygmodels.graph.graphtype.abstractobj import AbstractNode
+from pygmodels.graph.graphtype.graphobj import GraphObject
 
 
 class Node(AbstractNode, GraphObject):

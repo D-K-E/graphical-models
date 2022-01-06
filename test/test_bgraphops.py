@@ -12,16 +12,16 @@ from pygmodels.graph.graphops.graphops import (
     BaseGraphNodeOps,
     BaseGraphOps,
 )
-from pygmodels.graph.gtype.abstractobj import (
+from pygmodels.graph.graphtype.abstractobj import (
     AbstractDiGraph,
     AbstractEdge,
     AbstractGraph,
     AbstractNode,
     AbstractUndiGraph,
 )
-from pygmodels.graph.gtype.basegraph import BaseGraph
-from pygmodels.graph.gtype.edge import Edge, EdgeType
-from pygmodels.graph.gtype.node import Node
+from pygmodels.graph.graphtype.basegraph import BaseGraph
+from pygmodels.graph.graphtype.edge import Edge, EdgeType
+from pygmodels.graph.graphtype.node import Node
 
 
 class BaseGraphOpsTest(unittest.TestCase):

@@ -10,16 +10,16 @@ from pprint import pprint
 from typing import Callable, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
-from pygmodels.factor.factorf.factorops import FactorBoolOps, FactorOps
-from pygmodels.factor.ftype.abstractfactor import (
+from pygmodels.factor.factorfunc.factorops import FactorBoolOps, FactorOps
+from pygmodels.factor.factortype.abstractfactor import (
     AbstractFactor,
     DomainSliceSet,
     DomainSubset,
     FactorDomain,
     FactorScope,
 )
-from pygmodels.factor.ftype.basefactor import BaseFactor
-from pygmodels.graph.gtype.graphobj import GraphObject
+from pygmodels.factor.factortype.basefactor import BaseFactor
+from pygmodels.graph.graphtype.graphobj import GraphObject
 from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable
 from pygmodels.value.value import NumericValue
 

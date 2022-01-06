@@ -3,13 +3,13 @@ Graph search result
 """
 from typing import Callable, Dict, List, Optional, Set, Tuple, Union
 
-from pygmodels.graph.gtype.abstractobj import (
+from pygmodels.graph.graphtype.abstractobj import (
     AbstractEdge,
     AbstractGraph,
     AbstractNode,
     AbstractSearchResult,
 )
-from pygmodels.graph.gtype.graphobj import GraphObject
+from pygmodels.graph.graphtype.graphobj import GraphObject
 
 
 class BaseGraphSearchResult(GraphObject, AbstractSearchResult):

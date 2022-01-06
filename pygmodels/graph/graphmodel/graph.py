@@ -19,10 +19,10 @@ from pygmodels.graph.ganalysis.graphanalyzer import (
 from pygmodels.graph.graphops.graphalg import BaseGraphAlgOps, BaseGraphSetOps
 from pygmodels.graph.graphops.graphops import BaseGraphEdgeOps, BaseGraphOps
 from pygmodels.graph.graphops.graphsearcher import BaseGraphSearcher
-from pygmodels.graph.gtype.basegraph import BaseGraph
-from pygmodels.graph.gtype.edge import Edge, EdgeType
-from pygmodels.graph.gtype.graphobj import GraphObject
-from pygmodels.graph.gtype.node import Node
+from pygmodels.graph.graphtype.basegraph import BaseGraph
+from pygmodels.graph.graphtype.edge import Edge, EdgeType
+from pygmodels.graph.graphtype.graphobj import GraphObject
+from pygmodels.graph.graphtype.node import Node
 
 
 class Graph(BaseGraph):

@@ -4,9 +4,9 @@ and/or search tree implementation
 from copy import deepcopy
 from uuid import uuid4
 
-from gmodels.gtypes.edge import Edge, EdgeType
-from gmodels.gtypes.path import Path
-from gmodels.gtypes.tree import Tree
+from gmodels.graphtypes.edge import Edge, EdgeType
+from gmodels.graphtypes.path import Path
+from gmodels.graphtypes.tree import Tree
 from gmodels.pgmtypes.pgmodel import PGModel
 from gmodels.pgmtypes.randomvariable import ANDNode, NumCatRVariable, ORNode
 

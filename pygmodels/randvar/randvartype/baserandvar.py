@@ -5,10 +5,14 @@ random variable interface
 
 from typing import Callable, Optional, Set
 
-from pygmodels.randvar.rtype.abstractrandvar import AbstractRandomVariable
-from pygmodels.randvar.rtype.abstractrandvar import PossibleOutcomes
-from pygmodels.randvar.rtype.abstractrandvar import AssociatedValueSet
-from pygmodels.graph.gtype.graphobj import GraphObject
+from pygmodels.graph.graphtype.graphobj import GraphObject
+from pygmodels.randvar.randvartype.abstractrandvar import (
+    AbstractRandomVariable,
+    AssociatedValueSet,
+    PossibleOutcomes,
+)
+from pygmodels.value.codomain import CodomainValue, Outcome
+from pygmodels.value.value import NumericValue
 
 
 class BaseRandomVariable(AbstractRandomVariable, GraphObject):
@@ -38,7 +42,9 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         data: Optional[dict] = None,
         input_data: Optional[PossibleOutcomes] = None,
         f: Callable[[Outcome], CodomainValue] = lambda x: x,
-        marginal_distribution: Callable[[CodomainValue], float] = lambda x: 1.0,
+        marginal_distribution: Callable[
+            [CodomainValue], float
+        ] = lambda x: 1.0,
     ):
         """!
         \brief Constructor for random variable
@@ -92,7 +98,9 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         \endcode
 
         constructor for a random variable"""
-        super().__init__(oid=randvar_id, odata=data if data is not None else {})
+        super().__init__(
+            oid=randvar_id, odata=data if data is not None else {}
+        )
         self.name = randvar_name
         if input_data is None and data is None:
             raise ValueError("Either input data or data must not be None")
@@ -110,12 +118,14 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         self._inputs = possible_outcomes
         self.f = f
         self._outs = None
+        psum = sum(list(map(marginal_distribution, possible_outcomes)))
+        if psum > 1 and psum < 0:
+            raise ValueError("probability sum bigger than 1 or smaller than 0")
         self.dist = marginal_distribution
 
     @property
     def inputs(self) -> PossibleOutcomes:
-        """!
-        """
+        """!"""
         return self._inputs
 
     @property
@@ -136,7 +146,7 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
 
         \returns probability value associated to the outcome
         """
-        return self.dist(value)
+        return self.dist(outcome)
 
     def __eq__(self, other: AbstractRandomVariable) -> bool:
         """!

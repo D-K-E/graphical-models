@@ -12,14 +12,14 @@ from pygmodels.graph.graphops.graphops import (
     BaseGraphOps,
 )
 from pygmodels.graph.graphops.graphsearcher import BaseGraphSearcher
-from pygmodels.graph.gtype.abstractobj import (
+from pygmodels.graph.graphtype.abstractobj import (
     AbstractEdge,
     AbstractGraph,
     AbstractNode,
     EdgeType,
 )
-from pygmodels.graph.gtype.basegraph import BaseGraph
-from pygmodels.graph.gtype.gsearchresult import (
+from pygmodels.graph.graphtype.basegraph import BaseGraph
+from pygmodels.graph.graphtype.gsearchresult import (
     BaseGraphBFSResult,
     BaseGraphDFSResult,
 )

@@ -10,7 +10,7 @@ from itertools import combinations, product
 from typing import Callable, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
-from pygmodels.factor.ftype.abstractfactor import (
+from pygmodels.factor.factortype.abstractfactor import (
     AbstractFactor,
     DomainSliceSet,
     DomainSubset,
@@ -18,7 +18,9 @@ from pygmodels.factor.ftype.abstractfactor import (
     FactorDomain,
     FactorScope,
 )
-from pygmodels.randvar.rtype.abstractrandvar import AbstractRandomVariable
+from pygmodels.randvar.randvartype.abstractrandvar import (
+    AbstractRandomVariable,
+)
 from pygmodels.value.value import NumericValue
 
 

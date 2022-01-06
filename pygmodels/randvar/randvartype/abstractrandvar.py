@@ -3,12 +3,10 @@
 """
 from abc import ABC, abstractmethod
 
-from pygmodels.graph.gtype.abstractobj import AbstractNode
-from pygmodels.value.codomain import Outcome
-from pygmodels.value.value import NumericValue
+from pygmodels.graph.graphtype.abstractobj import AbstractNode
+from pygmodels.value.codomain import Codomain, CodomainValue, Outcome
 from pygmodels.value.domain import Domain
-from pygmodels.value.codomain import Codomain
-from pygmodels.value.codomain import CodomainValue
+from pygmodels.value.value import NumericValue
 
 PossibleOutcomes = Domain
 AssociatedValueSet = Codomain

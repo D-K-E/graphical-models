@@ -5,8 +5,10 @@
 from abc import ABC, abstractmethod
 from typing import Callable, FrozenSet, List, Set, Tuple
 
-from pygmodels.graph.gtype.abstractobj import AbstractGraphObj
-from pygmodels.randvar.rtype.abstractrandvar import AbstractRandomVariable
+from pygmodels.graph.graphtype.abstractobj import AbstractGraphObj
+from pygmodels.randvar.randvartype.abstractrandvar import (
+    AbstractRandomVariable,
+)
 from pygmodels.value.value import NumericValue, OrderedFiniteVSet
 
 FactorScope = Set[AbstractRandomVariable]

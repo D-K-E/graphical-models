@@ -6,7 +6,7 @@ import math
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
-from pygmodels.graph.gmodel.path import Path
+from pygmodels.graph.graphmodel.path import Path
 from pygmodels.graph.graphops.graphops import (
     BaseGraphBoolOps,
     BaseGraphEdgeOps,
@@ -14,11 +14,11 @@ from pygmodels.graph.graphops.graphops import (
     BaseGraphOps,
 )
 from pygmodels.graph.graphops.graphsearcher import BaseGraphSearcher
-from pygmodels.graph.gtype.abstractobj import AbstractTree
-from pygmodels.graph.gtype.basegraph import BaseGraph
-from pygmodels.graph.gtype.edge import Edge, EdgeType
-from pygmodels.graph.gtype.node import Node
-from pygmodels.graph.gtype.queue import PriorityQueue
+from pygmodels.graph.graphtype.abstractobj import AbstractTree
+from pygmodels.graph.graphtype.basegraph import BaseGraph
+from pygmodels.graph.graphtype.edge import Edge, EdgeType
+from pygmodels.graph.graphtype.node import Node
+from pygmodels.graph.graphtype.queue import PriorityQueue
 
 
 class Tree(BaseGraph, AbstractTree):

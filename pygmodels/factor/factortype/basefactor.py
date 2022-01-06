@@ -7,15 +7,17 @@ from itertools import combinations, product
 from typing import Callable, Optional, Set
 from uuid import uuid4
 
-from pygmodels.factor.ftype.abstractfactor import (
+from pygmodels.factor.factortype.abstractfactor import (
     AbstractFactor,
     DomainSliceSet,
     DomainSubset,
     FactorDomain,
     FactorScope,
 )
-from pygmodels.graph.gtype.graphobj import GraphObject
-from pygmodels.randvar.rtype.abstractrandvar import AbstractRandomVariable
+from pygmodels.graph.graphtype.graphobj import GraphObject
+from pygmodels.randvar.randvartype.abstractrandvar import (
+    AbstractRandomVariable,
+)
 from pygmodels.value.value import NumericValue
 
 

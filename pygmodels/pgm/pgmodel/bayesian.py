@@ -6,9 +6,9 @@ from typing import Callable, Optional, Set
 from uuid import uuid4
 
 from pygmodels.factor.factor import Factor
-from pygmodels.graph.gmodel.digraph import DiGraph
+from pygmodels.graph.graphmodel.digraph import DiGraph
 from pygmodels.graph.graphops.graphops import BaseGraphOps
-from pygmodels.graph.gtype.edge import Edge
+from pygmodels.graph.graphtype.edge import Edge
 from pygmodels.pgm.pgmtype.pgmodel import PGModel
 from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable
 

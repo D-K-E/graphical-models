@@ -7,8 +7,8 @@ or a set of factors.
 
 from typing import Callable, FrozenSet, List, Optional, Set, Tuple, Union
 
-from pygmodels.factor.factorf.factorops import FactorOps
-from pygmodels.factor.ftype.abstractfactor import AbstractFactor
+from pygmodels.factor.factorfunc.factorops import FactorOps
+from pygmodels.factor.factortype.abstractfactor import AbstractFactor
 from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable, NumericValue
 from pygmodels.value.value import FiniteVSet, OrderedFiniteVSet
 

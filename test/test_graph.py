@@ -12,7 +12,7 @@ from pygmodels.graph.ganalysis.graphanalyzer import (
     BaseGraphBoolAnalyzer,
     BaseGraphNumericAnalyzer,
 )
-from pygmodels.graph.gmodel.graph import Graph
+from pygmodels.graph.graphmodel.graph import Graph
 from pygmodels.graph.graphops.graphalg import BaseGraphAlgOps, BaseGraphSetOps
 from pygmodels.graph.graphops.graphops import (
     BaseGraphBoolOps,
@@ -20,8 +20,8 @@ from pygmodels.graph.graphops.graphops import (
     BaseGraphNodeOps,
     BaseGraphOps,
 )
-from pygmodels.graph.gtype.edge import Edge, EdgeType
-from pygmodels.graph.gtype.node import Node
+from pygmodels.graph.graphtype.edge import Edge, EdgeType
+from pygmodels.graph.graphtype.node import Node
 
 
 class GraphTest(unittest.TestCase):

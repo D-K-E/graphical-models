@@ -6,14 +6,16 @@ Abstract objects, interfaces, for implementing Probabilistic graphical models
 from abc import abstractmethod
 from typing import Callable, Dict, FrozenSet, List, Set, Tuple
 
-from pygmodels.factor.ftype.abstractfactor import AbstractFactor
-from pygmodels.gtype.abstractobj import (
+from pygmodels.factor.factortype.abstractfactor import AbstractFactor
+from pygmodels.graphtype.abstractobj import (
     AbstractEdge,
     AbstractGraph,
     AbstractGraphObj,
     AbstractNode,
 )
-from pygmodels.randvar.rtype.abstractrandvar import AbstractRandomVariable
+from pygmodels.randvar.randvartype.abstractrandvar import (
+    AbstractRandomVariable,
+)
 from pygmodels.value.codomain import Outcome
 from pygmodels.value.value import NumericValue
 

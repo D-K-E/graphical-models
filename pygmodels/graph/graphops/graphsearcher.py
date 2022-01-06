@@ -10,16 +10,16 @@ from pygmodels.graph.graphops.graphops import (
     BaseGraphNodeOps,
     BaseGraphOps,
 )
-from pygmodels.graph.gtype.abstractobj import (
+from pygmodels.graph.graphtype.abstractobj import (
     AbstractEdge,
     AbstractGraph,
     AbstractNode,
 )
-from pygmodels.graph.gtype.gsearchresult import (
+from pygmodels.graph.graphtype.gsearchresult import (
     BaseGraphBFSResult,
     BaseGraphDFSResult,
 )
-from pygmodels.graph.gtype.queue import PriorityQueue
+from pygmodels.graph.graphtype.queue import PriorityQueue
 
 
 class BaseGraphSearcher:

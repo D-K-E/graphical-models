@@ -6,10 +6,10 @@ import unittest
 from uuid import uuid4
 
 from pygmodels.factor.factor import Factor
-from pygmodels.factor.factorf.factorops import FactorOps
-from pygmodels.graph.gmodel.undigraph import UndiGraph
+from pygmodels.factor.factorfunc.factorops import FactorOps
+from pygmodels.graph.graphmodel.undigraph import UndiGraph
 from pygmodels.graph.graphops.graphops import BaseGraphOps
-from pygmodels.graph.gtype.edge import Edge, EdgeType
+from pygmodels.graph.graphtype.edge import Edge, EdgeType
 from pygmodels.pgm.pgmodel.lwfchain import LWFChainGraph
 from pygmodels.pgm.pgmodel.markov import ConditionalRandomField
 from pygmodels.pgm.pgmtype.pgmodel import PGModel

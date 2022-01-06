@@ -17,8 +17,8 @@ from typing import Callable, Set
 from uuid import uuid4
 
 from pygmodels.graph.ganalysis.graphanalyzer import BaseGraphAnalyzer
-from pygmodels.graph.gmodel.graph import Graph
-from pygmodels.graph.gmodel.undigraph import UndiGraph
+from pygmodels.graph.graphmodel.graph import Graph
+from pygmodels.graph.graphmodel.undigraph import UndiGraph
 from pygmodels.graph.graphops.digraphops import DiGraphBoolOps
 from pygmodels.graph.graphops.graphops import (
     BaseGraphBoolOps,
@@ -26,10 +26,10 @@ from pygmodels.graph.graphops.graphops import (
     BaseGraphOps,
 )
 from pygmodels.graph.graphops.graphsearcher import BaseGraphSearcher
-from pygmodels.graph.gtype.abstractobj import AbstractDiGraph, EdgeType
-from pygmodels.graph.gtype.basegraph import BaseGraph
-from pygmodels.graph.gtype.edge import Edge
-from pygmodels.graph.gtype.node import Node
+from pygmodels.graph.graphtype.abstractobj import AbstractDiGraph, EdgeType
+from pygmodels.graph.graphtype.basegraph import BaseGraph
+from pygmodels.graph.graphtype.edge import Edge
+from pygmodels.graph.graphtype.node import Node
 
 
 class DiGraph(AbstractDiGraph, BaseGraph):

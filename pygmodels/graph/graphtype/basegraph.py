@@ -11,14 +11,14 @@ from pygmodels.graph.graphops.graphops import (
     BaseGraphNodeOps,
     BaseGraphOps,
 )
-from pygmodels.graph.gtype.abstractobj import (
+from pygmodels.graph.graphtype.abstractobj import (
     AbstractEdge,
     AbstractGraph,
     AbstractNode,
 )
-from pygmodels.graph.gtype.edge import Edge, EdgeType
-from pygmodels.graph.gtype.graphobj import GraphObject
-from pygmodels.graph.gtype.node import Node
+from pygmodels.graph.graphtype.edge import Edge, EdgeType
+from pygmodels.graph.graphtype.graphobj import GraphObject
+from pygmodels.graph.graphtype.node import Node
 
 
 class BaseGraph(GraphObject, AbstractGraph):

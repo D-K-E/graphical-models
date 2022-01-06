@@ -2,9 +2,9 @@
 
 import unittest
 
-from pygmodels.graph.gtype.edge import Edge, EdgeType
-from pygmodels.graph.gtype.node import Node
-from pygmodels.graph.gtype.queue import PriorityQueue
+from pygmodels.graph.graphtype.edge import Edge, EdgeType
+from pygmodels.graph.graphtype.node import Node
+from pygmodels.graph.graphtype.queue import PriorityQueue
 
 
 class PriorityQueueTest(unittest.TestCase):

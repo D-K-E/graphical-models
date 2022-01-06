@@ -6,13 +6,13 @@ from typing import Callable, Dict, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
 from pygmodels.graph.graphops.graphsearcher import BaseGraphSearcher
-from pygmodels.graph.gtype.abstractobj import (
+from pygmodels.graph.graphtype.abstractobj import (
     AbstractEdge,
     AbstractNode,
     AbstractPath,
 )
-from pygmodels.graph.gtype.basegraph import BaseGraph
-from pygmodels.graph.gtype.queue import PriorityQueue
+from pygmodels.graph.graphtype.basegraph import BaseGraph
+from pygmodels.graph.graphtype.queue import PriorityQueue
 
 
 class Path(BaseGraph, AbstractPath):

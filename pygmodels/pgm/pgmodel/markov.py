@@ -6,9 +6,9 @@ from typing import Optional, Set, Tuple
 from uuid import uuid4
 
 from pygmodels.factor.factor import Factor
-from pygmodels.graph.gmodel.undigraph import UndiGraph
+from pygmodels.graph.graphmodel.undigraph import UndiGraph
 from pygmodels.graph.graphops.graphops import BaseGraphOps
-from pygmodels.graph.gtype.edge import Edge
+from pygmodels.graph.graphtype.edge import Edge
 from pygmodels.pgm.pgmtype.pgmodel import PGModel
 from pygmodels.pgm.pgmtype.randomvariable import (
     NumCatRVariable,
