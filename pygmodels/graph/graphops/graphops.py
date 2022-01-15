@@ -14,6 +14,7 @@ from pygmodels.graph.graphtype.abstractobj import (
     AbstractUndiGraph,
     EdgeType,
 )
+from pygmodels.utils import is_type, type_check
 
 
 class BaseGraphBoolOps:
@@ -27,6 +28,7 @@ class BaseGraphBoolOps:
         We check if given graph object is in the graph.
         \throws TypeError if the argument is not a node or an edge
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         if isinstance(ne, AbstractNode):
             return ne.id() in {v.id() for v in g.V}
         elif isinstance(ne, AbstractEdge):
@@ -70,6 +72,7 @@ class BaseGraphBoolOps:
 
         \endcode
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         if not BaseGraphBoolOps.is_in(g, e1):
             raise ValueError("edge not in Graph")
 
@@ -103,6 +106,7 @@ class BaseGraphBoolOps:
 
         \endcode
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         if not BaseGraphBoolOps.is_in(g, e):
             raise ValueError("edge not in Graph")
 
@@ -130,6 +134,7 @@ class BaseGraphBoolOps:
 
         We check whether a proximity condition is valid for given two nodes.
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         if es is None:
             es = frozenset(g.E)
         for e in es:
@@ -174,6 +179,7 @@ class BaseGraphBoolOps:
 
         \endcode
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         if not BaseGraphBoolOps.is_in(g, n1):
             raise ValueError("node not in graph")
 
@@ -244,6 +250,7 @@ class BaseGraphEdgeOps:
 
         \endcode
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
 
         if not BaseGraphBoolOps.is_in(g, n):
             raise ValueError("node not in Graph")
@@ -293,6 +300,7 @@ class BaseGraphEdgeOps:
 
         \endcode
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         if not BaseGraphBoolOps.is_in(g, n):
             raise ValueError("node not in Graph")
 
@@ -339,6 +347,7 @@ class BaseGraphEdgeOps:
 
         \endcode
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         if not BaseGraphBoolOps.is_in(g, n):
             raise ValueError("node not in Graph")
 
@@ -376,6 +385,7 @@ class BaseGraphEdgeOps:
 
         \endcode
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         if not BaseGraphBoolOps.is_in(g, n):
             raise ValueError("node not in graph")
 
@@ -386,6 +396,7 @@ class BaseGraphEdgeOps:
         """!
         \brief obtain edge set of the graph
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         return frozenset([n for n in g.E])
 
     @staticmethod
@@ -394,6 +405,7 @@ class BaseGraphEdgeOps:
         \brief obtain edge by using its identifier
         \throws ValueError if the edge id is not in graph
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         E = {e.id(): e for e in g.E}
         if edge_id not in E:
             raise ValueError("edge id not in graph")
@@ -411,6 +423,7 @@ class BaseGraphEdgeOps:
         \throws ValueError if any of argument nodes are not inside the graph.
         \throws ValueError if there are no edges that consist of argument nodes.
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         if not BaseGraphBoolOps.is_in(g, start) or not BaseGraphBoolOps.is_in(
             g, end
         ):
@@ -478,6 +491,7 @@ class BaseGraphNodeOps:
 
         \endcode
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         return frozenset([n for n in g.V])
 
     @staticmethod
@@ -523,6 +537,7 @@ class BaseGraphNodeOps:
 
         \endcode
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         if not BaseGraphBoolOps.is_in(g, n1):
             raise ValueError("node is not in graph")
         neighbours = set()
@@ -537,6 +552,7 @@ class BaseGraphNodeOps:
         \brief obtain vertex by using its identifier
         \throws ValueError if the node is not in graph
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         V = {v.id(): v for v in g.V}
         if node_id not in V:
             raise ValueError("node id not in graph")
@@ -551,6 +567,7 @@ class BaseGraphNodeOps:
 
         \throws ValueError if edge is not inside the graph
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         if BaseGraphBoolOps.is_in(g, e):
             return (e.start(), e.end())
         else:
@@ -569,6 +586,7 @@ class BaseGraphOps:
 
         For each node we register the edges.
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         _nodes = BaseGraphNodeOps.get_nodes(ns=set(g.V), es=set(g.E))
         gdata = {}
         for vertex in _nodes:
@@ -640,6 +658,7 @@ class BaseGraphOps:
 
         \endcode
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         gmat = {}
         for v in g.V:
             for k in g.V:
@@ -670,6 +689,7 @@ class BaseGraphOps:
         \param edge_policy determines which edges should be conserved. By
         default we conserve edges whose incident nodes are a subset of vs
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         if not all(BaseGraphBoolOps.is_in(g, v) for v in vs):
             raise ValueError("Given nodes are not contained in graph")
         es: Set[AbstractEdge] = set()

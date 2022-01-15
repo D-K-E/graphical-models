@@ -17,6 +17,7 @@ from pygmodels.graph.graphtype.abstractobj import (
 )
 from pygmodels.graph.graphtype.basegraph import BaseGraph
 from pygmodels.graph.graphtype.edge import Edge
+from pygmodels.utils import is_type, type_check
 
 
 class BaseGraphSetOps:
@@ -32,6 +33,7 @@ class BaseGraphSetOps:
         ],
     ):
         """!"""
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         is_eset = all(isinstance(o, AbstractEdge) for o in obj)
         if is_eset:
             edges = g.E
@@ -73,6 +75,7 @@ class BaseGraphSetOps:
         the target for the operation as the nodes of this graph, if it is an
         edge we provide a set of edges of this graph
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         is_node = isinstance(obj, AbstractNode)
         if is_node:
             return BaseGraphSetOps.set_op_node_edge(g=g, obj=set([obj]), op=op)
@@ -112,6 +115,7 @@ class BaseGraphSetOps:
         """!
         \brief obtain intersection of either node or edge set
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         return BaseGraphSetOps.set_op(
             g, obj=aset, op=lambda gset, y: gset.intersection(y)
         )
@@ -130,6 +134,7 @@ class BaseGraphSetOps:
         """!
         \brief obtain union of either node or edge set
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         return BaseGraphSetOps.set_op(
             g, obj=aset, op=lambda gset, y: gset.union(y)
         )
@@ -148,6 +153,7 @@ class BaseGraphSetOps:
         """!
         \brief obtain set difference of either node or edge set
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         return BaseGraphSetOps.set_op(
             g, obj=aset, op=lambda gset, y: gset.difference(y)
         )
@@ -166,6 +172,7 @@ class BaseGraphSetOps:
         """!
         \brief obtain symmetric set difference of either node or edge set.
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         return BaseGraphSetOps.set_op(
             g, obj=aset, op=lambda gset, y: gset.symmetric_difference(y)
         )
@@ -184,6 +191,7 @@ class BaseGraphSetOps:
         """!
         \brief check if argument set of nodes or edges is contained by graph
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         return BaseGraphSetOps.set_op(
             g, obj=a, op=lambda gset, y: y.issubset(gset) is True
         )
@@ -201,6 +209,7 @@ class BaseGraphAlgOps:
         """!
         \brief subtraction of elements for G - v cases, see Diestel p. 4
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         if isinstance(el, AbstractGraph):
             if is_plus is False:
                 elnodes = set(el.V)
@@ -249,6 +258,7 @@ class BaseGraphAlgOps:
         is_plus=False,
     ) -> BaseGraph:
         """"""
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         if isinstance(el, AbstractNode):
             return BaseGraphAlgOps.plus_minus_node_edge(
                 g=g, el=set([el]), is_plus=is_plus
@@ -284,6 +294,7 @@ class BaseGraphAlgOps:
         """!
         \brief subtraction of elements for G - v cases, see Diestel p. 4
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         return BaseGraphAlgOps.plus_minus(g=g, el=el, is_plus=False)
 
     @staticmethod
@@ -297,6 +308,7 @@ class BaseGraphAlgOps:
         Add edge between nodes. If there are no edges in between.
         The flag is_directed specifies if the edge is directed or not
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         if not BaseGraphBoolOps.is_in(g, n1) or not BaseGraphBoolOps.is_in(
             g, n2
         ):
@@ -349,4 +361,5 @@ class BaseGraphAlgOps:
         """!
         \brief addition of elements for G + v cases, see Diestel p. 4
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         return BaseGraphAlgOps.plus_minus(g=g, el=el, is_plus=True)

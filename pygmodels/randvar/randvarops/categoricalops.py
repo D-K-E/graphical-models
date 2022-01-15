@@ -2,112 +2,29 @@
 \file categoricalops.py Contains categorical random variable operations
 """
 
+import math
 from typing import Any, Callable, FrozenSet, List, Optional, Set, Tuple
 
 from pygmodels.randvar.randvarmodel.categorical import (
     CatRandomVariable,
     NumCatRandomVariable,
 )
+from pygmodels.randvar.randvarops.baserandvarops import RandomVariableOps
 from pygmodels.randvar.randvartype.abstractrandvar import (
     AbstractRandomVariable,
     AssociatedValueSet,
     PossibleOutcomes,
 )
+from pygmodels.utils import is_type, type_check
 from pygmodels.value.codomain import CodomainValue
 from pygmodels.value.value import NumericValue
 
 
-class CatRandomVariableOps:
+class CatRandomVariableNumericOps:
     """!
-    Basic operations that can be applied to categorical random variables
+    Operations that apply to categorical random variables that output numeric
+    values
     """
-
-    @staticmethod
-    def values(r: CatRandomVariable) -> AssociatedValueSet:
-        """!
-        \brief outcome values of the random variable
-
-        \see CatRandomVariable constructor for more explanation about outcome
-        values and their relation to random variables. \see
-        CatRandomVariable.value_set for a more functional version of this
-        function which let's you associate several transformations and filters
-        before obtaining outcomes.
-
-        \throws KeyError We raise a key error if there are no values associated
-        to this random variable.
-
-        \returns possible outcomes associated to this random variable.
-
-        \code{.py}
-        >>> students = PossibleOutcomes(frozenset(["student_1", "student_2"]))
-        >>> grade_f = lambda x: "F" if x == "student_1" else "A"
-        >>> grade_distribution = lambda x: 0.1 if x == "F" else 0.9
-        >>> indata = {"possible-outcomes": students}
-        >>> rvar = CatRandomVariable(
-        >>>    input_data=indata,
-        >>>    node_id="myrandomvar",
-        >>>    f=grade_f,
-        >>>    marginal_distribution=grade_distribution
-        >>> )
-        >>> rvar.values()
-        >>> frozenset(["A", "F"])
-
-        \endcode
-        """
-        return r.image
-
-    @staticmethod
-    def value_set(
-        r: CatRandomVariable,
-        value_filter=lambda x: True,
-        value_transform=lambda x: x,
-    ) -> FrozenSet[Tuple[str, CodomainValue]]:
-        """!
-        \brief the outcome value set of the random variable.
-
-        \param value_filter function for filtering out values during the
-        retrieval.
-
-        \param value_transfom function for transforming values during the
-        retrieval
-
-        \returns codomain of random variable, that is possible outcomes
-        associated to random variable
-
-        This is basically the codomain of the function associated to random
-        variable. Notice that this is completely different from probabilities
-        and other statistical discussion.
-        We also brand each value with the identifier of this random variable.
-        When we are dealing with categorical random variables, this function
-        should work, however for continuous codomains it would not really work.
-
-        \code{.py}
-        >>> students = PossibleOutcomes(frozenset(["student_1", "student_2"]))
-        >>> grade_f = lambda x: "F" if x == "student_1" else "A"
-        >>> grade_distribution = lambda x: 0.1 if x == "F" else 0.9
-        >>> indata = {"possible-outcomes": students}
-        >>> rvar = CatRandomVariable(
-        >>>    input_data=indata,
-        >>>    node_id="myrandomvar",
-        >>>    f=grade_f,
-        >>>    marginal_distribution=grade_distribution
-        >>> )
-        >>> rvar.value_set(
-        >>>         value_transform=lambda x: x.lower(),
-        >>>         value_filter=lambda x: x != "A"
-        >>> )
-        >>> frozenset([("myrandomvar","f")])
-
-        \endcode
-        """
-        sid = r.id()
-        return frozenset(
-            [
-                (sid, value_transform(v))
-                for v in CatRandomVariableOps.values(r)
-                if value_filter(v) is True
-            ]
-        )
 
     @staticmethod
     def p_x_fn(
@@ -119,16 +36,8 @@ class CatRandomVariableOps:
         implements:
         \f$\sum_{i=1}^n \phi(x_i) p(x_i) \f$
         """
-        return sum(CatRandomVariableOps.apply(lambda x: phi(x) * r.p(x)))
 
-    @staticmethod
-    def apply(
-        r: CatRandomVariable, phi: Callable[[CodomainValue], Any]
-    ) -> List[Any]:
-        """!
-        \brief apply function phi to possible outcomes of the random variable
-        """
-        return [phi(v) for v in CatRandomVariableOps.values(r)]
+        return sum(RandomVariableOps.apply(lambda x: phi(x) * r.p(x)))
 
     @staticmethod
     def apply_to_marginals(
@@ -137,7 +46,7 @@ class CatRandomVariableOps:
         """!
         \brief apply function phi to marginals of the random variable
         """
-        return CatRandomVariableOps.apply(lambda x: phi(r.marginal(x)))
+        return RandomVariableOps.apply(lambda x: phi(r.marginal(x)))
 
     @staticmethod
     def expected_apply(
@@ -145,7 +54,7 @@ class CatRandomVariableOps:
     ) -> NumericValue:
 
         """!"""
-        return CatRandomVariableOps.p_x_fn(r, phi)
+        return RandomVariableOps.p_x_fn(r, phi)
 
 
 class NumCatRandomVariableOps:
@@ -189,6 +98,7 @@ class NumCatRandomVariableOps:
 
         \endcode
         """
+        NumCatRandomVariableBoolOps.type_check(r, shouldRaiseError=True)
         if isinstance(evidence_value, int):
             evidence_value = float(evidence_value)
         if not NumCatRandomVariableBoolOps.is_numeric(evidence_value):
@@ -247,7 +157,7 @@ class NumCatRandomVariableOps:
         """
         if not NumCatRandomVariableBoolOps.is_numeric(val):
             raise TypeError("Reduction value must be numeric (int, float)")
-        vs = frozenset([v for v in CatRandomVariableOps.values(r) if v == val])
+        vs = frozenset([v for v in RandomVariableOps.values(r) if v == val])
         r._inputs = vs
         return r
 
@@ -257,58 +167,6 @@ class NumCatRandomVariableBoolOps:
     Basic operations outputting booleans that can be applied to categorical
     random variables
     """
-
-    @staticmethod
-    def type_check(
-        r: NumCatRandomVariable, other: Any, shouldRaiseError: bool = False
-    ) -> bool:
-        """!
-        \brief simple function for checking whether the other is also a
-        NumCatRVariable
-
-        \param other it can be anything
-
-        \throws TypeError if the other is not a NumCatRVariable, we raise a type
-        error
-
-        \code{.py}
-
-        >>> nid1 = "rvar1"
-        >>> input_data = {
-        >>>    "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
-        >>>    "grade": {"outcome-values": [0.2, 0.4, 0.6], "evidence": 0.2},
-        >>>    "dice": {"outcome-values": [i for i in range(1, 7)], "evidence": 1.0 / 6},
-        >>> }
-
-        >>> def intelligence_dist(intelligence_value: float) -> float:
-        >>>    if intelligence_value == 0.1:
-        >>>        return 0.7
-        >>>    elif intelligence_value == 0.9:
-        >>>        return 0.3
-        >>>    else:
-        >>>        return 0.0
-
-        >>> # intelligence
-        >>> intelligence = NumCatRVariable(
-        >>>    node_id=nid1,
-        >>>    input_data=input_data["intelligence"],
-        >>>    marginal_distribution=intelligence_dist,
-        >>> )
-        >>> NumCatRVariable.type_check("my numeric categorical variable")
-        >>> TypeError("other arg must be of type NumCatRVariable, it is str")
-        >>> NumCatRVariable.type_check(intelligence)
-        >>> None
-
-        \endcode
-        """
-        if isinstance(other, NumCatRandomVariable) is False:
-            if shouldRaiseError:
-                raise TypeError(
-                    "other arg must be of type NumCatRVariable, it is "
-                    + type(other)
-                )
-            return False
-        return True
 
     @staticmethod
     def has_evidence(
@@ -483,7 +341,7 @@ class NumCatRandomVariableNumericOps:
         """
         mx = float("inf") if is_min else float("-inf")
         mxv = None
-        for v in CatRandomVariableOps.values(r):
+        for v in RandomVariableOps.values(r):
             marginal = r.marginal(v)
             cond = mx > marginal if is_min else mx < marginal
             if cond:
@@ -620,8 +478,9 @@ class NumCatRandomVariableNumericOps:
         """
         NumCatRandomVariableBoolOps.type_check(other, shouldRaiseError=True)
         marginal = r.marginal(evidence_value)
-        return CatRandomVariableOps.p_x_fn(other, phi=lambda x: x * marginal)
+        return RandomVariableOps.p_x_fn(other, phi=lambda x: x * marginal)
 
+    @staticmethod
     def marginal_over_evidence_key(
         r: NumCatRandomVariable, other: AbstractRandomVariable
     ) -> NumericValue:
@@ -674,6 +533,7 @@ class NumCatRandomVariableNumericOps:
             r, evidence_value, other
         )
 
+    @staticmethod
     def expected_value(r: NumCatRandomVariable) -> NumericValue:
         """!
         \brief Expected value of random variable
@@ -705,9 +565,26 @@ class NumCatRandomVariableNumericOps:
         \endcode
         """
         return sum(
-            [value * r.p(value) for value in CatRandomVariableOps.values(r)]
+            [value * r.p(value) for value in RandomVariableOps.values(r)]
         )
 
+    @staticmethod
+    def variance(r: NumCatRandomVariable):
+        """!
+        Koller, Friedman 2009, p. 33
+        \f$ E[X^2] - (E[X])^2 \f$
+        """
+        E_X2 = RandomVariableOps.expected_apply(r, phi=lambda x: x * x)
+        return E_X2 - (NumCatRandomVariableNumericOps.expected_value(r) ** 2)
+
+    @staticmethod
+    def standard_deviation(r: NumCatRandomVariable):
+        """!
+        standard deviation Koller, Friedman 2009, p. 33
+        """
+        return math.sqrt(NumCatRandomVariableNumericOps.variance(r))
+
+    @staticmethod
     def P_X_e(r: NumCatRandomVariable) -> NumericValue:
         """!
         \brief evaluate probability with given random variable's evidence if it is
@@ -746,6 +623,7 @@ class NumCatRandomVariableNumericOps:
             return r.marginal(r.data()["evidence"])
         return NumCatRandomVariableNumericOps.expected_value(r)
 
+    @staticmethod
     def max_marginal_e(r: NumCatRandomVariable) -> NumericValue:
         """!
         evaluate max probability with given random variable's evidence if it is
@@ -781,6 +659,7 @@ class NumCatRandomVariableNumericOps:
             return r.marginal(r.data()["evidence"])
         return NumCatRandomVariableNumericOps.max(r)
 
+    @staticmethod
     def min_marginal_e(r: NumCatRandomVariable) -> NumericValue:
         """!
         \brief evaluate min probability with given random variable's evidence
@@ -816,3 +695,60 @@ class NumCatRandomVariableNumericOps:
         if "evidence" in r.data():
             return r.marginal(r.data()["evidence"])
         return NumCatRandomVariableNumericOps.min(r)
+
+    @staticmethod
+    def joint(r: NumCatRandomVariable, v: NumCatRandomVariable):
+        """!
+        Joint distribution of two random variables
+        from Biagini and Campanino 2016 p. 35
+
+        """
+        NumCatRandomVariableBoolOps.type_check(v, shouldRaiseError=True)
+        NumCatRandomVariableBoolOps.type_check(r, shouldRaiseError=True)
+        return NumCatRandomVariableNumericOps.P_X_e(
+            r
+        ) * NumCatRandomVariableNumericOps.P_X_e(v)
+
+    @staticmethod
+    def max_joint(r: NumCatRandomVariable, v: NumCatRandomVariable):
+        """!
+        max joint probability
+        """
+        type_check(
+            val=r,
+            other=v,
+            shouldRaiseError=True,
+            originType=NumCatRandomVariable,
+        )
+        rm = NumCatRandomVariableNumericOps.max_marginal_e(r)
+        vm = NumCatRandomVariableNumericOps.max_marginal_e(v)
+        return rm * vm
+
+    @staticmethod
+    def conditional(r: NumCatRandomVariable, other: NumCatRandomVariable):
+        """!
+        Conditional probability distribution (Bayes rule)
+        from Koller and Friedman
+        """
+        is_type(
+            val=other, originType=NumCatRandomVariable, shouldRaiseError=True
+        )
+        is_type(val=r, originType=NumCatRandomVariable, shouldRaiseError=True)
+        opxe = NumCatRandomVariableNumericOps.P_X_e(other)
+        return NumCatRandomVariableNumericOps.joint(r, other) / opxe
+
+    def max_conditional(r: NumCatRandomVariable, other):
+        """!"""
+        is_type(
+            val=other, originType=NumCatRandomVariable, shouldRaiseError=True
+        )
+        is_type(val=r, originType=NumCatRandomVariable, shouldRaiseError=True)
+        joint = NumCatRandomVariableNumericOps.max_joint(r, other)
+        return max(
+            [
+                v
+                for v in CatRandomVariableNumericOps.apply_to_marginals(
+                    other, lambda x: joint / x
+                )
+            ]
+        )

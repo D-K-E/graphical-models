@@ -128,13 +128,14 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         """!"""
         return self._inputs
 
-    @property
-    def image(self) -> AssociatedValueSet:
+    def image(self, sampler: Callable) -> AssociatedValueSet:
         """!
         Image of the random variable's function
         """
         if self._outs is None:
-            self._outs = frozenset(set(self.f(i) for i in self.inputs))
+            self._outs = sampler(
+                frozenset(set(self.f(i) for i in self.inputs))
+            )
         return self._outs
 
     def p(self, outcome: CodomainValue) -> NumericValue:

@@ -2,6 +2,7 @@
 \file abstractrandvar.py Represents an abstract random variable
 """
 from abc import ABC, abstractmethod
+from typing import Callable
 
 from pygmodels.graph.graphtype.abstractobj import AbstractNode
 from pygmodels.value.codomain import Codomain, CodomainValue, Outcome
@@ -25,9 +26,8 @@ class AbstractRandomVariable(AbstractNode):
         """
         raise NotImplementedError
 
-    @property
     @abstractmethod
-    def image(self) -> AssociatedValueSet:
+    def image(self, sampler: Callable) -> AssociatedValueSet:
         """!
         Image/Range of the random variable. It can be either a representation
         or the full range.

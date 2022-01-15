@@ -20,6 +20,7 @@ from pygmodels.graph.graphtype.gsearchresult import (
     BaseGraphDFSResult,
 )
 from pygmodels.graph.graphtype.queue import PriorityQueue
+from pygmodels.utils import is_type, type_check
 
 
 class BaseGraphSearcher:
@@ -57,6 +58,7 @@ class BaseGraphSearcher:
         \param check_cycle fill cycles if it is detected
         \param edge_generator generate edges of a vertex with respect to graph type
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         marked[u] = True
         time += 1
         d[u] = time
@@ -121,6 +123,7 @@ class BaseGraphSearcher:
 
         \see dfs_forest() method for more information on parameters.
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         V: Dict[str, AbstractNode] = {n.id(): n for n in g.V}
         if start_node is not None:
             if not BaseGraphBoolOps.is_in(g, start_node):
@@ -191,6 +194,7 @@ class BaseGraphSearcher:
         """!
         \brief obtain the edge set implied by the predecessor array.
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         esets: Dict[str, Set[AbstractEdge]] = {}
         V = {v.id(): v for v in g.V}
         for u, forest in preds.copy().items():
@@ -220,6 +224,7 @@ class BaseGraphSearcher:
 
         \throws ValueError if given node is not found in graph instance
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         if not BaseGraphBoolOps.is_in(g, n1):
             raise ValueError("argument node is not in graph")
         nid = n1.id()
@@ -269,6 +274,7 @@ class BaseGraphSearcher:
         """!
         Apply uniform cost search to given problem set
         """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
         if not BaseGraphBoolOps.is_in(g, start) or not BaseGraphBoolOps.is_in(
             g, goal
         ):

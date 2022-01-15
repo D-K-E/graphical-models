@@ -19,9 +19,11 @@ from pygmodels.factor.factortype.abstractfactor import (
     FactorScope,
 )
 from pygmodels.factor.factortype.basefactor import BaseFactor
+from pygmodels.pgm.pgmtype.randomvariable import RandomVariable
 from pygmodels.randvar.randvartype.abstractrandvar import (
     AbstractRandomVariable,
 )
+from pygmodels.utils import is_type, type_check
 
 
 class FactorAlgebra:
@@ -40,6 +42,13 @@ class FactorAlgebra:
         """!
         Wrapper of FactorOps.cls_product
         """
+        type_check(
+            val=f,
+            other=other,
+            shouldRaiseError=True,
+            originType=AbstractFactor,
+        )
+
         ((scope, phi), prod) = FactorOps.product(
             f=f,
             other=other,
@@ -58,6 +67,7 @@ class FactorAlgebra:
         """!
         Wrapper of FactorOps.cls_reduced
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         (scope, phi) = FactorOps.reduced(f=f, assignments=assignments)
         return BaseFactor(gid=str(uuid4()), scope_vars=scope, factor_fn=phi)
 
@@ -68,6 +78,7 @@ class FactorAlgebra:
         """!
         Wrapper of FactorOps.reduced_by_value
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         (scope, phi) = FactorFactorableOps.reduced_by_value(
             f=f, assignments=assignments
         )
@@ -80,6 +91,7 @@ class FactorAlgebra:
         """!
         Wrapper of FactorOps.cls_filter_assignments
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         (scope, phi) = FactorOps.filter_assignments(
             f=f, assignments=assignments
         )
@@ -92,6 +104,7 @@ class FactorAlgebra:
         """!
         Wrapper of FactorOps.reduced_by_vars
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         (scope, phi) = FactorFactorableOps.reduced_by_vars(
             f=f, assignments=assignments
         )
@@ -104,6 +117,8 @@ class FactorAlgebra:
         """!
         Wrapper of FactorOps.maxout_var
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
+        is_type(val=Y, originType=RandomVariable, shouldRaiseError=True)
         (scope, phi) = FactorFactorableOps.maxout_var(f=f, Y=Y)
         return BaseFactor(gid=str(uuid4()), scope_vars=scope, factor_fn=phi)
 
@@ -114,6 +129,8 @@ class FactorAlgebra:
         """!
         Wrapper of FactorOps.cls_sumout_var
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
+        is_type(val=Y, originType=RandomVariable, shouldRaiseError=True)
         (scope, phi) = FactorFactorableOps.sumout_var(f=f, Y=Y)
         return BaseFactor(gid=str(uuid4()), scope_vars=scope, factor_fn=phi)
 
@@ -128,6 +145,7 @@ class FactorAlgebra:
 
         \return Factor
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         if len(Ys) == 0:
             raise ValueError("variables not be an empty set")
         if len(Ys) == 1:

@@ -10,6 +10,7 @@ from typing import Callable, FrozenSet, List, Optional, Set, Tuple, Union
 from pygmodels.factor.factorfunc.factorops import FactorOps
 from pygmodels.factor.factortype.abstractfactor import AbstractFactor
 from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable, NumericValue
+from pygmodels.utils import is_type, type_check
 from pygmodels.value.value import FiniteVSet, OrderedFiniteVSet
 
 ProbabilityValue = NumericValue
@@ -60,8 +61,7 @@ class FactorNumericAnalyzer:
 
         \endcode
         """
-        if not isinstance(f, AbstractFactor):
-            raise TypeError("The object must be of Factor type")
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
 
         mval, mprob = FactorAnalyzer._max_prob_value(f)
         return mprob
@@ -77,6 +77,7 @@ class FactorNumericAnalyzer:
 
         \return normalized preference value
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         fdomain = FactorOps.factor_domain(f)
         Z = FactorOps.partition_value(fdomain)
         return phi_result / Z
@@ -120,8 +121,7 @@ class FactorNumericAnalyzer:
 
         \endcode
         """
-        if not isinstance(f, AbstractFactor):
-            raise TypeError("The object must be of Factor type")
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
 
         mval, mprob = FactorAnalyzer._min_prob_value(f)
         return mprob
@@ -133,6 +133,7 @@ class FactorNumericAnalyzer:
 
         \see Factor.partition_value(domains)
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         return sum([f.phi(scope_product=sv) for sv in FactorOps.cartesian(f)])
 
 
@@ -148,8 +149,7 @@ class FactorAnalyzer:
         comp_v: float = float("-inf"),
     ) -> Tuple[Set[OrderedFiniteVSet], ProbabilityValue]:
         """"""
-        if not isinstance(f, AbstractFactor):
-            raise TypeError("The object must be of Factor type")
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
 
         cval = comp_v
         out_val = None
@@ -172,6 +172,7 @@ class FactorAnalyzer:
         Obtain the highest preference value yielding domain member of this
         factor with its associated value.
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         return FactorAnalyzer._compare_prob_value(
             f=f, comp_fn=lambda phi_s, mx: phi_s > mx, comp_v=float("-inf")
         )
@@ -187,6 +188,7 @@ class FactorAnalyzer:
         Obtain the highest preference value yielding domain member of this
         factor with its associated value.
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         return FactorAnalyzer._compare_prob_value(
             f=f, comp_fn=lambda phi_s, mx: phi_s < mx, comp_v=float("inf")
         )
@@ -234,6 +236,7 @@ class FactorAnalyzer:
 
         \endcode
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         mval, mrob = FactorAnalyzer._max_prob_value(f)
         return mval
 
@@ -280,5 +283,6 @@ class FactorAnalyzer:
 
         \endcode
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         mval, mrob = FactorAnalyzer._min_prob_value(f)
         return mval

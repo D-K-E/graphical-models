@@ -21,6 +21,7 @@ from pygmodels.factor.factortype.abstractfactor import (
 from pygmodels.randvar.randvartype.abstractrandvar import (
     AbstractRandomVariable,
 )
+from pygmodels.utils import is_type, type_check
 from pygmodels.value.value import NumericValue
 
 
@@ -64,6 +65,7 @@ class FactorFactorableOps:
            a2  |  b1  |  c1
 
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         svars = set()
         for sv in f.scope_vars():
             for kval in assignments:
@@ -82,6 +84,7 @@ class FactorFactorableOps:
 
         \return a set of random variables and a factor function
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         return FactorFactorableOps.reduced(f, assignments)
 
     @staticmethod
@@ -98,6 +101,7 @@ class FactorFactorableOps:
 
         \return Factor
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         return FactorFactorableOps.reduced(f=f, assignments=assignments)
 
     @staticmethod
@@ -123,6 +127,7 @@ class FactorFactorableOps:
 
         \return Factor
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         if Y not in f.scope_vars():
             raise ValueError("argument is not in scope of this factor")
 
@@ -165,6 +170,7 @@ class FactorFactorableOps:
 
         \return Factor
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         if Y not in f.scope_vars():
             msg = "Argument " + str(Y)
             msg += " is not in scope of this factor: "
@@ -208,6 +214,7 @@ class FactorBoolOps:
         \endparblock
 
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         has, var = FactorOps.find_var(f, ids)
         return has
 
@@ -224,6 +231,7 @@ class FactorOps:
         """!
         Find given random variable using its identifier string
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         vs = [s for s in f.scope_vars() if s.id() == ids]
         if len(vs) > 1:
             raise ValueError("more than one variable matches the id string")
@@ -237,6 +245,7 @@ class FactorOps:
         """!
         Get random variable using its identifier string
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         has, var = FactorOps.find_var(f, ids)
         if has:
             return var
@@ -273,11 +282,12 @@ class FactorOps:
         \return tuple whose first element is the resulting factor and second
         element is the accumulated product.
         """
-        if not isinstance(f, AbstractFactor):
-            raise TypeError("f argument needs to be a factor")
-
-        if not isinstance(other, AbstractFactor):
-            raise TypeError("other needs to be a factor")
+        type_check(
+            val=f,
+            other=other,
+            shouldRaiseError=True,
+            originType=AbstractFactor,
+        )
         #
         svar = f.scope_vars()
         ovar = other.scope_vars()
@@ -332,6 +342,7 @@ class FactorOps:
 
         \return set of valid assignments
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         assignment_d = {a[0]: a[1] for a in assignments}
         context_ids = set([c.id() for c in context])
         for a in assignment_d.copy().keys():
@@ -379,6 +390,7 @@ class FactorOps:
         \endcode
 
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         return [
             s.value_set(
                 value_filter=value_filter, value_transform=value_transform
@@ -399,6 +411,7 @@ class FactorOps:
         \see Factor.normalize(phi_result), Factor.phi(scope_product)
 
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         Z = f.partition_value(FactorOps.factor_domain(f, D=f.scope_vars()))
         return f.phi(scope_product) / Z
 
@@ -432,6 +445,7 @@ class FactorOps:
 
         \endcode
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         domain_values = FactorOps.factor_domain(f, D=f.scope_vars())
         return [frozenset(s) for s in list(product(*domain_values))]
 
@@ -496,6 +510,7 @@ class FactorOps:
 
         \endcode
         """
+        is_type(val=f, originType=AbstractFactor, shouldRaiseError=True)
         sids = set()
         for vs in domain:
             for vtpl in vs:

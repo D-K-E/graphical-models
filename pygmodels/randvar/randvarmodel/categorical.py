@@ -6,6 +6,7 @@ import math
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple
 from uuid import uuid4
 
+from pygmodels.randvar.randvartype.abstractrandvar import AssociatedValueSet
 from pygmodels.randvar.randvartype.baserandvar import BaseRandomVariable
 from pygmodels.value.codomain import CodomainValue, Outcome, PossibleOutcomes
 from pygmodels.value.value import NumericValue
@@ -92,6 +93,12 @@ class CatRandomVariable(BaseRandomVariable):
         \returns probability value associated to value
         """
         return self.p(value)
+
+    def image(self, sampler=lambda x: x) -> AssociatedValueSet:
+        """!
+        Image of the random variable's function
+        """
+        return BaseRandomVariable.image(self, sampler=sampler)
 
 
 class NumCatRandomVariable(CatRandomVariable):
