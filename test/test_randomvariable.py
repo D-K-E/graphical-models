@@ -69,7 +69,7 @@ class NumCatRVariableTest(unittest.TestCase):
             marginal_distribution=fair_dice_dist,
         )
         #
-        students = PossibleOutcomes(frozenset(["student_1", "student_2"]))
+        students = frozenset(["student_1", "student_2"])
 
         def grade_f(x):
             return "F" if x == "student_1" else "A"

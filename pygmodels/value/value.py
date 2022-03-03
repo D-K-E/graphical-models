@@ -28,12 +28,14 @@ class SetValue(AbstractSetValue):
         self.v = val
         self._set = set_id
 
+    @property
     def belongs_to(self) -> str:
         """"""
         if self._set is None:
             raise ValueError("Value not associated to any set")
         return self._set
 
+    @property
     def value(self) -> Value:
         if self.v is None:
             raise ValueError("Value is not associated to any data")

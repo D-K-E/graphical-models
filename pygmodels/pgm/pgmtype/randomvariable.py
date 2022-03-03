@@ -8,9 +8,11 @@ from typing import Any, Callable, Dict, FrozenSet, List, Set, Tuple
 from uuid import uuid4
 
 from pygmodels.graph.graphtype.node import Node
-from pygmodels.value.codomain import CodomainValue, Outcome, PossibleOutcomes
+from pygmodels.value.codomain import CodomainValue
 from pygmodels.value.domain import DomainValue
 from pygmodels.value.value import NumericValue
+from pygmodels.randvar.randvartype.abstractrandvar import PossibleOutcome
+from pygmodels.randvar.randvartype.abstractrandvar import PossibleOutcomes
 
 
 class RandomVariable(Node):
@@ -36,7 +38,7 @@ class RandomVariable(Node):
         self,
         node_id: str,
         data: Any,
-        f: Callable[[Outcome], CodomainValue] = lambda x: x,
+        f: Callable[[PossibleOutcome], CodomainValue] = lambda x: x,
     ):
         """!
         \brief Constructor of a random variable
@@ -63,10 +65,8 @@ class CatRandomVariable(RandomVariable):
         self,
         node_id: str,
         input_data: Dict[str, Any],
-        f: Callable[[Outcome], CodomainValue] = lambda x: x,
-        marginal_distribution: Callable[
-            [CodomainValue], float
-        ] = lambda x: 1.0,
+        f: Callable[[PossibleOutcome], CodomainValue] = lambda x: x,
+        marginal_distribution: Callable[[CodomainValue], float] = lambda x: 1.0,
     ):
         """!
         \brief Constructor for categorical/discrete random variable
@@ -115,17 +115,13 @@ class CatRandomVariable(RandomVariable):
         data.update(input_data)
         if "possible-outcomes" in input_data:
             data["outcome-values"] = frozenset(
-                [f(v) for v in input_data["possible-outcomes"].data]
+                [f(v) for v in input_data["possible-outcomes"]]
             )
         super().__init__(node_id=node_id, data=data, f=f)
         if "outcome-values" in data:
-            psum = sum(
-                list(map(marginal_distribution, data["outcome-values"]))
-            )
+            psum = sum(list(map(marginal_distribution, data["outcome-values"])))
             if psum > 1 and psum < 0:
-                raise ValueError(
-                    "probability sum bigger than 1 or smaller than 0"
-                )
+                raise ValueError("probability sum bigger than 1 or smaller than 0")
         self.dist = marginal_distribution
 
     def p(self, value: CodomainValue) -> float:
@@ -187,15 +183,11 @@ class CatRandomVariable(RandomVariable):
         """
         vdata = self.data()
         if "outcome-values" not in vdata:
-            raise KeyError(
-                "This random variable has no associated set of values"
-            )
+            raise KeyError("This random variable has no associated set of values")
         return vdata["outcome-values"]
 
     def value_set(
-        self,
-        value_filter=lambda x: True,
-        value_transform=lambda x: x,
+        self, value_filter=lambda x: True, value_transform=lambda x: x,
     ) -> FrozenSet[Tuple[str, NumericValue]]:
         """!
         \brief the outcome value set of the random variable.
@@ -257,8 +249,8 @@ class NumCatRVariable(CatRandomVariable):
     def __init__(
         self,
         node_id: str,
-        input_data: Dict[str, Outcome],
-        f: Callable[[Outcome], NumericValue] = lambda x: x,
+        input_data: Dict[str, PossibleOutcome],
+        f: Callable[[PossibleOutcome], NumericValue] = lambda x: x,
         marginal_distribution: Callable[[NumericValue], float] = lambda x: 1.0,
     ):
         """!
@@ -346,8 +338,7 @@ class NumCatRVariable(CatRandomVariable):
         """
         if isinstance(other, NumCatRVariable) is False:
             raise TypeError(
-                "other arg must be of type NumCatRVariable, it is "
-                + type(other)
+                "other arg must be of type NumCatRVariable, it is " + type(other)
             )
 
     def has_evidence(self) -> None:
@@ -474,9 +465,7 @@ class NumCatRVariable(CatRandomVariable):
         mx, mxv = self.min_max_marginal_with_outcome(is_min=True)
         return mx
 
-    def min_max_marginal_with_outcome(
-        self, is_min: bool
-    ) -> Tuple[float, NumericValue]:
+    def min_max_marginal_with_outcome(self, is_min: bool) -> Tuple[float, NumericValue]:
         """!
         \brief returns highest/lowest probability with its outcome
 
@@ -954,10 +943,7 @@ class NumCatRVariable(CatRandomVariable):
         make a new random variable from given function with same distribution
         """
         return NumCatRVariable(
-            node_id=str(uuid4()),
-            f=phi,
-            input_data=self.data(),
-            distribution=self.dist,
+            node_id=str(uuid4()), f=phi, input_data=self.data(), distribution=self.dist,
         )
 
     def joint(self, v):

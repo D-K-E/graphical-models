@@ -5,11 +5,12 @@ from abc import ABC, abstractmethod
 from typing import Callable
 
 from pygmodels.graph.graphtype.abstractobj import AbstractNode
-from pygmodels.value.codomain import Codomain, CodomainValue, Outcome
-from pygmodels.value.domain import Domain
+from pygmodels.value.codomain import Codomain, CodomainValue
+from pygmodels.value.domain import Domain, DomainValue
 from pygmodels.value.value import NumericValue
 
 PossibleOutcomes = Domain
+PossibleOutcome = DomainValue
 AssociatedValueSet = Codomain
 
 
