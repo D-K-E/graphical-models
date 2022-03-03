@@ -8,7 +8,7 @@ from pygmodels.randvar.randvartype.abstractrandvar import (
     PossibleOutcomes,
 )
 from pygmodels.randvar.randvartype.baserandvar import BaseRandomVariable
-from pygmodels.value.codomain import CodomainValue, Outcome, PossibleOutcomes
+from pygmodels.value.codomain import CodomainValue, Outcome
 from pygmodels.value.value import NumericValue
 
 from typing import Any, Callable, FrozenSet, List, Optional, Set, Tuple
@@ -58,6 +58,7 @@ class RandomVariableOps:
         r: AbstractRandomVariable,
         value_filter=lambda x: True,
         value_transform=lambda x: x,
+        sampler=lambda x: x,
     ) -> FrozenSet[Tuple[str, CodomainValue]]:
         """!
         \brief the outcome value set of the random variable.
@@ -101,7 +102,7 @@ class RandomVariableOps:
         return frozenset(
             [
                 (sid, value_transform(v))
-                for v in RandomVariableOps.values(r)
+                for v in RandomVariableOps.values(r, sampler)
                 if value_filter(v) is True
             ]
         )
