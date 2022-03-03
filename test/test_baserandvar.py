@@ -6,19 +6,21 @@ import math
 import unittest
 
 from pygmodels.randvar.randvartype.baserandvar import BaseRandomVariable
-from pygmodels.value.domain import DomainValue
 from pygmodels.value.codomain import CodomainValue
+from pygmodels.value.domain import DomainValue
 
 
 class BaseRandomVariableTest(unittest.TestCase):
-    ""
+    """"""
 
     def setUp(self):
-        ""
+        """"""
         # dice random variable
         dicename = "dice"
         diceid = "dice01"
-        dice_input_data = set([DomainValue(v=i, dom_id=diceid) for i in range(1, 7)])
+        dice_input_data = set(
+            [DomainValue(v=i, dom_id=diceid) for i in range(1, 7)]
+        )
         dice_f = lambda x: x
         dice_distribution = lambda x: x.v / 6.0
         #
@@ -73,7 +75,9 @@ class BaseRandomVariableTest(unittest.TestCase):
 
     def test_str(self):
         "test string representation"
-        self.assertEqual(str(self.dice), "<RandomVariable :: id: dice01 name: dice>")
+        self.assertEqual(
+            str(self.dice), "<RandomVariable :: id: dice01 name: dice>"
+        )
 
     def test_hash(self):
         "test hash function"
@@ -82,7 +86,7 @@ class BaseRandomVariableTest(unittest.TestCase):
         )
 
     def test_image(self):
-        ""
+        """"""
         simage = frozenset(
             [x.value for x in self.student_rvar.image(sampler=lambda x: x)]
         )
@@ -90,7 +94,7 @@ class BaseRandomVariableTest(unittest.TestCase):
         self.assertEqual(simage, compval)
 
     def test_inputs(self):
-        ""
+        """"""
         self.assertEqual(
             self.student_rvar.inputs,
             set(
@@ -102,7 +106,7 @@ class BaseRandomVariableTest(unittest.TestCase):
         )
 
     def test_p(self):
-        ""
+        """"""
         self.assertEqual(
             0.1,
             self.student_rvar.p(

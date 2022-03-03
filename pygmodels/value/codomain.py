@@ -4,7 +4,7 @@ with probabilities and related concepts the codomain should be a measurable
 value
 """
 
-from typing import Any, Callable, Dict, FrozenSet, List, Set, Tuple, Optional
+from typing import Any, Callable, Dict, FrozenSet, List, Optional, Set, Tuple
 
 from pygmodels.value.abstractvalue import AbstractSetValue
 
@@ -15,7 +15,7 @@ class Outcome:
 
 
 class CodomainValue(AbstractSetValue):
-    ""
+    """"""
 
     def __init__(
         self,
@@ -34,7 +34,9 @@ class CodomainValue(AbstractSetValue):
         self._fn = mapping_name
         if domain_name is not None:
             if not isinstance(domain_name, str):
-                raise TypeError("domain_name must be a string if it is provided")
+                raise TypeError(
+                    "domain_name must be a string if it is provided"
+                )
         self._fn_domain = domain_name
 
     @property
@@ -60,7 +62,7 @@ class CodomainValue(AbstractSetValue):
         return self._fn_domain
 
     def __eq__(self, other):
-        ""
+        """"""
         if isinstance(other, CodomainValue):
             c1 = other.value == self.value
             c2 = other.belongs_to == self.belongs_to
@@ -68,7 +70,7 @@ class CodomainValue(AbstractSetValue):
         return False
 
     def __str__(self):
-        ""
+        """"""
         m = "<CodomainValue: " + str(self.value)
         m += " of set " + str(self.belongs_to)
         m += " mapped by " + str(self.mapped_by)
@@ -77,7 +79,7 @@ class CodomainValue(AbstractSetValue):
         return m
 
     def __hash__(self):
-        ""
+        """"""
         m = "<CodomainValue: " + str(self.value)
         m += " of set " + str(self.belongs_to)
         return hash(m)

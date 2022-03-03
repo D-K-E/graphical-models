@@ -4,23 +4,30 @@ BaseRandomVariableOps tests
 import math
 import unittest
 
-from pygmodels.randvar.randvartype.baserandvar import BaseRandomVariable
 from pygmodels.randvar.randvarops.baserandvarops import RandomVariableOps
-from pygmodels.value.domain import DomainValue
+from pygmodels.randvar.randvartype.baserandvar import BaseRandomVariable
 from pygmodels.value.codomain import CodomainValue
+from pygmodels.value.domain import DomainValue
 
 
 class RandomVariableOpsTest(unittest.TestCase):
-    ""
+    """"""
 
     def setUp(self):
-        ""
+        """"""
         # dice random variable
         dicename = "dice"
         diceid = "dice01"
-        dice_input_data = set([DomainValue(v=i, dom_id=diceid) for i in range(1, 7)])
-        dice_f = lambda x: x
-        dice_distribution = lambda x: x.v / 6.0
+        dice_input_data = set(
+            [DomainValue(v=i, dom_id=diceid) for i in range(1, 7)]
+        )
+
+        def dice_f(x: DomainValue):
+            return x
+
+        def dice_distribution(x: DomainValue):
+            return x.value / 6.0
+
         #
         self.dice = BaseRandomVariable(
             randvar_id=diceid,
@@ -68,20 +75,22 @@ class RandomVariableOpsTest(unittest.TestCase):
         )
 
     def test_values(self):
-        ""
-        simage = RandomVariableOps.values(self.student_rvar, sampler=lambda x: x)
+        """"""
+        simage = RandomVariableOps.values(
+            self.student_rvar, sampler=lambda x: x
+        )
         simage = frozenset([x.value for x in simage])
         compval = frozenset(["A", "F"])
         self.assertEqual(simage, compval)
 
     def test_value_set(self):
-        ""
+        """"""
         self.assertEqual(
             RandomVariableOps.value_set(
                 r=self.student_rvar,
                 value_transform=lambda x: x.value.lower(),
                 value_filter=lambda x: x.value != "A",
-                sampler = lambda x: x
+                sampler=lambda x: x,
             ),
             frozenset([("student01", "f")]),
         )

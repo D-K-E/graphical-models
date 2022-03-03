@@ -24,7 +24,9 @@ class CatRandomVariable(BaseRandomVariable):
         data: Optional[dict] = None,
         input_data: Optional[PossibleOutcomes] = None,
         f: Callable[[Outcome], CodomainValue] = lambda x: x,
-        marginal_distribution: Callable[[CodomainValue], float] = lambda x: 1.0,
+        marginal_distribution: Callable[
+            [CodomainValue], float
+        ] = lambda x: 1.0,
     ):
         """!
         \brief Constructor for categorical/discrete random variable

@@ -23,7 +23,7 @@ class DomainValue(AbstractSetValue):
         return self.v
 
     def __eq__(self, other):
-        ""
+        """"""
         if isinstance(other, DomainValue):
             c1 = other.value == self.value
             c2 = other.belongs_to == self.belongs_to
@@ -31,14 +31,14 @@ class DomainValue(AbstractSetValue):
         return False
 
     def __str__(self):
-        ""
+        """"""
         m = "<DomainValue: " + str(self.value)
         m += " of domain " + str(self.belongs_to)
         m += ">"
         return m
 
     def __hash__(self):
-        ""
+        """"""
         return hash(str(self))
 
 

@@ -6,7 +6,7 @@ from typing import Any, Optional
 
 
 def is_type(val: Any, originType: Any, shouldRaiseError=False) -> bool:
-    ""
+    """"""
     if isinstance(val, originType) is False:
         if shouldRaiseError:
             raise TypeError(
@@ -21,9 +21,12 @@ def is_type(val: Any, originType: Any, shouldRaiseError=False) -> bool:
 
 
 def is_other_type(
-    val: Any, other: Any, shouldRaiseError: bool, originType: Optional[Any] = None,
+    val: Any,
+    other: Any,
+    shouldRaiseError: bool,
+    originType: Optional[Any] = None,
 ) -> bool:
-    ""
+    """"""
     comp_type = type(val) if originType is None else originType
     if isinstance(other, comp_type) is False:
         if shouldRaiseError:
@@ -43,13 +46,18 @@ def type_check(
     shouldRaiseError=False,
     originType: Optional[Any] = None,
 ) -> bool:
-    """!
-    """
+    """!"""
     if originType is not None:
-        if is_type(val, originType, shouldRaiseError=shouldRaiseError) is False:
+        if (
+            is_type(val, originType, shouldRaiseError=shouldRaiseError)
+            is False
+        ):
             return False
     other_check = is_other_type(
-        val=val, other=other, originType=originType, shouldRaiseError=shouldRaiseError,
+        val=val,
+        other=other,
+        originType=originType,
+        shouldRaiseError=shouldRaiseError,
     )
     if other_check is False:
         return False

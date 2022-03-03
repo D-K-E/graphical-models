@@ -2,6 +2,9 @@
 \file baserandvarops.py Base random variable operations
 """
 
+from typing import Any, Callable, FrozenSet, List, Optional, Set, Tuple
+from uuid import uuid4
+
 from pygmodels.randvar.randvartype.abstractrandvar import (
     AbstractRandomVariable,
     AssociatedValueSet,
@@ -11,8 +14,6 @@ from pygmodels.randvar.randvartype.baserandvar import BaseRandomVariable
 from pygmodels.value.codomain import CodomainValue, Outcome
 from pygmodels.value.value import NumericValue
 
-from typing import Any, Callable, FrozenSet, List, Optional, Set, Tuple
-
 
 class RandomVariableOps:
     """!
@@ -20,7 +21,9 @@ class RandomVariableOps:
     """
 
     @staticmethod
-    def values(r: AbstractRandomVariable, sampler: Callable) -> AssociatedValueSet:
+    def values(
+        r: AbstractRandomVariable, sampler: Callable
+    ) -> AssociatedValueSet:
         """!
         \brief outcome values of the random variable
 
