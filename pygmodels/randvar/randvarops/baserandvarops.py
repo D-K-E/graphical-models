@@ -41,7 +41,7 @@ class RandomVariableOps:
 
         \code{.py}
 
-        >>> 
+        >>>
         >>> def grade_f(x: DomainValue) -> CodomainValue:
         >>>     if x.value == "student_1":
         >>>         return CodomainValue(
@@ -56,7 +56,7 @@ class RandomVariableOps:
         >>>        mapping_name="grade_f",
         >>>        domain_name=x.belongs_to,
         >>>     )
-        >>> 
+        >>>
         >>> def grade_distribution(x: CodomainValue):
         >>>     return 0.1 if x.value == "F" else 0.9
 
@@ -64,7 +64,7 @@ class RandomVariableOps:
         >>> svar_id = "student01"
         >>> students = set([DomainValue(v="student_1", dom_id=svar_id),
         >>>                 DomainValue(v="student_2", dom_id=svar_id)])
-        >>> 
+        >>>
         >>> student_rvar = BaseRandomVariable(
         >>>     randvar_name=svar_dname,
         >>>     randvar_id=svar_id,

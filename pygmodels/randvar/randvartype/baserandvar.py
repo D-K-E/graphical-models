@@ -86,7 +86,7 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
 
         \code{.py}
 
-        >>> 
+        >>>
         >>> dicename = "dice"
         >>> diceid = "dice01"
         >>> dice_input_data = set(
@@ -102,7 +102,7 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         >>>    f=dice_f,
         >>>    marginal_distribution=dice_distribution,
         >>> )
-        >>> 
+        >>>
 
         \endcode
 
