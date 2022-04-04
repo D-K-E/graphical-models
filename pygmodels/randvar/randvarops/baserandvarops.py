@@ -1,5 +1,6 @@
 """!
-\file baserandvarops.py Base random variable operations
+\file baserandvarops.py Base random variable operations. These operations are
+defined for objects inheriting from \see BaseRandomVariable.
 """
 
 from typing import Any, Callable, FrozenSet, List, Optional, Set, Tuple
@@ -39,17 +40,40 @@ class RandomVariableOps:
         \returns possible outcomes associated to this random variable.
 
         \code{.py}
-        >>> students = PossibleOutcomes(frozenset(["student_1", "student_2"]))
-        >>> grade_f = lambda x: "F" if x == "student_1" else "A"
-        >>> grade_distribution = lambda x: 0.1 if x == "F" else 0.9
-        >>> indata = {"possible-outcomes": students}
-        >>> rvar = CatRandomVariable(
-        >>>    input_data=indata,
-        >>>    node_id="myrandomvar",
-        >>>    f=grade_f,
-        >>>    marginal_distribution=grade_distribution
+
+        >>> 
+        >>> def grade_f(x: DomainValue) -> CodomainValue:
+        >>>     if x.value == "student_1":
+        >>>         return CodomainValue(
+        >>>            value="F",
+        >>>            set_name="grades",
+        >>>            mapping_name="grade_f",
+        >>>            domain_name=x.belongs_to,
+        >>>         )
+        >>>     return CodomainValue(
+        >>>        value="A",
+        >>>        set_name="grades",
+        >>>        mapping_name="grade_f",
+        >>>        domain_name=x.belongs_to,
+        >>>     )
+        >>> 
+        >>> def grade_distribution(x: CodomainValue):
+        >>>     return 0.1 if x.value == "F" else 0.9
+
+        >>> svar_dname = "student"
+        >>> svar_id = "student01"
+        >>> students = set([DomainValue(v="student_1", dom_id=svar_id),
+        >>>                 DomainValue(v="student_2", dom_id=svar_id)])
+        >>> 
+        >>> student_rvar = BaseRandomVariable(
+        >>>     randvar_name=svar_dname,
+        >>>     randvar_id=svar_id,
+        >>>     input_data=students,
+        >>>     data=None,
+        >>>     f=grade_f,
+        >>>     marginal_distribution=grade_distribution,
         >>> )
-        >>> rvar.values()
+        >>> student_rvar.values()
         >>> frozenset(["A", "F"])
 
         \endcode

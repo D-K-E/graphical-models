@@ -1,6 +1,7 @@
 """!
 \file baserandvar.py Base Random Variable object that implements the abstract
-random variable interface
+random variable interface. Inheriting from this object would make your object
+usable for all the operations defined in \see baserandvarops.py.
 """
 
 from typing import Callable, Optional, Set
@@ -85,16 +86,23 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
 
         \code{.py}
 
-        >>> students = PossibleOutcomes(frozenset(["student_1", "student_2"]))
-        >>> grade_f = lambda x: "F" if x == "student_1" else "A"
-        >>> grade_distribution = lambda x: 0.1 if x == "F" else 0.9
-        >>> indata = {"possible-outcomes": students}
-        >>> rvar = CatRandomVariable(
-        >>>    input_data=indata,
-        >>>    node_id="myrandomvar",
-        >>>    f=grade_f,
-        >>>    marginal_distribution=grade_distribution
+        >>> 
+        >>> dicename = "dice"
+        >>> diceid = "dice01"
+        >>> dice_input_data = set(
+        >>>    [DomainValue(v=i, dom_id=diceid) for i in range(1, 7)]
         >>> )
+        >>> dice_f = lambda x: x
+        >>> dice_distribution = lambda x: x.v / 6.0
+        >>> dice = BaseRandomVariable(
+        >>>    randvar_id=diceid,
+        >>>    randvar_name=dicename,
+        >>>    data=None,
+        >>>    input_data=dice_input_data,
+        >>>    f=dice_f,
+        >>>    marginal_distribution=dice_distribution,
+        >>> )
+        >>> 
 
         \endcode
 
