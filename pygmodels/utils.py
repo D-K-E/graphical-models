@@ -6,7 +6,9 @@ from typing import Any, Optional
 
 
 def is_type(val: Any, originType: Any, shouldRaiseError=False) -> bool:
-    """"""
+    """!
+    Check if given value is of origin type
+    """
     if isinstance(val, originType) is False:
         if shouldRaiseError:
             raise TypeError(
@@ -61,3 +63,4 @@ def type_check(
     )
     if other_check is False:
         return False
+    return True

@@ -3,9 +3,11 @@ BaseRandomVariableOps tests
 """
 import math
 import unittest
+from typing import Any, Optional
 
 from pygmodels.randvar.randvarops.baserandvarops import RandomVariableOps
 from pygmodels.randvar.randvartype.baserandvar import BaseRandomVariable
+from pygmodels.utils import is_type, type_check
 from pygmodels.value.codomain import CodomainValue
 from pygmodels.value.domain import DomainValue
 
@@ -94,3 +96,26 @@ class RandomVariableOpsTest(unittest.TestCase):
             ),
             frozenset([("student01", "f")]),
         )
+
+    def test_apply(self):
+        """"""
+
+        def phi(x: CodomainValue) -> Any:
+            "apply function to codomain"
+            tval = is_type(
+                val=x, originType=CodomainValue, shouldRaiseError=False
+            )
+            if tval:
+                return x.value.lower() if x.value == "A" else x.value
+            else:
+                return 5.0
+
+        #
+        compval = frozenset(["a", "F"])
+        vals = RandomVariableOps.apply(phi=phi, r=self.student_rvar)
+        self.assertEqual(vals, compval)
+
+    @unittest.skip("compare value not yet created")
+    def test_mk_new_randvar(self):
+        """"""
+        pass

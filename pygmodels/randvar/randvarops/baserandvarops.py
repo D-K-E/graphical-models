@@ -30,7 +30,7 @@ class RandomVariableOps:
 
         \see CatRandomVariable constructor for more explanation about outcome
         values and their relation to random variables. \see
-        CatRandomVariable.value_set for a more functional version of this
+        CatRandomVariable. value_set for a more functional version of this
         function which let's you associate several transformations and filters
         before obtaining outcomes.
 
@@ -136,12 +136,15 @@ class RandomVariableOps:
 
     @staticmethod
     def apply(
-        r: AbstractRandomVariable, phi: Callable[[CodomainValue], Any]
-    ) -> List[Any]:
+        r: AbstractRandomVariable,
+        phi: Callable[[CodomainValue], Any],
+        sampler=lambda x: x,
+    ) -> FrozenSet[Any]:
         """!
         \brief apply function phi to possible outcomes of the random variable
         """
-        return [phi(v) for v in RandomVariableOps.values(r)]
+        vs = RandomVariableOps.values(r, sampler=sampler)
+        return frozenset([phi(v) for v in vs])
 
     @staticmethod
     def mk_new_randvar(
