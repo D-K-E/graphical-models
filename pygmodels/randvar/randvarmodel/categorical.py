@@ -8,7 +8,8 @@ from uuid import uuid4
 
 from pygmodels.randvar.randvartype.abstractrandvar import AssociatedValueSet
 from pygmodels.randvar.randvartype.baserandvar import BaseRandomVariable
-from pygmodels.value.codomain import CodomainValue, Outcome, PossibleOutcomes
+from pygmodels.value.codomain import CodomainValue, Outcome
+from pygmodels.value.domain import DomainValue, Domain
 from pygmodels.value.value import NumericValue
 
 
@@ -22,8 +23,8 @@ class CatRandomVariable(BaseRandomVariable):
         randvar_id: str,
         randvar_name: Optional[str] = None,
         data: Optional[dict] = None,
-        input_data: Optional[PossibleOutcomes] = None,
-        f: Callable[[Outcome], CodomainValue] = lambda x: x,
+        input_data: Optional[Domain] = None,
+        f: Callable[[DomainValue], CodomainValue] = lambda x: x,
         marginal_distribution: Callable[
             [CodomainValue], float
         ] = lambda x: 1.0,

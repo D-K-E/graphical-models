@@ -13,7 +13,6 @@ from pygmodels.randvar.randvarops.baserandvarops import RandomVariableOps
 from pygmodels.randvar.randvartype.abstractrandvar import (
     AbstractRandomVariable,
     AssociatedValueSet,
-    PossibleOutcomes,
 )
 from pygmodels.utils import is_type, type_check
 from pygmodels.value.codomain import CodomainValue
@@ -46,7 +45,7 @@ class CatRandomVariableNumericOps:
         """!
         \brief apply function phi to marginals of the random variable
         """
-        return RandomVariableOps.apply(lambda x: phi(r.marginal(x)))
+        return RandomVariableOps.apply(lambda x: phi(r.p(x)))
 
     @staticmethod
     def expected_apply(
@@ -169,9 +168,7 @@ class NumCatRandomVariableBoolOps:
     """
 
     @staticmethod
-    def has_evidence(
-        r: NumCatRandomVariable, shouldRaiseError: bool = False
-    ) -> bool:
+    def has_evidence(r: NumCatRandomVariable, shouldRaiseError: bool = False) -> bool:
         """!
         \brief Check if any evidence is associated with this random variable
 
@@ -249,7 +246,7 @@ class NumCatRandomVariableNumericOps:
     """
 
     @staticmethod
-    def max(r: NumCatRandomVariable) -> NumericValue:
+    def max(r: NumCatRandomVariable, sampler: Callable = lambda x: x) -> NumericValue:
         """!
         \brief maximum marginal value
 
@@ -285,12 +282,12 @@ class NumCatRandomVariableNumericOps:
         \endcode
         """
         mx, mxv = NumCatRandomVariableNumericOps.min_max_marginal_with_outcome(
-            r, is_min=False
+            r, is_min=False, sampler=sampler
         )
         return mx
 
     @staticmethod
-    def min(r: NumCatRandomVariable) -> NumericValue:
+    def min(r: NumCatRandomVariable, sampler: Callable = lambda x: x) -> NumericValue:
         """!
         \brief minimum marginal value
 
@@ -325,13 +322,13 @@ class NumCatRandomVariableNumericOps:
 
         """
         mx, mxv = NumCatRandomVariableNumericOps.min_max_marginal_with_outcome(
-            r, is_min=True
+            r, is_min=True, sampler=sampler
         )
         return mx
 
     @staticmethod
     def min_max_marginal_with_outcome(
-        r: NumCatRandomVariable, is_min: bool
+        r: NumCatRandomVariable, is_min: bool, sampler: Callable
     ) -> Tuple[float, NumericValue]:
         """!
         \brief returns highest/lowest probability with its outcome
@@ -341,8 +338,8 @@ class NumCatRandomVariableNumericOps:
         """
         mx = float("inf") if is_min else float("-inf")
         mxv = None
-        for v in RandomVariableOps.values(r):
-            marginal = r.marginal(v)
+        for v in RandomVariableOps.values(r, sampler=sampler):
+            marginal = r.p(v)
             cond = mx > marginal if is_min else mx < marginal
             if cond:
                 mx = marginal
@@ -350,7 +347,7 @@ class NumCatRandomVariableNumericOps:
         return mx, mxv
 
     @staticmethod
-    def max_marginal_value(r: NumCatRandomVariable) -> NumericValue:
+    def max_marginal_value(r: NumCatRandomVariable, sampler: Callable) -> NumericValue:
         """!
         \brief highest probability outcome
 
@@ -383,12 +380,12 @@ class NumCatRandomVariableNumericOps:
         \endcode
         """
         mx, mxv = NumCatRandomVariableNumericOps.min_max_marginal_with_outcome(
-            r, is_min=False
+            r, is_min=False, sampler=sampler
         )
         return mxv
 
     @staticmethod
-    def min_marginal_value(r: NumCatRandomVariable) -> NumericValue:
+    def min_marginal_value(r: NumCatRandomVariable, sampler) -> NumericValue:
         """!
         \brief highest probability outcome
 
@@ -422,7 +419,7 @@ class NumCatRandomVariableNumericOps:
         \endcode
         """
         mx, mxv = NumCatRandomVariableNumericOps.min_max_marginal_with_outcome(
-            r, is_min=True
+            r, is_min=True, sampler=sampler
         )
         return mxv
 
@@ -477,7 +474,7 @@ class NumCatRandomVariableNumericOps:
         \endcode
         """
         NumCatRandomVariableBoolOps.type_check(other, shouldRaiseError=True)
-        marginal = r.marginal(evidence_value)
+        marginal = r.p(evidence_value)
         return RandomVariableOps.p_x_fn(other, phi=lambda x: x * marginal)
 
     @staticmethod
@@ -529,9 +526,7 @@ class NumCatRandomVariableNumericOps:
         NumCatRandomVariableBoolOps.has_evidence(r, shouldRaiseError=True)
         data = r.data()
         evidence_value = data["evidence"]
-        return NumCatRandomVariableNumericOps.marginal_over(
-            r, evidence_value, other
-        )
+        return NumCatRandomVariableNumericOps.marginal_over(r, evidence_value, other)
 
     @staticmethod
     def expected_value(r: NumCatRandomVariable) -> NumericValue:
@@ -564,9 +559,7 @@ class NumCatRandomVariableNumericOps:
 
         \endcode
         """
-        return sum(
-            [value * r.p(value) for value in RandomVariableOps.values(r)]
-        )
+        return sum([value * r.p(value) for value in RandomVariableOps.values(r)])
 
     @staticmethod
     def variance(r: NumCatRandomVariable):
@@ -620,7 +613,7 @@ class NumCatRandomVariableNumericOps:
         \endcode
         """
         if "evidence" in r.data():
-            return r.marginal(r.data()["evidence"])
+            return r.p(r.data()["evidence"])
         return NumCatRandomVariableNumericOps.expected_value(r)
 
     @staticmethod
@@ -656,7 +649,7 @@ class NumCatRandomVariableNumericOps:
         \endcode
         """
         if "evidence" in r.data():
-            return r.marginal(r.data()["evidence"])
+            return r.p(r.data()["evidence"])
         return NumCatRandomVariableNumericOps.max(r)
 
     @staticmethod
@@ -693,7 +686,7 @@ class NumCatRandomVariableNumericOps:
 
         """
         if "evidence" in r.data():
-            return r.marginal(r.data()["evidence"])
+            return r.p(r.data()["evidence"])
         return NumCatRandomVariableNumericOps.min(r)
 
     @staticmethod
@@ -715,10 +708,7 @@ class NumCatRandomVariableNumericOps:
         max joint probability
         """
         type_check(
-            val=r,
-            other=v,
-            shouldRaiseError=True,
-            originType=NumCatRandomVariable,
+            val=r, other=v, shouldRaiseError=True, originType=NumCatRandomVariable,
         )
         rm = NumCatRandomVariableNumericOps.max_marginal_e(r)
         vm = NumCatRandomVariableNumericOps.max_marginal_e(v)
@@ -730,18 +720,14 @@ class NumCatRandomVariableNumericOps:
         Conditional probability distribution (Bayes rule)
         from Koller and Friedman
         """
-        is_type(
-            val=other, originType=NumCatRandomVariable, shouldRaiseError=True
-        )
+        is_type(val=other, originType=NumCatRandomVariable, shouldRaiseError=True)
         is_type(val=r, originType=NumCatRandomVariable, shouldRaiseError=True)
         opxe = NumCatRandomVariableNumericOps.P_X_e(other)
         return NumCatRandomVariableNumericOps.joint(r, other) / opxe
 
     def max_conditional(r: NumCatRandomVariable, other):
         """!"""
-        is_type(
-            val=other, originType=NumCatRandomVariable, shouldRaiseError=True
-        )
+        is_type(val=other, originType=NumCatRandomVariable, shouldRaiseError=True)
         is_type(val=r, originType=NumCatRandomVariable, shouldRaiseError=True)
         joint = NumCatRandomVariableNumericOps.max_joint(r, other)
         return max(

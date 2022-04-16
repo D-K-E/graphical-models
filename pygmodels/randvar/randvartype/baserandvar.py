@@ -10,10 +10,9 @@ from pygmodels.graph.graphtype.graphobj import GraphObject
 from pygmodels.randvar.randvartype.abstractrandvar import (
     AbstractRandomVariable,
     AssociatedValueSet,
-    PossibleOutcome,
-    PossibleOutcomes,
 )
 from pygmodels.value.codomain import CodomainValue
+from pygmodels.value.domain import Domain, DomainValue
 from pygmodels.value.value import NumericValue
 
 
@@ -29,7 +28,7 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
 
     It is important to note that domain and codomain of random variables are
     quite ambiguous. The \f$\Omega\f$ in the definition is set of possible
-    outcomes, \see PossibleOutcomes object. In the context of probabilistic
+    outcomes, \see Domain object. In the context of probabilistic
     graphical models each random variable is also considered as a \see Node of
     a \see Graph. This object is meant to be a base class for further needs.
     It lacks quite a bit of methods. Hence it can not be used directly in a
@@ -42,11 +41,9 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         randvar_id: str,
         randvar_name: Optional[str] = None,
         data: Optional[dict] = None,
-        input_data: Optional[PossibleOutcomes] = None,
-        f: Callable[[PossibleOutcome], CodomainValue] = lambda x: x,
-        marginal_distribution: Callable[
-            [CodomainValue], float
-        ] = lambda x: 1.0,
+        input_data: Optional[Domain] = None,
+        f: Callable[[DomainValue], CodomainValue] = lambda x: x,
+        marginal_distribution: Callable[[CodomainValue], float] = lambda x: 1.0,
     ):
         """!
         \brief Constructor for random variable
@@ -107,9 +104,7 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         \endcode
 
         constructor for a random variable"""
-        super().__init__(
-            oid=randvar_id, odata=data if data is not None else {}
-        )
+        super().__init__(oid=randvar_id, odata=data if data is not None else {})
         self.name = randvar_name
         if input_data is None and data is None:
             raise ValueError("Either input data or data must not be None")
@@ -135,7 +130,7 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         self.dist = marginal_distribution
 
     @property
-    def inputs(self) -> PossibleOutcomes:
+    def inputs(self) -> Domain:
         """!"""
         return self._inputs
 
@@ -144,9 +139,7 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         Image of the random variable's function
         """
         if self._outs is None:
-            self._outs = sampler(
-                frozenset(set(self.f(i) for i in self.inputs))
-            )
+            self._outs = sampler(frozenset(set(self.f(i) for i in self.inputs)))
         return self._outs
 
     def p(self, outcome: CodomainValue) -> NumericValue:
