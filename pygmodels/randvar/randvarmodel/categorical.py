@@ -9,7 +9,7 @@ from uuid import uuid4
 from pygmodels.randvar.randvartype.abstractrandvar import AssociatedValueSet
 from pygmodels.randvar.randvartype.baserandvar import BaseRandomVariable
 from pygmodels.value.codomain import CodomainValue, Outcome
-from pygmodels.value.domain import DomainValue, Domain
+from pygmodels.value.domain import Domain, DomainValue
 from pygmodels.value.value import NumericValue
 
 

@@ -43,7 +43,9 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         data: Optional[dict] = None,
         input_data: Optional[Domain] = None,
         f: Callable[[DomainValue], CodomainValue] = lambda x: x,
-        marginal_distribution: Callable[[CodomainValue], float] = lambda x: 1.0,
+        marginal_distribution: Callable[
+            [CodomainValue], float
+        ] = lambda x: 1.0,
     ):
         """!
         \brief Constructor for random variable
@@ -104,7 +106,9 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         \endcode
 
         constructor for a random variable"""
-        super().__init__(oid=randvar_id, odata=data if data is not None else {})
+        super().__init__(
+            oid=randvar_id, odata=data if data is not None else {}
+        )
         self.name = randvar_name
         if input_data is None and data is None:
             raise ValueError("Either input data or data must not be None")
@@ -139,7 +143,9 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         Image of the random variable's function
         """
         if self._outs is None:
-            self._outs = sampler(frozenset(set(self.f(i) for i in self.inputs)))
+            self._outs = sampler(
+                frozenset(set(self.f(i) for i in self.inputs))
+            )
         return self._outs
 
     def p(self, outcome: CodomainValue) -> NumericValue:

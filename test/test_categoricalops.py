@@ -6,11 +6,12 @@ import math
 import unittest
 from typing import Any, Optional
 
-from pygmodels.randvar.randvarops.categoricalops import CatRandomVariableNumericOps
-from pygmodels.randvar.randvarops.categoricalops import NumCatRandomVariableOps
-from pygmodels.randvar.randvarops.categoricalops import NumCatRandomVariableBoolOps
-from pygmodels.randvar.randvarops.categoricalops import NumCatRandomVariableNumericOps
-
+from pygmodels.randvar.randvarops.categoricalops import (
+    CatRandomVariableNumericOps,
+    NumCatRandomVariableBoolOps,
+    NumCatRandomVariableNumericOps,
+    NumCatRandomVariableOps,
+)
 from pygmodels.randvar.randvartype.baserandvar import BaseRandomVariable
 from pygmodels.utils import is_type, type_check
 from pygmodels.value.codomain import CodomainValue
@@ -25,7 +26,9 @@ class CategoricalOpsTest(unittest.TestCase):
         # dice random variable
         dicename = "dice"
         diceid = "dice01"
-        dice_input_data = set([DomainValue(v=i, dom_id=diceid) for i in range(1, 7)])
+        dice_input_data = set(
+            [DomainValue(v=i, dom_id=diceid) for i in range(1, 7)]
+        )
 
         def dice_f(x: DomainValue):
             return x
@@ -81,7 +84,7 @@ class CategoricalOpsTest(unittest.TestCase):
 
         # intelligence random variable
         def intelligence_f(x: DomainValue) -> CodomainValue:
-            ""
+            """"""
             if x.value == "student_1":
                 return CodomainValue(
                     value=0.1,
@@ -97,10 +100,9 @@ class CategoricalOpsTest(unittest.TestCase):
             )
 
         def intelligence_dist(x: CodomainValue) -> float:
-            ""
+            """"""
             return 0.7 if x.value == 0.1 else (1.0 - 0.7)
 
-        intell_id = "intelligence"
         self.intelligence = BaseRandomVariable(
             randvar_name="intelligence",
             randvar_id="intelligence_randvar",
@@ -120,7 +122,9 @@ class CategoricalOpsTest(unittest.TestCase):
 
     def test_max(self):
         self.assertEqual(
-            NumCatRandomVariableNumericOps.max(self.intelligence, sampler=lambda x: x),
+            NumCatRandomVariableNumericOps.max(
+                self.intelligence, sampler=lambda x: x
+            ),
             0.7,
         )
 
@@ -200,5 +204,6 @@ class CategoricalOpsTest(unittest.TestCase):
     def test_standard_deviation(self):
         """"""
         self.assertEqual(
-            round(self.dice.standard_deviation(), 3), round(math.sqrt(2.917), 3),
+            round(self.dice.standard_deviation(), 3),
+            round(math.sqrt(2.917), 3),
         )

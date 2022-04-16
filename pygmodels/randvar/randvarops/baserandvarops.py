@@ -22,7 +22,9 @@ class RandomVariableOps:
     """
 
     @staticmethod
-    def values(r: AbstractRandomVariable, sampler: Callable) -> AssociatedValueSet:
+    def values(
+        r: AbstractRandomVariable, sampler: Callable
+    ) -> AssociatedValueSet:
         """!
         \brief outcome values of the random variable
 
