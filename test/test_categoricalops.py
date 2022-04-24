@@ -6,13 +6,13 @@ import math
 import unittest
 from typing import Any, Optional
 
+from pygmodels.randvar.randvarmodel.categorical import CatRandomVariable
 from pygmodels.randvar.randvarops.categoricalops import (
     CatRandomVariableNumericOps,
     NumCatRandomVariableBoolOps,
     NumCatRandomVariableNumericOps,
     NumCatRandomVariableOps,
 )
-from pygmodels.randvar.randvartype.baserandvar import BaseRandomVariable
 from pygmodels.utils import is_type, type_check
 from pygmodels.value.codomain import CodomainValue
 from pygmodels.value.domain import DomainValue
@@ -30,14 +30,19 @@ class CategoricalOpsTest(unittest.TestCase):
             [DomainValue(v=i, dom_id=diceid) for i in range(1, 7)]
         )
 
-        def dice_f(x: DomainValue):
-            return x
+        def dice_f(x: DomainValue) -> CodomainValue:
+            return CodomainValue(
+                value=x.value,
+                set_name=x.belongs_to,
+                mapping_name="dice_f",
+                domain_name=x.belongs_to,
+            )
 
-        def dice_distribution(x: DomainValue):
-            return x.value / 6.0
+        def dice_distribution(x: CodomainValue):
+            return 1.0 / 6.0
 
         #
-        self.dice = BaseRandomVariable(
+        self.dice = CatRandomVariable(
             randvar_id=diceid,
             randvar_name=dicename,
             data=None,
@@ -73,7 +78,7 @@ class CategoricalOpsTest(unittest.TestCase):
             ]
         )
 
-        self.student_rvar = BaseRandomVariable(
+        self.student_rvar = CatRandomVariable(
             randvar_name=svar_dname,
             randvar_id=svar_id,
             input_data=students,
@@ -103,7 +108,7 @@ class CategoricalOpsTest(unittest.TestCase):
             """"""
             return 0.7 if x.value == 0.1 else (1.0 - 0.7)
 
-        self.intelligence = BaseRandomVariable(
+        self.intelligence = CatRandomVariable(
             randvar_name="intelligence",
             randvar_id="intelligence_randvar",
             input_data=students,
@@ -140,6 +145,7 @@ class CategoricalOpsTest(unittest.TestCase):
         )
 
     def test_min_marginal_value(self):
+        """"""
         self.assertEqual(
             NumCatRandomVariableNumericOps.min_marginal_value(
                 self.intelligence, sampler=lambda x: x
@@ -147,25 +153,42 @@ class CategoricalOpsTest(unittest.TestCase):
             0.9,
         )
 
-    @unittest.skip("not done")
     def test_expected_value(self):
         """"""
-        self.assertEqual(self.dice.expected_value(), 3.5)
+        self.assertEqual(
+            round(
+                NumCatRandomVariableNumericOps.expected_value(
+                    self.dice, sampler=lambda x: x
+                ),
+                3,
+            ),
+            3.5,
+        )
 
-    @unittest.skip("not done")
     def test_marginal_with_known_value(self):
         """"""
-        self.assertEqual(self.grade.marginal(0.4), 0.37)
+        c1 = CodomainValue(
+            value="F",
+            set_name="grades",
+            mapping_name="grade_f",
+        )
+        self.assertEqual(self.student_rvar.marginal(c1), 0.1)
 
-    @unittest.skip("not done")
     def test_p_x_known_value(self):
         """"""
-        self.assertEqual(self.grade.p(0.4), 0.37)
+        c1 = CodomainValue(
+            value="F",
+            set_name="grades",
+            mapping_name="grade_f",
+        )
+        self.assertEqual(self.student_rvar.marginal(c1), 0.1)
 
     @unittest.skip("not done")
     def test_P_X_e(self):
         """"""
-        self.assertEqual(self.grade.P_X_e(), 0.25)
+        self.assertEqual(
+            NumCatRandomVariableNumericOps.P_X_e(self.intelligence), 0.25
+        )
 
     @unittest.skip("not done")
     def test_max_marginal_e(self):

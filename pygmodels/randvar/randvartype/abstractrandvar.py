@@ -4,7 +4,10 @@
 from abc import ABC, abstractmethod
 from typing import Callable
 
-from pygmodels.graph.graphtype.abstractobj import AbstractNode
+from pygmodels.graph.graphtype.abstractobj import (
+    AbstractGraphObj,
+    AbstractNode,
+)
 from pygmodels.value.codomain import Codomain, CodomainValue
 from pygmodels.value.domain import Domain, DomainValue
 from pygmodels.value.value import NumericValue
@@ -12,6 +15,23 @@ from pygmodels.value.value import NumericValue
 PossibleOutcomes = Domain
 PossibleOutcome = DomainValue
 AssociatedValueSet = Codomain
+
+
+class AbstractEvidence(AbstractGraphObj):
+    """!
+    An evidence interface.
+    """
+
+    @abstractmethod
+    def value(self) -> CodomainValue:
+        raise NotImplementedError
+
+    @abstractmethod
+    def description(self) -> str:
+        """!
+        Observation conditions and the nature of evidence
+        """
+        raise NotImplementedError
 
 
 class AbstractRandomVariable(AbstractNode):

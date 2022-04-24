@@ -145,7 +145,11 @@ class NumCatRandomVariableOps:
         return r
 
     @staticmethod
-    def reduce_to_value(r: NumCatRandomVariable, val: NumericValue):
+    def reduce_to_value(
+        r: NumCatRandomVariable,
+        val: NumericValue,
+        sampler: Callable = lambda x: x,
+    ):
         """!
         \brief reduce outcomes of this random variable to val
 
@@ -156,7 +160,13 @@ class NumCatRandomVariableOps:
         """
         if not NumCatRandomVariableBoolOps.is_numeric(val):
             raise TypeError("Reduction value must be numeric (int, float)")
-        vs = frozenset([v for v in RandomVariableOps.values(r) if v == val])
+        vs = frozenset(
+            [
+                v
+                for v in RandomVariableOps.values(r, sampler=sampler)
+                if v == val
+            ]
+        )
         r._inputs = vs
         return r
 
@@ -344,8 +354,8 @@ class NumCatRandomVariableNumericOps:
         """
         mx = float("inf") if is_min else float("-inf")
         mxv = None
-        for v in RandomVariableOps.values(r, sampler=sampler):
-            marginal = r.p(v)
+        for v in r.image():
+            marginal = r.marginal(v)
             cond = mx > marginal if is_min else mx < marginal
             if cond:
                 mx = marginal
@@ -539,7 +549,9 @@ class NumCatRandomVariableNumericOps:
         )
 
     @staticmethod
-    def expected_value(r: NumCatRandomVariable) -> NumericValue:
+    def expected_value(
+        r: NumCatRandomVariable, sampler: Callable = lambda x: x
+    ) -> NumericValue:
         """!
         \brief Expected value of random variable
         from Koller, Friedman 2009, p. 31
@@ -570,7 +582,10 @@ class NumCatRandomVariableNumericOps:
         \endcode
         """
         return sum(
-            [value * r.p(value) for value in RandomVariableOps.values(r)]
+            [
+                codomain_member.value * r.p(codomain_member)
+                for codomain_member in r.image()
+            ]
         )
 
     @staticmethod
@@ -590,7 +605,9 @@ class NumCatRandomVariableNumericOps:
         return math.sqrt(NumCatRandomVariableNumericOps.variance(r))
 
     @staticmethod
-    def P_X_e(r: NumCatRandomVariable) -> NumericValue:
+    def P_X_e(
+        r: NumCatRandomVariable, sampler: Callable = lambda x: x
+    ) -> NumericValue:
         """!
         \brief evaluate probability with given random variable's evidence if it is
         given.
@@ -626,7 +643,9 @@ class NumCatRandomVariableNumericOps:
         """
         if "evidence" in r.data():
             return r.p(r.data()["evidence"])
-        return NumCatRandomVariableNumericOps.expected_value(r)
+        return NumCatRandomVariableNumericOps.expected_value(
+            r, sampler=sampler
+        )
 
     @staticmethod
     def max_marginal_e(r: NumCatRandomVariable) -> NumericValue:
