@@ -46,7 +46,7 @@ class BaseEvidence(AbstractEvidence, GraphObject):
         if description is not None:
             is_type(
                 description,
-                originType=CodomainValue,
+                originType=str,
                 shouldRaiseError=True,
                 val_name="description",
             )
