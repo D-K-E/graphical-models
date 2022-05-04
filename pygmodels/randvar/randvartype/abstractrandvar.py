@@ -2,7 +2,7 @@
 \file abstractrandvar.py Represents an abstract random variable
 """
 from abc import ABC, abstractmethod
-from typing import Callable
+from typing import Callable, Optional
 
 from pygmodels.graph.graphtype.abstractobj import (
     AbstractGraphObj,
@@ -23,11 +23,16 @@ class AbstractEvidence(AbstractGraphObj):
     """
 
     @abstractmethod
+    def belongs_to(self) -> str:
+        "Output the identifier of the random variable associated with the evidence"
+        raise NotImplementedError
+
+    @abstractmethod
     def value(self) -> CodomainValue:
         raise NotImplementedError
 
     @abstractmethod
-    def description(self) -> str:
+    def description(self) -> Optional[str]:
         """!
         Observation conditions and the nature of evidence
         """

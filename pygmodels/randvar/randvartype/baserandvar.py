@@ -10,10 +10,104 @@ from pygmodels.graph.graphtype.graphobj import GraphObject
 from pygmodels.randvar.randvartype.abstractrandvar import (
     AbstractRandomVariable,
     AssociatedValueSet,
+    AbstractEvidence,
 )
 from pygmodels.value.codomain import CodomainValue
 from pygmodels.value.domain import Domain, DomainValue
 from pygmodels.value.value import NumericValue
+
+# for type checking
+from pygmodels.utils import is_type
+
+
+class BaseEvidence(AbstractEvidence, GraphObject):
+    """!
+    \brief A base class that implements the basic methods of the abstract evidence
+    """
+
+    def __init__(
+        self,
+        evidence_id: str,
+        value: CodomainValue,
+        randvar_id: str,
+        description: Optional[str] = None,
+        data: Optional[dict] = None,
+    ):
+        ""
+        is_type(
+            evidence_id, originType=str, shouldRaiseError=True, val_name="evidence_id"
+        )
+        is_type(
+            randvar_id, originType=str, shouldRaiseError=True, val_name="randvar_id"
+        )
+        is_type(
+            value, originType=CodomainValue, shouldRaiseError=True, val_name="value",
+        )
+        if description is not None:
+            is_type(
+                description,
+                originType=CodomainValue,
+                shouldRaiseError=True,
+                val_name="description",
+            )
+        if data is not None:
+            is_type(
+                data, originType=dict, shouldRaiseError=True, val_name="data",
+            )
+        # init graphobj
+        super().__init__(oid=evidence_id, odata=data if data is not None else {})
+        self.rand_id = randvar_id
+        self.val = value
+        self.descr = description
+
+    def belongs_to(self) -> str:
+        "Identifier of the random variable associated to evidence"
+        return self.rand_id
+
+    def value(self) -> CodomainValue:
+        "Value of the evidence"
+        return self.val
+
+    def description(self) -> Optional[str]:
+        "description of observation conditions of the evidence"
+        return self.descr
+
+    def __eq__(self, other: AbstractEvidence) -> bool:
+        """!
+        Checks the instance first and then the random variable identifiers and
+        value.
+
+        Note that the identifiers of evidence themselves do not play a role
+        in their equality comparison
+        """
+        if not isinstance(other, AbstractEvidence):
+            return False
+        if other.value() != self.value():
+            return False
+        if other.belongs_to() != self.belongs_to():
+            return False
+        return True
+
+    def __str__(self):
+        """!
+        String representation of an evidence
+        """
+        msg = "<BaseEvidence :: id: "
+        msg += self.id()
+        msg += " value: " + str(self.value())
+        msg += " belongs to: " + str(self.belongs_to())
+        # this would create hash problems
+        # msg += " description: " + (
+        #    self.description() if self.description() is not None else ""
+        # )
+        msg += ">"
+        return msg
+
+    def __hash__(self):
+        """!
+        \brief Obtain hash value from string representation of evidence
+        """
+        return hash(self.__str__())
 
 
 class BaseRandomVariable(AbstractRandomVariable, GraphObject):
@@ -43,9 +137,7 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         data: Optional[dict] = None,
         input_data: Optional[Domain] = None,
         f: Callable[[DomainValue], CodomainValue] = lambda x: x,
-        marginal_distribution: Callable[
-            [CodomainValue], float
-        ] = lambda x: 1.0,
+        marginal_distribution: Callable[[CodomainValue], float] = lambda x: 1.0,
     ):
         """!
         \brief Constructor for random variable
@@ -106,9 +198,7 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         \endcode
 
         constructor for a random variable"""
-        super().__init__(
-            oid=randvar_id, odata=data if data is not None else {}
-        )
+        super().__init__(oid=randvar_id, odata=data if data is not None else {})
         self.name = randvar_name
         if input_data is None and data is None:
             raise ValueError("Either input data or data must not be None")
@@ -143,9 +233,7 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         Image of the random variable's function
         """
         if self._outs is None:
-            self._outs = sampler(
-                frozenset(set(self.f(i) for i in self.inputs))
-            )
+            self._outs = sampler(frozenset(set(self.f(i) for i in self.inputs)))
         return self._outs
 
     def p(self, outcome: CodomainValue) -> NumericValue:
