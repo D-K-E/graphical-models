@@ -5,7 +5,9 @@ Utility functions
 from typing import Any, Optional
 
 
-def is_type(val: Any, originType: Any, shouldRaiseError=False, val_name=None) -> bool:
+def is_type(
+    val: Any, originType: Any, shouldRaiseError=False, val_name=None
+) -> bool:
     """!
     Check if given value is of origin type
     """
@@ -23,7 +25,10 @@ def is_type(val: Any, originType: Any, shouldRaiseError=False, val_name=None) ->
 
 
 def is_other_type(
-    val: Any, other: Any, shouldRaiseError: bool, originType: Optional[Any] = None,
+    val: Any,
+    other: Any,
+    shouldRaiseError: bool,
+    originType: Optional[Any] = None,
 ) -> bool:
     """"""
     comp_type = type(val) if originType is None else originType
@@ -47,10 +52,16 @@ def type_check(
 ) -> bool:
     """!"""
     if originType is not None:
-        if is_type(val, originType, shouldRaiseError=shouldRaiseError) is False:
+        if (
+            is_type(val, originType, shouldRaiseError=shouldRaiseError)
+            is False
+        ):
             return False
     other_check = is_other_type(
-        val=val, other=other, originType=originType, shouldRaiseError=shouldRaiseError,
+        val=val,
+        other=other,
+        originType=originType,
+        shouldRaiseError=shouldRaiseError,
     )
     if other_check is False:
         return False

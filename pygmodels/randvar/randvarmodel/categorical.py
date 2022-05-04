@@ -95,11 +95,14 @@ class CatRandomVariable(BaseRandomVariable):
         """
         return self.p(value)
 
-    def image(self) -> AssociatedValueSet:
+    def image(
+        self,
+        sampler: Callable[[Domain], List[DomainValue]] = lambda x: list(x),
+    ) -> AssociatedValueSet:
         """!
         Image of the random variable's function
         """
-        return BaseRandomVariable.image(self, sampler=lambda x: x)
+        return BaseRandomVariable.image(self, sampler=sampler)
 
 
 class NumCatRandomVariable(CatRandomVariable):

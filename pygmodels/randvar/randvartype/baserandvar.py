@@ -4,20 +4,20 @@ random variable interface. Inheriting from this object would make your object
 usable for all the operations defined in \see baserandvarops.py.
 """
 
-from typing import Callable, Optional, Set
+from typing import Callable, List, Optional, Set
 
 from pygmodels.graph.graphtype.graphobj import GraphObject
 from pygmodels.randvar.randvartype.abstractrandvar import (
+    AbstractEvidence,
     AbstractRandomVariable,
     AssociatedValueSet,
-    AbstractEvidence,
 )
-from pygmodels.value.codomain import CodomainValue
-from pygmodels.value.domain import Domain, DomainValue
-from pygmodels.value.value import NumericValue
 
 # for type checking
 from pygmodels.utils import is_type
+from pygmodels.value.codomain import CodomainValue
+from pygmodels.value.domain import Domain, DomainValue
+from pygmodels.value.value import NumericValue
 
 
 class BaseEvidence(AbstractEvidence, GraphObject):
@@ -33,15 +33,24 @@ class BaseEvidence(AbstractEvidence, GraphObject):
         description: Optional[str] = None,
         data: Optional[dict] = None,
     ):
-        ""
+        """"""
         is_type(
-            evidence_id, originType=str, shouldRaiseError=True, val_name="evidence_id"
+            evidence_id,
+            originType=str,
+            shouldRaiseError=True,
+            val_name="evidence_id",
         )
         is_type(
-            randvar_id, originType=str, shouldRaiseError=True, val_name="randvar_id"
+            randvar_id,
+            originType=str,
+            shouldRaiseError=True,
+            val_name="randvar_id",
         )
         is_type(
-            value, originType=CodomainValue, shouldRaiseError=True, val_name="value",
+            value,
+            originType=CodomainValue,
+            shouldRaiseError=True,
+            val_name="value",
         )
         if description is not None:
             is_type(
@@ -52,10 +61,15 @@ class BaseEvidence(AbstractEvidence, GraphObject):
             )
         if data is not None:
             is_type(
-                data, originType=dict, shouldRaiseError=True, val_name="data",
+                data,
+                originType=dict,
+                shouldRaiseError=True,
+                val_name="data",
             )
         # init graphobj
-        super().__init__(oid=evidence_id, odata=data if data is not None else {})
+        super().__init__(
+            oid=evidence_id, odata=data if data is not None else {}
+        )
         self.rand_id = randvar_id
         self.val = value
         self.descr = description
@@ -137,7 +151,10 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         data: Optional[dict] = None,
         input_data: Optional[Domain] = None,
         f: Callable[[DomainValue], CodomainValue] = lambda x: x,
-        marginal_distribution: Callable[[CodomainValue], float] = lambda x: 1.0,
+        marginal_distribution: Callable[
+            [CodomainValue], float
+        ] = lambda x: 1.0,
+        sampler: Optional[Callable[[Domain], List[DomainValue]]] = None,
     ):
         """!
         \brief Constructor for random variable
@@ -198,7 +215,9 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         \endcode
 
         constructor for a random variable"""
-        super().__init__(oid=randvar_id, odata=data if data is not None else {})
+        super().__init__(
+            oid=randvar_id, odata=data if data is not None else {}
+        )
         self.name = randvar_name
         if input_data is None and data is None:
             raise ValueError("Either input data or data must not be None")
@@ -218,9 +237,24 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
             raise TypeError("f must be a callable")
         self.f = f
         self._outs = None
-        psum = sum(list(map(marginal_distribution, possible_outcomes)))
-        if psum > 1 and psum < 0:
-            raise ValueError("probability sum bigger than 1 or smaller than 0")
+        self._sampler = None
+        if sampler is not None and not callable(sampler):
+            raise TypeError(
+                "if sampler is not None, it must be a callable, but it is "
+                + str(type(sampler))
+            )
+        elif sampler is not None and callable(sampler):
+            # check if marginal distribution gives a correct probability
+            # distribution
+            image = [self.f(s) for s in sampler(possible_outcomes)]
+            psum = sum(list(map(marginal_distribution, image)))
+            if psum > 1 and psum < 0:
+                raise ValueError(
+                    "probability sum bigger than 1 or smaller than 0"
+                )
+            self._sampler = sampler
+        else:
+            self._sampler = sampler
         self.dist = marginal_distribution
 
     @property
@@ -228,13 +262,48 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         """!"""
         return self._inputs
 
-    def image(self, sampler: Callable) -> AssociatedValueSet:
+    def image(
+        self, sampler: Optional[Callable[[Domain], List[DomainValue]]] = None
+    ) -> AssociatedValueSet:
         """!
-        Image of the random variable's function
+        \brief Image of the random variable's function.
+
+        There two ways of obtaining an image. We either specify a sampler at
+        the constructor of RandomVariable or we specify it in this function. If
+        both of the samplers are None during the calling of this method, we
+        raise a TypeError. If both samplers are not None, we use the sampler
+        provided during the function call and ignore the one provided in the
+        constructor.
+
+        \param sampler a function for sampling the domain of random variable if
+        it is continuous or if it is too large.
+
+        \returns either full range of the random variable or its subset
+        depending on the sampler.
+
+        \raises TypeError when both samplers are None, we raise type error.
+
         """
-        if self._outs is None:
-            self._outs = sampler(frozenset(set(self.f(i) for i in self.inputs)))
-        return self._outs
+        if sampler is not None and self._sampler is None:
+            return frozenset(set(self.f(i) for i in sampler(self.inputs)))
+        elif sampler is None and self._sampler is None:
+            msg = "Both samplers are None. "
+            msg += "In order to obtain an image of the random variable, "
+            msg += "please provide a sampler function either in the constructor or "
+            msg += "here."
+            raise TypeError(msg)
+        elif sampler is None and self._sampler is not None:
+            if self._outs is None:
+                self._outs = frozenset(
+                    set(self.f(i) for i in self._sampler(self.inputs))
+                )
+            return self._outs
+        elif sampler is not None and self._sampler is not None:
+            return frozenset(set(self.f(i) for i in sampler(self.inputs)))
+        else:
+            raise ValueError(
+                "Unknown configuration, possible bug, please create an issue"
+            )
 
     def p(self, outcome: CodomainValue) -> NumericValue:
         """!

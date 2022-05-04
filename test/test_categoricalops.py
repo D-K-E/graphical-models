@@ -13,6 +13,7 @@ from pygmodels.randvar.randvarops.categoricalops import (
     NumCatRandomVariableNumericOps,
     NumCatRandomVariableOps,
 )
+from pygmodels.randvar.randvartype.baserandvar import BaseEvidence
 from pygmodels.utils import is_type, type_check
 from pygmodels.value.codomain import CodomainValue
 from pygmodels.value.domain import DomainValue
@@ -106,15 +107,100 @@ class CategoricalOpsTest(unittest.TestCase):
 
         def intelligence_dist(x: CodomainValue) -> float:
             """"""
+            is_type(
+                x,
+                originType=CodomainValue,
+                shouldRaiseError=True,
+                val_name="x",
+            )
             return 0.7 if x.value == 0.1 else (1.0 - 0.7)
 
+        # evidence
+        self.intev = BaseEvidence(
+            evidence_id="grade-evidence",
+            value=CodomainValue(
+                value="F",
+                set_name="grades",
+                mapping_name="grade_f",
+                domain_name=svar_id,
+            ),
+            randvar_id=self.student_rvar.id(),
+            description="intelligence evidence",
+            data=None,
+        )
         self.intelligence = CatRandomVariable(
             randvar_name="intelligence",
             randvar_id="intelligence_randvar",
             input_data=students,
-            data={"evidence": 0.9},
+            data={"evidence": self.intev},
             f=intelligence_f,
             marginal_distribution=intelligence_dist,
+        )
+
+        def grade_event(x: DomainValue) -> CodomainValue:
+            """"""
+            if x.value == "F":
+                return CodomainValue(
+                    value=0.2,
+                    set_name="grade values",
+                    mapping_name="grade_event",
+                    domain_name=x.belongs_to,
+                )
+            elif x.value == "D":
+                return CodomainValue(
+                    value=0.4,
+                    set_name="grade values",
+                    mapping_name="grade_event",
+                    domain_name=x.belongs_to,
+                )
+            elif x.value == "B":
+                return CodomainValue(
+                    value=0.6,
+                    set_name="grade values",
+                    mapping_name="grade_event",
+                    domain_name=x.belongs_to,
+                )
+            else:
+                raise ValueError("Unkown domain value " + str(x))
+
+        def grade_dist(x: CodomainValue) -> float:
+            if x.value == 0.2:
+                return 0.25
+            elif x.value == 0.4:
+                return 0.37
+            elif x.value == 0.6:
+                return 0.38
+            else:
+                raise ValueError("unknown grade value: " + str(x))
+
+        grades = set(
+            [
+                DomainValue(v="F", dom_id="grade names"),
+                DomainValue(v="D", dom_id="grade names"),
+                DomainValue(v="B", dom_id="grade names"),
+            ]
+        )
+
+        self.grade_ev = BaseEvidence(
+            evidence_id="grade-evidence",
+            value=CodomainValue(
+                value=0.2,
+                set_name="grade values",
+                mapping_name="grade_event",
+                domain_name="grade names",
+            ),
+            randvar_id="grade_rvar",
+            description="grade evidence",
+            data=None,
+        )
+
+        self.grade_rvar = CatRandomVariable(
+            randvar_name="grade",
+            randvar_id="grade_rvar",
+            input_data=grades,
+            data={"evidence": self.grade_ev},
+            f=grade_event,
+            marginal_distribution=grade_dist,
         )
 
     def test_max_marginal_value(self):
@@ -183,29 +269,43 @@ class CategoricalOpsTest(unittest.TestCase):
         )
         self.assertEqual(self.student_rvar.marginal(c1), 0.1)
 
-    @unittest.skip("not done")
     def test_P_X_e(self):
         """"""
         self.assertEqual(
-            NumCatRandomVariableNumericOps.P_X_e(self.intelligence), 0.25
+            round(NumCatRandomVariableNumericOps.P_X_e(self.intelligence), 4),
+            0.3,
         )
 
-    @unittest.skip("not done")
     def test_max_marginal_e(self):
-        """"""
-        self.assertEqual(self.grade.max_marginal_e(), 0.25)
+        """ """
+        self.assertEqual(
+            round(
+                NumCatRandomVariableNumericOps.max_marginal_e(
+                    self.student_rvar
+                ),
+                4,
+            ),
+            0.9,
+        )
 
-    @unittest.skip("not done")
     def test_min_marginal_e(self):
         """"""
-        self.assertEqual(self.grade.min_marginal_e(), 0.25)
+        self.assertEqual(
+            round(
+                NumCatRandomVariableNumericOps.min_marginal_e(
+                    self.student_rvar
+                ),
+                4,
+            ),
+            0.1,
+        )
 
-    @unittest.skip("not done")
     def test_marginal_over(self):
         """"""
-        eval_value = 0.2
-        margover = self.grade.marginal_over(eval_value, self.dice)
-        self.assertEqual(margover, 3.5 * 0.25)
+        margover = NumCatRandomVariableNumericOps.marginal_over(
+            r=self.grade_rvar, other=self.dice, evidence=self.grade_ev
+        )
+        self.assertEqual(round(margover, 4), 3.5 * 0.25)
 
     @unittest.skip("not done")
     def test_marginal_over_evidence_key(self):

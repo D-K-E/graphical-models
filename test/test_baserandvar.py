@@ -5,8 +5,10 @@ Unittests for baserandvar.py operations
 import math
 import unittest
 
-from pygmodels.randvar.randvartype.baserandvar import BaseRandomVariable
-from pygmodels.randvar.randvartype.baserandvar import BaseEvidence
+from pygmodels.randvar.randvartype.baserandvar import (
+    BaseEvidence,
+    BaseRandomVariable,
+)
 from pygmodels.value.codomain import CodomainValue
 from pygmodels.value.domain import DomainValue
 
@@ -19,9 +21,21 @@ class BaseRandvarTest(unittest.TestCase):
         # dice random variable
         dicename = "dice"
         diceid = "dice01"
-        dice_input_data = set([DomainValue(v=i, dom_id=diceid) for i in range(1, 7)])
-        dice_f = lambda x: x
-        dice_distribution = lambda x: x.v / 6.0
+        dice_input_data = set(
+            [DomainValue(v=i, dom_id=diceid) for i in range(1, 7)]
+        )
+
+        def dice_f(x: DomainValue) -> CodomainValue:
+            return CodomainValue(
+                value=x.value,
+                set_name="dice value",
+                mapping_name="dice_f",
+                domain_name=x.belongs_to,
+            )
+
+        def dice_distribution(x: CodomainValue):
+            return x.value / 6.0
+
         #
         self.dice = BaseRandomVariable(
             randvar_id=diceid,
@@ -105,7 +119,8 @@ class BaseRandvarTest(unittest.TestCase):
     def test_evidence_belongs_to(self):
         """"""
         self.assertEqual(
-            self.grade_ev.belongs_to(), self.student_rvar.id(),
+            self.grade_ev.belongs_to(),
+            self.student_rvar.id(),
         )
 
     def test_evidence_eq(self):
@@ -128,7 +143,9 @@ class BaseRandvarTest(unittest.TestCase):
 
     def test_str(self):
         "test string representation"
-        self.assertEqual(str(self.dice), "<RandomVariable :: id: dice01 name: dice>")
+        self.assertEqual(
+            str(self.dice), "<RandomVariable :: id: dice01 name: dice>"
+        )
 
     def test_hash(self):
         "test hash function"
