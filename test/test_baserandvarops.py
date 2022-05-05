@@ -7,6 +7,7 @@ from typing import Any, Optional
 
 from pygmodels.randvar.randvarops.baserandvarops import RandomVariableOps
 from pygmodels.randvar.randvartype.baserandvar import BaseRandomVariable
+from pygmodels.randvar.randvartype.baserandvar import BaseEvidence
 from pygmodels.utils import is_type, type_check
 from pygmodels.value.codomain import CodomainValue
 from pygmodels.value.domain import DomainValue
@@ -20,9 +21,7 @@ class RandomVariableOpsTest(unittest.TestCase):
         # dice random variable
         dicename = "dice"
         diceid = "dice01"
-        dice_input_data = set(
-            [DomainValue(v=i, dom_id=diceid) for i in range(1, 7)]
-        )
+        dice_input_data = set([DomainValue(v=i, dom_id=diceid) for i in range(1, 7)])
 
         def dice_f(x: DomainValue):
             return x
@@ -38,6 +37,20 @@ class RandomVariableOpsTest(unittest.TestCase):
             input_data=dice_input_data,
             f=dice_f,
             marginal_distribution=dice_distribution,
+            sampler=lambda x: x,
+        )
+
+        self.grade_ev = BaseEvidence(
+            evidence_id="grade-evidence",
+            value=CodomainValue(
+                value=0.2,
+                set_name="grade values",
+                mapping_name="grade_event",
+                domain_name="grade names",
+            ),
+            randvar_id="grade_rvar",
+            description="grade evidence",
+            data=None,
         )
 
         def grade_f(x: DomainValue) -> CodomainValue:
@@ -78,9 +91,7 @@ class RandomVariableOpsTest(unittest.TestCase):
 
     def test_values(self):
         """"""
-        simage = RandomVariableOps.values(
-            self.student_rvar, sampler=lambda x: x
-        )
+        simage = RandomVariableOps.values(self.student_rvar, sampler=lambda x: x)
         simage = frozenset([x.value for x in simage])
         compval = frozenset(["A", "F"])
         self.assertEqual(simage, compval)
@@ -102,9 +113,7 @@ class RandomVariableOpsTest(unittest.TestCase):
 
         def phi(x: CodomainValue) -> Any:
             "apply function to codomain"
-            tval = is_type(
-                val=x, originType=CodomainValue, shouldRaiseError=False
-            )
+            tval = is_type(val=x, originType=CodomainValue, shouldRaiseError=False)
             if tval:
                 return x.value.lower() if x.value == "A" else x.value
             else:
@@ -119,3 +128,15 @@ class RandomVariableOpsTest(unittest.TestCase):
     def test_mk_new_randvar(self):
         """"""
         pass
+
+    def test_add_evidence(self):
+        ""
+        dice = self.dice.copy()
+        RandomVariableOps.add_evidence(r=dice, evidence=self.grade_ev)
+        self.assertEqual(dice.data()["evidence"], self.grade_ev)
+
+    def test_pop_evidence(self):
+        ""
+        dice = self.dice.copy()
+        RandomVariableOps.add_evidence(r=dice, evidence=self.grade_ev)
+        self.assertEqual(RandomVariableOps.pop_evidence(dice), dice)

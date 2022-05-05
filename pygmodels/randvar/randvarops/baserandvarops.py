@@ -8,12 +8,15 @@ from uuid import uuid4
 
 from pygmodels.randvar.randvartype.abstractrandvar import (
     AbstractRandomVariable,
+    AbstractEvidence,
     AssociatedValueSet,
     PossibleOutcomes,
 )
 from pygmodels.randvar.randvartype.baserandvar import BaseRandomVariable
+from pygmodels.randvar.randvartype.baserandvar import BaseEvidence
 from pygmodels.value.codomain import CodomainValue, Outcome
 from pygmodels.value.value import NumericValue
+from pygmodels.utils import is_type
 
 
 class RandomVariableOps:
@@ -22,9 +25,7 @@ class RandomVariableOps:
     """
 
     @staticmethod
-    def values(
-        r: AbstractRandomVariable, sampler: Callable
-    ) -> AssociatedValueSet:
+    def values(r: AbstractRandomVariable, sampler: Callable) -> AssociatedValueSet:
         """!
         \brief outcome values of the random variable
 
@@ -162,3 +163,97 @@ class RandomVariableOps:
             input_data=r.inputs,
             marginal_distribution=r.dist,
         )
+
+    @staticmethod
+    def add_evidence(
+        r: AbstractRandomVariable, evidence: AbstractEvidence
+    ) -> AbstractRandomVariable:
+        """!
+        \brief add evidence to random variable
+
+        \throws TypeError if the evidence is not a numeric value
+
+        \todo Update documentation evidence has its own type now.
+
+        \todo test DONE
+
+        \code{.py}
+
+        >>> nid1 = "rvar1"
+        >>> input_data = {
+        >>>    "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
+        >>>    "noevidence": {"outcome-values": [0.1, 0.9]}
+        >>> }
+
+        >>> def intelligence_dist(intelligence_value: float) -> float:
+        >>>    if intelligence_value == 0.1:
+        >>>        return 0.7
+        >>>    elif intelligence_value == 0.9:
+        >>>        return 0.3
+        >>>    else:
+        >>>        return 0.0
+
+        >>> # intelligence
+        >>> noev = NumCatRVariable(
+        >>>    node_id=nid1,
+        >>>    input_data=input_data["noevidence"],
+        >>>    marginal_distribution=intelligence_dist,
+        >>> )
+        >>> noev.add_evidence(0.9)
+        >>> # now noev is same as intelligence
+
+        \endcode
+        """
+        is_type(
+            r, originType=AbstractRandomVariable, shouldRaiseError=True, val_name="r"
+        )
+        is_type(
+            evidence,
+            originType=AbstractEvidence,
+            shouldRaiseError=True,
+            val_name="evidence",
+        )
+        e = {"evidence": evidence}
+        r.update_data(e)
+        return r
+
+    @staticmethod
+    def pop_evidence(r: AbstractRandomVariable) -> AbstractRandomVariable:
+        """!
+        \brief remove evidence from this random variable
+
+        \todo Update documentation evidence has its own type now.
+        \todo test DONE
+
+        \code{.py}
+
+        >>> nid1 = "rvar1"
+        >>> input_data = {
+        >>>    "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
+        >>>    "noevidence": {"outcome-values": [0.1, 0.9]}
+        >>> }
+
+        >>> def intelligence_dist(intelligence_value: float) -> float:
+        >>>    if intelligence_value == 0.1:
+        >>>        return 0.7
+        >>>    elif intelligence_value == 0.9:
+        >>>        return 0.3
+        >>>    else:
+        >>>        return 0.0
+
+        >>> # intelligence
+        >>> intelligence = NumCatRVariable(
+        >>>    node_id=nid1,
+        >>>    input_data=input_data["intelligence"],
+        >>>    marginal_distribution=intelligence_dist,
+        >>> )
+        >>> intelligence.pop_evidence()
+        >>> # now intelligence is same as noev
+
+        \endcode
+        """
+        data = r.data()
+        if "evidence" in data:
+            data.pop("evidence")
+        r.update_data(data)
+        return r

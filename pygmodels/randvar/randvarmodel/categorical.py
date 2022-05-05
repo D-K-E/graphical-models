@@ -25,9 +25,7 @@ class CatRandomVariable(BaseRandomVariable):
         data: Optional[dict] = None,
         input_data: Optional[Domain] = None,
         f: Callable[[DomainValue], CodomainValue] = lambda x: x,
-        marginal_distribution: Callable[
-            [CodomainValue], float
-        ] = lambda x: 1.0,
+        marginal_distribution: Callable[[CodomainValue], float] = lambda x: 1.0,
     ):
         """!
         \brief Constructor for categorical/discrete random variable
@@ -92,12 +90,13 @@ class CatRandomVariable(BaseRandomVariable):
         \see CatRandomVariable.p
 
         \returns probability value associated to value
+
+        \todo test DONE
         """
         return self.p(value)
 
     def image(
-        self,
-        sampler: Callable[[Domain], List[DomainValue]] = lambda x: list(x),
+        self, sampler: Callable[[Domain], List[DomainValue]] = lambda x: list(x),
     ) -> AssociatedValueSet:
         """!
         Image of the random variable's function
@@ -116,10 +115,12 @@ class NumCatRandomVariable(CatRandomVariable):
 
     def __init__(
         self,
-        node_id: str,
-        input_data: Dict[str, Outcome],
-        f: Callable[[Outcome], NumericValue] = lambda x: x,
-        marginal_distribution: Callable[[NumericValue], float] = lambda x: 1.0,
+        randvar_id: str,
+        randvar_name: Optional[str] = None,
+        data: Optional[dict] = None,
+        input_data: Optional[Domain] = None,
+        f: Callable[[DomainValue], NumericValue] = lambda x: x,
+        marginal_distribution: Callable[[CodomainValue], float] = lambda x: 1.0,
     ):
         """!
         \brief constructor for Numeric Categorical Random Variable
@@ -156,17 +157,12 @@ class NumCatRandomVariable(CatRandomVariable):
 
         """
         super().__init__(
-            node_id=node_id,
+            randvar_id=randvar_id,
+            randvar_name=randvar_name,
             input_data=input_data,
             f=f,
             marginal_distribution=marginal_distribution,
         )
-
-    def apply(self, phi: Callable[[NumericValue], NumericValue]):
-        """!
-        \brief apply function phi to possible outcomes of the random variable
-        """
-        return [phi(v) for v in self.values()]
 
     # def mk_new_rvar(self, phi: Callable[[float], float]):
     #     """!

@@ -37,6 +37,8 @@ class CatRandomVariableNumericOps:
         from Biagini, Campanino, 2016, p. 11
         implements:
         \f$\sum_{i=1}^n \phi(x_i) p(x_i) \f$
+
+        \todo test DONE
         """
         outphi = phi
         return sum(
@@ -51,117 +53,26 @@ class CatRandomVariableNumericOps:
     ) -> List[NumericValue]:
         """!
         \brief apply function phi to marginals of the random variable
+
+        \todo test DONE
         """
-        return RandomVariableOps.apply(lambda x: phi(r.p(x)))
+        outphi = phi
+        rvar = r
+        return RandomVariableOps.apply(rvar, phi=lambda x: outphi(rvar.p(x)))
 
     @staticmethod
     def expected_apply(
         r: CatRandomVariable, phi: Callable[[NumericValue], NumericValue]
     ) -> NumericValue:
 
-        """!"""
-        return RandomVariableOps.p_x_fn(r, phi)
-
-
-class NumCatRandomVariableOps:
-    """!
-    Numeric Categorical Random Variable operations
-    """
-
-    @staticmethod
-    def add_evidence(
-        r: NumCatRandomVariable, evidence: AbstractEvidence
-    ) -> NumCatRandomVariable:
         """!
-        \brief add evidence to random variable
-
-        \throws TypeError if the evidence is not a numeric value
-
-        \todo Update documentation evidence has its own type now.
-
-        \code{.py}
-
-        >>> nid1 = "rvar1"
-        >>> input_data = {
-        >>>    "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
-        >>>    "noevidence": {"outcome-values": [0.1, 0.9]}
-        >>> }
-
-        >>> def intelligence_dist(intelligence_value: float) -> float:
-        >>>    if intelligence_value == 0.1:
-        >>>        return 0.7
-        >>>    elif intelligence_value == 0.9:
-        >>>        return 0.3
-        >>>    else:
-        >>>        return 0.0
-
-        >>> # intelligence
-        >>> noev = NumCatRVariable(
-        >>>    node_id=nid1,
-        >>>    input_data=input_data["noevidence"],
-        >>>    marginal_distribution=intelligence_dist,
-        >>> )
-        >>> noev.add_evidence(0.9)
-        >>> # now noev is same as intelligence
-
-        \endcode
+        \todo test DONE
         """
-        NumCatRandomVariableBoolOps.type_check(r, shouldRaiseError=True)
-        is_type(
-            evidence,
-            originType=AbstractEvidence,
-            shouldRaiseError=True,
-            val_name="evidence",
-        )
-        e = {"evidence": evidence}
-        r.update_data(e)
-        return r
-
-    @staticmethod
-    def pop_evidence(r: NumCatRandomVariable) -> NumCatRandomVariable:
-        """!
-        \brief remove evidence from this random variable
-
-        \todo Update documentation evidence has its own type now.
-
-        \code{.py}
-
-        >>> nid1 = "rvar1"
-        >>> input_data = {
-        >>>    "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
-        >>>    "noevidence": {"outcome-values": [0.1, 0.9]}
-        >>> }
-
-        >>> def intelligence_dist(intelligence_value: float) -> float:
-        >>>    if intelligence_value == 0.1:
-        >>>        return 0.7
-        >>>    elif intelligence_value == 0.9:
-        >>>        return 0.3
-        >>>    else:
-        >>>        return 0.0
-
-        >>> # intelligence
-        >>> intelligence = NumCatRVariable(
-        >>>    node_id=nid1,
-        >>>    input_data=input_data["intelligence"],
-        >>>    marginal_distribution=intelligence_dist,
-        >>> )
-        >>> intelligence.pop_evidence()
-        >>> # now intelligence is same as noev
-
-        \endcode
-        """
-        data = r.data()
-        if "evidence" in data:
-            data.pop("evidence")
-        r.update_data(data)
-        return r
+        return CatRandomVariableNumericOps.p_x_fn(r, phi)
 
     @staticmethod
     def reduce_to_value(
-        r: NumCatRandomVariable,
-        val: NumericValue,
-        sampler: Callable = lambda x: x,
+        r: CatRandomVariable, val: CodomainValue, sampler: Callable = lambda x: x,
     ):
         """!
         \brief reduce outcomes of this random variable to val
@@ -170,17 +81,14 @@ class NumCatRandomVariableOps:
         reduced
 
         \throws TypeError if the val is not numeric we raise a type error.
+        \todo test
         """
         if not NumCatRandomVariableBoolOps.is_numeric(val):
             raise TypeError("Reduction value must be numeric (int, float)")
         vs = frozenset(
-            [
-                v
-                for v in RandomVariableOps.values(r, sampler=sampler)
-                if v == val
-            ]
+            [v for v in RandomVariableOps.values(r, sampler=sampler) if v == val]
         )
-        r._inputs = vs
+        r._outs = vs
         return r
 
 
@@ -191,9 +99,7 @@ class NumCatRandomVariableBoolOps:
     """
 
     @staticmethod
-    def has_evidence(
-        r: NumCatRandomVariable, shouldRaiseError: bool = False
-    ) -> bool:
+    def has_evidence(r: NumCatRandomVariable, shouldRaiseError: bool = False) -> bool:
         """!
         \brief Check if any evidence is associated with this random variable
 
@@ -201,6 +107,8 @@ class NumCatRandomVariableBoolOps:
         associated to random variable.
 
         \todo Update documentation evidence has its own type now.
+
+        \todo test
 
         \code{.py}
 
@@ -256,6 +164,8 @@ class NumCatRandomVariableBoolOps:
 
         \param v any value.
 
+        \todo test
+
         \code{.py}
         >>> NumCatRVariable.is_numeric("foo")
         >>> False
@@ -273,15 +183,15 @@ class NumCatRandomVariableNumericOps:
     """
 
     @staticmethod
-    def max(
-        r: NumCatRandomVariable, sampler: Callable = lambda x: x
-    ) -> NumericValue:
+    def max(r: NumCatRandomVariable, sampler: Callable = lambda x: x) -> NumericValue:
         """!
         \brief maximum marginal value
 
         We return the highest marginal/probability.
 
         \todo Update documentation evidence has its own type now.
+
+        \todo test DONE
 
         \code{.py}
         >>> nid1 = "rvar1"
@@ -318,15 +228,15 @@ class NumCatRandomVariableNumericOps:
         return mx
 
     @staticmethod
-    def min(
-        r: NumCatRandomVariable, sampler: Callable = lambda x: x
-    ) -> NumericValue:
+    def min(r: NumCatRandomVariable, sampler: Callable = lambda x: x) -> NumericValue:
         """!
         \brief minimum marginal value
 
         We return the lowest marginal/probability.
 
         \todo Update documentation evidence has its own type now.
+
+        \todo test DONE
 
         \code{.py}
         >>> nid1 = "rvar1"
@@ -370,6 +280,8 @@ class NumCatRandomVariableNumericOps:
 
         \param is_min flag for specifying whether to return lowest or highest
         probability-outcome pair
+
+        \todo test
         """
         mx = float("inf") if is_min else float("-inf")
         mxv = None
@@ -382,15 +294,15 @@ class NumCatRandomVariableNumericOps:
         return mx, mxv
 
     @staticmethod
-    def max_marginal_value(
-        r: NumCatRandomVariable, sampler: Callable
-    ) -> NumericValue:
+    def max_marginal_value(r: NumCatRandomVariable, sampler: Callable) -> NumericValue:
         """!
         \brief highest probability outcome
 
         Notice that this gives the outcome not the probability
 
         \todo Update documentation evidence has its own type now.
+
+        \todo test DONE
 
         \code{.py}
         >>> nid1 = "rvar1"
@@ -431,6 +343,8 @@ class NumCatRandomVariableNumericOps:
         Notice that this gives the outcome not the probability
 
         \todo Update documentation evidence has its own type now.
+
+        \todo test DONE
 
         \code{.py}
         >>> nid1 = "rvar1"
@@ -478,6 +392,8 @@ class NumCatRandomVariableNumericOps:
         \f$ \sum_{j=1}^n p(x_i) p(y_j) = p(x_i) \sum_{j=1}^n p(y_j) \f$
 
         \todo Update documentation evidence has its own type now.
+
+        \todo test DONE
 
         \code{.py}
         >>> input_data = {
@@ -540,6 +456,8 @@ class NumCatRandomVariableNumericOps:
 
         \todo Update documentation evidence has its own type now.
 
+        \todo test DONE
+
         \code{.py}
         >>> input_data = {
         >>>    "intelligence": {"outcome-values": [0.1, 0.9], "evidence": 0.9},
@@ -580,9 +498,7 @@ class NumCatRandomVariableNumericOps:
         NumCatRandomVariableBoolOps.has_evidence(r, shouldRaiseError=True)
         data = r.data()
         evidence_value = data["evidence"]
-        return NumCatRandomVariableNumericOps.marginal_over(
-            r, evidence_value, other
-        )
+        return NumCatRandomVariableNumericOps.marginal_over(r, evidence_value, other)
 
     @staticmethod
     def expected_value(
@@ -597,6 +513,8 @@ class NumCatRandomVariableNumericOps:
 
 
         \todo Update documentation evidence has its own type now.
+
+        \todo test DONE
 
         \code{.py}
         >>> input_data = {
@@ -632,21 +550,25 @@ class NumCatRandomVariableNumericOps:
         """!
         Koller, Friedman 2009, p. 33
         \f$ E[X^2] - (E[X])^2 \f$
+
+        \todo test DONE
         """
-        E_X2 = RandomVariableOps.expected_apply(r, phi=lambda x: x * x)
+        E_X2 = CatRandomVariableNumericOps.expected_apply(
+            r, phi=lambda x: x.value * x.value
+        )
         return E_X2 - (NumCatRandomVariableNumericOps.expected_value(r) ** 2)
 
     @staticmethod
     def standard_deviation(r: NumCatRandomVariable):
         """!
         standard deviation Koller, Friedman 2009, p. 33
+
+        \todo test DONE
         """
         return math.sqrt(NumCatRandomVariableNumericOps.variance(r))
 
     @staticmethod
-    def P_X_e(
-        r: NumCatRandomVariable, sampler: Callable = lambda x: x
-    ) -> NumericValue:
+    def P_X_e(r: NumCatRandomVariable, sampler: Callable = lambda x: x) -> NumericValue:
         """!
         \brief evaluate probability with given random variable's evidence if it is
         given.
@@ -655,6 +577,8 @@ class NumCatRandomVariableNumericOps:
         random variable
 
         \todo Update documentation evidence has its own type now.
+
+        \todo test DONE
 
         \code{.py}
         >>> input_data = {
@@ -685,9 +609,7 @@ class NumCatRandomVariableNumericOps:
         if "evidence" in r.data():
             evidence = r.data()["evidence"]
             return r.p(evidence.value())
-        return NumCatRandomVariableNumericOps.expected_value(
-            r, sampler=sampler
-        )
+        return NumCatRandomVariableNumericOps.expected_value(r, sampler=sampler)
 
     @staticmethod
     def max_marginal_e(r: NumCatRandomVariable) -> NumericValue:
@@ -696,6 +618,8 @@ class NumCatRandomVariableNumericOps:
         present.
 
         \todo Update documentation evidence has its own type now.
+
+        \todo test DONE
 
         \code{.py}
         >>> input_data = {
@@ -729,12 +653,28 @@ class NumCatRandomVariableNumericOps:
         return NumCatRandomVariableNumericOps.max(r)
 
     @staticmethod
+    def joint(r: CatRandomVariable, v: CatRandomVariable):
+        """!
+        Joint distribution of two random variables
+        from Biagini and Campanino 2016 p. 35
+
+        \todo test DONE
+        """
+        is_type(v, shouldRaiseError=True, originType=NumCatRandomVariable, val_name="v")
+        is_type(r, shouldRaiseError=True, originType=NumCatRandomVariable, val_name="r")
+        return NumCatRandomVariableNumericOps.P_X_e(
+            r
+        ) * NumCatRandomVariableNumericOps.P_X_e(v)
+
+    @staticmethod
     def min_marginal_e(r: NumCatRandomVariable) -> NumericValue:
         """!
         \brief evaluate min probability with given random variable's evidence
         if it is present.
 
         \todo Update documentation evidence has its own type now.
+
+        \todo test DONE
 
         \code{.py}
         >>> input_data = {
@@ -769,28 +709,14 @@ class NumCatRandomVariableNumericOps:
         return NumCatRandomVariableNumericOps.min(r)
 
     @staticmethod
-    def joint(r: NumCatRandomVariable, v: NumCatRandomVariable):
-        """!
-        Joint distribution of two random variables
-        from Biagini and Campanino 2016 p. 35
-
-        """
-        NumCatRandomVariableBoolOps.type_check(v, shouldRaiseError=True)
-        NumCatRandomVariableBoolOps.type_check(r, shouldRaiseError=True)
-        return NumCatRandomVariableNumericOps.P_X_e(
-            r
-        ) * NumCatRandomVariableNumericOps.P_X_e(v)
-
-    @staticmethod
     def max_joint(r: NumCatRandomVariable, v: NumCatRandomVariable):
         """!
         max joint probability
+
+        \todo test
         """
         type_check(
-            val=r,
-            other=v,
-            shouldRaiseError=True,
-            originType=NumCatRandomVariable,
+            val=r, other=v, shouldRaiseError=True, originType=NumCatRandomVariable,
         )
         rm = NumCatRandomVariableNumericOps.max_marginal_e(r)
         vm = NumCatRandomVariableNumericOps.max_marginal_e(v)
@@ -801,20 +727,21 @@ class NumCatRandomVariableNumericOps:
         """!
         Conditional probability distribution (Bayes rule)
         from Koller and Friedman
+
+        \todo test
         """
-        is_type(
-            val=other, originType=NumCatRandomVariable, shouldRaiseError=True
-        )
+        is_type(val=other, originType=NumCatRandomVariable, shouldRaiseError=True)
         is_type(val=r, originType=NumCatRandomVariable, shouldRaiseError=True)
         opxe = NumCatRandomVariableNumericOps.P_X_e(other)
         return NumCatRandomVariableNumericOps.joint(r, other) / opxe
 
     @staticmethod
     def max_conditional(r: NumCatRandomVariable, other):
-        """!"""
-        is_type(
-            val=other, originType=NumCatRandomVariable, shouldRaiseError=True
-        )
+        """!
+
+        \todo test
+        """
+        is_type(val=other, originType=NumCatRandomVariable, shouldRaiseError=True)
         is_type(val=r, originType=NumCatRandomVariable, shouldRaiseError=True)
         joint = NumCatRandomVariableNumericOps.max_joint(r, other)
         return max(

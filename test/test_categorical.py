@@ -1,28 +1,18 @@
 """!
-\file test_categoricalops.py Contains tests for categoricalops.py
-Categorical random variable operation tests
+\file test_categorical.py Tests of categorical.py objects
 """
 
-import math
 import unittest
-from typing import Any, Optional
 
 from pygmodels.randvar.randvarmodel.categorical import CatRandomVariable
 from pygmodels.randvar.randvarmodel.categorical import NumCatRandomVariable
-from pygmodels.randvar.randvarops.categoricalops import (
-    CatRandomVariableNumericOps,
-    NumCatRandomVariableBoolOps,
-    NumCatRandomVariableNumericOps,
-)
 from pygmodels.randvar.randvartype.baserandvar import BaseEvidence
 from pygmodels.utils import is_type, type_check
 from pygmodels.value.codomain import CodomainValue
 from pygmodels.value.domain import DomainValue
 
 
-class CategoricalOpsTest(unittest.TestCase):
-    """"""
-
+class CategoricalTest(unittest.TestCase):
     def setUp(self):
         """"""
         # dice random variable
@@ -199,141 +189,15 @@ class CategoricalOpsTest(unittest.TestCase):
             marginal_distribution=grade_dist,
         )
 
-    def test_max_marginal_value(self):
-        self.assertEqual(
-            NumCatRandomVariableNumericOps.max_marginal_value(
-                self.intelligence, sampler=lambda x: x
-            ).value,
-            0.1,
-        )
-
-    def test_max(self):
-        self.assertEqual(
-            NumCatRandomVariableNumericOps.max(self.intelligence, sampler=lambda x: x),
-            0.7,
-        )
-
-    def test_min(self):
-        self.assertEqual(
-            round(
-                NumCatRandomVariableNumericOps.min(
-                    self.intelligence, sampler=lambda x: x
-                ),
-                3,
-            ),
-            0.3,
-        )
-
-    def test_min_marginal_value(self):
+    def test_marginal_with_known_value(self):
         """"""
-        self.assertEqual(
-            NumCatRandomVariableNumericOps.min_marginal_value(
-                self.intelligence, sampler=lambda x: x
-            ).value,
-            0.9,
-        )
+        c1 = CodomainValue(value="F", set_name="grades", mapping_name="grade_f",)
+        self.assertEqual(self.student_rvar.marginal(c1), 0.1)
 
-    def test_expected_value(self):
+    def test_p_x_known_value(self):
         """"""
-        self.assertEqual(
-            round(
-                NumCatRandomVariableNumericOps.expected_value(
-                    self.dice, sampler=lambda x: x
-                ),
-                3,
-            ),
-            3.5,
-        )
-
-    def test_P_X_e(self):
-        """"""
-        self.assertEqual(
-            round(NumCatRandomVariableNumericOps.P_X_e(self.intelligence), 4), 0.3,
-        )
-
-    def test_max_marginal_e(self):
-        """ """
-        self.assertEqual(
-            round(NumCatRandomVariableNumericOps.max_marginal_e(self.student_rvar), 4,),
-            0.9,
-        )
-
-    def test_min_marginal_e(self):
-        """"""
-        self.assertEqual(
-            round(NumCatRandomVariableNumericOps.min_marginal_e(self.student_rvar), 4,),
-            0.1,
-        )
-
-    def test_marginal_over(self):
-        """"""
-        margover = NumCatRandomVariableNumericOps.marginal_over(
-            r=self.grade_rvar, other=self.dice, evidence=self.grade_ev
-        )
-        self.assertEqual(round(margover, 4), 3.5 * 0.25)
-
-    def test_marginal_over_evidence_key(self):
-        """"""
-        margover = NumCatRandomVariableNumericOps.marginal_over_evidence_key(
-            r=self.grade_rvar, other=self.dice
-        )
-        self.assertEqual(round(margover, 4), 3.5 * 0.25)
-
-    def test_joint_without_evidence(self):
-        ""
-        joint = NumCatRandomVariableNumericOps.joint(v=self.dice, r=self.dice)
-        self.assertEqual(round(joint, 4), 3.5 * 3.5)
-
-    def test_variance(self):
-        ""
-        variance = NumCatRandomVariableNumericOps.variance(self.dice)
-        self.assertEqual(round(variance, 3), 2.917)
-
-    def test_standard_deviation(self):
-        """"""
-        sdev = NumCatRandomVariableNumericOps.standard_deviation(self.dice)
-        self.assertEqual(round(sdev, 3), round(math.sqrt(2.917), 3))
-
-    def test_p_x_fn(self):
-        ""
-
-        def pfn(x: CodomainValue):
-            if x.value == "F":
-                return 0.0
-            else:
-                return 1.0
-
-        #
-        val = CatRandomVariableNumericOps.p_x_fn(r=self.student_rvar, phi=pfn)
-        self.assertEqual(val, 0.9)
-
-    def test_expected_apply(self):
-        ""
-
-        def pfn(x: CodomainValue):
-            if x.value == "F":
-                return 0.0
-            else:
-                return 1.0
-
-        #
-        val = CatRandomVariableNumericOps.expected_apply(r=self.student_rvar, phi=pfn)
-        self.assertEqual(val, 0.9)
-
-    def test_apply_to_marginals(self):
-        ""
-
-        def pfn(x):
-            if x > 0.5:
-                return 0.0
-            else:
-                return 1.0
-
-        #
-        val = CatRandomVariableNumericOps.apply_to_marginals(
-            r=self.student_rvar, phi=pfn
-        )
-        self.assertEqual(val, set([0.0, 1.0]))
+        c1 = CodomainValue(value="F", set_name="grades", mapping_name="grade_f",)
+        self.assertEqual(self.student_rvar.p(c1), 0.1)
 
 
 if __name__ == "__main__":

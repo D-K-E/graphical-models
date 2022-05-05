@@ -7,6 +7,7 @@ value
 from typing import Any, Callable, Dict, FrozenSet, List, Optional, Set, Tuple
 
 from pygmodels.value.abstractvalue import AbstractSetValue
+from pygmodels.utils import is_type
 
 
 class Outcome:
@@ -25,18 +26,20 @@ class CodomainValue(AbstractSetValue):
         domain_name: Optional[str] = None,
     ):
         self.v = value
-        if not isinstance(set_name, str):
-            raise TypeError("Set name should be a string")
+        is_type(set_name, originType=str, shouldRaiseError=True, val_name="set_name")
         self._set = set_name
 
-        if not isinstance(mapping_name, str):
-            raise TypeError("mapping_name should be a string")
+        is_type(
+            mapping_name, originType=str, shouldRaiseError=True, val_name="mapping_name"
+        )
         self._fn = mapping_name
         if domain_name is not None:
-            if not isinstance(domain_name, str):
-                raise TypeError(
-                    "domain_name must be a string if it is provided"
-                )
+            is_type(
+                domain_name,
+                originType=str,
+                shouldRaiseError=True,
+                val_name="domain_name",
+            )
         self._fn_domain = domain_name
 
     @property
