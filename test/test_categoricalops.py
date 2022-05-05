@@ -7,8 +7,10 @@ import math
 import unittest
 from typing import Any, Optional
 
-from pygmodels.randvar.randvarmodel.categorical import CatRandomVariable
-from pygmodels.randvar.randvarmodel.categorical import NumCatRandomVariable
+from pygmodels.randvar.randvarmodel.categorical import (
+    CatRandomVariable,
+    NumCatRandomVariable,
+)
 from pygmodels.randvar.randvarops.categoricalops import (
     CatRandomVariableNumericOps,
     NumCatRandomVariableBoolOps,
@@ -28,7 +30,9 @@ class CategoricalOpsTest(unittest.TestCase):
         # dice random variable
         dicename = "dice"
         diceid = "dice01"
-        dice_input_data = set([DomainValue(v=i, dom_id=diceid) for i in range(1, 7)])
+        dice_input_data = set(
+            [DomainValue(v=i, dom_id=diceid) for i in range(1, 7)]
+        )
 
         def dice_f(x: DomainValue) -> CodomainValue:
             return CodomainValue(
@@ -107,7 +111,10 @@ class CategoricalOpsTest(unittest.TestCase):
         def intelligence_dist(x: CodomainValue) -> float:
             """"""
             is_type(
-                x, originType=CodomainValue, shouldRaiseError=True, val_name="x",
+                x,
+                originType=CodomainValue,
+                shouldRaiseError=True,
+                val_name="x",
             )
             return 0.7 if x.value == 0.1 else (1.0 - 0.7)
 
@@ -209,7 +216,9 @@ class CategoricalOpsTest(unittest.TestCase):
 
     def test_max(self):
         self.assertEqual(
-            NumCatRandomVariableNumericOps.max(self.intelligence, sampler=lambda x: x),
+            NumCatRandomVariableNumericOps.max(
+                self.intelligence, sampler=lambda x: x
+            ),
             0.7,
         )
 
@@ -248,20 +257,31 @@ class CategoricalOpsTest(unittest.TestCase):
     def test_P_X_e(self):
         """"""
         self.assertEqual(
-            round(NumCatRandomVariableNumericOps.P_X_e(self.intelligence), 4), 0.3,
+            round(NumCatRandomVariableNumericOps.P_X_e(self.intelligence), 4),
+            0.3,
         )
 
     def test_max_marginal_e(self):
         """ """
         self.assertEqual(
-            round(NumCatRandomVariableNumericOps.max_marginal_e(self.student_rvar), 4,),
+            round(
+                NumCatRandomVariableNumericOps.max_marginal_e(
+                    self.student_rvar
+                ),
+                4,
+            ),
             0.9,
         )
 
     def test_min_marginal_e(self):
         """"""
         self.assertEqual(
-            round(NumCatRandomVariableNumericOps.min_marginal_e(self.student_rvar), 4,),
+            round(
+                NumCatRandomVariableNumericOps.min_marginal_e(
+                    self.student_rvar
+                ),
+                4,
+            ),
             0.1,
         )
 
@@ -280,12 +300,12 @@ class CategoricalOpsTest(unittest.TestCase):
         self.assertEqual(round(margover, 4), 3.5 * 0.25)
 
     def test_joint_without_evidence(self):
-        ""
+        """"""
         joint = NumCatRandomVariableNumericOps.joint(v=self.dice, r=self.dice)
         self.assertEqual(round(joint, 4), 3.5 * 3.5)
 
     def test_variance(self):
-        ""
+        """"""
         variance = NumCatRandomVariableNumericOps.variance(self.dice)
         self.assertEqual(round(variance, 3), 2.917)
 
@@ -295,7 +315,7 @@ class CategoricalOpsTest(unittest.TestCase):
         self.assertEqual(round(sdev, 3), round(math.sqrt(2.917), 3))
 
     def test_p_x_fn(self):
-        ""
+        """"""
 
         def pfn(x: CodomainValue):
             if x.value == "F":
@@ -308,7 +328,7 @@ class CategoricalOpsTest(unittest.TestCase):
         self.assertEqual(val, 0.9)
 
     def test_expected_apply(self):
-        ""
+        """"""
 
         def pfn(x: CodomainValue):
             if x.value == "F":
@@ -317,11 +337,13 @@ class CategoricalOpsTest(unittest.TestCase):
                 return 1.0
 
         #
-        val = CatRandomVariableNumericOps.expected_apply(r=self.student_rvar, phi=pfn)
+        val = CatRandomVariableNumericOps.expected_apply(
+            r=self.student_rvar, phi=pfn
+        )
         self.assertEqual(val, 0.9)
 
     def test_apply_to_marginals(self):
-        ""
+        """"""
 
         def pfn(x):
             if x > 0.5:

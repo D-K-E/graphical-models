@@ -7,16 +7,18 @@ from typing import Any, Callable, FrozenSet, List, Optional, Set, Tuple
 from uuid import uuid4
 
 from pygmodels.randvar.randvartype.abstractrandvar import (
-    AbstractRandomVariable,
     AbstractEvidence,
+    AbstractRandomVariable,
     AssociatedValueSet,
     PossibleOutcomes,
 )
-from pygmodels.randvar.randvartype.baserandvar import BaseRandomVariable
-from pygmodels.randvar.randvartype.baserandvar import BaseEvidence
+from pygmodels.randvar.randvartype.baserandvar import (
+    BaseEvidence,
+    BaseRandomVariable,
+)
+from pygmodels.utils import is_type
 from pygmodels.value.codomain import CodomainValue, Outcome
 from pygmodels.value.value import NumericValue
-from pygmodels.utils import is_type
 
 
 class RandomVariableOps:
@@ -25,7 +27,9 @@ class RandomVariableOps:
     """
 
     @staticmethod
-    def values(r: AbstractRandomVariable, sampler: Callable) -> AssociatedValueSet:
+    def values(
+        r: AbstractRandomVariable, sampler: Callable
+    ) -> AssociatedValueSet:
         """!
         \brief outcome values of the random variable
 
@@ -205,7 +209,10 @@ class RandomVariableOps:
         \endcode
         """
         is_type(
-            r, originType=AbstractRandomVariable, shouldRaiseError=True, val_name="r"
+            r,
+            originType=AbstractRandomVariable,
+            shouldRaiseError=True,
+            val_name="r",
         )
         is_type(
             evidence,

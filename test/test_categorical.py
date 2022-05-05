@@ -4,8 +4,10 @@
 
 import unittest
 
-from pygmodels.randvar.randvarmodel.categorical import CatRandomVariable
-from pygmodels.randvar.randvarmodel.categorical import NumCatRandomVariable
+from pygmodels.randvar.randvarmodel.categorical import (
+    CatRandomVariable,
+    NumCatRandomVariable,
+)
 from pygmodels.randvar.randvartype.baserandvar import BaseEvidence
 from pygmodels.utils import is_type, type_check
 from pygmodels.value.codomain import CodomainValue
@@ -18,7 +20,9 @@ class CategoricalTest(unittest.TestCase):
         # dice random variable
         dicename = "dice"
         diceid = "dice01"
-        dice_input_data = set([DomainValue(v=i, dom_id=diceid) for i in range(1, 7)])
+        dice_input_data = set(
+            [DomainValue(v=i, dom_id=diceid) for i in range(1, 7)]
+        )
 
         def dice_f(x: DomainValue) -> CodomainValue:
             return CodomainValue(
@@ -97,7 +101,10 @@ class CategoricalTest(unittest.TestCase):
         def intelligence_dist(x: CodomainValue) -> float:
             """"""
             is_type(
-                x, originType=CodomainValue, shouldRaiseError=True, val_name="x",
+                x,
+                originType=CodomainValue,
+                shouldRaiseError=True,
+                val_name="x",
             )
             return 0.7 if x.value == 0.1 else (1.0 - 0.7)
 
@@ -191,12 +198,20 @@ class CategoricalTest(unittest.TestCase):
 
     def test_marginal_with_known_value(self):
         """"""
-        c1 = CodomainValue(value="F", set_name="grades", mapping_name="grade_f",)
+        c1 = CodomainValue(
+            value="F",
+            set_name="grades",
+            mapping_name="grade_f",
+        )
         self.assertEqual(self.student_rvar.marginal(c1), 0.1)
 
     def test_p_x_known_value(self):
         """"""
-        c1 = CodomainValue(value="F", set_name="grades", mapping_name="grade_f",)
+        c1 = CodomainValue(
+            value="F",
+            set_name="grades",
+            mapping_name="grade_f",
+        )
         self.assertEqual(self.student_rvar.p(c1), 0.1)
 
 
