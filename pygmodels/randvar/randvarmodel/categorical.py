@@ -25,9 +25,7 @@ class CatRandomVariable(BaseRandomVariable):
         data: Optional[dict] = None,
         input_data: Optional[Domain] = None,
         f: Callable[[DomainValue], CodomainValue] = lambda x: x,
-        marginal_distribution: Callable[
-            [CodomainValue], float
-        ] = lambda x: 1.0,
+        marginal_distribution: Callable[[CodomainValue], float] = lambda x: 1.0,
     ):
         """!
         \brief Constructor for categorical/discrete random variable
@@ -98,8 +96,7 @@ class CatRandomVariable(BaseRandomVariable):
         return self.p(value)
 
     def image(
-        self,
-        sampler: Callable[[Domain], List[DomainValue]] = lambda x: list(x),
+        self, sampler: Callable[[Domain], List[DomainValue]] = lambda x: list(x),
     ) -> AssociatedValueSet:
         """!
         Image of the random variable's function
@@ -123,9 +120,7 @@ class NumCatRandomVariable(CatRandomVariable):
         data: Optional[dict] = None,
         input_data: Optional[Domain] = None,
         f: Callable[[DomainValue], NumericValue] = lambda x: x,
-        marginal_distribution: Callable[
-            [CodomainValue], float
-        ] = lambda x: 1.0,
+        marginal_distribution: Callable[[CodomainValue], float] = lambda x: 1.0,
     ):
         """!
         \brief constructor for Numeric Categorical Random Variable
@@ -165,6 +160,7 @@ class NumCatRandomVariable(CatRandomVariable):
             randvar_id=randvar_id,
             randvar_name=randvar_name,
             input_data=input_data,
+            data=data,
             f=f,
             marginal_distribution=marginal_distribution,
         )

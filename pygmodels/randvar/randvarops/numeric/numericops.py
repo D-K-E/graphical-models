@@ -396,9 +396,7 @@ class NumericOps:
 
         \todo test DONE
         """
-        E_X2 = CNumericOps.expected_apply(
-            r, phi=lambda x: x.value * x.value
-        )
+        E_X2 = CNumericOps.expected_apply(r, phi=lambda x: x.value * x.value)
         return E_X2 - (NumericOps.expected_value(r) ** 2)
 
     @staticmethod
@@ -509,9 +507,7 @@ class NumericOps:
         is_type(
             r, shouldRaiseError=True, originType=NumCatRandomVariable, val_name="r",
         )
-        return NumericOps.P_X_e(
-            r
-        ) * NumericOps.P_X_e(v)
+        return NumericOps.P_X_e(r) * NumericOps.P_X_e(v)
 
     @staticmethod
     def min_marginal_e(r: NumCatRandomVariable) -> NumericValue:
@@ -560,7 +556,7 @@ class NumericOps:
         """!
         max joint probability
 
-        \todo test
+        \todo test DONE
         """
         type_check(
             val=r, other=v, shouldRaiseError=True, originType=NumCatRandomVariable,
@@ -575,7 +571,7 @@ class NumericOps:
         Conditional probability distribution (Bayes rule)
         from Koller and Friedman
 
-        \todo test
+        \todo test DONE
         """
         is_type(val=other, originType=NumCatRandomVariable, shouldRaiseError=True)
         is_type(val=r, originType=NumCatRandomVariable, shouldRaiseError=True)
@@ -583,19 +579,22 @@ class NumericOps:
         return NumericOps.joint(r, other) / opxe
 
     @staticmethod
-    def max_conditional(r: NumCatRandomVariable, other):
+    def max_conditional(r: NumCatRandomVariable, other: NumCatRandomVariable):
         """!
-
         \todo test
         """
         is_type(val=other, originType=NumCatRandomVariable, shouldRaiseError=True)
         is_type(val=r, originType=NumCatRandomVariable, shouldRaiseError=True)
         joint = NumericOps.max_joint(r, other)
         return max(
-            [
-                v
-                for v in CNumericOps.apply_to_marginals(
-                    other, lambda x: joint / x
-                )
-            ]
+            [v for v in CNumericOps.apply_to_marginals(other, lambda x: joint / x)]
         )
+
+    @staticmethod
+    def joint_matrix(r: NumCatRandomVariable, other: NumCatRandomVariable):
+        """!
+        Obtain the joint distribution of numeric random variables in matrix
+        form as stated by Biagini and Campanino 2016 p. 35
+
+        \todo test
+        """

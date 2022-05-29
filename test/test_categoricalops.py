@@ -6,6 +6,7 @@ Categorical random variable operation tests
 import math
 import unittest
 from typing import Any, Optional
+import pdb
 
 from pygmodels.randvar.randvarmodel.categorical import (
     CatRandomVariable,
@@ -113,11 +114,11 @@ class CategoricalOpsTest(unittest.TestCase):
 
         # evidence
         self.intev = BaseEvidence(
-            evidence_id="grade-evidence",
+            evidence_id="intelligence-evidence",
             value=CodomainValue(
-                value="F",
-                set_name="grades",
-                mapping_name="grade_f",
+                value=0.1,
+                set_name="intelligence",
+                mapping_name="intelligence_f",
                 domain_name=svar_id,
             ),
             randvar_id=self.student_rvar.id(),
@@ -125,6 +126,14 @@ class CategoricalOpsTest(unittest.TestCase):
             data=None,
         )
         self.intelligence = CatRandomVariable(
+            randvar_name="intelligence",
+            randvar_id="intelligence_randvar",
+            input_data=students,
+            data={"evidence": self.intev},
+            f=intelligence_f,
+            marginal_distribution=intelligence_dist,
+        )
+        self.intelligence2 = NumCatRandomVariable(
             randvar_name="intelligence",
             randvar_id="intelligence_randvar",
             input_data=students,
@@ -201,68 +210,49 @@ class CategoricalOpsTest(unittest.TestCase):
 
     def test_max_marginal_value(self):
         self.assertEqual(
-            NumericOps.max_marginal_value(
-                self.intelligence, sampler=lambda x: x
-            ).value,
+            NumericOps.max_marginal_value(self.intelligence, sampler=lambda x: x).value,
             0.1,
         )
 
     def test_max(self):
         self.assertEqual(
-            NumericOps.max(self.intelligence, sampler=lambda x: x),
-            0.7,
+            NumericOps.max(self.intelligence, sampler=lambda x: x), 0.7,
         )
 
     def test_min(self):
         self.assertEqual(
-            round(
-                NumericOps.min(
-                    self.intelligence, sampler=lambda x: x
-                ),
-                3,
-            ),
-            0.3,
+            round(NumericOps.min(self.intelligence, sampler=lambda x: x), 3,), 0.3,
         )
 
     def test_min_marginal_value(self):
         """"""
         self.assertEqual(
-            NumericOps.min_marginal_value(
-                self.intelligence, sampler=lambda x: x
-            ).value,
+            NumericOps.min_marginal_value(self.intelligence, sampler=lambda x: x).value,
             0.9,
         )
 
     def test_expected_value(self):
         """"""
         self.assertEqual(
-            round(
-                NumericOps.expected_value(
-                    self.dice, sampler=lambda x: x
-                ),
-                3,
-            ),
-            3.5,
+            round(NumericOps.expected_value(self.dice, sampler=lambda x: x), 3,), 3.5,
         )
 
     def test_P_X_e(self):
         """"""
         self.assertEqual(
-            round(NumericOps.P_X_e(self.intelligence), 4), 0.3,
+            round(NumericOps.P_X_e(self.intelligence), 4), 0.7,
         )
 
     def test_max_marginal_e(self):
         """ """
         self.assertEqual(
-            round(NumericOps.max_marginal_e(self.student_rvar), 4,),
-            0.9,
+            round(NumericOps.max_marginal_e(self.student_rvar), 4,), 0.9,
         )
 
     def test_min_marginal_e(self):
         """"""
         self.assertEqual(
-            round(NumericOps.min_marginal_e(self.student_rvar), 4,),
-            0.1,
+            round(NumericOps.min_marginal_e(self.student_rvar), 4,), 0.1,
         )
 
     def test_marginal_over(self):
@@ -330,10 +320,39 @@ class CategoricalOpsTest(unittest.TestCase):
                 return 1.0
 
         #
-        val = CNumericOps.apply_to_marginals(
-            r=self.student_rvar, phi=pfn
-        )
+        val = CNumericOps.apply_to_marginals(r=self.student_rvar, phi=pfn)
         self.assertEqual(val, set([0.0, 1.0]))
+
+    def test_max_joint(self):
+        "maximum joint probability of two numeric categorical random variables"
+        compval = round((1 / 6) * 0.7, 5)
+        val = NumericOps.max_joint(r=self.intelligence2, v=self.dice)
+        self.assertEqual(round(val, 5), compval)
+
+    def test_conditional_1(self):
+        "test conditional probability"
+        # self.assertEqual(val, compval)
+        val = NumericOps.conditional(other=self.intelligence2, r=self.dice)
+        v1 = 0.7
+        v2 = sum(1 / 6 * i for i in range(1, 7))
+        compval = round(v2 * v1 / v1, 5)
+        self.assertEqual(round(val, 5), compval)
+
+    def test_conditional_2(self):
+        "maximum joint probability of two numeric categorical random variables"
+        # self.assertEqual(val, compval)
+        val = NumericOps.conditional(r=self.intelligence2, other=self.dice)
+        rv = sum(1 / 6 * i for i in range(1, 7))
+        compval = round(rv * 0.7 / rv, 5)
+        self.assertEqual(round(val, 5), compval)
+
+    @unittest.skip("needs a reference value")
+    def test_max_conditional(self):
+        ""
+
+    @unittest.skip("needs a reference value")
+    def test_joint_matrix(self):
+        ""
 
 
 if __name__ == "__main__":

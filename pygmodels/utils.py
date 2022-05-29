@@ -14,7 +14,7 @@ def is_type(
     if isinstance(val, originType) is False:
         if shouldRaiseError:
             raise TypeError(
-                ("value" if val_name is not None else val_name)
+                ("value" if val_name is None else val_name)
                 + " must be of type: "
                 + originType.__name__
                 + " but it is "
