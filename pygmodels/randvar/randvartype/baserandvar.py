@@ -35,22 +35,13 @@ class BaseEvidence(AbstractEvidence, GraphObject):
     ):
         """"""
         is_type(
-            evidence_id,
-            originType=str,
-            shouldRaiseError=True,
-            val_name="evidence_id",
+            evidence_id, originType=str, shouldRaiseError=True, val_name="evidence_id",
         )
         is_type(
-            randvar_id,
-            originType=str,
-            shouldRaiseError=True,
-            val_name="randvar_id",
+            randvar_id, originType=str, shouldRaiseError=True, val_name="randvar_id",
         )
         is_type(
-            value,
-            originType=CodomainValue,
-            shouldRaiseError=True,
-            val_name="value",
+            value, originType=CodomainValue, shouldRaiseError=True, val_name="value",
         )
         if description is not None:
             is_type(
@@ -61,15 +52,10 @@ class BaseEvidence(AbstractEvidence, GraphObject):
             )
         if data is not None:
             is_type(
-                data,
-                originType=dict,
-                shouldRaiseError=True,
-                val_name="data",
+                data, originType=dict, shouldRaiseError=True, val_name="data",
             )
         # init graphobj
-        super().__init__(
-            oid=evidence_id, odata=data if data is not None else {}
-        )
+        super().__init__(oid=evidence_id, odata=data if data is not None else {})
         self.rand_id = randvar_id
         self.val = value
         self.descr = description
@@ -151,9 +137,7 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         data: Optional[dict] = None,
         input_data: Optional[Domain] = None,
         f: Callable[[DomainValue], CodomainValue] = lambda x: x,
-        marginal_distribution: Callable[
-            [CodomainValue], float
-        ] = lambda x: 1.0,
+        marginal_distribution: Callable[[CodomainValue], float] = lambda x: 1.0,
         sampler: Optional[Callable[[Domain], List[DomainValue]]] = None,
     ):
         """!
@@ -215,9 +199,7 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         \endcode
 
         constructor for a random variable"""
-        super().__init__(
-            oid=randvar_id, odata=data if data is not None else {}
-        )
+        super().__init__(oid=randvar_id, odata=data if data is not None else {})
         self.name = randvar_name
         if input_data is None and data is None:
             raise ValueError("Either input data or data must not be None")
@@ -249,9 +231,7 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
             image = [self.f(s) for s in sampler(possible_outcomes)]
             psum = sum(list(map(marginal_distribution, image)))
             if psum > 1 and psum < 0:
-                raise ValueError(
-                    "probability sum bigger than 1 or smaller than 0"
-                )
+                raise ValueError("probability sum bigger than 1 or smaller than 0")
             self._sampler = sampler
         else:
             self._sampler = sampler
@@ -263,7 +243,7 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         return self._inputs
 
     def image(
-        self, sampler: Optional[Callable[[Domain], List[DomainValue]]] = None
+        self, sampler: Optional[Callable[[Domain], List[DomainValue]]] = None,
     ) -> AssociatedValueSet:
         """!
         \brief Image of the random variable's function.
@@ -284,14 +264,14 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         \raises TypeError when both samplers are None, we raise type error.
 
         """
-        if sampler is not None and self._sampler is None:
-            return frozenset(set(self.f(i) for i in sampler(self.inputs)))
-        elif sampler is None and self._sampler is None:
+        if sampler is None and self._sampler is None:
             msg = "Both samplers are None. "
             msg += "In order to obtain an image of the random variable, "
             msg += "please provide a sampler function either in the constructor or "
             msg += "here."
             raise TypeError(msg)
+        if sampler is not None and self._sampler is None:
+            return frozenset(set(self.f(i) for i in sampler(self.inputs)))
         elif sampler is None and self._sampler is not None:
             if self._outs is None:
                 self._outs = frozenset(

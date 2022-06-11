@@ -76,6 +76,7 @@ class CatRandomVariable(BaseRandomVariable):
             input_data=input_data,
             f=f,
             marginal_distribution=marginal_distribution,
+            sampler=lambda x: x,
         )
 
     def marginal(self, value: CodomainValue) -> NumericValue:

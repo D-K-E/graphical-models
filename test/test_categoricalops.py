@@ -323,6 +323,22 @@ class CategoricalOpsTest(unittest.TestCase):
         val = CNumericOps.apply_to_marginals(r=self.student_rvar, phi=pfn)
         self.assertEqual(val, set([0.0, 1.0]))
 
+    @unittest.skip("something is not right with sampling")
+    def test_reduce_to_value(self):
+        ""
+        red_val = CodomainValue(
+            value=0.4,
+            set_name="grade values",
+            mapping_name="grade_event",
+            domain_name="grade names",
+        )
+        nrand = CNumericOps.reduce_to_value(self.grade_rvar, val=red_val, sampler=None)
+        nimage = nrand.image()
+        print(nimage)
+        print(red_val)
+        print(nrand._outs)
+        self.assertEqual(red_val, nimage)
+
     def test_max_joint(self):
         "maximum joint probability of two numeric categorical random variables"
         compval = round((1 / 6) * 0.7, 5)

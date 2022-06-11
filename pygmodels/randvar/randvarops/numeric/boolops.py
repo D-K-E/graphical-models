@@ -3,6 +3,7 @@
 variables 
 """
 from pygmodels.randvar.randvarmodel.categorical import NumCatRandomVariable
+from pygmodels.value.codomain import CodomainValue
 from typing import Any, Callable, FrozenSet, List, Optional, Set, Tuple
 
 
@@ -72,7 +73,7 @@ class BoolOps:
         return True
 
     @staticmethod
-    def is_numeric(v: Any) -> bool:
+    def is_numeric(v: object) -> bool:
         """!
         \brief check if v is whether float or int
 
@@ -87,4 +88,7 @@ class BoolOps:
         >>> True
         \endcode
         """
-        return True if isinstance(v, (float, int)) else False
+        numt = (float, int)
+        if isinstance(v, CodomainValue):
+            return isinstance(v.value, numt)
+        return isinstance(v, numt)

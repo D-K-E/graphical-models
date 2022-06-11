@@ -9,6 +9,7 @@ from pygmodels.randvar.randvarmodel.categorical import (
     CatRandomVariable,
     NumCatRandomVariable,
 )
+from pygmodels.randvar.randvarops.numeric.boolops import BoolOps
 from pygmodels.randvar.randvarops.baserandvarops import RandomVariableOps
 from pygmodels.randvar.randvartype.abstractrandvar import (
     AbstractEvidence,
@@ -86,7 +87,11 @@ class NumericOps:
         if not BoolOps.is_numeric(val):
             raise TypeError("Reduction value must be numeric (int, float)")
         vs = frozenset(
-            [v for v in RandomVariableOps.values(r, sampler=sampler) if v == val]
+            [
+                v
+                for v in RandomVariableOps.values(r, sampler=sampler)
+                if v.value == val.value
+            ]
         )
         r._outs = vs
         return r
