@@ -41,7 +41,6 @@ class RandomVariableOpsTest(unittest.TestCase):
             input_data=dice_input_data,
             f=dice_f,
             marginal_distribution=dice_distribution,
-            sampler=lambda x: x,
         )
 
         self.grade_ev = BaseEvidence(

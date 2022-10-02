@@ -384,7 +384,7 @@ class NumericOps:
         return sum(
             [
                 codomain_member.value * r.p(codomain_member)
-                for codomain_member in r.image()
+                for codomain_member in r.image(sampler=sampler)
             ]
         )
 

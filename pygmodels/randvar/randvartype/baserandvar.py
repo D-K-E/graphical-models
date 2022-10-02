@@ -138,7 +138,6 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         input_data: Optional[Domain] = None,
         f: Callable[[DomainValue], CodomainValue] = lambda x: x,
         marginal_distribution: Callable[[CodomainValue], float] = lambda x: 1.0,
-        sampler: Optional[Callable[[Domain], List[DomainValue]]] = None,
     ):
         """!
         \brief Constructor for random variable
@@ -219,22 +218,6 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
             raise TypeError("f must be a callable")
         self.f = f
         self._outs = None
-        self._sampler = None
-        if sampler is not None and not callable(sampler):
-            raise TypeError(
-                "if sampler is not None, it must be a callable, but it is "
-                + str(type(sampler))
-            )
-        elif sampler is not None and callable(sampler):
-            # check if marginal distribution gives a correct probability
-            # distribution
-            image = [self.f(s) for s in sampler(possible_outcomes)]
-            psum = sum(list(map(marginal_distribution, image)))
-            if psum > 1 and psum < 0:
-                raise ValueError("probability sum bigger than 1 or smaller than 0")
-            self._sampler = sampler
-        else:
-            self._sampler = sampler
         self.dist = marginal_distribution
 
     @property
@@ -243,7 +226,7 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         return self._inputs
 
     def image(
-        self, sampler: Optional[Callable[[Domain], List[DomainValue]]] = None,
+        self, sampler: Callable[[Domain], List[DomainValue]]
     ) -> AssociatedValueSet:
         """!
         \brief Image of the random variable's function.
@@ -264,26 +247,13 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         \raises TypeError when both samplers are None, we raise type error.
 
         """
-        if sampler is None and self._sampler is None:
-            msg = "Both samplers are None. "
-            msg += "In order to obtain an image of the random variable, "
-            msg += "please provide a sampler function either in the constructor or "
-            msg += "here."
-            raise TypeError(msg)
-        if sampler is not None and self._sampler is None:
-            return frozenset(set(self.f(i) for i in sampler(self.inputs)))
-        elif sampler is None and self._sampler is not None:
+        if sampler is None:
             if self._outs is None:
-                self._outs = frozenset(
-                    set(self.f(i) for i in self._sampler(self.inputs))
-                )
+                msg = "Sampler can not be none "
+                msg += "if codomain values have not been assigned yet"
+                raise ValueError(msg)
             return self._outs
-        elif sampler is not None and self._sampler is not None:
-            return frozenset(set(self.f(i) for i in sampler(self.inputs)))
-        else:
-            raise ValueError(
-                "Unknown configuration, possible bug, please create an issue"
-            )
+        return frozenset(set(self.f(i) for i in sampler(self.inputs)))
 
     def p(self, outcome: CodomainValue) -> NumericValue:
         """!
