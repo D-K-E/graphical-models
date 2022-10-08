@@ -13,7 +13,6 @@ from pygmodels.value.value import NumericValue
 from pygmodels.randvar.randvartype.abstractrandvar import (
     AbstractEvidence,
     AbstractRandomVariable,
-    AssociatedValueSet,
 )
 from pygmodels.value.codomain import CodomainValue
 from pygmodels.utils import is_type, type_check
@@ -384,7 +383,7 @@ class NumericOps:
         return sum(
             [
                 codomain_member.value * r.p(codomain_member)
-                for codomain_member in r.image(sampler=sampler)
+                for codomain_member in r.image()
             ]
         )
 

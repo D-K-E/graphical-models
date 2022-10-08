@@ -43,7 +43,10 @@ class DomainValue(AbstractSetValue):
 
 
 Domain = Set[DomainValue]
-OrderedCodomain = List[DomainValue]
+DomainSample = Set[DomainValue]
+Population = Domain
+Sample = DomainSample
+OrderedDomain = List[DomainValue]
 
 FiniteDomain = FrozenSet[DomainValue]
 OrderedFiniteDomain = Tuple[DomainValue]

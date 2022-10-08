@@ -9,12 +9,12 @@ from pygmodels.graph.graphtype.abstractobj import (
     AbstractNode,
 )
 from pygmodels.value.codomain import Codomain, CodomainValue
+from pygmodels.value.codomain import Range
 from pygmodels.value.domain import Domain, DomainValue
 from pygmodels.value.value import NumericValue
 
 PossibleOutcomes = Domain
 PossibleOutcome = DomainValue
-AssociatedValueSet = Codomain
 
 
 class AbstractEvidence(AbstractGraphObj):
@@ -52,11 +52,20 @@ class AbstractRandomVariable(AbstractNode):
         """
         raise NotImplementedError
 
+    @property
+    def range_id(self) -> str:
+        """!
+        Identifier of the range of the random variable.
+
+        The identifier of the range is used to determine if two random
+        variables are equal or not.
+        """
+        raise NotImplementedError
+
     @abstractmethod
     def image(
-        self,
-        sampler: Optional[Callable[[PossibleOutcomes], List[PossibleOutcome]]],
-    ) -> AssociatedValueSet:
+        self, sampler: Optional[Callable[[PossibleOutcomes], List[PossibleOutcome]]],
+    ) -> Range:
         """!
         Image/Range of the random variable. It can be either a representation
         or the full range.

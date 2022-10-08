@@ -9,7 +9,6 @@ from uuid import uuid4
 from pygmodels.randvar.randvartype.abstractrandvar import (
     AbstractEvidence,
     AbstractRandomVariable,
-    AssociatedValueSet,
     PossibleOutcomes,
 )
 from pygmodels.randvar.randvartype.baserandvar import (
@@ -18,6 +17,7 @@ from pygmodels.randvar.randvartype.baserandvar import (
 )
 from pygmodels.utils import is_type
 from pygmodels.value.codomain import CodomainValue, Outcome
+from pygmodels.value.codomain import Range, RangeSubset
 from pygmodels.value.value import NumericValue
 
 
@@ -28,8 +28,8 @@ class RandomVariableOps:
 
     @staticmethod
     def values(
-        r: AbstractRandomVariable, sampler: Callable
-    ) -> AssociatedValueSet:
+        r: AbstractRandomVariable, sampler: Callable[[Range], RangeSubset]
+    ) -> RangeSubset:
         """!
         \brief outcome values of the random variable
 
@@ -83,7 +83,7 @@ class RandomVariableOps:
 
         \endcode
         """
-        return r.image(sampler=sampler)
+        return sampler(r.image())
 
     @staticmethod
     def value_set(
@@ -209,10 +209,7 @@ class RandomVariableOps:
         \endcode
         """
         is_type(
-            r,
-            originType=AbstractRandomVariable,
-            shouldRaiseError=True,
-            val_name="r",
+            r, originType=AbstractRandomVariable, shouldRaiseError=True, val_name="r",
         )
         is_type(
             evidence,

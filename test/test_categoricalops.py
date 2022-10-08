@@ -333,11 +333,7 @@ class CategoricalOpsTest(unittest.TestCase):
             domain_name="grade names",
         )
         nrand = CNumericOps.reduce_to_value(r=self.grade_rvar, val=red_val,)
-        # pdb.set_trace()
         nimage = nrand.image()
-        print("randvar image: ", str(list(map(str, nimage))))
-        print("reduce value: ", str(red_val))
-        print("outs: ", str(list(map(str, nrand._outs))))
         self.assertEqual(frozenset([red_val]), nimage)
 
     def test_max_joint(self):

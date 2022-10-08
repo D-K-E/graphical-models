@@ -21,9 +21,7 @@ class BaseRandvarTest(unittest.TestCase):
         # dice random variable
         dicename = "dice"
         diceid = "dice01"
-        dice_input_data = set(
-            [DomainValue(v=i, dom_id=diceid) for i in range(1, 7)]
-        )
+        dice_input_data = set([DomainValue(v=i, dom_id=diceid) for i in range(1, 7)])
 
         def dice_f(x: DomainValue) -> CodomainValue:
             return CodomainValue(
@@ -119,8 +117,7 @@ class BaseRandvarTest(unittest.TestCase):
     def test_evidence_belongs_to(self):
         """"""
         self.assertEqual(
-            self.grade_ev.belongs_to(),
-            self.student_rvar.id(),
+            self.grade_ev.belongs_to(), self.student_rvar.id(),
         )
 
     def test_evidence_eq(self):
@@ -143,9 +140,7 @@ class BaseRandvarTest(unittest.TestCase):
 
     def test_str(self):
         "test string representation"
-        self.assertEqual(
-            str(self.dice), "<RandomVariable :: id: dice01 name: dice>"
-        )
+        self.assertEqual(str(self.dice), "<RandomVariable :: id: dice01 name: dice>")
 
     def test_hash(self):
         "test hash function"
@@ -155,9 +150,7 @@ class BaseRandvarTest(unittest.TestCase):
 
     def test_image(self):
         """"""
-        simage = frozenset(
-            [x.value for x in self.student_rvar.image(sampler=lambda x: x)]
-        )
+        simage = frozenset([x.value for x in self.student_rvar.image()])
         compval = frozenset(["A", "F"])
         self.assertEqual(simage, compval)
 

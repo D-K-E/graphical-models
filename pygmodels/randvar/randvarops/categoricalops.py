@@ -14,7 +14,6 @@ from pygmodels.randvar.randvarops.baserandvarops import RandomVariableOps
 from pygmodels.randvar.randvartype.abstractrandvar import (
     AbstractEvidence,
     AbstractRandomVariable,
-    AssociatedValueSet,
 )
 from pygmodels.utils import is_type, type_check
 from pygmodels.value.codomain import CodomainValue

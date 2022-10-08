@@ -10,13 +10,13 @@ from pygmodels.graph.graphtype.graphobj import GraphObject
 from pygmodels.randvar.randvartype.abstractrandvar import (
     AbstractEvidence,
     AbstractRandomVariable,
-    AssociatedValueSet,
 )
 
 # for type checking
 from pygmodels.utils import is_type
-from pygmodels.value.codomain import CodomainValue
-from pygmodels.value.domain import Domain, DomainValue
+from pygmodels.value.codomain import CodomainValue, Range
+from pygmodels.value.domain import Domain, DomainValue, DomainSample
+from pygmodels.value.domain import Population
 from pygmodels.value.value import NumericValue
 
 
@@ -138,6 +138,7 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         input_data: Optional[Domain] = None,
         f: Callable[[DomainValue], CodomainValue] = lambda x: x,
         marginal_distribution: Callable[[CodomainValue], float] = lambda x: 1.0,
+        sampler: Callable[[Population], DomainSample] = lambda xs: frozenset(xs),
     ):
         """!
         \brief Constructor for random variable
@@ -216,18 +217,33 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         self._inputs = possible_outcomes
         if not callable(f):
             raise TypeError("f must be a callable")
+
         self.f = f
         self._outs = None
         self.dist = marginal_distribution
+        self._range_id = None
+        for i in self.inputs:
+            self._range_id = str(type(self.f(i)))
+            break
+
+        if not callable(sampler):
+            raise TypeError("sampler must be a callable")
+        self._sampler = sampler
 
     @property
-    def inputs(self) -> Domain:
+    def range_id(self) -> str:
+        """!
+        The identifier of the range of the function that dictates the 
+        behavior of the random variable
+        """
+        return self._range_id
+
+    @property
+    def inputs(self) -> Population:  # or Domain
         """!"""
         return self._inputs
 
-    def image(
-        self, sampler: Callable[[Domain], List[DomainValue]]
-    ) -> AssociatedValueSet:
+    def image(self) -> Range:
         """!
         \brief Image of the random variable's function.
 
@@ -247,13 +263,10 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         \raises TypeError when both samplers are None, we raise type error.
 
         """
-        if sampler is None:
-            if self._outs is None:
-                msg = "Sampler can not be none "
-                msg += "if codomain values have not been assigned yet"
-                raise ValueError(msg)
-            return self._outs
-        return frozenset(set(self.f(i) for i in sampler(self.inputs)))
+        if self._outs is None:
+            domain_sample = self._sampler(self.inputs)
+            self._outs = frozenset(self.f(sample) for sample in domain_sample)
+        return self._outs
 
     def p(self, outcome: CodomainValue) -> NumericValue:
         """!
@@ -274,9 +287,9 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
             return False
         if other.inputs != self.inputs:
             return False
-        if other.image() != self.image():
+        if other.range_id != self.range_id:
             return False
-        for ins in self.inputs:
+        for ins in self._sampler(self.inputs):
             if other.p(ins) != self.p(ins):
                 return False
         return True

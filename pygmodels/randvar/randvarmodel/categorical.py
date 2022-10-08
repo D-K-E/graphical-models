@@ -6,7 +6,6 @@ import math
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple
 from uuid import uuid4
 
-from pygmodels.randvar.randvartype.abstractrandvar import AssociatedValueSet
 from pygmodels.randvar.randvartype.baserandvar import BaseRandomVariable
 from pygmodels.value.codomain import CodomainValue, Outcome
 from pygmodels.value.domain import Domain, DomainValue
@@ -76,6 +75,7 @@ class CatRandomVariable(BaseRandomVariable):
             input_data=input_data,
             f=f,
             marginal_distribution=marginal_distribution,
+            sampler=lambda xs: frozenset(xs),
         )
 
     def marginal(self, value: CodomainValue) -> NumericValue:
@@ -94,14 +94,6 @@ class CatRandomVariable(BaseRandomVariable):
         \todo test DONE
         """
         return self.p(value)
-
-    def image(
-        self, sampler: Callable[[Domain], List[DomainValue]] = lambda x: list(x),
-    ) -> AssociatedValueSet:
-        """!
-        Image of the random variable's function
-        """
-        return BaseRandomVariable.image(self, sampler=sampler)
 
 
 class NumCatRandomVariable(CatRandomVariable):

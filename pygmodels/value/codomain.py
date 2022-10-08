@@ -97,6 +97,8 @@ class CodomainValue(AbstractSetValue):
 
 
 Codomain = Set[CodomainValue]
+Range = Set[CodomainValue]
+RangeSubset = Range
 OrderedCodomain = List[CodomainValue]
 
 FiniteCodomain = FrozenSet[CodomainValue]
