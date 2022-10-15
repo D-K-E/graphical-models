@@ -29,7 +29,9 @@ class CategoricalOpsTest(unittest.TestCase):
         # dice random variable
         dicename = "dice"
         diceid = "dice01"
-        dice_input_data = set([DomainValue(v=i, dom_id=diceid) for i in range(1, 7)])
+        dice_input_data = set(
+            [DomainValue(value=i, set_name=diceid) for i in range(1, 7)]
+        )
 
         def dice_f(x: DomainValue) -> CodomainValue:
             return CodomainValue(
@@ -74,8 +76,8 @@ class CategoricalOpsTest(unittest.TestCase):
         svar_id = "student01"
         students = set(
             [
-                DomainValue(v="student_1", dom_id=svar_id),
-                DomainValue(v="student_2", dom_id=svar_id),
+                DomainValue(value="student_1", set_name=svar_id),
+                DomainValue(value="student_2", set_name=svar_id),
             ]
         )
 
@@ -180,9 +182,9 @@ class CategoricalOpsTest(unittest.TestCase):
 
         grades = set(
             [
-                DomainValue(v="F", dom_id="grade names"),
-                DomainValue(v="D", dom_id="grade names"),
-                DomainValue(v="B", dom_id="grade names"),
+                DomainValue(value="F", set_name="grade names"),
+                DomainValue(value="D", set_name="grade names"),
+                DomainValue(value="B", set_name="grade names"),
             ]
         )
 
@@ -323,7 +325,6 @@ class CategoricalOpsTest(unittest.TestCase):
         val = CNumericOps.apply_to_marginals(r=self.student_rvar, phi=pfn)
         self.assertEqual(val, set([0.0, 1.0]))
 
-    # @unittest.skip("something is not right with sampling")
     def test_reduce_to_value(self):
         ""
         red_val = CodomainValue(

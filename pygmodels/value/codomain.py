@@ -7,7 +7,7 @@ value
 from typing import Any, Callable, Dict, FrozenSet, List, Optional, Set, Tuple
 
 from pygmodels.utils import is_type
-from pygmodels.value.abstractvalue import AbstractSetValue
+from pygmodels.value.value import SetValue
 
 
 class Outcome:
@@ -15,7 +15,7 @@ class Outcome:
         self.data = v
 
 
-class CodomainValue(AbstractSetValue):
+class CodomainValue(SetValue):
     """"""
 
     def __init__(
@@ -25,14 +25,7 @@ class CodomainValue(AbstractSetValue):
         mapping_name: str,
         domain_name: Optional[str] = None,
     ):
-        self.v = value
-        is_type(
-            set_name,
-            originType=str,
-            shouldRaiseError=True,
-            val_name="set_name",
-        )
-        self._set = set_name
+        super().__init__(v=value, set_id=set_name)
 
         is_type(
             mapping_name,
@@ -51,16 +44,6 @@ class CodomainValue(AbstractSetValue):
         self._fn_domain = domain_name
 
     @property
-    def belongs_to(self) -> str:
-        if self._set is None:
-            raise ValueError("Value is not associated to a domain")
-        return self._set
-
-    @property
-    def value(self) -> Any:
-        return self.v
-
-    @property
     def mapped_by(self) -> str:
         "name of the function mapping to the codomain"
         if self._fn is None:
@@ -72,14 +55,6 @@ class CodomainValue(AbstractSetValue):
         "the domain name of the function mapping to the codomain"
         return self._fn_domain
 
-    def __eq__(self, other):
-        """"""
-        if isinstance(other, CodomainValue):
-            c1 = other.value == self.value
-            c2 = other.belongs_to == self.belongs_to
-            return c1 and c2
-        return False
-
     def __str__(self):
         """"""
         m = "<CodomainValue: " + str(self.value)
@@ -88,12 +63,6 @@ class CodomainValue(AbstractSetValue):
         m += " from " + str(self.mapped_from)
         m += ">"
         return m
-
-    def __hash__(self):
-        """"""
-        m = "<CodomainValue: " + str(self.value)
-        m += " of set " + str(self.belongs_to)
-        return hash(m)
 
 
 Codomain = Set[CodomainValue]

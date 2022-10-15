@@ -24,7 +24,7 @@ class RandomVariableOpsTest(unittest.TestCase):
         dicename = "dice"
         diceid = "dice01"
         dice_input_data = set(
-            [DomainValue(v=i, dom_id=diceid) for i in range(1, 7)]
+            [DomainValue(value=i, set_name=diceid) for i in range(1, 7)]
         )
 
         def dice_f(x: DomainValue):
@@ -78,8 +78,8 @@ class RandomVariableOpsTest(unittest.TestCase):
         svar_id = "student01"
         students = set(
             [
-                DomainValue(v="student_1", dom_id=svar_id),
-                DomainValue(v="student_2", dom_id=svar_id),
+                DomainValue(value="student_1", set_name=svar_id),
+                DomainValue(value="student_2", set_name=svar_id),
             ]
         )
 
@@ -94,9 +94,7 @@ class RandomVariableOpsTest(unittest.TestCase):
 
     def test_values(self):
         """"""
-        simage = RandomVariableOps.values(
-            self.student_rvar, sampler=lambda x: x
-        )
+        simage = RandomVariableOps.values(self.student_rvar, sampler=lambda x: x)
         simage = frozenset([x.value for x in simage])
         compval = frozenset(["A", "F"])
         self.assertEqual(simage, compval)
@@ -118,9 +116,7 @@ class RandomVariableOpsTest(unittest.TestCase):
 
         def phi(x: CodomainValue) -> Any:
             "apply function to codomain"
-            tval = is_type(
-                val=x, originType=CodomainValue, shouldRaiseError=False
-            )
+            tval = is_type(val=x, originType=CodomainValue, shouldRaiseError=False)
             if tval:
                 return x.value.lower() if x.value == "A" else x.value
             else:

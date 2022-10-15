@@ -1,86 +1,32 @@
 """!
-\file test_categorical.py Tests of categorical.py objects
+\file test_numeric_boolops.py Contains tests for boolops.py in numeric module
+
 """
 
 import unittest
+from typing import Any, Optional
+import pdb
 
 from pygmodels.randvar.randvarmodel.categorical import (
     CatRandomVariable,
     NumCatRandomVariable,
 )
-from pygmodels.randvar.randvartype.baserandvar import BaseEvidence
+from pygmodels.randvar.randvarops.numeric.boolops import BoolOps
+from pygmodels.randvar.randvarops.categoricalops import NumericOps as CNumericOps
+from pygmodels.randvar.randvartype.baserandvar import (
+    BaseEvidence,
+    BaseRandomVariable,
+)
 from pygmodels.utils import is_type, type_check
 from pygmodels.value.codomain import CodomainValue
 from pygmodels.value.domain import DomainValue
 
 
-class CategoricalTest(unittest.TestCase):
+class TestCategoricalNumericBoolOps(unittest.TestCase):
+    """"""
+
     def setUp(self):
         """"""
-        # dice random variable
-        dicename = "dice"
-        diceid = "dice01"
-        dice_input_data = set(
-            [DomainValue(value=i, set_name=diceid) for i in range(1, 7)]
-        )
-
-        def dice_f(x: DomainValue) -> CodomainValue:
-            return CodomainValue(
-                value=x.value,
-                set_name=x.belongs_to,
-                mapping_name="dice_f",
-                domain_name=x.belongs_to,
-            )
-
-        def dice_distribution(x: CodomainValue):
-            return 1.0 / 6.0
-
-        #
-        self.dice = NumCatRandomVariable(
-            randvar_id=diceid,
-            randvar_name=dicename,
-            data=None,
-            input_data=dice_input_data,
-            f=dice_f,
-            marginal_distribution=dice_distribution,
-        )
-
-        def grade_f(x: DomainValue) -> CodomainValue:
-            if x.value == "student_1":
-                return CodomainValue(
-                    value="F",
-                    set_name="grades",
-                    mapping_name="grade_f",
-                    domain_name=x.belongs_to,
-                )
-            return CodomainValue(
-                value="A",
-                set_name="grades",
-                mapping_name="grade_f",
-                domain_name=x.belongs_to,
-            )
-
-        def grade_distribution(x: CodomainValue):
-            return 0.1 if x.value == "F" else 0.9
-
-        svar_dname = "student"
-        svar_id = "student01"
-        students = set(
-            [
-                DomainValue(value="student_1", set_name=svar_id),
-                DomainValue(value="student_2", set_name=svar_id),
-            ]
-        )
-
-        self.student_rvar = CatRandomVariable(
-            randvar_name=svar_dname,
-            randvar_id=svar_id,
-            input_data=students,
-            data=None,
-            f=grade_f,
-            marginal_distribution=grade_distribution,
-        )
-
         # intelligence random variable
         def intelligence_f(x: DomainValue) -> CodomainValue:
             """"""
@@ -105,16 +51,33 @@ class CategoricalTest(unittest.TestCase):
             )
             return 0.7 if x.value == 0.1 else (1.0 - 0.7)
 
+        svar_id = "student01"
+        students = set(
+            [
+                DomainValue(value="student_1", set_name=svar_id),
+                DomainValue(value="student_2", set_name=svar_id),
+            ]
+        )
+        svar_dname = "student"
+        ##self.student_rvar = BaseRandomVariable(
+        ##    randvar_name=svar_dname,
+        ##    randvar_id=svar_id,
+        ##    input_data=students,
+        ##    data=None,
+        ##    f=grade_f,
+        ##    marginal_distribution=grade_distribution,
+        ##)
+
         # evidence
         self.intev = BaseEvidence(
-            evidence_id="grade-evidence",
+            evidence_id="intelligence-evidence",
             value=CodomainValue(
-                value="F",
-                set_name="grades",
-                mapping_name="grade_f",
+                value=0.1,
+                set_name="intelligence",
+                mapping_name="intelligence_f",
                 domain_name=svar_id,
             ),
-            randvar_id=self.student_rvar.id(),
+            randvar_id=svar_id,
             description="intelligence evidence",
             data=None,
         )
@@ -193,15 +156,14 @@ class CategoricalTest(unittest.TestCase):
             marginal_distribution=grade_dist,
         )
 
-    def test_marginal_with_known_value(self):
-        """"""
-        c1 = CodomainValue(value="F", set_name="grades", mapping_name="grade_f",)
-        self.assertEqual(self.student_rvar.marginal(c1), 0.1)
+    def test_has_evidence(self):
+        self.assertTrue(BoolOps.has_evidence(self.intelligence))
 
-    def test_p_x_known_value(self):
-        """"""
-        c1 = CodomainValue(value="F", set_name="grades", mapping_name="grade_f",)
-        self.assertEqual(self.student_rvar.p(c1), 0.1)
+    @unittest.skip("not tested yet")
+    def test_is_numeric(self):
+        self.assertEqual(
+            NumericOps.max(self.intelligence, sampler=lambda x: x), 0.7,
+        )
 
 
 if __name__ == "__main__":

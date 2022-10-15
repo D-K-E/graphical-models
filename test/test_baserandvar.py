@@ -21,7 +21,7 @@ class BaseRandvarTest(unittest.TestCase):
         # dice random variable
         dicename = "dice"
         diceid = "dice01"
-        dice_input_data = set([DomainValue(v=i, dom_id=diceid) for i in range(1, 7)])
+        dice_input_data = set([DomainValue(value=i, set_name=diceid) for i in range(1, 7)])
 
         def dice_f(x: DomainValue) -> CodomainValue:
             return CodomainValue(
@@ -66,8 +66,8 @@ class BaseRandvarTest(unittest.TestCase):
         svar_id = "student01"
         students = set(
             [
-                DomainValue(v="student_1", dom_id=svar_id),
-                DomainValue(v="student_2", dom_id=svar_id),
+                DomainValue(value="student_1", set_name=svar_id),
+                DomainValue(value="student_2", set_name=svar_id),
             ]
         )
 
@@ -160,8 +160,8 @@ class BaseRandvarTest(unittest.TestCase):
             self.student_rvar.inputs,
             set(
                 [
-                    DomainValue(v="student_1", dom_id="student01"),
-                    DomainValue(v="student_2", dom_id="student01"),
+                    DomainValue(value="student_1", set_name="student01"),
+                    DomainValue(value="student_2", set_name="student01"),
                 ]
             ),
         )

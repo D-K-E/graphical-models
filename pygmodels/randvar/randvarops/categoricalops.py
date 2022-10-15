@@ -38,7 +38,6 @@ class NumericOps:
         implements:
         \f$\sum_{i=1}^n \phi(x_i) p(x_i) \f$
 
-        \todo test DONE
         """
         outphi = phi
         return sum(
@@ -54,7 +53,6 @@ class NumericOps:
         """!
         \brief apply function phi to marginals of the random variable
 
-        \todo test DONE
         """
         outphi = phi
         rvar = r
@@ -66,14 +64,11 @@ class NumericOps:
     ) -> NumericValue:
 
         """!
-        \todo test DONE
         """
         return NumericOps.p_x_fn(r, phi)
 
     @staticmethod
-    def reduce_to_value(
-        r: CatRandomVariable, val: CodomainValue, sampler: Callable = lambda x: x,
-    ):
+    def reduce_to_value(r: CatRandomVariable, val: CodomainValue):
         """!
         \brief reduce outcomes of this random variable to val
 
@@ -81,16 +76,9 @@ class NumericOps:
         reduced
 
         \throws TypeError if the val is not numeric we raise a type error.
-        \todo test
         """
         if not BoolOps.is_numeric(val):
             raise TypeError("Reduction value must be numeric (int, float)")
-        vs = frozenset(
-            [
-                v
-                for v in RandomVariableOps.values(r, sampler=sampler)
-                if v.value == val.value
-            ]
-        )
+        vs = frozenset([v for v in r.image() if v.value == val.value])
         r._outs = vs
         return r
