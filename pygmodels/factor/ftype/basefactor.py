@@ -17,6 +17,7 @@ from pygmodels.factor.ftype.abstractfactor import (
 from pygmodels.graph.gtype.graphobj import GraphObject
 from pygmodels.randvar.rtype.abstractrandvar import AbstractRandomVariable
 from pygmodels.value.value import NumericValue
+import pdb
 
 
 class BaseFactor(AbstractFactor, GraphObject):
@@ -46,9 +47,7 @@ class BaseFactor(AbstractFactor, GraphObject):
     def __str__(self):
         """"""
         msg = "Factor: " + self.id() + "\n"
-        msg += "Scope variables: " + str(
-            {s.id(): s for s in self.scope_vars()}
-        )
+        msg += "Scope variables: " + str({s.id(): s for s in self.scope_vars()})
         msg += "Factor function: " + str(self.factor_fn)
         return msg
 
@@ -77,16 +76,12 @@ class BaseFactor(AbstractFactor, GraphObject):
             return x
 
         other_domain = [
-            s.value_set(
-                value_filter=value_filter, value_transform=value_transform
-            )
+            s.value_set(value_filter=value_filter, value_transform=value_transform)
             for s in n.scope_vars()
             if rvar_filter(s)
         ]
         this_domain = [
-            s.value_set(
-                value_filter=value_filter, value_transform=value_transform
-            )
+            s.value_set(value_filter=value_filter, value_transform=value_transform)
             for s in self.scope_vars()
             if rvar_filter(s)
         ]
@@ -134,9 +129,7 @@ class BaseFactor(AbstractFactor, GraphObject):
         """
         svar = f.scope_vars()
         fn = f.phi
-        return BaseFactor(
-            gid=f.id(), data=f.data(), factor_fn=fn, scope_vars=svar
-        )
+        return BaseFactor(gid=f.id(), data=f.data(), factor_fn=fn, scope_vars=svar)
 
     @classmethod
     def from_joint_vars(cls, svars: FactorScope):
@@ -200,7 +193,7 @@ class BaseFactor(AbstractFactor, GraphObject):
         """
         return self.factor_fn(scope_product)
 
-    def partition_value(self, domains: FactorDomain):
+    def partition_value(self, domain_subsets: FactorDomain):
         """!
         \brief compute partition value aka normalizing value for the factor
         from Koller, Friedman 2009 p. 105
@@ -248,12 +241,14 @@ class BaseFactor(AbstractFactor, GraphObject):
         >>>    gid="f", scope_vars=set([grade, dice, intelligence])
         >>> )
         >>>
-        >>> pval = f.partition_value(f.vars_domain())
+        >>> pval = f.partition_value([f.scope_vars()])
         >>> print(pval)
         >>> 1.0
 
         \endcode
 
         """
-        scope_matches = list(product(*domains))
+        if not all(isinstance(d, frozenset) for d in domain_subsets):
+            raise TypeError("All domain subsets must be frozenset")
+        scope_matches = list(product(*domain_subsets))
         return sum([self.phi(scope_product=sv) for sv in scope_matches])

@@ -47,9 +47,7 @@ class FactorAlgebra:
         )
 
     @staticmethod
-    def reduced(
-        f: AbstractFactor, assignments: DomainSubset
-    ) -> AbstractFactor:
+    def reduced(f: AbstractFactor, assignments: DomainSubset) -> AbstractFactor:
         """!
         Wrapper of FactorOps.cls_reduced
         """
@@ -75,27 +73,19 @@ class FactorAlgebra:
         """!
         Wrapper of FactorOps.cls_filter_assignments
         """
-        (scope, phi) = FactorOps.filter_assignments(
-            f=f, assignments=assignments
-        )
+        (scope, phi) = FactorOps.filter_assignments(f=f, assignments=assignments)
         return BaseFactor(gid=str(uuid4()), scope_vars=scope, factor_fn=phi)
 
     @staticmethod
-    def reduced_by_vars(
-        f: AbstractFactor, assignments: DomainSubset
-    ) -> AbstractFactor:
+    def reduced_by_vars(f: AbstractFactor, assignments: DomainSubset) -> AbstractFactor:
         """!
         Wrapper of FactorOps.reduced_by_vars
         """
-        (scope, phi) = FactorFactorableOps.reduced_by_vars(
-            f=f, assignments=assignments
-        )
+        (scope, phi) = FactorFactorableOps.reduced_by_vars(f=f, assignments=assignments)
         return BaseFactor(gid=str(uuid4()), scope_vars=scope, factor_fn=phi)
 
     @staticmethod
-    def maxout_var(
-        f: AbstractFactor, Y: AbstractRandomVariable
-    ) -> AbstractFactor:
+    def maxout_var(f: AbstractFactor, Y: AbstractRandomVariable) -> AbstractFactor:
         """!
         Wrapper of FactorOps.maxout_var
         """
@@ -103,9 +93,7 @@ class FactorAlgebra:
         return BaseFactor(gid=str(uuid4()), scope_vars=scope, factor_fn=phi)
 
     @staticmethod
-    def sumout_var(
-        f: AbstractFactor, Y: AbstractRandomVariable
-    ) -> AbstractFactor:
+    def sumout_var(f: AbstractFactor, Y: AbstractRandomVariable) -> AbstractFactor:
         """!
         Wrapper of FactorOps.cls_sumout_var
         """
