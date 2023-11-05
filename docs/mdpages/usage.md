@@ -17,16 +17,23 @@ Usage:
 
 \code{.py}
 
-from gmodels.pgmodel import PGModel
-from gmodels.gtypes.edge import Edge, EdgeType
-from gmodels.factor import Factor
-from gmodels.randomvariable import NumCatRVariable
+# import necessary packages
+from pygmodels.pgm.pgmtype.pgmodel import PGModel
+from pygmodels.graph.gtype.edge import Edge, EdgeType
+from pygmodels.factor.factor import Factor
+from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable
+from pygmodels.factor.factorf.factorops import FactorOps
+
 # Example adapted from Darwiche 2009, p. 140
+
+# define data
 idata = {
             "a": {"outcome-values": [True, False]},
             "b": {"outcome-values": [True, False]},
             "c": {"outcome-values": [True, False]},
         }
+
+# define nodes
 a = NumCatRVariable(
             node_id="a", input_data=idata["a"], marginal_distribution=lambda x: 0.6 if x else 0.4
         )
@@ -36,6 +43,8 @@ b = NumCatRVariable(
 c = NumCatRVariable(
     node_id="c", input_data=idata["c"], marginal_distribution=lambda x: 0.5 if x else 0.5
 )
+
+# define edges
 ab = Edge(
     edge_id="ab",
     edge_type=EdgeType.UNDIRECTED,
@@ -48,6 +57,8 @@ bc = Edge(
     start_node=b,
     end_node=c,
 )
+
+# define factor functions
 def phi_ba(scope_product):
     ""
     ss = set(scope_product)
@@ -61,7 +72,7 @@ def phi_ba(scope_product):
         return 0.8
     else:
         raise ValueError("product error")
-
+ 
 def phi_cb(scope_product):
     ""
     ss = set(scope_product)
@@ -75,7 +86,7 @@ def phi_cb(scope_product):
         return 0.5
     else:
         raise ValueError("product error")
-
+ 
 def phi_a(scope_product):
     s = set(scope_product)
     if s == set([("a", True)]):
@@ -84,9 +95,13 @@ def phi_a(scope_product):
         return 0.4
     else:
         raise ValueError("product error")
+        
+# instantiate factors with factor functions and random variables in scope
 ba_f = Factor(gid="ba", scope_vars=set([b, a]), factor_fn=phi_ba)
 cb_f = Factor(gid="cb", scope_vars=set([c, b]), factor_fn=phi_cb)
 a_f = Factor(gid="a", scope_vars=set([a]), factor_fn=phi_a)
+
+# Instantiate the graph with nodes, edges and factors and do a query with given evidence
 pgm = PGModel(
     gid="pgm",
     nodes=set([a, b, c]),
@@ -96,7 +111,7 @@ pgm = PGModel(
 evidences = set([("a", True)])
 queries = set([c])
 product_factor, a = pgm.cond_prod_by_variable_elimination(queries, evidences)
-print(round( product_factor.phi_normal(set([("c", True)])), 4))
+print(round( FactorOps.phi_normal(product_factor, set([("c", True)])), 4))
 # should give you 0.32
 
 \endcode
@@ -129,10 +144,10 @@ Usage:
 
 # import necessary parts
 
-from gmodels.bayesian import BayesianNetwork
-from gmodels.gtypes.edge import Edge, EdgeType
-from gmodels.factor import Factor
-from gmodels.randomvariable import NumCatRVariable
+from pygmodels.pgm.pgmodel.bayesian import BayesianNetwork
+from pygmodels.graph.gtype.edge import Edge, EdgeType
+from pygmodels.factor.factor import Factor
+from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable
 
 # data and nodes
 idata = {"outcome-values": [True, False]}
@@ -265,10 +280,11 @@ Usage:
 \code{.py}
 
 # import necessary packages
-from gmodels.markov import MarkovNetwork
-from gmodels.gtypes.edge import Edge, EdgeType
-from gmodels.factor import Factor
-from gmodels.randomvariable import NumCatRVariable
+from pygmodels.pgm.pgmodel.markov import MarkovNetwork
+from pygmodels.graph.gtype.edge import Edge, EdgeType
+from pygmodels.factor.factor import Factor
+from pygmodels.factor.factorf.factorops import FactorOps
+from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable
 
 # define data and random variable nodes
 idata = {
@@ -403,9 +419,9 @@ mnetwork = MarkovNetwork(
  
 queries = set([A, B])
 evidences = set()
-prob, a = mnetwork.cond_prod_by_variable_elimination(queries, evidences)
+f, a = mnetwork.cond_prod_by_variable_elimination(queries, evidences)
 q2 = set([("A", False), ("B", True)])
-round(prob.phi_normal(q2), 2)
+round(FactorOps.phi_normal(f, q2), 2)
 # 0.69
 
 \endcode
@@ -426,12 +442,12 @@ Usage:
 \code{.py}
 
 # import necessary packages
-from gmodels.randomvariable import NumCatRVariable
-from gmodels.markov import ConditionalRandomField
-from gmodels.gtypes.edge import Edge, EdgeType
-from gmodels.factor import Factor
 import math
 from random import choice
+from pygmodels.pgm.pgmodel.markov import ConditionalRandomField
+from pygmodels.graph.gtype.edge import Edge, EdgeType
+from pygmodels.factor.factor import Factor
+from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable
 
 # define data and nodes
 idata = {"A": {"outcome-values": [True, False]}}
@@ -539,10 +555,10 @@ query = frozenset(
         ("X_3", choice([False, True])),
     ]
 )
-foo1, a1 = crf_koller.cond_prod_by_variable_elimination(
+fact, a1 = crf_koller.cond_prod_by_variable_elimination(
     queries=query_vars, evidences=evidence
 )
-print(foo1.phi(query) == 1.0)
+print(fact.phi(query) == 1.0)
 # True
 
 \endcode
@@ -570,337 +586,339 @@ Usage:
 \code{.py}
 
 # import necessary packages
-from gmodels.lwfchain import LWFChainGraph
-from gmodels.gtypes.edge import Edge, EdgeType
-from gmodels.factor import Factor
-from gmodels.randomvariable import NumCatRVariable
+from pygmodels.pgm.pgmodel.lwfchain import LWFChainGraph
+from pygmodels.pgm.pgmodel.bayesian import BayesianNetwork
+from pygmodels.graph.gtype.edge import Edge, EdgeType
+from pygmodels.factor.factor import Factor
+from pygmodels.factor.factorf.factorops import FactorOps
+from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable
 
 
 # define data and nodes
 idata = {"outcome-values": [True, False]}
-A = NumCatRVariable(
-       node_id="A", input_data=idata, marginal_distribution=lambda x: 0.5
+Smoking = NumCatRVariable(
+       node_id="Smoking", input_data=idata, marginal_distribution=lambda x: 0.5
 )
-B = NumCatRVariable(
-       node_id="B", input_data=idata, marginal_distribution=lambda x: 0.5
+Bronchitis = NumCatRVariable(
+       node_id="Bronchitis", input_data=idata, marginal_distribution=lambda x: 0.5
 )
-C = NumCatRVariable(
-       node_id="C", input_data=idata, marginal_distribution=lambda x: 0.5
+LungCancer = NumCatRVariable(
+       node_id="LungCancer", input_data=idata, marginal_distribution=lambda x: 0.5
 )
-D = NumCatRVariable(
-       node_id="D", input_data=idata, marginal_distribution=lambda x: 0.5
+EitherTL = NumCatRVariable(
+       node_id="EitherTL", input_data=idata, marginal_distribution=lambda x: 0.5
 )
-E = NumCatRVariable(
-       node_id="E", input_data=idata, marginal_distribution=lambda x: 0.5
+VisitAsia = NumCatRVariable(
+       node_id="VisitAsia", input_data=idata, marginal_distribution=lambda x: 0.5
 )
-F = NumCatRVariable(
-       node_id="F", input_data=idata, marginal_distribution=lambda x: 0.5
+Tuberculosis = NumCatRVariable(
+       node_id="Tuberculosis", input_data=idata, marginal_distribution=lambda x: 0.5
 )
-G = NumCatRVariable(
-       node_id="G", input_data=idata, marginal_distribution=lambda x: 0.5
+Xray = NumCatRVariable(
+       node_id="Xray", input_data=idata, marginal_distribution=lambda x: 0.5
 )
-H = NumCatRVariable(
-       node_id="H", input_data=idata, marginal_distribution=lambda x: 0.5
+Cough = NumCatRVariable(
+       node_id="Cough", input_data=idata, marginal_distribution=lambda x: 0.5
 )
-I = NumCatRVariable(
-       node_id="I", input_data=idata, marginal_distribution=lambda x: 0.5
-)
-K = NumCatRVariable(
-       node_id="K", input_data=idata, marginal_distribution=lambda x: 0.5
-)
-L = NumCatRVariable(
-       node_id="L", input_data=idata, marginal_distribution=lambda x: 0.5
+Dysponea = NumCatRVariable(
+       node_id="Dysponea", input_data=idata, marginal_distribution=lambda x: 0.5
 )
 
 # define edges
 #
 #  Cowell 2005, p. 110
 #
-#   A                      E---+
-#   |                          |
-#   +----+                 F <-+
-#        |                 |
-#   B <--+---> C --> D <---+
-#   |                |
-#   +---> H <--------+----> G
-#   |     |
-#   +---> I
-#
-AB_c = Edge(
-  edge_id="AB",
-  start_node=A,
-  end_node=B,
+SmokingBronchitis_c = Edge(
+  edge_id="SmokingBronchitis",
+  start_node=Smoking,
+  end_node=Bronchitis,
   edge_type=EdgeType.DIRECTED,
 )
-AC_c = Edge(
-  edge_id="AC",
-  start_node=A,
-  end_node=C,
+SmokingLungCancer_c = Edge(
+  edge_id="SmokingLungCancer",
+  start_node=Smoking,
+  end_node=LungCancer,
   edge_type=EdgeType.DIRECTED,
 )
-CD_c = Edge(
-  edge_id="CD",
-  start_node=C,
-  end_node=D,
+LungCancerEitherTL_c = Edge(
+  edge_id="LungCancerEitherTL",
+  start_node=LungCancer,
+  end_node=EitherTL,
   edge_type=EdgeType.DIRECTED,
 )
-EF_c = Edge(
-  edge_id="EF",
-  start_node=E,
-  end_node=F,
+VisitAsiaTuberculosis_c = Edge(
+  edge_id="VisitAsiaF",
+  start_node=VisitAsia,
+  end_node=Tuberculosis,
   edge_type=EdgeType.DIRECTED,
 )
-FD_c = Edge(
-  edge_id="FD",
-  start_node=F,
-  end_node=D,
+TuberculosisEitherTL_c = Edge(
+  edge_id="TuberculosisEitherTL",
+  start_node=Tuberculosis,
+  end_node=EitherTL,
   edge_type=EdgeType.DIRECTED,
 )
-DG_c = Edge(
-  edge_id="DG",
-  start_node=D,
-  end_node=G,
+EitherTLXray_c = Edge(
+  edge_id="EitherTLXray",
+  start_node=EitherTL,
+  end_node=Xray,
   edge_type=EdgeType.DIRECTED,
 )
-DH_c = Edge(
-  edge_id="DH",
-  start_node=D,
-  end_node=H,
+EitherTLCough_c = Edge(
+  edge_id="EitherTLCough",
+  start_node=EitherTL,
+  end_node=Cough,
   edge_type=EdgeType.DIRECTED,
 )
-BH_c = Edge(
-  edge_id="BH",
-  start_node=B,
-  end_node=H,
+BronchitisCough_c = Edge(
+  edge_id="BronchitisCough",
+  start_node=Bronchitis,
+  end_node=Cough,
   edge_type=EdgeType.DIRECTED,
 )
-BI_c = Edge(
-  edge_id="BI",
-  start_node=B,
-  end_node=I,
+BronchitisDysponea_c = Edge(
+  edge_id="BronchitisI",
+  start_node=Bronchitis,
+  end_node=Dysponea,
   edge_type=EdgeType.DIRECTED,
 )
-HI_c = Edge(
-  edge_id="HI",
-  start_node=H,
-  end_node=I,
+CoughDysponea_c = Edge(
+  edge_id="CoughI",
+  start_node=Cough,
+  end_node=Dysponea,
   edge_type=EdgeType.UNDIRECTED,
 )
 
 # define factor functions
 
-def phi_e(scope_product):
+def phi_VisitAsia(scope_product):
     "Visit to Asia factor p(a)"
     ss = set(scope_product)
-    if ss == set([("E", True)]):
+    if ss == set([("VisitAsia", True)]):
         return 0.01
-    elif ss == set([("E", False)]):
+    elif ss == set([("VisitAsia", False)]):
         return 0.99
     else:
         raise ValueError("Unknown scope product")
 
-def phi_fe(scope_product):
+def phi_TuberculosisVisitAsia(scope_product):
     "Tuberculosis | Visit to Asia factor p(t,a)"
     ss = set(scope_product)
-    if ss == set([("F", True), ("E", True)]):
+    if ss == set([("Tuberculosis", True), ("VisitAsia", True)]):
         return 0.05
-    elif ss == set([("F", False), ("E", True)]):
+    elif ss == set([("Tuberculosis", False), ("VisitAsia", True)]):
         return 0.95
-    elif ss == set([("F", True), ("E", False)]):
+    elif ss == set([("Tuberculosis", True), ("VisitAsia", False)]):
         return 0.01
-    elif ss == set([("F", False), ("E", False)]):
+    elif ss == set([("Tuberculosis", False), ("VisitAsia", False)]):
         return 0.99
     else:
         raise ValueError("Unknown scope product")
 
 
-def phi_dg(scope_product):
+def phi_EitherTLXray(scope_product):
     "either tuberculosis or lung cancer | x ray p(e,x)"
     ss = set(scope_product)
-    if ss == set([("D", True), ("G", True)]):
+    if ss == set([("EitherTL", True), ("Xray", True)]):
         return 0.98
-    elif ss == set([("D", False), ("G", True)]):
+    elif ss == set([("EitherTL", False), ("Xray", True)]):
         return 0.05
-    elif ss == set([("D", True), ("G", False)]):
+    elif ss == set([("EitherTL", True), ("Xray", False)]):
         return 0.02
-    elif ss == set([("D", False), ("G", False)]):
+    elif ss == set([("EitherTL", False), ("Xray", False)]):
         return 0.95
     else:
         raise ValueError("Unknown scope product")
 
-def phi_a(scope_product):
+def phi_Smoking(scope_product):
     "smoke factor p(s)"
     ss = set(scope_product)
-    if ss == set([("A", True)]):
+    if ss == set([("Smoking", True)]):
         return 0.5
-    elif ss == set([("A", False)]):
+    elif ss == set([("Smoking", False)]):
         return 0.5
     else:
         raise ValueError("Unknown scope product")
 
 
-def phi_ab(scope_product):
+def phi_SmokingBronchitis(scope_product):
     "smoke given bronchitis p(s,b)"
     ss = set(scope_product)
-    if ss == set([("A", True), ("B", True)]):
+    if ss == set([("Smoking", True), ("Bronchitis", True)]):
         return 0.6
-    elif ss == set([("A", False), ("B", True)]):
+    elif ss == set([("Smoking", False), ("Bronchitis", True)]):
         return 0.3
-    elif ss == set([("A", True), ("B", False)]):
+    elif ss == set([("Smoking", True), ("Bronchitis", False)]):
         return 0.4
-    elif ss == set([("A", False), ("B", False)]):
+    elif ss == set([("Smoking", False), ("Bronchitis", False)]):
         return 0.7
     else:
         raise ValueError("Unknown scope product")
 
 
-def phi_ac(scope_product):
+def phi_SmokingLungCancer(scope_product):
     "lung cancer given smoke p(s,l)"
     ss = set(scope_product)
-    if ss == set([("A", True), ("C", True)]):
+    if ss == set([("Smoking", True), ("LungCancer", True)]):
         return 0.1
-    elif ss == set([("A", False), ("C", True)]):
+    elif ss == set([("Smoking", False), ("LungCancer", True)]):
         return 0.01
-    elif ss == set([("A", True), ("C", False)]):
+    elif ss == set([("Smoking", True), ("LungCancer", False)]):
         return 0.9
-    elif ss == set([("A", False), ("C", False)]):
+    elif ss == set([("Smoking", False), ("LungCancer", False)]):
         return 0.99
     else:
         raise ValueError("Unknown scope product")
 
 
-def phi_cdf(scope_product):
+def phi_LungCancerEitherTLTuberculosis(scope_product):
     "either tuberculosis or lung given lung cancer and tuberculosis p(e, l, t)"
     ss = set(scope_product)
-    if ss == set([("C", True), ("D", True), ("F", True)]):
+    if ss == set([("LungCancer", True), ("EitherTL", True), ("Tuberculosis", True)]):
         return 1
-    elif ss == set([("C", True), ("D", False), ("F", True)]):
+    elif ss == set([("LungCancer", True), ("EitherTL", False), ("Tuberculosis", True)]):
         return 0
-    elif ss == set([("C", False), ("D", True), ("F", True)]):
+    elif ss == set([("LungCancer", False), ("EitherTL", True), ("Tuberculosis", True)]):
         return 1
-    elif ss == set([("C", False), ("D", False), ("F", True)]):
+    elif ss == set([("LungCancer", False), ("EitherTL", False), ("Tuberculosis", True)]):
         return 0
-    elif ss == set([("C", True), ("D", True), ("F", False)]):
+    elif ss == set([("LungCancer", True), ("EitherTL", True), ("Tuberculosis", False)]):
         return 1
-    elif ss == set([("C", True), ("D", False), ("F", False)]):
+    elif ss == set([("LungCancer", True), ("EitherTL", False), ("Tuberculosis", False)]):
         return 0
-    elif ss == set([("C", False), ("D", True), ("F", False)]):
+    elif ss == set([("LungCancer", False), ("EitherTL", True), ("Tuberculosis", False)]):
         return 0
-    elif ss == set([("C", False), ("D", False), ("F", False)]):
+    elif ss == set([("LungCancer", False), ("EitherTL", False), ("Tuberculosis", False)]):
         return 1
     else:
         raise ValueError("Unknown scope product")
 
 
-def phi_ihb(scope_product):
+def phi_DysponeaCoughBronchitis(scope_product):
     "cough, dyspnoea, bronchitis I, H, B p(c,d,b)"
     ss = set(scope_product)
-    if ss == set([("H", True), ("I", True), ("B", True)]):
+    if ss == set([("Cough", True), ("Dysponea", True), ("Bronchitis", True)]):
         return 16
-    elif ss == set([("H", True), ("I", False), ("B", True)]):
+    elif ss == set([("Cough", True), ("Dysponea", False), ("Bronchitis", True)]):
         return 1
-    elif ss == set([("H", False), ("I", True), ("B", True)]):
+    elif ss == set([("Cough", False), ("Dysponea", True), ("Bronchitis", True)]):
         return 4
-    elif ss == set([("H", False), ("I", False), ("B", True)]):
+    elif ss == set([("Cough", False), ("Dysponea", False), ("Bronchitis", True)]):
         return 1
-    elif ss == set([("H", True), ("I", True), ("B", False)]):
+    elif ss == set([("Cough", True), ("Dysponea", True), ("Bronchitis", False)]):
         return 2
-    elif ss == set([("H", True), ("I", False), ("B", False)]):
+    elif ss == set([("Cough", True), ("Dysponea", False), ("Bronchitis", False)]):
         return 1
-    elif ss == set([("H", False), ("I", True), ("B", False)]):
+    elif ss == set([("Cough", False), ("Dysponea", True), ("Bronchitis", False)]):
         return 1
-    elif ss == set([("H", False), ("I", False), ("B", False)]):
+    elif ss == set([("Cough", False), ("Dysponea", False), ("Bronchitis", False)]):
         return 1
     else:
         raise ValueError("Unknown scope product")
 
 
-def phi_hbd(scope_product):
+def phi_CoughBronchitisEitherTL(scope_product):
     "cough, either tuberculosis or lung cancer, bronchitis D, H, B p(c,b,e)"
     ss = set(scope_product)
-    if ss == set([("H", True), ("D", True), ("B", True)]):
+    if ss == set([("Cough", True), ("EitherTL", True), ("Bronchitis", True)]):
         return 5
-    elif ss == set([("H", True), ("D", False), ("B", True)]):
+    elif ss == set([("Cough", True), ("EitherTL", False), ("Bronchitis", True)]):
         return 2
-    elif ss == set([("H", False), ("D", True), ("B", True)]):
+    elif ss == set([("Cough", False), ("EitherTL", True), ("Bronchitis", True)]):
         return 1
-    elif ss == set([("H", False), ("D", False), ("B", True)]):
+    elif ss == set([("Cough", False), ("EitherTL", False), ("Bronchitis", True)]):
         return 1
-    elif ss == set([("H", True), ("D", True), ("B", False)]):
+    elif ss == set([("Cough", True), ("EitherTL", True), ("Bronchitis", False)]):
         return 3
-    elif ss == set([("H", True), ("D", False), ("B", False)]):
+    elif ss == set([("Cough", True), ("EitherTL", False), ("Bronchitis", False)]):
         return 1
-    elif ss == set([("H", False), ("D", True), ("B", False)]):
+    elif ss == set([("Cough", False), ("EitherTL", True), ("Bronchitis", False)]):
         return 1
-    elif ss == set([("H", False), ("D", False), ("B", False)]):
+    elif ss == set([("Cough", False), ("EitherTL", False), ("Bronchitis", False)]):
         return 1
     else:
         raise ValueError("Unknown scope product")
 
 
-def phi_bd(scope_product):
+def phi_BronchitisEitherTL(scope_product):
     "bronchitis, either tuberculosis or lung cancer B, D p(b,e)"
     ss = set(scope_product)
-    if ss == set([("B", True), ("D", True)]):
+    if ss == set([("Bronchitis", True), ("EitherTL", True)]):
         return 1 / 90
-    elif ss == set([("B", False), ("D", True)]):
+    elif ss == set([("Bronchitis", False), ("EitherTL", True)]):
         return 1 / 11
-    elif ss == set([("B", True), ("D", False)]):
+    elif ss == set([("Bronchitis", True), ("EitherTL", False)]):
         return 1 / 39
-    elif ss == set([("B", False), ("D", False)]):
+    elif ss == set([("Bronchitis", False), ("EitherTL", False)]):
         return 1 / 5
     else:
         raise ValueError("Unknown scope product")
 
-# instantiate factors with factor functions and implied random 
-# variables in scope
 
-E_cf = Factor(gid="E_cf", scope_vars=set([E]), factor_fn=phi_e)
-EF_cf = Factor(
-    gid="EF_cf", scope_vars=set([E, F]), factor_fn=phi_fe
+# instantiate factors with factor functions and implied random variables in scope
+VisitAsia_cf = Factor(gid="VisitAsia_cf", scope_vars=set([VisitAsia]), factor_fn=phi_VisitAsia)
+VisitAsiaTuberculosis_cf = Factor(
+    gid="VisitAsiaTuberculosis_cf", scope_vars=set([VisitAsia, Tuberculosis]), 
+    factor_fn=phi_TuberculosisVisitAsia
 )
-DG_cf = Factor(
-    gid="DG_cf", scope_vars=set([D, G]), factor_fn=phi_dg
+EitherTLXray_cf = Factor(
+    gid="EitherTLXray_cf", scope_vars=set([EitherTL, Xray]), factor_fn=phi_EitherTLXray
 )
-A_cf = Factor(gid="A_cf", scope_vars=set([A]), factor_fn=phi_a)
-AB_cf = Factor(
-    gid="AB_cf", scope_vars=set([A, B]), factor_fn=phi_ab
+Smoking_cf = Factor(gid="Smoking_cf", scope_vars=set([Smoking]), factor_fn=phi_Smoking)
+SmokingBronchitis_cf = Factor(
+    gid="SmokingBronchitis_cf", scope_vars=set([Smoking, Bronchitis]),
+    factor_fn=phi_SmokingBronchitis
 )
-AC_cf = Factor(
-    gid="AC_cf", scope_vars=set([A, C]), factor_fn=phi_ac
+SmokingLungCancer_cf = Factor(
+    gid="SmokingLungCancer_cf", scope_vars=set([Smoking, LungCancer]),
+    factor_fn=phi_SmokingLungCancer
 )
-CDF_cf = Factor(
-    gid="CDF_cf", scope_vars=set([D, C, F]), factor_fn=phi_cdf
+LungCancerEitherTLTuberculosis_cf = Factor(
+    gid="LungCancerEitherTLTuberculosis_cf",
+    scope_vars=set([EitherTL, LungCancer, Tuberculosis]), factor_fn=phi_LungCancerEitherTLTuberculosis
 )
 
-IHB_cf = Factor(
-    gid="IHB_cf", scope_vars=set([H, I, B]), factor_fn=phi_ihb
+DysponeaCoughBronchitis_cf = Factor(
+    gid="IHBronchitis_cf", scope_vars=set([Cough, Dysponea, Bronchitis]), factor_fn=phi_DysponeaCoughBronchitis
 )
 
-HBD_cf = Factor(
-    gid="HBD_cf", scope_vars=set([H, D, B]), factor_fn=phi_hbd
+CoughBronchitisEitherTL_cf = Factor(
+    gid="CoughBronchitisEitherTL_cf", scope_vars=set([Cough, EitherTL, Bronchitis]), 
+    factor_fn=phi_CoughBronchitisEitherTL
 )
-BD_cf = Factor(
-    gid="BD_cf", scope_vars=set([D, B]), factor_fn=phi_bd
+BronchitisEitherTL_cf = Factor(
+    gid="BronchitisEitherTL_cf", 
+    scope_vars=set([EitherTL, Bronchitis]), 
+    factor_fn=phi_BronchitisEitherTL
 )
 
 
 # instantiate lwf chain graph and make a query
 cowell = LWFChainGraph(
     gid="cowell",
-    nodes=set([A, B, C, D, E, F, G, H, I]),
-    edges=set([AB_c, AC_c, CD_c, EF_c, FD_c, 
-        DG_c, DH_c, BH_c, BI_c, HI_c]),
-    factors=set([E_cf, EF_cf, DG_cf, A_cf, AB_cf, 
-        AC_cf, CDF_cf, IHB_cf, HBD_cf, BD_cf])
+    nodes=set([Smoking, Bronchitis, LungCancer, EitherTL, VisitAsia, 
+               Tuberculosis, Xray, Cough, Dysponea]),
+    edges=set([SmokingBronchitis_c, SmokingLungCancer_c, 
+               LungCancerEitherTL_c,
+               VisitAsiaTuberculosis_c, TuberculosisEitherTL_c, 
+               EitherTLXray_c, EitherTLCough_c, BronchitisCough_c,
+               BronchitisDysponea_c, CoughDysponea_c]),
+    factors=set([VisitAsia_cf, VisitAsiaTuberculosis_cf,
+                 EitherTLXray_cf, Smoking_cf,
+                 SmokingBronchitis_cf,
+                 SmokingLungCancer_cf, 
+                 LungCancerEitherTLTuberculosis_cf,
+                 DysponeaCoughBronchitis_cf, CoughBronchitisEitherTL_cf, 
+                 BronchitisEitherTL_cf])
 )
-evidences = set([("E", True), ("A", True), ("G", False)])
+evidences = set([("VisitAsia", True), ("Smoking", True), ("Xray", False)])
 
 final_factor, a = cowell.cond_prod_by_variable_elimination(
-    set([B]), evidences
+    set([Bronchitis]), evidences
 )
 
-round(final_factor.phi_normal(set([("B", True)])), 4)
+round(FactorOps.phi_normal(final_factor, set([("Bronchitis", True)])), 4)
+
 # 0.60
 
 \endcode
