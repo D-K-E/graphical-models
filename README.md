@@ -98,7 +98,7 @@ OK
 
 ## Usage Examples
 
-See Related Pages section under the [docs](https://d-k-e.github.io/graphical-models/).
+See [Related Pages](https://d-k-e.github.io/graphical-models/html/pages.html) section under the [docs](https://d-k-e.github.io/graphical-models/).
 
 ## Guide for Contributors
 
