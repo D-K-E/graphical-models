@@ -1,0 +1,3 @@
+"""
+gsearchresult.py tests
+"""
