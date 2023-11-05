@@ -66,7 +66,7 @@ class CodomainValue(SetValue):
 
 
 Codomain = Set[CodomainValue]
-Range = Set[CodomainValue]
+Range = FrozenSet[CodomainValue]
 RangeSubset = Range
 OrderedCodomain = List[CodomainValue]
 

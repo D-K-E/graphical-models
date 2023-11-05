@@ -247,18 +247,11 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         """!
         \brief Image of the random variable's function.
 
-        There two ways of obtaining an image. We either specify a sampler at
-        the constructor of RandomVariable or we specify it in this function. If
-        both of the samplers are None during the calling of this method, we
-        raise a TypeError. If both samplers are not None, we use the sampler
-        provided during the function call and ignore the one provided in the
-        constructor.
-
-        \param sampler a function for sampling the domain of random variable if
-        it is continuous or if it is too large.
+        The image of the underlying function of the random variable is obtained
+        through the sampler passed in the constructor.
 
         \returns either full range of the random variable or its subset
-        depending on the sampler.
+        depending on the sampler. Both have `frozenset` as their type.
 
         \raises TypeError when both samplers are None, we raise type error.
 
