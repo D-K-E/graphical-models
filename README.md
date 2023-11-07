@@ -98,7 +98,9 @@ OK
 
 ## Usage Examples
 
-See [Related Pages](https://d-k-e.github.io/graphical-models/html/pages.html) section under the [docs](https://d-k-e.github.io/graphical-models/).
+See the [example notebooks](./examples/) on how to use different PGM types.
+Please note that running the examples require installing `jupyterlab` along
+with PyGModels.
 
 ## Guide for Contributors
 
