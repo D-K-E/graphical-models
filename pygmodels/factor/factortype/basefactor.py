@@ -18,6 +18,7 @@ from pygmodels.graph.graphtype.graphobj import GraphObject
 from pygmodels.randvar.randvartype.abstractrandvar import (
     AbstractRandomVariable,
 )
+from pygmodels.randvar.randvarops.baserandvarops import RandomVariableOps
 from pygmodels.value.value import NumericValue
 
 
@@ -34,7 +35,7 @@ class BaseFactor(AbstractFactor, GraphObject):
         """"""
         super().__init__(oid=gid, odata=data)
         for svar in scope_vars:
-            vs = svar.values()
+            vs = RandomVariableOps.values(svar, sampler=lambda x: x)  # .values()
             if any([v < 0 for v in vs]):
                 msg = "Scope variables contain a negative value."
                 msg += " Negative factors are not allowed"
@@ -48,9 +49,7 @@ class BaseFactor(AbstractFactor, GraphObject):
     def __str__(self):
         """"""
         msg = "Factor: " + self.id() + "\n"
-        msg += "Scope variables: " + str(
-            {s.id(): s for s in self.scope_vars()}
-        )
+        msg += "Scope variables: " + str({s.id(): s for s in self.scope_vars()})
         msg += "Factor function: " + str(self.factor_fn)
         return msg
 
@@ -79,16 +78,12 @@ class BaseFactor(AbstractFactor, GraphObject):
             return x
 
         other_domain = [
-            s.value_set(
-                value_filter=value_filter, value_transform=value_transform
-            )
+            s.value_set(value_filter=value_filter, value_transform=value_transform)
             for s in n.scope_vars()
             if rvar_filter(s)
         ]
         this_domain = [
-            s.value_set(
-                value_filter=value_filter, value_transform=value_transform
-            )
+            s.value_set(value_filter=value_filter, value_transform=value_transform)
             for s in self.scope_vars()
             if rvar_filter(s)
         ]
@@ -136,9 +131,7 @@ class BaseFactor(AbstractFactor, GraphObject):
         """
         svar = f.scope_vars()
         fn = f.phi
-        return BaseFactor(
-            gid=f.id(), data=f.data(), factor_fn=fn, scope_vars=svar
-        )
+        return BaseFactor(gid=f.id(), data=f.data(), factor_fn=fn, scope_vars=svar)
 
     @classmethod
     def from_joint_vars(cls, svars: FactorScope):

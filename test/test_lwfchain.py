@@ -13,7 +13,11 @@ from pygmodels.graph.graphtype.edge import Edge, EdgeType
 from pygmodels.pgm.pgmodel.lwfchain import LWFChainGraph
 from pygmodels.pgm.pgmodel.markov import ConditionalRandomField
 from pygmodels.pgm.pgmtype.pgmodel import PGModel
-from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable
+
+# from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable
+from pygmodels.randvar.randvarmodel.categorical import (
+    NumCatRandomVariable as NumCatRVariable,
+)
 
 
 class LWFChainGraphTest(unittest.TestCase):
@@ -23,37 +27,37 @@ class LWFChainGraphTest(unittest.TestCase):
         """"""
         idata = {"outcome-values": [True, False]}
         self.A = NumCatRVariable(
-            node_id="A", input_data=idata, marginal_distribution=lambda x: 0.5
+            randvar_id="A", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.B = NumCatRVariable(
-            node_id="B", input_data=idata, marginal_distribution=lambda x: 0.5
+            randvar_id="B", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.C = NumCatRVariable(
-            node_id="C", input_data=idata, marginal_distribution=lambda x: 0.5
+            randvar_id="C", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.D = NumCatRVariable(
-            node_id="D", input_data=idata, marginal_distribution=lambda x: 0.5
+            randvar_id="D", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.E = NumCatRVariable(
-            node_id="E", input_data=idata, marginal_distribution=lambda x: 0.5
+            randvar_id="E", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.F = NumCatRVariable(
-            node_id="F", input_data=idata, marginal_distribution=lambda x: 0.5
+            randvar_id="F", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.G = NumCatRVariable(
-            node_id="G", input_data=idata, marginal_distribution=lambda x: 0.5
+            randvar_id="G", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.H = NumCatRVariable(
-            node_id="H", input_data=idata, marginal_distribution=lambda x: 0.5
+            randvar_id="H", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.Irvar = NumCatRVariable(
-            node_id="I", input_data=idata, marginal_distribution=lambda x: 0.5
+            randvar_id="I", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.K = NumCatRVariable(
-            node_id="K", input_data=idata, marginal_distribution=lambda x: 0.5
+            randvar_id="K", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         self.L = NumCatRVariable(
-            node_id="L", input_data=idata, marginal_distribution=lambda x: 0.5
+            randvar_id="L", input_data=idata, marginal_distribution=lambda x: 0.5
         )
         #
         #  Cowell 2005, p. 110
@@ -145,9 +149,7 @@ class LWFChainGraphTest(unittest.TestCase):
             else:
                 raise ValueError("Unknown scope product")
 
-        self.E_cf = Factor(
-            gid="E_cf", scope_vars=set([self.E]), factor_fn=phi_e
-        )
+        self.E_cf = Factor(gid="E_cf", scope_vars=set([self.E]), factor_fn=phi_e)
 
         def phi_fe(scope_product):
             """!
@@ -207,9 +209,7 @@ class LWFChainGraphTest(unittest.TestCase):
             else:
                 raise ValueError("Unknown scope product")
 
-        self.A_cf = Factor(
-            gid="A_cf", scope_vars=set([self.A]), factor_fn=phi_a
-        )
+        self.A_cf = Factor(gid="A_cf", scope_vars=set([self.A]), factor_fn=phi_a)
 
         def phi_ab(scope_product):
             """!
@@ -570,11 +570,7 @@ class LWFChainGraphTest(unittest.TestCase):
     def test_ccomponents(self):
         """"""
         ccomps_nds = set(
-            [
-                set(s).pop()
-                for s in self.cowell.ccomponents
-                if isinstance(s, frozenset)
-            ]
+            [set(s).pop() for s in self.cowell.ccomponents if isinstance(s, frozenset)]
         )
         ccomps_undi = [
             s for s in self.cowell.ccomponents if isinstance(s, UndiGraph)
@@ -593,16 +589,12 @@ class LWFChainGraphTest(unittest.TestCase):
     def test_parents_of_K(self):
         """"""
         ccomps_undi = [
-            s
-            for s in enumerate(self.cowell.ccomponents)
-            if isinstance(s[1], UndiGraph)
+            s for s in enumerate(self.cowell.ccomponents) if isinstance(s[1], UndiGraph)
         ].pop()
         parents_k = self.cowell.parents_of_K(ccomps_undi[0])
         self.assertEqual(parents_k, set([self.B, self.D]))
         ccomps_undi = [
-            s
-            for s in enumerate(self.koller.ccomponents)
-            if isinstance(s[1], frozenset)
+            s for s in enumerate(self.koller.ccomponents) if isinstance(s[1], frozenset)
         ]
         parents = set()
         for c in ccomps_undi:
@@ -616,9 +608,7 @@ class LWFChainGraphTest(unittest.TestCase):
                     frozenset([self.B, frozenset()]),
                     frozenset([self.A, frozenset()]),
                     frozenset([self.H, frozenset()]),
-                    frozenset(
-                        [self.Irvar, frozenset([self.H, self.C, self.E])]
-                    ),
+                    frozenset([self.Irvar, frozenset([self.H, self.C, self.E])]),
                 ]
             ),
         )
@@ -626,9 +616,7 @@ class LWFChainGraphTest(unittest.TestCase):
     def test_K(self):
         """"""
         ccomps_undi = [
-            s
-            for s in enumerate(self.cowell.ccomponents)
-            if isinstance(s[1], UndiGraph)
+            s for s in enumerate(self.cowell.ccomponents) if isinstance(s[1], UndiGraph)
         ]
         hi = self.cowell.K(ccomps_undi[0][0])
         self.assertEqual(hi.V, set([self.H, self.Irvar]))
@@ -735,9 +723,7 @@ class LWFChainGraphTest(unittest.TestCase):
         for e_val in comp_vals:
             ename = e_val[0]
             e_v = e_val[1]
-            f = round(
-                FactorOps.phi_normal(final_factor, set([(ename, e_v)])), 4
-            )
+            f = round(FactorOps.phi_normal(final_factor, set([(ename, e_v)])), 4)
             self.assertEqual(f, e_val[2])
 
     def test_cond_prod_by_variable_elimination_evidences_I(self):
@@ -752,9 +738,7 @@ class LWFChainGraphTest(unittest.TestCase):
         for e_val in comp_vals:
             ename = e_val[0]
             e_v = e_val[1]
-            f = round(
-                FactorOps.phi_normal(final_factor, set([(ename, e_v)])), 4
-            )
+            f = round(FactorOps.phi_normal(final_factor, set([(ename, e_v)])), 4)
             self.assertEqual(f, e_val[2])
 
     def test_cond_prod_by_variable_elimination_evidences_H(self):
@@ -769,9 +753,7 @@ class LWFChainGraphTest(unittest.TestCase):
         for e_val in comp_vals:
             ename = e_val[0]
             e_v = e_val[1]
-            f = round(
-                FactorOps.phi_normal(final_factor, set([(ename, e_v)])), 4
-            )
+            f = round(FactorOps.phi_normal(final_factor, set([(ename, e_v)])), 4)
             self.assertEqual(f, e_val[2])
 
     def test_cond_prod_by_variable_elimination_evidences_C(self):
@@ -786,9 +768,7 @@ class LWFChainGraphTest(unittest.TestCase):
         for e_val in comp_vals:
             ename = e_val[0]
             e_v = e_val[1]
-            f = round(
-                FactorOps.phi_normal(final_factor, set([(ename, e_v)])), 4
-            )
+            f = round(FactorOps.phi_normal(final_factor, set([(ename, e_v)])), 4)
             self.assertEqual(f, e_val[2])
 
     def test_cond_prod_by_variable_elimination_evidences_F(self):
@@ -803,9 +783,7 @@ class LWFChainGraphTest(unittest.TestCase):
         for e_val in comp_vals:
             ename = e_val[0]
             e_v = e_val[1]
-            f = round(
-                FactorOps.phi_normal(final_factor, set([(ename, e_v)])), 4
-            )
+            f = round(FactorOps.phi_normal(final_factor, set([(ename, e_v)])), 4)
             self.assertEqual(f, e_val[2])
 
     @unittest.skip("unfinished test")

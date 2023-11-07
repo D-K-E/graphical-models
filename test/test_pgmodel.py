@@ -15,7 +15,10 @@ from pygmodels.factor.factorfunc.factoralg import FactorAlgebra
 from pygmodels.factor.factorfunc.factorops import FactorOps
 from pygmodels.graph.graphtype.edge import Edge, EdgeType
 from pygmodels.pgm.pgmtype.pgmodel import PGModel, min_unmarked_neighbours
-from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable
+#from pygmodels.pgm.pgmtype.randomvariable import NumCatRVariable
+from pygmodels.randvar.randvarmodel.categorical import (
+    NumCatRandomVariable as NumCatRVariable,
+)
 
 
 class PGModelTest(unittest.TestCase):
@@ -31,17 +34,17 @@ class PGModelTest(unittest.TestCase):
             "c": {"outcome-values": [True, False]},
         }
         cls.a = NumCatRVariable(
-            node_id="a",
+            randvar_id="a",
             input_data=idata["a"],
             marginal_distribution=lambda x: 0.6 if x else 0.4,
         )
         cls.b = NumCatRVariable(
-            node_id="b",
+            randvar_id="b",
             input_data=idata["b"],
             marginal_distribution=lambda x: 0.5 if x else 0.5,
         )
         cls.c = NumCatRVariable(
-            node_id="c",
+            randvar_id="c",
             input_data=idata["c"],
             marginal_distribution=lambda x: 0.5 if x else 0.5,
         )
@@ -95,31 +98,27 @@ class PGModelTest(unittest.TestCase):
             else:
                 raise ValueError("product error")
 
-        cls.ba_f = Factor(
-            gid="ba", scope_vars=set([cls.b, cls.a]), factor_fn=phi_ba
-        )
-        cls.cb_f = Factor(
-            gid="cb", scope_vars=set([cls.c, cls.b]), factor_fn=phi_cb
-        )
+        cls.ba_f = Factor(gid="ba", scope_vars=set([cls.b, cls.a]), factor_fn=phi_ba)
+        cls.cb_f = Factor(gid="cb", scope_vars=set([cls.c, cls.b]), factor_fn=phi_cb)
         cls.a_f = Factor(gid="a", scope_vars=set([cls.a]), factor_fn=phi_a)
 
     def cls_nodes_2(cls):
         """"""
         odata = {"outcome-values": [True, False]}
         cls.J = NumCatRVariable(
-            node_id="J", input_data=odata, marginal_distribution=lambda x: 0.5
+            randvar_id="J", input_data=odata, marginal_distribution=lambda x: 0.5
         )
         cls.Irvar = NumCatRVariable(
-            node_id="I", input_data=odata, marginal_distribution=lambda x: 0.5
+            randvar_id="I", input_data=odata, marginal_distribution=lambda x: 0.5
         )
         cls.X = NumCatRVariable(
-            node_id="X", input_data=odata, marginal_distribution=lambda x: 0.5
+            randvar_id="X", input_data=odata, marginal_distribution=lambda x: 0.5
         )
         cls.Y = NumCatRVariable(
-            node_id="Y", input_data=odata, marginal_distribution=lambda x: 0.5
+            randvar_id="Y", input_data=odata, marginal_distribution=lambda x: 0.5
         )
         cls.Orvar = NumCatRVariable(
-            node_id="O", input_data=odata, marginal_distribution=lambda x: 0.5
+            randvar_id="O", input_data=odata, marginal_distribution=lambda x: 0.5
         )
         cls.JX = Edge(
             edge_id="JX",
@@ -166,9 +165,7 @@ class PGModelTest(unittest.TestCase):
             """"""
             return phi_ij(scope_product, i="I")
 
-        cls.I_f = Factor(
-            gid="I_f", scope_vars=set([cls.Irvar]), factor_fn=phi_i
-        )
+        cls.I_f = Factor(gid="I_f", scope_vars=set([cls.Irvar]), factor_fn=phi_i)
 
         def phi_j(scope_product):
             """"""
@@ -190,9 +187,7 @@ class PGModelTest(unittest.TestCase):
             else:
                 raise ValueError("scope product unknown")
 
-        cls.JY_f = Factor(
-            gid="JY_f", scope_vars=set([cls.J, cls.Y]), factor_fn=phi_jy
-        )
+        cls.JY_f = Factor(gid="JY_f", scope_vars=set([cls.J, cls.Y]), factor_fn=phi_jy)
 
     def cls_nodes_3(cls):
         """"""
@@ -276,9 +271,7 @@ class PGModelTest(unittest.TestCase):
             gid="mpe",
             nodes=set([self.J, self.Y, self.X, self.Irvar, self.Orvar]),
             edges=set([self.JY, self.JX, self.YO, self.IX, self.XO]),
-            factors=set(
-                [self.I_f, self.J_f, self.JY_f, self.IJX_f, self.XYO_f]
-            ),
+            factors=set([self.I_f, self.J_f, self.JY_f, self.IJX_f, self.XYO_f]),
         )
 
         # profiler code
@@ -308,9 +301,7 @@ class PGModelTest(unittest.TestCase):
 
     def test_factors(self):
         """"""
-        self.assertEqual(
-            self.pgm.factors(), set([self.ba_f, self.cb_f, self.a_f])
-        )
+        self.assertEqual(self.pgm.factors(), set([self.ba_f, self.cb_f, self.a_f]))
 
     def test_closure_of(self):
         """"""
@@ -318,9 +309,7 @@ class PGModelTest(unittest.TestCase):
 
     def test_conditionaly_independent_of_t(self):
         """"""
-        self.assertEqual(
-            self.pgm.is_conditionaly_independent_of(self.a, self.c), True
-        )
+        self.assertEqual(self.pgm.is_conditionaly_independent_of(self.a, self.c), True)
 
     def test_conditionaly_independent_of_f(self):
         """"""
@@ -335,17 +324,13 @@ class PGModelTest(unittest.TestCase):
     def test_is_scope_subset_of_t(self):
         """"""
         self.assertEqual(
-            self.pgm.is_scope_subset_of(
-                self.ba_f, set([self.a, self.b, self.c])
-            ),
+            self.pgm.is_scope_subset_of(self.ba_f, set([self.a, self.b, self.c])),
             True,
         )
 
     def test_is_scope_subset_of_f(self):
         """"""
-        self.assertEqual(
-            self.pgm.is_scope_subset_of(self.ba_f, set([self.c])), False
-        )
+        self.assertEqual(self.pgm.is_scope_subset_of(self.ba_f, set([self.c])), False)
 
     def test_scope_subset_factors(self):
         """"""
@@ -356,9 +341,7 @@ class PGModelTest(unittest.TestCase):
 
     def test_get_factor_product_var(self):
         """"""
-        p, f, of = self.pgm.get_factor_product_var(
-            fs=self.pgm.factors(), Z=self.a
-        )
+        p, f, of = self.pgm.get_factor_product_var(fs=self.pgm.factors(), Z=self.a)
         self.assertEqual(f, set([self.a_f, self.ba_f]))
         self.assertEqual(of, set([self.cb_f]))
         afbf, v = FactorAlgebra.product(f=self.a_f, other=self.ba_f)
@@ -373,9 +356,7 @@ class PGModelTest(unittest.TestCase):
         """!
         based on values of Darwiche 2009 p. 133
         """
-        ofacs = self.pgm.sum_prod_var_eliminate(
-            factors=self.pgm.factors(), Z=self.a
-        )
+        ofacs = self.pgm.sum_prod_var_eliminate(factors=self.pgm.factors(), Z=self.a)
         smf = [o for o in ofacs if o.id() != "cb"][0]
         for s in FactorOps.cartesian(smf):
             ss = set(s)
@@ -403,32 +384,21 @@ class PGModelTest(unittest.TestCase):
     def test_order_by_greedy_metric(self):
         """!"""
         ns = set([self.a, self.b])
-        cards = self.pgm.order_by_greedy_metric(
-            nodes=ns, s=min_unmarked_neighbours
-        )
+        cards = self.pgm.order_by_greedy_metric(nodes=ns, s=min_unmarked_neighbours)
         self.assertEqual(cards, {"a": 0, "b": 1})
         ns = set([self.c, self.b])
-        cards2 = self.pgm.order_by_greedy_metric(
-            nodes=ns, s=min_unmarked_neighbours
-        )
+        cards2 = self.pgm.order_by_greedy_metric(nodes=ns, s=min_unmarked_neighbours)
         self.assertEqual(cards2, {"c": 0, "b": 1})
         ns = set([self.c, self.a])
-        cards3 = self.pgm.order_by_greedy_metric(
-            nodes=ns, s=min_unmarked_neighbours
-        )
-        self.assertTrue(
-            cards3 == {"a": 0, "c": 1} or cards3 == {"a": 1, "c": 0}
-        )
+        cards3 = self.pgm.order_by_greedy_metric(nodes=ns, s=min_unmarked_neighbours)
+        self.assertTrue(cards3 == {"a": 0, "c": 1} or cards3 == {"a": 1, "c": 0})
 
     def test_reduce_factors_with_evidence(self):
         """"""
         ev = set([("a", True), ("b", True)])
         fs, es = self.pgm.reduce_factors_with_evidence(ev)
         fs_s = set(
-            [
-                frozenset([frozenset(s) for s in FactorOps.cartesian(f)])
-                for f in fs
-            ]
+            [frozenset([frozenset(s) for s in FactorOps.cartesian(f)]) for f in fs]
         )
         self.assertEqual(
             fs_s,
