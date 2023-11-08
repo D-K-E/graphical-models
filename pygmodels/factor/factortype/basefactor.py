@@ -21,6 +21,9 @@ from pygmodels.randvar.randvartype.abstractrandvar import (
 from pygmodels.randvar.randvarops.baserandvarops import RandomVariableOps
 from pygmodels.value.value import NumericValue
 
+from pygmodels.utils import is_type, is_optional_type
+from types import FunctionType, LambdaType
+
 
 class BaseFactor(AbstractFactor, GraphObject):
     """"""
@@ -34,6 +37,8 @@ class BaseFactor(AbstractFactor, GraphObject):
     ):
         """"""
         super().__init__(oid=gid, odata=data)
+        is_type(scope_vars, "scope_vars", FactorScope, True)
+        is_optional_type(factor_fn, "factor_fn", FunctionType, True)
         for svar in scope_vars:
             vs = RandomVariableOps.values(svar, sampler=lambda x: x)  # .values()
             if any([v < 0 for v in vs]):
@@ -122,6 +127,7 @@ class BaseFactor(AbstractFactor, GraphObject):
 
         \endcode
         """
+        is_type(f, "f", LambdaType, True)
         return f(self.svars)
 
     @classmethod
@@ -129,6 +135,7 @@ class BaseFactor(AbstractFactor, GraphObject):
         """!
         \brief make BaseFactor from an AbstractFactor
         """
+        is_type(f, "f", AbstractFactor, True)
         svar = f.scope_vars()
         fn = f.phi
         return BaseFactor(gid=f.id(), data=f.data(), factor_fn=fn, scope_vars=svar)
@@ -157,6 +164,7 @@ class BaseFactor(AbstractFactor, GraphObject):
 
         \endcode
         """
+        is_type(f, "f", FactorScope, True)
         return BaseFactor(gid=str(uuid4()), scope_vars=svars)
 
     @classmethod
@@ -168,9 +176,11 @@ class BaseFactor(AbstractFactor, GraphObject):
         """!
         \brief Make a factor from scope variables and a preference function
         """
+        is_type(f, "f", FactorScope, True)
+        is_type(fn, "fn", FunctionType, True)
         return BaseFactor(gid=str(uuid4()), scope_vars=svars, factor_fn=fn)
 
-    def phi(self, scope_product: DomainSliceSet) -> float:
+    def __call__(self, scope_product: DomainSliceSet) -> float:
         """!
         \brief obtain a factor value for given scope random variables
 
@@ -193,9 +203,10 @@ class BaseFactor(AbstractFactor, GraphObject):
 
         \endcode
         """
+        is_type(scope_product, "scope_product", DomainSliceSet, True)
         return self.factor_fn(scope_product)
 
-    def partition_value(self, domains: FactorDomain):
+    def partition_value(self, domains: FactorDomain) -> float:
         """!
         \brief compute partition value aka normalizing value for the factor
         from Koller, Friedman 2009 p. 105
@@ -250,5 +261,6 @@ class BaseFactor(AbstractFactor, GraphObject):
         \endcode
 
         """
+        is_type(domains, "domains", FactorDomain, True)
         scope_matches = list(product(*domains))
         return sum([self.phi(scope_product=sv) for sv in scope_matches])

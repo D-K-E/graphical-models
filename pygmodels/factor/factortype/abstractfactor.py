@@ -28,11 +28,14 @@ class AbstractFactor(AbstractGraphObj):
         raise NotImplementedError
 
     @abstractmethod
-    def partition_value(self, vd: FactorDomain):
+    def partition_value(self, vd: FactorDomain) -> float:
         """"""
         raise NotImplementedError
 
+    def Z(self, vd: FactorDomain) -> float:
+        return self.partition_value(vd=vd)
+
     @abstractmethod
-    def phi(self, scope_product: DomainSliceSet):
+    def __call__(self, scope_product: DomainSliceSet):
         """"""
         raise NotImplementedError
