@@ -13,7 +13,7 @@ from pygmodels.randvar.randvartype.abstractrandvar import (
 )
 
 # for type checking
-from pygmodels.utils import is_type
+from pygmodels.utils import is_type, is_optional_type
 from pygmodels.value.codomain import CodomainValue, Range
 from pygmodels.value.domain import Domain, DomainValue, DomainSample
 from pygmodels.value.domain import Population
@@ -200,7 +200,12 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
 
         constructor for a random variable"""
         super().__init__(oid=randvar_id, odata=data if data is not None else {})
+        # check type errors
+        is_optional_type(randvar_name, "randvar_name", str, True)
         self.name = randvar_name
+        #
+        is_optional_type(data, "data", dict, True)
+        is_optional_type(input_data, "input_data", Domain, True)
         if input_data is None and data is None:
             raise ValueError("Either input data or data must not be None")
         if input_data is None and data is not None:
