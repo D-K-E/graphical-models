@@ -4,23 +4,53 @@ random variable interface. Inheriting from this object would make your object
 usable for all the operations defined in \see baserandvarops.py.
 """
 
-from typing import Callable, List, Optional, Set
+from typing import Callable, List, Optional, Set, Tuple, Dict
+from collections.abc import Iterable
 
 from pygmodels.graph.graphtype.graphobj import GraphObject
 from pygmodels.randvar.randvartype.abstractrandvar import (
     AbstractEvidence,
+    AbstractEvent,
     AbstractRandomVariable,
+    AbstractRandomVariableMember,
+    PossibleOutcome,
 )
 
 # for type checking
 from pygmodels.utils import is_type, is_optional_type
 from pygmodels.value.codomain import CodomainValue, Range
 from pygmodels.value.domain import Domain, DomainValue, DomainSample
-from pygmodels.value.domain import Population
 from pygmodels.value.value import NumericValue
+from types import FunctionType
 
 
-class BaseEvidence(AbstractEvidence, GraphObject):
+class BaseRandomVariableMember(AbstractRandomVariableMember, GraphObject):
+    """"""
+
+    def __init__(
+        self,
+        member_id: str,
+        randvar_id: str,
+        description: Optional[str] = None,
+        data: Optional[dict] = None,
+    ):
+        """"""
+        super().__init__(oid=member_id, odata=data)
+        is_type(randvar_id, "randvar_id", str, True)
+        self.rand_id = randvar_id
+        is_optional_type(description, "description", str, True)
+        self.descr = description
+
+    def belongs_to(self) -> str:
+        "Identifier of the random variable associated to evidence"
+        return self.rand_id
+
+    def description(self) -> Optional[str]:
+        "description of observation conditions of the evidence"
+        return self.descr
+
+
+class BaseEvidence(AbstractEvidence, BaseRandomVariableMember):
     """!
     \brief A base class that implements the basic methods of the abstract evidence
     """
@@ -30,59 +60,26 @@ class BaseEvidence(AbstractEvidence, GraphObject):
         evidence_id: str,
         value: CodomainValue,
         randvar_id: str,
-        description: Optional[str] = None,
         data: Optional[dict] = None,
     ):
         """"""
-        is_type(
-            evidence_id,
-            originType=str,
-            shouldRaiseError=True,
-            val_name="evidence_id",
-        )
-        is_type(
-            randvar_id,
-            originType=str,
-            shouldRaiseError=True,
-            val_name="randvar_id",
-        )
         is_type(
             value,
             originType=CodomainValue,
             shouldRaiseError=True,
             val_name="value",
         )
-        if description is not None:
-            is_type(
-                description,
-                originType=str,
-                shouldRaiseError=True,
-                val_name="description",
-            )
-        if data is not None:
-            is_type(
-                data,
-                originType=dict,
-                shouldRaiseError=True,
-                val_name="data",
-            )
-        # init graphobj
-        super().__init__(oid=evidence_id, odata=data if data is not None else {})
-        self.rand_id = randvar_id
+        super().__init__(
+            member_id=evidence_id,
+            randvar_id=randvar_id,
+            data=data,
+            description=description,
+        )
         self.val = value
-        self.descr = description
-
-    def belongs_to(self) -> str:
-        "Identifier of the random variable associated to evidence"
-        return self.rand_id
 
     def value(self) -> CodomainValue:
         "Value of the evidence"
         return self.val
-
-    def description(self) -> Optional[str]:
-        "description of observation conditions of the evidence"
-        return self.descr
 
     def __eq__(self, other: AbstractEvidence) -> bool:
         """!
@@ -122,6 +119,107 @@ class BaseEvidence(AbstractEvidence, GraphObject):
         return hash(self.__str__())
 
 
+class BaseEvent(AbstractEvent, BaseRandomVariableMember):
+    """!
+    \brief A base class that implements the basic methods of the abstract event
+    """
+
+    def __init__(
+        self,
+        event_id: str,
+        randvar_id: str,
+        func: Callable[[Domain], PossibleOutcomes],
+        data: Optional[dict] = None,
+        description: Optional[str] = None,
+    ):
+        """"""
+        super().__init__(
+            member_id=event_id,
+            randvar_id=randvar_id,
+            data=data,
+            description=description,
+        )
+        is_type(func, "func", FunctionType, True)
+        self.f = func
+
+    def __call__(self, sample: DomainValue) -> PossibleOutcome:
+        """"""
+        is_type(sample, "sample", DomainValue, True)
+        return self.f(sample)
+
+
+class RandomVariableInitializer:
+    """!
+    \brief It contains members for initializing a random variable
+    """
+
+    def __init__(
+        self,
+        event: BaseEvent,
+        event_input: Optional[Domain] = None,
+        input_sampler: Callable[[Domain], Iterable[DomainValue]] = lambda xs: frozenset(
+            xs
+        ),
+        marginal_distribution: Optional[
+            Callable[[CodomainValue], float]
+        ] = lambda x: 1.0,
+    ):
+        """
+        \param event_input domain of event
+        \param event a measurable function which maps a domain to codomain
+        \param input_sampler function that samples the \see event_input
+        \param marginal_distribution a function that takes in a value from
+        codomain of the random variable and outputs a value in the range [0,1].
+        Notice that is not a local distribution, it should be the marginal
+        distribution that is independent of local structure.
+
+        """
+        is_optional_type(event_input, "event_input", Domain, True)
+        self.event_input = event_input
+        is_optional(event, "event", BaseEvent, True)
+        self.event = event
+        is_optional(input_sampler, "input_sampler", FunctionType, True)
+        self.input_sampler = input_sampler
+        is_optional_type(event_sample_nb, "event_sample_nb", int, True)
+        self.arg_dist = marginal_distribution
+        self.distribution = self.init()
+
+    def init(self):
+        """check if initialization is possible"""
+        if any(
+            [
+                a is None
+                for a in [
+                    self.event_input,
+                    self.event,
+                    self.input_sampler,
+                    self.nb_samples,
+                ]
+            ]
+        ) or (self.arg_dist is None):
+            msg = "Either [event_input, event, event_sample_nb, input_sampler]"
+            msg += " or marginal_distribution must be provided to initialize"
+            msg += " random variable"
+            raise ValueError(msg)
+        if self.arg_dist is None:
+            out_count = {}
+            sample_count = 0
+            for input_sample in self.input_sampler(self.event_input):
+                output = self.event(input_sample)
+                if output not in out_count:
+                    out_count[output] = 0
+                out_count[output] += 1
+                sample_count += 1
+            #
+            def dist_fn(out: CodomainValue):
+                value = out_count[out] / sample_count
+                return value
+
+            return dist_fn
+        else:
+            return self.arg_dist
+
+
 class BaseRandomVariable(AbstractRandomVariable, GraphObject):
     """!
     \brief a Random Variable as defined by Koller, Friedman 2009, p. 20
@@ -131,43 +229,29 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
     Formally, a random variable, such as Grade, is defined by a function that
     associates with each outcome in \f$\Omega\f$ a value.
     </blockquote>
-
-    It is important to note that domain and codomain of random variables are
-    quite ambiguous. The \f$\Omega\f$ in the definition is set of possible
-    outcomes, \see Domain object. In the context of probabilistic
-    graphical models each random variable is also considered as a \see Node of
-    a \see Graph. This object is meant to be a base class for further needs.
-    It lacks quite a bit of methods. Hence it can not be used directly in a
-    \see PGModel.
-
     """
 
     def __init__(
         self,
         randvar_id: str,
+        initializer: Optional[RandomVariableInitializer] = None,
         randvar_name: Optional[str] = None,
-        data: Optional[dict] = None,
-        input_data: Optional[Domain] = None,
-        f: Callable[[DomainValue], CodomainValue] = lambda x: x,
-        marginal_distribution: Callable[[CodomainValue], float] = lambda x: 1.0,
-        sampler: Callable[[Population], DomainSample] = lambda xs: frozenset(xs),
+        graph_data: Optional[dict] = None,
+        evidence: Optional[BaseEvidence] = None,
     ):
         """!
         \brief Constructor for random variable
 
-        \param marginal_distribution a function that takes in a value from
-        codomain of the random variable and outputs a value in the range [0,1].
-        Notice that is not a local distribution, it should be the marginal
-        distribution that is independent of local structure.
 
         \param data The data associated to random variable can be anything
         \param randvar_id identifier of random variable. Same identifier is used
         as node identifier in a graph.
         \param randvar_name name of random variable for easy recognition
-        \param f a function who takes data or from data, and outputs anything.
+        \param initializer controls random variable initialization. A random
+        variable can be initialized either by passing its marginal distribution
+        or passing an event and its related objects \see RandomVariableInitializer
 
         \returns a random variable instance
-
 
         \throws ValueError We raise a value error if the probability values
         associated to outcomes add up to a value bigger than one.
@@ -211,74 +295,45 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         \endcode
 
         constructor for a random variable"""
-        super().__init__(oid=randvar_id, odata=data if data is not None else {})
+        super().__init__(oid=randvar_id, odata=graph_data)
         # check type errors
         is_optional_type(randvar_name, "randvar_name", str, True)
         self.name = randvar_name
+        is_optional_type(evidence, "evidence", BaseEvidence, True)
+        self.evidence = evidence
+        if evidence is None and graph_data is not None:
+            if "evidence" in graph_data:
+                is_type(graph_data["evidence"], "evidence", BaseEvidence, True)
+                self.evidence = graph_data["evidence"]
         #
-        is_optional_type(data, "data", dict, True)
-        is_optional_type(input_data, "input_data", Domain, True)
-        if input_data is None and data is None:
-            raise ValueError("Either input data or data must not be None")
-        if input_data is None and data is not None:
-            if "possible-outcomes" not in data:
-                msg = "if input_data is not provided, provided data"
-                msg += "must contain 'possible-outcomes' key"
+        is_optional_type(initializer, "initializer", RandomVariableInitializer, True)
+        if (graph_data is None) and (initializer is None):
+            msg = "either the initializer or the graph_data with"
+            msg += " enough information to instantiate the initializer must be"
+            msg += " provided"
+            raise ValueError(msg)
+        if initializer is None:
+            event_keys = ["event_input", "event", "input_sampler"]
+            marginal_dist_key = "marginal_distribution"
+            in_gdata = all(e for e in graph_data)
+            in_m_gdata = marginal_dist_key in graph_data
+            if (not in_gdata) and (not in_m_gdata):
+                msg = f"Either {event_keys} or {marginal_dist_key}"
+                msg += " must be present in graph_data"
                 raise ValueError(msg)
-            else:
-                possible_outcomes = data["possible-outcomes"]
-        elif input_data is not None:
-            possible_outcomes = input_data
+            initializer = RandomVariableInitializer(
+                event_input=graph_data["event_input"],
+                event=graph_data["event"],
+                input_sampler=graph_data["input_sampler"],
+                marginal_distribution=graph_data["marginal_distribution"],
+            )
+            self.dist = initializer.distribution
+            self.event = initializer.event
         else:
-            raise ValueError("Unknown data configuration")
-        self._inputs = possible_outcomes
-        if not callable(f):
-            raise TypeError("f must be a callable")
+            self.dist = initializer.distribution
+            self.event = initializer.event
 
-        self.f = f
-        self._outs = None
-        self.dist = marginal_distribution
-        self._range_id = None
-        for i in self.inputs:
-            self._range_id = str(type(self.f(i)))
-            break
-
-        if not callable(sampler):
-            raise TypeError("sampler must be a callable")
-        self._sampler = sampler
-
-    @property
-    def range_id(self) -> str:
-        """!
-        The identifier of the range of the function that dictates the
-        behavior of the random variable
-        """
-        return self._range_id
-
-    @property
-    def inputs(self) -> Population:  # or Domain
-        """!"""
-        return self._inputs
-
-    def image(self) -> Range:
-        """!
-        \brief Image of the random variable's function.
-
-        The image of the underlying function of the random variable is obtained
-        through the sampler passed in the constructor.
-
-        \returns either full range of the random variable or its subset
-        depending on the sampler. Both have `frozenset` as their type.
-
-        \raises TypeError when both samplers are None, we raise type error.
-
-        """
-        if self._outs is None:
-            domain_sample = self._sampler(self.inputs)
-            self._outs = frozenset(self.f(sample) for sample in domain_sample)
-        return self._outs
-
-    def p(self, outcome: CodomainValue) -> NumericValue:
+    def __call__(self, outcome: CodomainValue) -> float:
         """!
         \brief probability of given outcome value as per the associated
         distribution
@@ -296,13 +351,11 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
         """
         if not isinstance(other, AbstractRandomVariable):
             return False
-        if other.inputs != self.inputs:
+        if other.event.id() != self.event.id():
             return False
-        if other.range_id != self.range_id:
-            return False
-        for ins in self._sampler(self.inputs):
-            if other.p(ins) != self.p(ins):
-                return False
+        # for ins in self._sampler(self.inputs):
+        #    if other.p(ins) != self.p(ins):
+        #        return False
         return True
 
     def __str__(self):
