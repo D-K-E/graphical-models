@@ -14,7 +14,7 @@ from pygmodels.value.value import NumericValue
 
 class CatRandomVariable(BaseRandomVariable):
     """!
-    \brief A discrete/categorical random variable \see RandomVariable
+    \brief A discrete/categorical random variable \see BaseRandomVariable
     """
 
     def __init__(
@@ -77,23 +77,6 @@ class CatRandomVariable(BaseRandomVariable):
             marginal_distribution=marginal_distribution,
             sampler=lambda xs: frozenset(xs),
         )
-
-    def marginal(self, value: CodomainValue) -> NumericValue:
-        """!
-        \brief marginal distribution that is the probability of an outcome
-
-        from Biagini, Campanino, 2016, p. 35
-        <blockquote>
-        Marginal distribution of X is the function: \f$p_1(x_i) = P(X=x_i)\f$
-        </blockquote>
-
-        \see CatRandomVariable.p
-
-        \returns probability value associated to value
-
-        \todo test DONE
-        """
-        return self.p(value)
 
 
 class NumCatRandomVariable(CatRandomVariable):
