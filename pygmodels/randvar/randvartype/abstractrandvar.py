@@ -16,20 +16,9 @@ from pygmodels.value.value import NumericValue
 PossibleOutcomes = Codomain
 PossibleOutcome = CodomainValue
 
-Event = Callable[Domain, [PossibleOutcomes]]
 
-
-class AbstractEvent(AbstractGraphObj):
-    @abstractmethod
-    def __call__(self, sample: DomainValue) -> PossibleOutcome:
-        """An event that maps a sample to outcome"""
-        raise NotImplementedError
-
-
-class AbstractEvidence(AbstractGraphObj):
-    """!
-    An evidence interface.
-    """
+class AbstractRandomVariableMember(AbstractGraphObj):
+    """"""
 
     @abstractmethod
     def belongs_to(self) -> str:
@@ -37,14 +26,29 @@ class AbstractEvidence(AbstractGraphObj):
         raise NotImplementedError
 
     @abstractmethod
-    def value(self) -> PossibleOutcome:
-        raise NotImplementedError
-
-    @abstractmethod
     def description(self) -> Optional[str]:
         """!
-        Observation conditions and the nature of evidence
+        Supplementary information about member
         """
+        raise NotImplementedError
+
+
+class AbstractEvent(AbstractRandomVariableMember):
+    """"""
+
+    @abstractmethod
+    def __call__(self, sample: DomainValue) -> PossibleOutcome:
+        """An event that maps a sample to outcome"""
+        raise NotImplementedError
+
+
+class AbstractEvidence(AbstractRandomVariableMember):
+    """!
+    An evidence interface.
+    """
+
+    @abstractmethod
+    def value(self) -> PossibleOutcome:
         raise NotImplementedError
 
 
@@ -53,34 +57,8 @@ class AbstractRandomVariable(AbstractNode):
     Abstract random variable
     """
 
-    @property
     @abstractmethod
-    def inputs(self) -> PossibleOutcomes:
-        """!
-        Inputs, that is outcomes of the random variable.
-        """
-        raise NotImplementedError
-
-    @property
-    def range_id(self) -> str:
-        """!
-        Identifier of the range of the random variable.
-
-        The identifier of the range is used to determine if two random
-        variables are equal or not.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def image(self) -> Range:
-        """!
-        Image/Range of the random variable. It can be either a representation
-        or the full range.
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def p(self, out: PossibleOutcome) -> NumericValue:
+    def __call__(self, out: PossibleOutcome) -> float:
         """!
         Measure the probability of the given outcome
         """
