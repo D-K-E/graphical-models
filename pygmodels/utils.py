@@ -37,7 +37,7 @@ def is_optional_type(
 def is_all_type(field_value, field_name: str, field_type, raise_error: bool = True):
     """"""
     if not is_type(
-        field_value, field_name, (list, set, frozenset), raise_error=raise_error
+        field_value, field_name, (list, set, frozenset, tuple), raise_error=raise_error
     ):
         return False
     is_all = all(
