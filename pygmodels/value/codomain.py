@@ -6,13 +6,9 @@ value
 
 from typing import Any, Callable, Dict, FrozenSet, List, Optional, Set, Tuple
 
-from pygmodels.utils import is_type
+from pygmodels.utils import is_type, is_optional_type
 from pygmodels.value.value import SetValue
-
-
-class Outcome:
-    def __init__(self, v):
-        self.data = v
+from pygmodels.value.value import Value
 
 
 class CodomainValue(SetValue):
@@ -20,27 +16,16 @@ class CodomainValue(SetValue):
 
     def __init__(
         self,
-        value: Any,
+        value: Value,
         set_name: str,
         mapping_name: str,
         domain_name: Optional[str] = None,
     ):
         super().__init__(v=value, set_id=set_name)
 
-        is_type(
-            mapping_name,
-            originType=str,
-            shouldRaiseError=True,
-            val_name="mapping_name",
-        )
+        is_type(mapping_name, "mapping_name", str, True)
         self._fn = mapping_name
-        if domain_name is not None:
-            is_type(
-                domain_name,
-                originType=str,
-                shouldRaiseError=True,
-                val_name="domain_name",
-            )
+        is_optional_type(domain_name, "domain_name", str, True)
         self._fn_domain = domain_name
 
     @property
