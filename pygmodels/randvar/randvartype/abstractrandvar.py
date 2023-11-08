@@ -13,8 +13,17 @@ from pygmodels.value.codomain import Range
 from pygmodels.value.domain import Domain, DomainValue
 from pygmodels.value.value import NumericValue
 
-PossibleOutcomes = Domain
-PossibleOutcome = DomainValue
+PossibleOutcomes = Codomain
+PossibleOutcome = CodomainValue
+
+Event = Callable[Domain, [PossibleOutcomes]]
+
+
+class AbstractEvent(AbstractGraphObj):
+    @abstractmethod
+    def __call__(self, sample: DomainValue) -> PossibleOutcome:
+        """An event that maps a sample to outcome"""
+        raise NotImplementedError
 
 
 class AbstractEvidence(AbstractGraphObj):
@@ -28,7 +37,7 @@ class AbstractEvidence(AbstractGraphObj):
         raise NotImplementedError
 
     @abstractmethod
-    def value(self) -> CodomainValue:
+    def value(self) -> PossibleOutcome:
         raise NotImplementedError
 
     @abstractmethod
@@ -71,7 +80,7 @@ class AbstractRandomVariable(AbstractNode):
         raise NotImplementedError
 
     @abstractmethod
-    def p(self, out: CodomainValue) -> NumericValue:
+    def p(self, out: PossibleOutcome) -> NumericValue:
         """!
         Measure the probability of the given outcome
         """
