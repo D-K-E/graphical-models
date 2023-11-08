@@ -4,6 +4,7 @@ defined for objects inheriting from \see BaseRandomVariable.
 """
 
 from typing import Any, Callable, FrozenSet, List, Optional, Set, Tuple
+from types import FunctionType, LambdaType
 from uuid import uuid4
 
 from pygmodels.randvar.randvartype.abstractrandvar import (
@@ -83,6 +84,8 @@ class RandomVariableOps:
 
         \endcode
         """
+        is_type(r, "r", AbstractRandomVariable, True)
+        is_type(sampler, "sampler", FunctionType, True)
         return sampler(r.image())
 
     @staticmethod
@@ -130,6 +133,10 @@ class RandomVariableOps:
 
         \endcode
         """
+        is_type(r, "r", AbstractRandomVariable, True)
+        is_type(value_filter, "value_filter", LambdaType, True)
+        is_type(value_transform, "value_transform", LambdaType, True)
+        is_type(sampler, "sampler", LambdaType, True)
         sid = r.id()
         return frozenset(
             [
@@ -148,6 +155,7 @@ class RandomVariableOps:
         """!
         \brief apply function phi to possible outcomes of the random variable
         """
+        is_type(phi, "phi", FunctionType, True)
         vs = RandomVariableOps.values(r, sampler=sampler)
         return frozenset([phi(v) for v in vs])
 
@@ -159,6 +167,7 @@ class RandomVariableOps:
         make a new random variable from given function with same distribution
         """
         rid = str(uuid4())
+        is_type(phi, "phi", FunctionType, True)
         return BaseRandomVariable(
             randvar_id=rid,
             randvar_name="name: " + rid,
@@ -208,15 +217,9 @@ class RandomVariableOps:
 
         \endcode
         """
-        is_type(
-            r, originType=AbstractRandomVariable, shouldRaiseError=True, val_name="r",
-        )
-        is_type(
-            evidence,
-            originType=AbstractEvidence,
-            shouldRaiseError=True,
-            val_name="evidence",
-        )
+
+        is_type(r, "r", AbstractRandomVariable, True)
+        is_type(evidence, "evidence", AbstractEvidence, True)
         e = {"evidence": evidence}
         r.update_data(e)
         return r
@@ -256,6 +259,7 @@ class RandomVariableOps:
 
         \endcode
         """
+        is_type(r, "r", AbstractRandomVariable, True)
         data = r.data()
         if "evidence" in data:
             data.pop("evidence")
