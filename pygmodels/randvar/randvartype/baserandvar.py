@@ -35,13 +35,22 @@ class BaseEvidence(AbstractEvidence, GraphObject):
     ):
         """"""
         is_type(
-            evidence_id, originType=str, shouldRaiseError=True, val_name="evidence_id",
+            evidence_id,
+            originType=str,
+            shouldRaiseError=True,
+            val_name="evidence_id",
         )
         is_type(
-            randvar_id, originType=str, shouldRaiseError=True, val_name="randvar_id",
+            randvar_id,
+            originType=str,
+            shouldRaiseError=True,
+            val_name="randvar_id",
         )
         is_type(
-            value, originType=CodomainValue, shouldRaiseError=True, val_name="value",
+            value,
+            originType=CodomainValue,
+            shouldRaiseError=True,
+            val_name="value",
         )
         if description is not None:
             is_type(
@@ -52,7 +61,10 @@ class BaseEvidence(AbstractEvidence, GraphObject):
             )
         if data is not None:
             is_type(
-                data, originType=dict, shouldRaiseError=True, val_name="data",
+                data,
+                originType=dict,
+                shouldRaiseError=True,
+                val_name="data",
             )
         # init graphobj
         super().__init__(oid=evidence_id, odata=data if data is not None else {})
@@ -238,7 +250,7 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
     @property
     def range_id(self) -> str:
         """!
-        The identifier of the range of the function that dictates the 
+        The identifier of the range of the function that dictates the
         behavior of the random variable
         """
         return self._range_id
@@ -275,6 +287,7 @@ class BaseRandomVariable(AbstractRandomVariable, GraphObject):
 
         \returns probability value associated to the outcome
         """
+        is_type(outcome, "outcome", CodomainValue, True)
         return self.dist(outcome)
 
     def __eq__(self, other: AbstractRandomVariable) -> bool:
