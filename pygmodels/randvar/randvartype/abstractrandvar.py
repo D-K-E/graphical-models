@@ -63,9 +63,7 @@ class AbstractRandomVariable(AbstractNode):
         raise NotImplementedError
 
     @abstractmethod
-    def image(
-        self, sampler: Optional[Callable[[PossibleOutcomes], List[PossibleOutcome]]],
-    ) -> Range:
+    def image(self) -> Range:
         """!
         Image/Range of the random variable. It can be either a representation
         or the full range.
