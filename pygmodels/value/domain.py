@@ -16,7 +16,6 @@ class DomainValue(SetValue):
 
 Domain = Set[DomainValue]
 DomainSample = Set[DomainValue]
-Population = Domain
 Sample = DomainSample
 OrderedDomain = List[DomainValue]
 
