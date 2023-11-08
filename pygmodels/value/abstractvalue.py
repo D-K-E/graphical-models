@@ -18,22 +18,22 @@ class AbstractValue(ABC):
 
     @abstractmethod
     def is_numeric(self) -> bool:
-        ""
+        """"""
         raise NotImplementedError
 
     @abstractmethod
     def is_string(self) -> bool:
-        ""
+        """"""
         raise NotImplementedError
 
     @abstractmethod
     def is_container(self) -> bool:
-        ""
+        """"""
         raise NotImplementedError
 
     @abstractmethod
     def is_callable(self) -> bool:
-        ""
+        """"""
         raise NotImplementedError
 
     @property
@@ -59,7 +59,7 @@ class AbstractSetValue(AbstractValue):
 
     def __str__(self):
         """"""
-        m = "SetValue[ " + str(self.value)
+        m = "Value[ " + str(self.value)
         m += " belongs to set " + str(self.belongs_to)
         m += " ]"
         return m
