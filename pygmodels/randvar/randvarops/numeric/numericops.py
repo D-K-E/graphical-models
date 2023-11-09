@@ -597,3 +597,4 @@ class NumericOps:
 
         \todo test
         """
+        raise NotImplementedError

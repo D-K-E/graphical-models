@@ -15,7 +15,7 @@ from pygmodels.randvar.randvartype.abstractrandvar import (
     AbstractEvidence,
     AbstractRandomVariable,
 )
-from pygmodels.utils import is_type, type_check
+from pygmodels.utils import is_type
 from pygmodels.value.codomain import CodomainValue
 from pygmodels.value.value import NumericValue
 
