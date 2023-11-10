@@ -1,3 +1,0 @@
-"""
-graphobj.py tests
-"""
