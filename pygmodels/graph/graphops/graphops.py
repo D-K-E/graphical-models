@@ -37,9 +37,7 @@ class BaseGraphBoolOps:
             raise TypeError("Given argument should be either edge or node")
 
     @staticmethod
-    def is_adjacent_of(
-        g: AbstractGraph, e1: AbstractEdge, e2: AbstractEdge
-    ) -> bool:
+    def is_adjacent_of(g: AbstractGraph, e1: AbstractEdge, e2: AbstractEdge) -> bool:
         """!
         \brief Check if two edges are adjacent
 
@@ -84,9 +82,7 @@ class BaseGraphBoolOps:
         return len(n1_ids.intersection(n2_ids)) > 0
 
     @staticmethod
-    def is_node_incident(
-        g: AbstractGraph, n: AbstractNode, e: AbstractEdge
-    ) -> bool:
+    def is_node_incident(g: AbstractGraph, n: AbstractNode, e: AbstractEdge) -> bool:
         """!
         \brief Check if a node is incident of an edge
 
@@ -143,9 +139,7 @@ class BaseGraphBoolOps:
         return False
 
     @staticmethod
-    def is_neighbour_of(
-        g: AbstractGraph, n1: AbstractNode, n2: AbstractNode
-    ) -> bool:
+    def is_neighbour_of(g: AbstractGraph, n1: AbstractNode, n2: AbstractNode) -> bool:
         """!
         \brief check if two nodes are neighbours
         We define the condition of neighborhood as having a common edge, not
@@ -186,9 +180,7 @@ class BaseGraphBoolOps:
         if not BaseGraphBoolOps.is_in(g, n2):
             raise ValueError("node not in graph")
 
-        def cond(
-            n_1: AbstractNode, n_2: AbstractNode, e: AbstractEdge
-        ) -> bool:
+        def cond(n_1: AbstractNode, n_2: AbstractNode, e: AbstractEdge) -> bool:
             """!
             \brief neighborhood condition
             """
@@ -205,9 +197,7 @@ class BaseGraphBoolOps:
         edge_ids = n1_edge_ids.intersection(n2_edge_ids)
         # filter self loops
         edges = set([e for e in g.E if e.id() in edge_ids])
-        return BaseGraphBoolOps.is_related_to(
-            g, n1=n1, n2=n2, condition=cond, es=edges
-        )
+        return BaseGraphBoolOps.is_related_to(g, n1=n1, n2=n2, condition=cond, es=edges)
 
 
 class BaseGraphEdgeOps:
@@ -260,9 +250,7 @@ class BaseGraphEdgeOps:
         return set([E[eid] for eid in edge_ids])
 
     @staticmethod
-    def outgoing_edges_of(
-        g: AbstractGraph, n: AbstractNode
-    ) -> FrozenSet[AbstractEdge]:
+    def outgoing_edges_of(g: AbstractGraph, n: AbstractNode) -> FrozenSet[AbstractEdge]:
         """!
         \brief obtain the outgoing edge set of a given node.
 
@@ -314,9 +302,7 @@ class BaseGraphEdgeOps:
         return frozenset(eset)
 
     @staticmethod
-    def incoming_edges_of(
-        g: AbstractGraph, n: AbstractNode
-    ) -> FrozenSet[AbstractEdge]:
+    def incoming_edges_of(g: AbstractGraph, n: AbstractNode) -> FrozenSet[AbstractEdge]:
         """!
         \brief obtain incoming edges of a given graph
 
@@ -424,9 +410,7 @@ class BaseGraphEdgeOps:
         \throws ValueError if there are no edges that consist of argument nodes.
         """
         is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
-        if not BaseGraphBoolOps.is_in(g, start) or not BaseGraphBoolOps.is_in(
-            g, end
-        ):
+        if not BaseGraphBoolOps.is_in(g, start) or not BaseGraphBoolOps.is_in(g, end):
             raise ValueError("one of the nodes is not present in graph")
         n1id = start.id()
         n2id = end.id()
@@ -697,3 +681,174 @@ class BaseGraphOps:
             if edge_policy(e, vs) is True:
                 es.add(e)
         return (vs, es)
+
+
+class BaseGraphSetOps:
+    """!"""
+
+    @staticmethod
+    def set_op_node_edge(
+        g: AbstractGraph,
+        obj: Union[Set[AbstractNode], Set[AbstractEdge]],
+        op: Callable[
+            [Union[Set[AbstractNode], Set[AbstractEdge]]],
+            Union[Set[AbstractNode], Set[AbstractEdge]],
+        ],
+    ):
+        """!"""
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
+        is_eset = all(isinstance(o, AbstractEdge) for o in obj)
+        if is_eset:
+            edges = g.E
+            return op(edges, obj)
+        is_nset = all(isinstance(o, AbstractNode) for o in obj)
+        if is_nset is False:
+            raise TypeError("argument type is not supported: " + type(obj).__name__)
+        #
+        nodes = g.V
+        return op(nodes, obj)
+
+    @staticmethod
+    def set_op(
+        g: AbstractGraph,
+        obj: Union[
+            Set[AbstractNode],
+            Set[AbstractEdge],
+            AbstractGraph,
+            AbstractNode,
+            AbstractEdge,
+        ],
+        op: Callable[
+            [Union[Set[AbstractNode], Set[AbstractEdge]]],
+            Union[Set[AbstractNode], Set[AbstractEdge], AbstractGraph],
+        ],
+    ) -> Optional[Union[Set[AbstractNode], Set[AbstractEdge], bool]]:
+        """!
+        \brief generic set operation for graph
+
+        \param obj the hooked object to operation. We deduce its corresponding
+        argument from its type.
+        \param op operation that is going to be applied to obj and its
+        corresponding object.
+
+        The idea is to give a single interface for generic set operation
+        functions. For example if object is a set of nodes we provide
+        the target for the operation as the nodes of this graph, if it is an
+        edge we provide a set of edges of this graph
+        """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
+        is_node = isinstance(obj, AbstractNode)
+        if is_node:
+            return BaseGraphSetOps.set_op_node_edge(g=g, obj=set([obj]), op=op)
+        is_edge = isinstance(obj, AbstractEdge)
+        if is_edge:
+            return BaseGraphSetOps.set_op_node_edge(g=g, obj=set([obj]), op=op)
+        is_set = isinstance(obj, (set, frozenset))
+        if is_set:
+            return BaseGraphSetOps.set_op_node_edge(g=g, obj=obj, op=op)
+        is_graph = isinstance(obj, AbstractGraph)
+        if is_graph:
+            oeset = BaseGraphOps.edges(obj)
+            onset = BaseGraphOps.nodes(obj)
+            oedge_set = BaseGraphSetOps.set_op(g, obj=oeset, op=op)
+            onode_set = BaseGraphSetOps.set_op(g, obj=onset, op=op)
+            gdata = g.data()
+            gdata.update(obj.data())
+            return BaseGraph(
+                gid=str(uuid4()), nodes=onode_set, edges=oedge_set, data=gdata
+            )
+        else:
+            raise TypeError("argument type is not supported: " + type(obj).__name__)
+
+    @staticmethod
+    def intersection(
+        g: AbstractGraph,
+        aset: Union[
+            Set[AbstractNode],
+            Set[AbstractEdge],
+            AbstractGraph,
+            AbstractNode,
+            AbstractEdge,
+        ],
+    ) -> Union[Set[AbstractNode], Set[AbstractEdge], AbstractGraph]:
+        """!
+        \brief obtain intersection of either node or edge set
+        """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
+        return BaseGraphSetOps.set_op(
+            g, obj=aset, op=lambda gset, y: gset.intersection(y)
+        )
+
+    @staticmethod
+    def union(
+        g: AbstractGraph,
+        aset: Union[
+            Set[AbstractNode],
+            Set[AbstractEdge],
+            AbstractGraph,
+            AbstractEdge,
+            AbstractNode,
+        ],
+    ) -> Union[Set[AbstractNode], Set[AbstractEdge], AbstractGraph]:
+        """!
+        \brief obtain union of either node or edge set
+        """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
+        return BaseGraphSetOps.set_op(g, obj=aset, op=lambda gset, y: gset.union(y))
+
+    @staticmethod
+    def difference(
+        g: AbstractGraph,
+        aset: Union[
+            Set[AbstractNode],
+            Set[AbstractEdge],
+            AbstractGraph,
+            AbstractEdge,
+            AbstractNode,
+        ],
+    ) -> Union[Set[AbstractNode], Set[AbstractEdge], AbstractGraph]:
+        """!
+        \brief obtain set difference of either node or edge set
+        """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
+        return BaseGraphSetOps.set_op(
+            g, obj=aset, op=lambda gset, y: gset.difference(y)
+        )
+
+    @staticmethod
+    def symmetric_difference(
+        g: AbstractGraph,
+        aset: Union[
+            Set[AbstractNode],
+            Set[AbstractEdge],
+            AbstractGraph,
+            AbstractNode,
+            AbstractEdge,
+        ],
+    ) -> Union[Set[AbstractNode], Set[AbstractEdge], AbstractGraph]:
+        """!
+        \brief obtain symmetric set difference of either node or edge set.
+        """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
+        return BaseGraphSetOps.set_op(
+            g, obj=aset, op=lambda gset, y: gset.symmetric_difference(y)
+        )
+
+    @staticmethod
+    def contains(
+        g: AbstractGraph,
+        a: Union[
+            Set[AbstractEdge],
+            Set[AbstractNode],
+            AbstractGraph,
+            AbstractNode,
+            AbstractEdge,
+        ],
+    ) -> bool:
+        """!
+        \brief check if argument set of nodes or edges is contained by graph
+        """
+        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
+        return BaseGraphSetOps.set_op(
+            g, obj=a, op=lambda gset, y: y.issubset(gset) is True
+        )
