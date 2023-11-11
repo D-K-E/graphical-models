@@ -55,3 +55,6 @@ class EdgeTest(unittest.TestCase):
         """"""
         negative = self.uedge.is_endvertice(Node("m3", {}))
         self.assertEqual(negative, False)
+
+if __name__ == "__main__":
+    unittest.main()

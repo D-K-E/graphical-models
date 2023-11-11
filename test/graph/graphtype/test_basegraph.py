@@ -66,17 +66,5 @@ class BaseGraphTest(unittest.TestCase):
             self.assertEqual(E[eid], edges[eid])
 
 
-def suite(verbose=False):
-    """"""
-    s = unittest.TestSuite()
-    bgraphtest = BaseGraphTest()
-    bgraphtest.verbose = verbose
-    #
-    s.addTest(bgraphtest)
-    return s
-
-
 if __name__ == "__main__":
-    runner = unittest.TextTestRunner()
-    # runner.run(suite())
     unittest.main()

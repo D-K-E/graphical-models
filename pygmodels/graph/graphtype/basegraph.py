@@ -5,7 +5,7 @@ functionality for doing graph theoretical operations
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Union
 from uuid import uuid4
 
-from pygmodels.graph.graphops.graphops import (
+from pygmodels.graph.graphfunc.graphops import (
     BaseGraphBoolOps,
     BaseGraphEdgeOps,
     BaseGraphNodeOps,
@@ -113,9 +113,7 @@ class BaseGraph(GraphObject, AbstractGraph):
             + "--"
             + "!!".join([str(n) for n in self._edges])
             + "--"
-            + "::".join(
-                [str(k) + "-" + str(v) for k, v in self.data().items()]
-            )
+            + "::".join([str(k) + "-" + str(v) for k, v in self.data().items()])
         )
 
     def __hash__(self):
@@ -229,9 +227,7 @@ class BaseGraph(GraphObject, AbstractGraph):
         return BaseGraph(gid=str(uuid4()), nodes=nodes, edges=edges)
 
     @classmethod
-    def based_on_node_set(
-        cls, edges: Set[AbstractEdge], nodes: Set[AbstractNode]
-    ):
+    def based_on_node_set(cls, edges: Set[AbstractEdge], nodes: Set[AbstractNode]):
         """!"""
         eset: Set[AbstractEdge] = set(
             [e for e in edges if set([e.start(), e.end()]).issubset(nodes)]
