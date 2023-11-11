@@ -8,7 +8,7 @@ from typing import Any, Union, Callable
 BinaryValue = bool
 NumericValue = Union[float, int, BinaryValue]
 
-Value = Union[NumericValue, str, frozenset, set, list, dict, tuple, Callable]
+PyValue = Union[NumericValue, str, frozenset, tuple, Callable]
 
 
 class AbstractValue(ABC):
@@ -38,12 +38,25 @@ class AbstractValue(ABC):
 
     @property
     @abstractmethod
-    def value(self) -> Value:
+    def value(self) -> PyValue:
         "Returns the value associated with the set value"
         raise NotImplementedError
 
+    def __hash__(self):
+        return hash(self.value)
+
+    def __str__(self):
+        return str(self.value)
+
+    def __eq__(self, other):
+        if not isinstance(other, AbstractValue):
+            return False
+        return self.value == other.value
+
 
 class AbstractSetValue(AbstractValue):
+    """"""
+
     @abstractmethod
     def belongs_to(self) -> str:
         "The name of the set that contains the value"

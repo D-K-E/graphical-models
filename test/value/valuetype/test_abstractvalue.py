@@ -3,12 +3,10 @@
 """
 
 import unittest
-from uuid import uuid4
-
 from pygmodels.value.valuetype.abstractvalue import PyValue
 
 
-class BaseGraphTest(unittest.TestCase):
+class AbstractValueTest(unittest.TestCase):
     """"""
 
     def setUp(self):

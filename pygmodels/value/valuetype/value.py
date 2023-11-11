@@ -4,9 +4,10 @@
 
 from typing import Callable, FrozenSet, List, Optional, Set, Tuple, Union
 
-from pygmodels.value.abstractvalue import AbstractSetValue
-from pygmodels.value.abstractvalue import AbstractValue
+from pygmodels.value.valuetype.abstractvalue import AbstractSetValue
+from pygmodels.value.valuetype.abstractvalue import AbstractValue
 from pygmodels.utils import is_type, is_optional_type
+from pygmodels.utils import is_all_type
 from types import FunctionType
 
 
@@ -36,7 +37,11 @@ class NumericValue(Value):
 
     def __init__(self, v: Union[float, int, bool]):
         is_type(v, "v", (float, int, bool), True)
-        self.value = v
+        self._v = v
+
+    @property
+    def value(self):
+        return self._v
 
 
 class StringValue(Value):
@@ -44,7 +49,11 @@ class StringValue(Value):
 
     def __init__(self, v: str):
         is_type(v, "v", str, True)
-        self.value = v
+        self._v = v
+
+    @property
+    def value(self):
+        return self._v
 
 
 class ContainerValue(Value):
@@ -54,13 +63,21 @@ class ContainerValue(Value):
         types = (tuple, frozenset)
         is_type(v, "v", types, True)
         is_all_type(v, "v", Value, True)
-        self.value = v
+        self._v = v
+
+    @property
+    def value(self):
+        return self._v
 
 
 class CallableValue(Value):
     def __init__(self, v: FunctionType):
         is_type(v, "v", FunctionType, True)
-        self.value = v
+        self._v = v
+
+    @property
+    def value(self):
+        return self._v
 
 
 class SetValue(Value, AbstractSetValue):
@@ -81,7 +98,12 @@ class SetValue(Value, AbstractSetValue):
         return self._set
 
     @property
-    def value(self) -> Value:
+    def value(self) -> object:
+        """inner python object attached to value"""
+        return self.fetch().value
+
+    def fetch(self) -> Value:
+        """"""
         if self._v is None:
             raise ValueError("Value is not associated to any data")
         return self._v
