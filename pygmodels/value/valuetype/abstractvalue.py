@@ -3,7 +3,11 @@
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Union, Callable
+from typing import Any, Union, Callable, NewType
+from collections.abc import MutableSet, MutableSequence, Sequence
+from pygmodels.utils import is_all_type, is_type
+from collections.abc import Set as CSet
+
 
 BinaryValue = bool
 NumericValue = Union[float, int, BinaryValue]
@@ -80,3 +84,110 @@ class AbstractSetValue(AbstractValue):
     def __hash__(self):
         """"""
         return hash(str(self))
+
+
+class TypedMutableSet(MutableSet):
+    """"""
+
+    def __init__(self, iterable, member_type):
+        is_all_type(iterable, "iterable", member_type, True)
+        lst = set()
+        for value in iterable:
+            lst.add(value)
+        self.elements = lst
+        self.member_type = member_type
+
+    def __iter__(self):
+        return iter(self.elements)
+
+    def __contains__(self, value):
+        """"""
+        return value in self.elements
+
+    def __len__(self):
+        """"""
+        return len(self.elements)
+
+    def add(self, element):
+        """"""
+        is_type(element, "element", self.member_type, True)
+        return self.elements.add(element)
+
+    def discard(self, element):
+        """"""
+        return self.elements.discard(element)
+
+
+class TypedOrderedSequence(MutableSequence):
+    """"""
+
+    def __init__(self, iterable, member_type):
+        is_type(iterable, "iterable", list, True)
+        is_all_type(iterable, "iterable", member_type, True)
+        self.elements = iterable.copy()
+        self.member_type = member_type
+
+    def __iter__(self):
+        return iter(self.elements)
+
+    def __contains__(self, value):
+        return value in self.elements
+
+    def __len__(self):
+        return len(self.elements)
+
+    def __getitem__(self, i):
+        return self.elements[i]
+
+    def __delitem__(self, i):
+        del self.elements[i]
+
+    def __setitem__(self, i, other):
+        is_type(other, "other", self.member_type, True)
+        self.elements[i] = other
+        return
+
+    def insert(self, i, other):
+        is_type(other, "other", self.member_type, True)
+        return self.elements.insert(i, other)
+
+
+class FiniteTypedSet(CSet):
+    """"""
+
+    def __init__(self, iterable, member_type):
+        is_all_type(iterable, "iterable", member_type, True)
+        lst = set()
+        for value in iterable:
+            lst.add(value)
+        self.elements = frozenset(lst)
+
+    def __iter__(self):
+        return iter(self.elements)
+
+    def __contains__(self, value):
+        return value in self.elements
+
+    def __len__(self):
+        return len(self.elements)
+
+
+class OrderedFiniteTypedSequence(Sequence):
+    """"""
+
+    def __init__(self, iterable, member_type):
+        is_type(iterable, "iterable", tuple, True)
+        is_all_type(iterable, "iterable", member_type, True)
+        self.elements = tuple([f for f in iterable])
+
+    def __iter__(self):
+        return iter(self.elements)
+
+    def __contains__(self, value):
+        return value in self.elements
+
+    def __len__(self):
+        return len(self.elements)
+
+    def __getitem__(self, i):
+        return self.elements[i]

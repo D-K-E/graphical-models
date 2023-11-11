@@ -7,8 +7,12 @@ value
 from typing import Any, Callable, Dict, FrozenSet, List, Optional, Set, Tuple
 
 from pygmodels.utils import is_type, is_optional_type
-from pygmodels.value.value import SetValue
-from pygmodels.value.value import Value
+from pygmodels.value.valuetype.value import SetValue
+from pygmodels.value.valuetype.value import Value
+from pygmodels.value.valuetype.abstractvalue import TypedMutableSet
+from pygmodels.value.valuetype.abstractvalue import TypedOrderedSequence
+from pygmodels.value.valuetype.abstractvalue import FiniteTypedSet
+from pygmodels.value.valuetype.abstractvalue import OrderedFiniteTypedSequence
 
 
 class CodomainValue(SetValue):
@@ -16,12 +20,12 @@ class CodomainValue(SetValue):
 
     def __init__(
         self,
-        value: Value,
-        set_name: str,
+        v: Value,
+        set_id: str,
         mapping_name: str,
         domain_name: Optional[str] = None,
     ):
-        super().__init__(v=value, set_id=set_name)
+        super().__init__(v=v, set_id=set_id)
 
         is_type(mapping_name, "mapping_name", str, True)
         self._fn = mapping_name
@@ -50,10 +54,45 @@ class CodomainValue(SetValue):
         return m
 
 
-Codomain = Set[CodomainValue]
-Range = FrozenSet[CodomainValue]
-RangeSubset = Range
-OrderedCodomain = List[CodomainValue]
+class Codomain(TypedMutableSet):
+    """"""
 
-FiniteCodomain = FrozenSet[CodomainValue]
-OrderedFiniteCodomain = Tuple[CodomainValue]
+    def __init__(self, iterable):
+        super().__init__(iterable, CodomainValue)
+
+
+class Range(Codomain):
+    """"""
+
+    def __init__(self, *args):
+        """"""
+        super().__init__(*args)
+
+
+class RangeSubset(Range):
+    """"""
+
+    def __init__(self, *args):
+        """"""
+        super().__init__(*args)
+
+
+class OrderedCodomain(TypedOrderedSequence):
+    """"""
+
+    def __init__(self, iterable):
+        super().__init__(iterable, CodomainValue)
+
+
+class FiniteCodomain(FiniteTypedSet):
+    """"""
+
+    def __init__(self, iterable):
+        super().__init__(iterable, CodomainValue)
+
+
+class OrderedFiniteCodomain(OrderedFiniteTypedSequence):
+    """"""
+
+    def __init__(self, iterable):
+        super().__init__(iterable, CodomainValue)

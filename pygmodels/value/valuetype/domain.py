@@ -3,21 +3,64 @@
 """
 
 from typing import Any, FrozenSet, List, Optional, Set, Tuple
+from typing import NewType
 
-from pygmodels.value.abstractvalue import AbstractSetValue
-from pygmodels.value.value import SetValue
-from pygmodels.value.value import Value
+from pygmodels.value.valuetype.abstractvalue import AbstractSetValue
+from pygmodels.value.valuetype.abstractvalue import TypedMutableSet
+from pygmodels.value.valuetype.abstractvalue import TypedOrderedSequence
+from pygmodels.value.valuetype.abstractvalue import FiniteTypedSet
+from pygmodels.value.valuetype.abstractvalue import OrderedFiniteTypedSequence
+from pygmodels.value.valuetype.value import SetValue
+from pygmodels.value.valuetype.value import Value
+from pygmodels.utils import is_all_type, is_type
 
 
 class DomainValue(SetValue):
-    def __init__(self, value: Value, set_name: Optional[str]):
-        super().__init__(v=value, set_id=set_name)
+    """"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
-Domain = Set[DomainValue]
-DomainSample = Set[DomainValue]
-Sample = DomainSample
-OrderedDomain = List[DomainValue]
+class Domain(TypedMutableSet):
+    """"""
 
-FiniteDomain = FrozenSet[DomainValue]
-OrderedFiniteDomain = Tuple[DomainValue]
+    def __init__(self, iterable):
+        super().__init__(iterable, DomainValue)
+
+
+class DomainSample(Domain):
+    """"""
+
+    def __init__(self, *args):
+        """"""
+        super().__init__(*args)
+
+
+class Sample(DomainSample):
+    """"""
+
+    def __init__(self, *args):
+        """"""
+        super().__init__(*args)
+
+
+class OrderedDomain(TypedOrderedSequence):
+    """"""
+
+    def __init__(self, iterable):
+        super().__init__(iterable, DomainValue)
+
+
+class FiniteDomain(FiniteTypedSet):
+    """"""
+
+    def __init__(self, iterable):
+        super().__init__(iterable, DomainValue)
+
+
+class OrderedFiniteDomain(OrderedFiniteTypedSequence):
+    """"""
+
+    def __init__(self, iterable):
+        super().__init__(iterable, DomainValue)

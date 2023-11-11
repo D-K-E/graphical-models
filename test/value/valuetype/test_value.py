@@ -218,15 +218,5 @@ class SetValueTest(unittest.TestCase):
         self.assertTrue(check)
 
 
-def suite():
-    """"""
-    suite = unittest.TestSuite()
-    suite.addTest(NumericValueTest("numeric value test"))
-    suite.addTest(StringValueTest("string value test"))
-    suite.addTest(ContainerValueTest("container value test"))
-    suite.addTest(CallableValueTest("callable value test"))
-    return suite
-
-
 if __name__ == "__main__":
     unittest.main()
