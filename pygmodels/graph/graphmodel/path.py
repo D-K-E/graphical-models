@@ -5,7 +5,7 @@ import math
 from typing import Callable, Dict, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
-from pygmodels.graph.graphops.graphsearcher import BaseGraphSearcher
+from pygmodels.graph.graphfunc.graphsearcher import BaseGraphSearcher
 from pygmodels.graph.graphtype.abstractobj import (
     AbstractEdge,
     AbstractNode,
@@ -197,6 +197,4 @@ class Cycle(Path):
         super().__init__(gid, data, nodes, edges)
         vs = self.node_list()
         if vs[0] != vs[-1]:
-            raise ValueError(
-                "The first and last vertice of a cycle must be same"
-            )
+            raise ValueError("The first and last vertice of a cycle must be same")

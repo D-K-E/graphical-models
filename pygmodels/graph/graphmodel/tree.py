@@ -7,13 +7,13 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
 from pygmodels.graph.graphmodel.path import Path
-from pygmodels.graph.graphops.graphops import (
+from pygmodels.graph.graphfunc.graphops import (
     BaseGraphBoolOps,
     BaseGraphEdgeOps,
     BaseGraphNodeOps,
     BaseGraphOps,
 )
-from pygmodels.graph.graphops.graphsearcher import BaseGraphSearcher
+from pygmodels.graph.graphfunc.graphsearcher import BaseGraphSearcher
 from pygmodels.graph.graphtype.abstractobj import AbstractTree
 from pygmodels.graph.graphtype.basegraph import BaseGraph
 from pygmodels.graph.graphtype.edge import Edge, EdgeType
@@ -81,9 +81,7 @@ class Tree(BaseGraph, AbstractTree):
 
     def node_table(self):
         """"""
-        node_table = {
-            v.id(): {"child": False, "parent": False} for v in self.V
-        }
+        node_table = {v.id(): {"child": False, "parent": False} for v in self.V}
         for e in self.E:
             estart_id = e.start().id()
             eend_id = e.end().id()
@@ -128,9 +126,7 @@ class Tree(BaseGraph, AbstractTree):
         nid = n.id()
         return self.topsort[nid]
 
-    def _is_closure_of(
-        self, x: Node, y: Node, fn: Callable[[int, int], bool]
-    ) -> bool:
+    def _is_closure_of(self, x: Node, y: Node, fn: Callable[[int, int], bool]) -> bool:
         """"""
         xheight = self.height_of(x)
         yheight = self.height_of(y)
@@ -170,9 +166,7 @@ class Tree(BaseGraph, AbstractTree):
         """
         return self.is_set_of(n, fn=self.is_downclosure_of)
 
-    def is_set_of(
-        self, n: Node, fn: Callable[[Node, Node], bool]
-    ) -> Set[Node]:
+    def is_set_of(self, n: Node, fn: Callable[[Node, Node], bool]) -> Set[Node]:
         nodes = self.V
         nset = set([y for y in nodes if fn(n, y) is True])
         return nset

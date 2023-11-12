@@ -11,14 +11,14 @@ import math
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
-from pygmodels.graph.ganalysis.graphanalyzer import (
+from pygmodels.graph.graphfunc.graphanalyzer import (
     BaseGraphAnalyzer,
     BaseGraphBoolAnalyzer,
     BaseGraphNumericAnalyzer,
 )
-from pygmodels.graph.graphops.graphalg import BaseGraphAlgOps, BaseGraphSetOps
-from pygmodels.graph.graphops.graphops import BaseGraphEdgeOps, BaseGraphOps
-from pygmodels.graph.graphops.graphsearcher import BaseGraphSearcher
+from pygmodels.graph.graphfunc.graphalg import BaseGraphAlgOps
+from pygmodels.graph.graphfunc.graphops import BaseGraphEdgeOps, BaseGraphOps
+from pygmodels.graph.graphfunc.graphsearcher import BaseGraphSearcher
 from pygmodels.graph.graphtype.basegraph import BaseGraph
 from pygmodels.graph.graphtype.edge import Edge, EdgeType
 from pygmodels.graph.graphtype.graphobj import GraphObject
@@ -97,9 +97,7 @@ class Graph(BaseGraph):
         if self._props is None:
             self._props = BaseGraphSearcher.depth_first_search(
                 self,
-                edge_generator=lambda node: BaseGraphEdgeOps.edges_of(
-                    self, node
-                ),
+                edge_generator=lambda node: BaseGraphEdgeOps.edges_of(self, node),
                 check_cycle=True,
             )
         return self._props

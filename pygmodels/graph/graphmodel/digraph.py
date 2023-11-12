@@ -16,16 +16,16 @@ the parent's algorithm.
 from typing import Callable, Set
 from uuid import uuid4
 
-from pygmodels.graph.ganalysis.graphanalyzer import BaseGraphAnalyzer
+from pygmodels.graph.graphfunc.graphanalyzer import BaseGraphAnalyzer
 from pygmodels.graph.graphmodel.graph import Graph
 from pygmodels.graph.graphmodel.undigraph import UndiGraph
-from pygmodels.graph.graphops.digraphops import DiGraphBoolOps
-from pygmodels.graph.graphops.graphops import (
+from pygmodels.graph.graphfunc.digraphops import DiGraphBoolOps
+from pygmodels.graph.graphfunc.graphops import (
     BaseGraphBoolOps,
     BaseGraphEdgeOps,
     BaseGraphOps,
 )
-from pygmodels.graph.graphops.graphsearcher import BaseGraphSearcher
+from pygmodels.graph.graphfunc.graphsearcher import BaseGraphSearcher
 from pygmodels.graph.graphtype.abstractobj import AbstractDiGraph, EdgeType
 from pygmodels.graph.graphtype.basegraph import BaseGraph
 from pygmodels.graph.graphtype.edge import Edge
@@ -59,16 +59,13 @@ class DiGraph(AbstractDiGraph, BaseGraph):
             for edge in edges:
                 if edge.type() == EdgeType.UNDIRECTED:
                     raise ValueError(
-                        "Can not instantiate directed graph with"
-                        + " undirected edges"
+                        "Can not instantiate directed graph with" + " undirected edges"
                     )
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
         self.path_props = {v.id(): self.find_shortest_paths(v) for v in self.V}
         self.dprops = BaseGraphSearcher.depth_first_search(
             self,
-            edge_generator=lambda x: BaseGraphEdgeOps.outgoing_edges_of(
-                self, x
-            ),
+            edge_generator=lambda x: BaseGraphEdgeOps.outgoing_edges_of(self, x),
             check_cycle=True,
         )
 
@@ -99,9 +96,7 @@ class DiGraph(AbstractDiGraph, BaseGraph):
         for e in edges:
             e.set_type(etype=EdgeType.UNDIRECTED)
             nedges.add(e)
-        return UndiGraph(
-            gid=str(uuid4()), data=self.data(), nodes=nnodes, edges=nedges
-        )
+        return UndiGraph(gid=str(uuid4()), data=self.data(), nodes=nnodes, edges=nedges)
 
     def find_shortest_paths(self, n: Node):
         """!
@@ -111,9 +106,7 @@ class DiGraph(AbstractDiGraph, BaseGraph):
         return BaseGraphSearcher.breadth_first_search(
             self,
             n1=n,
-            edge_generator=lambda x: BaseGraphEdgeOps.outgoing_edges_of(
-                self, x
-            ),
+            edge_generator=lambda x: BaseGraphEdgeOps.outgoing_edges_of(self, x),
         )
 
     def check_for_path(self, n1: Node, n2: Node) -> bool:

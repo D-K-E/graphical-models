@@ -12,7 +12,7 @@ along to the parent's method in order to adapt its functionality.
 from typing import Callable, Dict, List, Set, Union
 from uuid import uuid4
 
-from pygmodels.graph.ganalysis.graphanalyzer import (
+from pygmodels.graph.graphfunc.graphanalyzer import (
     BaseGraphAnalyzer,
     BaseGraphBoolAnalyzer,
     BaseGraphEdgeAnalyzer,
@@ -21,13 +21,13 @@ from pygmodels.graph.ganalysis.graphanalyzer import (
 )
 from pygmodels.graph.graphmodel.graph import Graph
 from pygmodels.graph.graphmodel.tree import Tree
-from pygmodels.graph.graphops.graphalg import BaseGraphAlgOps
-from pygmodels.graph.graphops.graphops import (
+from pygmodels.graph.graphfunc.graphalg import BaseGraphAlgOps
+from pygmodels.graph.graphfunc.graphops import (
     BaseGraphEdgeOps,
     BaseGraphNodeOps,
     BaseGraphOps,
 )
-from pygmodels.graph.graphops.graphsearcher import BaseGraphSearcher
+from pygmodels.graph.graphfunc.graphsearcher import BaseGraphSearcher
 from pygmodels.graph.graphtype.abstractobj import AbstractUndiGraph, EdgeType
 from pygmodels.graph.graphtype.basegraph import BaseGraph
 from pygmodels.graph.graphtype.edge import Edge
@@ -59,8 +59,7 @@ class UndiGraph(AbstractUndiGraph, BaseGraph):
             for edge in edges:
                 if edge.type() == EdgeType.DIRECTED:
                     raise ValueError(
-                        "Can not instantiate undirected graph with"
-                        + " directed edges"
+                        "Can not instantiate undirected graph with" + " directed edges"
                     )
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
         self._props = None
@@ -73,9 +72,7 @@ class UndiGraph(AbstractUndiGraph, BaseGraph):
         if self._props is None:
             self._props = BaseGraphSearcher.depth_first_search(
                 self,
-                edge_generator=lambda node: BaseGraphEdgeOps.edges_of(
-                    self, node
-                ),
+                edge_generator=lambda node: BaseGraphEdgeOps.edges_of(self, node),
                 check_cycle=True,
             )
         return self._props

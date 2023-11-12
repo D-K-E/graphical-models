@@ -5,7 +5,7 @@ import unittest
 
 from pygmodels.graph.graphmodel.graph import Graph
 from pygmodels.graph.graphmodel.path import Path
-from pygmodels.graph.graphops.graphops import BaseGraphOps
+from pygmodels.graph.graphfunc.graphops import BaseGraphOps
 from pygmodels.graph.graphtype.edge import Edge, EdgeType
 from pygmodels.graph.graphtype.node import Node
 

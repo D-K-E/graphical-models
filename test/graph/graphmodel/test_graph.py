@@ -7,14 +7,14 @@ import unittest
 # profiler related
 from pstats import Stats
 
-from pygmodels.graph.ganalysis.graphanalyzer import (
+from pygmodels.graph.graphfunc.graphanalyzer import (
     BaseGraphAnalyzer,
     BaseGraphBoolAnalyzer,
     BaseGraphNumericAnalyzer,
 )
 from pygmodels.graph.graphmodel.graph import Graph
-from pygmodels.graph.graphops.graphalg import BaseGraphAlgOps, BaseGraphSetOps
-from pygmodels.graph.graphops.graphops import (
+from pygmodels.graph.graphfunc.graphalg import BaseGraphAlgOps
+from pygmodels.graph.graphfunc.graphops import (
     BaseGraphBoolOps,
     BaseGraphEdgeOps,
     BaseGraphNodeOps,
@@ -245,9 +245,7 @@ class GraphTest(unittest.TestCase):
             "g1",
             data={"my": "graph", "data": "is", "very": "awesome"},
             nodes=set([self.bb, self.cc, self.dd, self.ee]),
-            edges=set(
-                [self.bb_cc, self.cc_dd, self.dd_ee, self.ee_bb, self.bb_dd]
-            ),
+            edges=set([self.bb_cc, self.cc_dd, self.dd_ee, self.ee_bb, self.bb_dd]),
         )
 
         # initialize profiler
@@ -281,31 +279,21 @@ class GraphTest(unittest.TestCase):
         n2 = Node("n2", {})
         n3 = Node("n3", {})
         n4 = Node("n4", {})
-        e1 = Edge(
-            "e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED
-        )
-        e2 = Edge(
-            "e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED
-        )
-        graph = Graph(
-            "g1", data={}, nodes=set([n1, n2, n3, n4]), edges=set([e1, e2])
-        )
+        e1 = Edge("e1", start_node=n1, end_node=n2, edge_type=EdgeType.UNDIRECTED)
+        e2 = Edge("e2", start_node=n2, end_node=n3, edge_type=EdgeType.UNDIRECTED)
+        graph = Graph("g1", data={}, nodes=set([n1, n2, n3, n4]), edges=set([e1, e2]))
         self.assertEqual(graph, self.graph)
 
     def test__add__n(self):
         """"""
         n = Node("n646", {})
         g = self.graph + n
-        self.assertEqual(
-            set(g.V), set([self.n1, self.n2, self.n3, self.n4, n])
-        )
+        self.assertEqual(set(g.V), set([self.n1, self.n2, self.n3, self.n4, n]))
 
     def test__add__e(self):
         """"""
         n = Node("n646", {})
-        e = Edge(
-            "e8", start_node=self.n1, end_node=n, edge_type=EdgeType.UNDIRECTED
-        )
+        e = Edge("e8", start_node=self.n1, end_node=n, edge_type=EdgeType.UNDIRECTED)
         g = self.graph + e
         self.assertEqual(set(g.E), set([e, self.e1, self.e2]))
 
@@ -314,9 +302,7 @@ class GraphTest(unittest.TestCase):
         n = Node("n646", {})
         n1 = Node("n647", {})
         n2 = Node("n648", {})
-        e = Edge(
-            "e8", start_node=self.n1, end_node=n, edge_type=EdgeType.UNDIRECTED
-        )
+        e = Edge("e8", start_node=self.n1, end_node=n, edge_type=EdgeType.UNDIRECTED)
         gg = Graph(gid="temp", data={}, nodes=set([n, n1, n2]), edges=set([e]))
         g = self.graph + gg
         self.assertEqual(
@@ -334,9 +320,7 @@ class GraphTest(unittest.TestCase):
     def test__sub__e(self):
         """"""
         n = Node("n646", {})
-        e = Edge(
-            "e8", start_node=self.n1, end_node=n, edge_type=EdgeType.UNDIRECTED
-        )
+        e = Edge("e8", start_node=self.n1, end_node=n, edge_type=EdgeType.UNDIRECTED)
         g = self.graph - e
         self.assertEqual(set(g.E), set([self.e1, self.e2]))
 
@@ -345,9 +329,7 @@ class GraphTest(unittest.TestCase):
         n = Node("n646", {})
         n1 = Node("n647", {})
         n2 = Node("n648", {})
-        e = Edge(
-            "e8", start_node=self.n1, end_node=n, edge_type=EdgeType.UNDIRECTED
-        )
+        e = Edge("e8", start_node=self.n1, end_node=n, edge_type=EdgeType.UNDIRECTED)
         gg = Graph(
             gid="temp",
             data={},

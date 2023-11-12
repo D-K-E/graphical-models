@@ -6,7 +6,7 @@ import pprint
 import unittest
 
 from pygmodels.graph.graphmodel.digraph import DiGraph
-from pygmodels.graph.graphops.graphops import (
+from pygmodels.graph.graphfunc.graphops import (
     BaseGraphEdgeOps,
     BaseGraphNodeOps,
     BaseGraphOps,
@@ -142,9 +142,7 @@ class DiGraphTest(unittest.TestCase):
         self.dgraph5 = DiGraph(
             "dg5",
             data={"my": "graph", "data": "is", "very": "awesome"},
-            nodes=set(
-                [self.a, self.b, self.c, self.d, self.e, self.f, self.g]
-            ),
+            nodes=set([self.a, self.b, self.c, self.d, self.e, self.f, self.g]),
             edges=set(
                 [
                     self.ab,
@@ -208,9 +206,7 @@ class DiGraphTest(unittest.TestCase):
     def test_find_shortest_path(self):
         """"""
         path_props = self.dgraph4.find_shortest_paths(n=self.n1)
-        self.assertEqual(
-            path_props.path_set, set([self.n1, self.n2, self.n3, self.n4])
-        )
+        self.assertEqual(path_props.path_set, set([self.n1, self.n2, self.n3, self.n4]))
 
     def test_check_for_path_false(self):
         v = self.dgraph4.check_for_path(self.n1, self.a)
