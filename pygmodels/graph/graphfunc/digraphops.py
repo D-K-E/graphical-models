@@ -7,14 +7,14 @@ involving directed edges
 
 from typing import Callable, Set
 
-from pygmodels.graph.graphops.graphops import BaseGraphBoolOps
+from pygmodels.graph.graphfunc.graphops import BaseGraphBoolOps
 from pygmodels.graph.graphtype.abstractobj import (
     AbstractDiGraph,
     AbstractEdge,
     AbstractNode,
     EdgeType,
 )
-from pygmodels.utils import is_type, type_check
+from pygmodels.utils import is_type
 
 
 class DiGraphBoolOps:
@@ -23,9 +23,7 @@ class DiGraphBoolOps:
     """
 
     @staticmethod
-    def is_family_of(
-        g: AbstractDiGraph, src: AbstractNode, dst: AbstractNode
-    ) -> bool:
+    def is_family_of(g: AbstractDiGraph, src: AbstractNode, dst: AbstractNode) -> bool:
         """!
         \brief Check if src is family of dst
 
@@ -42,7 +40,7 @@ class DiGraphBoolOps:
         is also a room for improvement, since it can be much more efficient
         using edge list representation.
         """
-        is_type(val=g, originType=AbstractDiGraph, shouldRaiseError=True)
+        is_type(g, "g", AbstractDiGraph, True)
         for e in g.E:
             # dst is child of src
             child_cond = e.start() == src and e.end() == dst
@@ -63,16 +61,14 @@ class DiGraphBoolOps:
         For all e in E[G] and for all {v,w} in V[e] if e is an outgoing edge of
         v and incoming edge of w than v is parent of w.
         """
-        is_type(val=g, originType=AbstractDiGraph, shouldRaiseError=True)
+        is_type(g, "g", AbstractDiGraph, True)
 
         def cond(n_1: AbstractNode, n_2: AbstractNode, e: AbstractEdge):
             """"""
             c = n_1 == e.start() and e.end() == n_2
             return c
 
-        return BaseGraphBoolOps.is_related_to(
-            g, n1=parent, n2=child, condition=cond
-        )
+        return BaseGraphBoolOps.is_related_to(g, n1=parent, n2=child, condition=cond)
 
     @staticmethod
     def is_child_of(
@@ -87,20 +83,16 @@ class DiGraphBoolOps:
         As you can see from the definition provided in is_parent_of() as well,
         if v is child of w, then w is parent of v.
         """
-        is_type(val=g, originType=AbstractDiGraph, shouldRaiseError=True)
+        is_type(g, "g", AbstractDiGraph, True)
         return DiGraphBoolOps.is_parent_of(g, parent=parent, child=child)
 
     @staticmethod
-    def is_adjacent_of(
-        g: AbstractDiGraph, e1: AbstractEdge, e2: AbstractEdge
-    ) -> bool:
+    def is_adjacent_of(g: AbstractDiGraph, e1: AbstractEdge, e2: AbstractEdge) -> bool:
         """!
         \brief check if edges have a common node
         """
-        is_type(val=g, originType=AbstractDiGraph, shouldRaiseError=True)
-        if not BaseGraphBoolOps.is_in(g, e1) or not BaseGraphBoolOps.is_in(
-            g, e2
-        ):
+        is_type(g, "g", AbstractDiGraph, True)
+        if not BaseGraphBoolOps.is_in(g, e1) or not BaseGraphBoolOps.is_in(g, e2):
             raise ValueError("argument edges are not in graph")
 
         n1_ids = e1.node_ids()
@@ -115,12 +107,12 @@ class DiGraphNumericOps:
 
     @staticmethod
     def in_degree_of(g: AbstractDiGraph, n: AbstractNode) -> int:
-        is_type(val=g, originType=AbstractDiGraph, shouldRaiseError=True)
+        is_type(g, "g", AbstractDiGraph, True)
         return len(DiGraphNodeOps.parents_of(g, n))
 
     @staticmethod
     def out_degree_of(g: AbstractDiGraph, n: AbstractNode) -> int:
-        is_type(val=g, originType=AbstractDiGraph, shouldRaiseError=True)
+        is_type(g, "g", AbstractDiGraph, True)
         return len(DiGraphNodeOps.children_of(g, n))
 
 
@@ -139,10 +131,8 @@ class DiGraphEdgeOps:
         \throws ValueError If any of the arguments are not found in this graph we
         throw value error.
         """
-        is_type(val=g, originType=AbstractDiGraph, shouldRaiseError=True)
-        if not BaseGraphBoolOps.is_in(g, start) or not BaseGraphBoolOps.is_in(
-            g, end
-        ):
+        is_type(g, "g", AbstractDiGraph, True)
+        if not BaseGraphBoolOps.is_in(g, start) or not BaseGraphBoolOps.is_in(g, end):
             raise ValueError("argument nodes are not in graph")
         #
         eset: Set[AbstractEdge] = set()
@@ -174,7 +164,7 @@ class DiGraphNodeOps:
         \throws ValueError if the argument does not belong to this graph we
         throw value error.
         """
-        is_type(val=g, originType=AbstractDiGraph, shouldRaiseError=True)
+        is_type(g, "g", AbstractDiGraph, True)
         if not BaseGraphBoolOps.is_in(g, n):
             raise ValueError("node not in graph")
         family = set()
@@ -190,7 +180,7 @@ class DiGraphNodeOps:
         \throws ValueError if the argument does not belong to this graph we
         throw value error.
         """
-        is_type(val=g, originType=AbstractDiGraph, shouldRaiseError=True)
+        is_type(g, "g", AbstractDiGraph, True)
         return DiGraphNodeOps.family_set_of(
             g=g,
             n=n,
@@ -205,7 +195,7 @@ class DiGraphNodeOps:
         \throws ValueError if the argument does not belong to this graph we
         throw value error.
         """
-        is_type(val=g, originType=AbstractDiGraph, shouldRaiseError=True)
+        is_type(g, "g", AbstractDiGraph, True)
         return DiGraphNodeOps.family_set_of(
             g=g,
             n=n,

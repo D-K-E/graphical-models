@@ -4,7 +4,7 @@ Traverse graphs in some fashion
 import math
 from typing import Callable, Dict, List, Optional, Set, Tuple, Union
 
-from pygmodels.graph.graphops.graphops import (
+from pygmodels.graph.graphfunc.graphops import (
     BaseGraphBoolOps,
     BaseGraphEdgeOps,
     BaseGraphNodeOps,
@@ -15,7 +15,7 @@ from pygmodels.graph.graphtype.abstractobj import (
     AbstractGraph,
     AbstractNode,
 )
-from pygmodels.graph.graphtype.gsearchresult import (
+from pygmodels.graph.graphtype.searchresult import (
     BaseGraphBFSResult,
     BaseGraphDFSResult,
 )

@@ -7,13 +7,13 @@ from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
 from pygmodels.graph.graphmodel.digraph import DiGraph
-from pygmodels.graph.graphops.digraphops import (
+from pygmodels.graph.graphfunc.digraphops import (
     DiGraphBoolOps,
     DiGraphEdgeOps,
     DiGraphNodeOps,
     DiGraphNumericOps,
 )
-from pygmodels.graph.graphops.graphops import BaseGraphEdgeOps
+from pygmodels.graph.graphfunc.graphops import BaseGraphEdgeOps
 from pygmodels.graph.graphtype.abstractobj import (
     AbstractDiGraph,
     AbstractEdge,
@@ -153,9 +153,7 @@ class DiGraphOpsTest(unittest.TestCase):
         self.dgraph5 = DiGraph(
             "dg5",
             data={"my": "graph", "data": "is", "very": "awesome"},
-            nodes=set(
-                [self.a, self.b, self.c, self.d, self.e, self.f, self.g]
-            ),
+            nodes=set([self.a, self.b, self.c, self.d, self.e, self.f, self.g]),
             edges=set(
                 [
                     self.ab,

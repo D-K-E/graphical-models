@@ -6,7 +6,7 @@ import math
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 from uuid import uuid4
 
-from pygmodels.graph.graphops.graphops import BaseGraphBoolOps, BaseGraphOps
+from pygmodels.graph.graphfunc.graphops import BaseGraphBoolOps, BaseGraphOps
 from pygmodels.graph.graphtype.abstractobj import (
     AbstractDiGraph,
     AbstractEdge,
@@ -17,7 +17,7 @@ from pygmodels.graph.graphtype.abstractobj import (
 )
 from pygmodels.graph.graphtype.basegraph import BaseGraph
 from pygmodels.graph.graphtype.edge import Edge
-from pygmodels.utils import is_type, type_check
+from pygmodels.utils import is_type
 
 
 class BaseGraphAlgOps:
@@ -32,7 +32,7 @@ class BaseGraphAlgOps:
         """!
         \brief subtraction of elements for G - v cases, see Diestel p. 4
         """
-        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
+        is_type(g, "g", AbstractGraph, True)
         if isinstance(el, AbstractGraph):
             if is_plus is False:
                 elnodes = set(el.V)
@@ -81,7 +81,7 @@ class BaseGraphAlgOps:
         is_plus=False,
     ) -> BaseGraph:
         """"""
-        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
+        is_type(g, "g", AbstractGraph, True)
         if isinstance(el, AbstractNode):
             return BaseGraphAlgOps.plus_minus_node_edge(
                 g=g, el=set([el]), is_plus=is_plus
@@ -113,7 +113,7 @@ class BaseGraphAlgOps:
         """!
         \brief subtraction of elements for G - v cases, see Diestel p. 4
         """
-        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
+        is_type(g, "g", AbstractGraph, True)
         return BaseGraphAlgOps.plus_minus(g=g, el=el, is_plus=False)
 
     @staticmethod
@@ -127,7 +127,7 @@ class BaseGraphAlgOps:
         Add edge between nodes. If there are no edges in between.
         The flag is_directed specifies if the edge is directed or not
         """
-        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
+        is_type(g, "g", AbstractGraph, True)
         if not BaseGraphBoolOps.is_in(g, n1) or not BaseGraphBoolOps.is_in(g, n2):
             raise ValueError("one of the nodes is not present in graph")
         n1id = n1.id()
@@ -170,5 +170,5 @@ class BaseGraphAlgOps:
         """!
         \brief addition of elements for G + v cases, see Diestel p. 4
         """
-        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
+        is_type(g, "g", AbstractGraph, True)
         return BaseGraphAlgOps.plus_minus(g=g, el=el, is_plus=True)

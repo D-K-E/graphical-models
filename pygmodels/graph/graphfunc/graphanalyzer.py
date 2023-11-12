@@ -5,13 +5,13 @@
 import math
 from typing import Callable, Dict, FrozenSet, List, Optional, Set, Tuple, Union
 
-from pygmodels.graph.graphops.graphops import (
+from pygmodels.graph.graphfunc.graphops import (
     BaseGraphBoolOps,
     BaseGraphEdgeOps,
     BaseGraphNodeOps,
     BaseGraphOps,
 )
-from pygmodels.graph.graphops.graphsearcher import BaseGraphSearcher
+from pygmodels.graph.graphfunc.graphsearcher import BaseGraphSearcher
 from pygmodels.graph.graphtype.abstractobj import (
     AbstractEdge,
     AbstractGraph,
@@ -19,7 +19,7 @@ from pygmodels.graph.graphtype.abstractobj import (
     EdgeType,
 )
 from pygmodels.graph.graphtype.basegraph import BaseGraph
-from pygmodels.graph.graphtype.gsearchresult import (
+from pygmodels.graph.graphtype.searchresult import (
     BaseGraphBFSResult,
     BaseGraphDFSResult,
 )
@@ -92,11 +92,7 @@ class BaseGraphBoolAnalyzer:
         """
         if n1 == n2:
             return False
-        return (
-            True
-            if BaseGraphBoolOps.is_neighbour_of(g, n1, n2) is False
-            else False
-        )
+        return True if BaseGraphBoolOps.is_neighbour_of(g, n1, n2) is False else False
 
     @staticmethod
     def is_stable(g: AbstractGraph, ns: FrozenSet[AbstractNode]) -> bool:
@@ -352,9 +348,7 @@ class BaseGraphNumericAnalyzer:
         return len(g.E) / len(g.V)
 
     @staticmethod
-    def ev_ratio_from_average_degree(
-        g: AbstractGraph, average_degree: float
-    ) -> float:
+    def ev_ratio_from_average_degree(g: AbstractGraph, average_degree: float) -> float:
         """!
         \brief obtain edge vertex ratio from average degree
 
@@ -371,9 +365,7 @@ class BaseGraphNumericAnalyzer:
         \brief shorthand for ev_ratio_from_average_degree()
         """
         adegree = BaseGraphNumericAnalyzer.average_degree(g)
-        return BaseGraphNumericAnalyzer.ev_ratio_from_average_degree(
-            g, adegree
-        )
+        return BaseGraphNumericAnalyzer.ev_ratio_from_average_degree(g, adegree)
 
     @staticmethod
     def shortest_path_length(g: AbstractGraph) -> int:
@@ -562,9 +554,7 @@ class BaseGraphNodeAnalyzer:
         return set(
             [
                 frozenset(
-                    BaseGraphNodeAnalyzer.get_component_nodes(
-                        k, g=g, result=result
-                    )
+                    BaseGraphNodeAnalyzer.get_component_nodes(k, g=g, result=result)
                 )
                 for k in component_roots
             ]
@@ -628,9 +618,7 @@ class BaseGraphEdgeAnalyzer:
             result = BaseGraphAnalyzer.dfs_props(
                 g, edge_generator=edge_generator, check_cycle=check_cycle
             )
-        nb_component = BaseGraphNumericAnalyzer.nb_components(
-            g=g, result=result
-        )
+        nb_component = BaseGraphNumericAnalyzer.nb_components(g=g, result=result)
         bridges = set()
         for e in g.E:
             made_g = graph_maker(e)
@@ -702,9 +690,7 @@ class BaseGraphAnalyzer:
         component_roots = [k for k in result.forest.keys()]
         return set(
             [
-                BaseGraphAnalyzer.get_component(
-                    root_node_id=root, g=g, result=result
-                )
+                BaseGraphAnalyzer.get_component(root_node_id=root, g=g, result=result)
                 for root in component_roots
             ]
         )

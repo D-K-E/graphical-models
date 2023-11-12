@@ -7,8 +7,8 @@ import unittest
 # profiler related
 from pstats import Stats
 
-from pygmodels.graph.graphops.graphops import BaseGraphOps
-from pygmodels.graph.graphops.graphsearcher import BaseGraphSearcher
+from pygmodels.graph.graphfunc.graphops import BaseGraphOps
+from pygmodels.graph.graphfunc.graphsearcher import BaseGraphSearcher
 from pygmodels.graph.graphtype.basegraph import BaseGraph
 from pygmodels.graph.graphtype.edge import Edge, EdgeType
 from pygmodels.graph.graphtype.node import Node
