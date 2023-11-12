@@ -20,7 +20,7 @@ from pygmodels.graph.graphtype.gsearchresult import (
     BaseGraphDFSResult,
 )
 from pygmodels.graph.graphtype.queue import PriorityQueue
-from pygmodels.utils import is_type, type_check
+from pygmodels.utils import is_type
 
 
 class BaseGraphSearcher:
@@ -58,7 +58,7 @@ class BaseGraphSearcher:
         \param check_cycle fill cycles if it is detected
         \param edge_generator generate edges of a vertex with respect to graph type
         """
-        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
+        is_type(g, "g", AbstractGraph, True)
         marked[u] = True
         time += 1
         d[u] = time
@@ -123,7 +123,7 @@ class BaseGraphSearcher:
 
         \see dfs_forest() method for more information on parameters.
         """
-        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
+        is_type(g, "g", AbstractGraph, True)
         V: Dict[str, AbstractNode] = {n.id(): n for n in g.V}
         if start_node is not None:
             if not BaseGraphBoolOps.is_in(g, start_node):
@@ -141,9 +141,7 @@ class BaseGraphSearcher:
         Ts: Dict[str, Set[str]] = {}
         d: Dict[str, int] = {n: math.inf for n in V}
         f: Dict[str, int] = {n: math.inf for n in V}
-        cycles: Dict[str, List[Dict[str, Union[str, int]]]] = {
-            n: [] for n in V
-        }
+        cycles: Dict[str, List[Dict[str, Union[str, int]]]] = {n: [] for n in V}
         component_counter = 0
         #
         for u in Vlst:
@@ -194,7 +192,7 @@ class BaseGraphSearcher:
         """!
         \brief obtain the edge set implied by the predecessor array.
         """
-        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
+        is_type(g, "g", AbstractGraph, True)
         esets: Dict[str, Set[AbstractEdge]] = {}
         V = {v.id(): v for v in g.V}
         for u, forest in preds.copy().items():
@@ -204,9 +202,7 @@ class BaseGraphSearcher:
                 if parent is not None:
                     pnode = V[parent]
                     eset = eset.union(
-                        BaseGraphEdgeOps.edge_by_vertices(
-                            g, start=pnode, end=cnode
-                        )
+                        BaseGraphEdgeOps.edge_by_vertices(g, start=pnode, end=cnode)
                     )
             esets[u] = eset
         return esets
@@ -224,7 +220,7 @@ class BaseGraphSearcher:
 
         \throws ValueError if given node is not found in graph instance
         """
-        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
+        is_type(g, "g", AbstractGraph, True)
         if not BaseGraphBoolOps.is_in(g, n1):
             raise ValueError("argument node is not in graph")
         nid = n1.id()
@@ -274,10 +270,8 @@ class BaseGraphSearcher:
         """!
         Apply uniform cost search to given problem set
         """
-        is_type(val=g, originType=AbstractGraph, shouldRaiseError=True)
-        if not BaseGraphBoolOps.is_in(g, start) or not BaseGraphBoolOps.is_in(
-            g, goal
-        ):
+        is_type(g, "g", AbstractGraph, True)
+        if not BaseGraphBoolOps.is_in(g, start) or not BaseGraphBoolOps.is_in(g, goal):
             raise ValueError("Start node or goal node is not in graph")
         problem_set = g.E if problem_set is None else problem_set
         pnode = {"cost": 0, "state": start.id(), "parent": None, "edge": None}
@@ -305,9 +299,7 @@ class BaseGraphSearcher:
                     # node is already in frontier
                     ckey = frontier.key(child, f=lambda x: x["state"])
                     if ckey > cnode["cost"]:
-                        frontier.insert(
-                            cnode["cost"], cnode, f=lambda x: x["state"]
-                        )
+                        frontier.insert(cnode["cost"], cnode, f=lambda x: x["state"])
 
     @staticmethod
     def from_ucs_result(
