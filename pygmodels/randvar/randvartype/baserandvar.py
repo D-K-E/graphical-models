@@ -7,7 +7,7 @@ usable for all the operations defined in \see baserandvarops.py.
 from typing import Callable, List, Optional, Set, Tuple, Dict
 from collections.abc import Iterable
 
-from pygmodels.graph.graphtype.graphobj import GraphObject
+from pygmodels.graph.graphtype.node import Node
 from pygmodels.randvar.randvartype.abstractrandvar import (
     AbstractEvidence,
     AbstractEvent,
@@ -18,9 +18,9 @@ from pygmodels.randvar.randvartype.abstractrandvar import (
 
 # for type checking
 from pygmodels.utils import is_type, is_optional_type
-from pygmodels.value.codomain import CodomainValue, Range
-from pygmodels.value.domain import Domain, DomainValue, DomainSample
 from pygmodels.value.value import NumericValue
+from pygmodels.randvar.randvartype.abstractrandvar import PossibleOutcomes
+from pygmodels.randvar.randvartype.abstractrandvar import PossibleOutcome
 from types import FunctionType
 
 
@@ -77,7 +77,7 @@ class BaseEvidence(AbstractEvidence, BaseRandomVariableMember):
         )
         self.val = value
 
-    def value(self) -> CodomainValue:
+    def value(self) -> PossibleOutcome:
         "Value of the evidence"
         return self.val
 
@@ -218,6 +218,30 @@ class RandomVariableInitializer:
             return dist_fn
         else:
             return self.arg_dist
+
+
+class BaseRandomNumber(AbstractRandomNumber, Node):
+    """"""
+
+    def __init__(
+        self,
+        randvar_id: str,
+        randvar_name: Optional[str] = None,
+        graph_data: Optional[dict] = None,
+        evidence: Optional[BaseEvidence] = None,
+    ):
+        super().__init__(node_id=randvar_id, data=graph_data)
+        is_optional_type(evidence, "evidence", BaseEvidence, True)
+        self._evidence = evidence
+        is_optional_type(randvar_name, "randvar_name", str, True)
+        self._name = randvar_name
+
+    @property
+    def name(self) -> str:
+        """"""
+        if self._name is None:
+            raise ValueError("name is none")
+        return self._name
 
 
 class BaseRandomVariable(AbstractRandomVariable, GraphObject):

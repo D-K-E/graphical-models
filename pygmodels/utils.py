@@ -3,6 +3,7 @@ Utility functions
 """
 
 from typing import Any, Optional
+from uuid import uuid4
 
 
 def is_type(field_value, field_name: str, field_type, raise_error: bool = True) -> bool:
@@ -87,3 +88,8 @@ def read_json(path: str):
     with open(path, "r", encoding="utf-8", newline="\n") as f:
         jfile = json.load(f)
     return jfile
+
+
+def mk_id():
+    """"""
+    return str(uuid4())

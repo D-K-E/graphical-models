@@ -9,7 +9,7 @@ from uuid import uuid4
 
 from pygmodels.factor.factortype.abstractfactor import (
     AbstractFactor,
-    DomainSliceSet,
+    FactorDomainValue,
     DomainSubset,
     FactorDomain,
     FactorScope,
@@ -32,7 +32,7 @@ class BaseFactor(AbstractFactor, GraphObject):
         self,
         gid: str,
         scope_vars: FactorScope,
-        factor_fn: Optional[Callable[[DomainSliceSet], NumericValue]] = None,
+        factor_fn: Optional[Callable[[FactorDomainValue], NumericValue]] = None,
         data={},
     ):
         """"""
@@ -59,7 +59,7 @@ class BaseFactor(AbstractFactor, GraphObject):
         return msg
 
     def __hash__(self):
-        return hash(self.__str__())
+        return hash(str(self))
 
     def __eq__(self, n: AbstractFactor):
         """!
@@ -180,7 +180,7 @@ class BaseFactor(AbstractFactor, GraphObject):
         is_type(fn, "fn", FunctionType, True)
         return BaseFactor(gid=str(uuid4()), scope_vars=svars, factor_fn=fn)
 
-    def __call__(self, scope_product: DomainSliceSet) -> float:
+    def __call__(self, scope_product: FactorDomainValue) -> float:
         """!
         \brief obtain a factor value for given scope random variables
 
@@ -203,7 +203,7 @@ class BaseFactor(AbstractFactor, GraphObject):
 
         \endcode
         """
-        is_type(scope_product, "scope_product", DomainSliceSet, True)
+        is_type(scope_product, "scope_product", FactorDomainValue, True)
         return self.factor_fn(scope_product)
 
     def partition_value(self, domains: FactorDomain) -> float:

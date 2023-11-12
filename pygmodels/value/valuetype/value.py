@@ -43,6 +43,120 @@ class NumericValue(Value):
     def value(self):
         return self._v
 
+    def __add__(self, other):
+        if isinstance(other, NumericValue):
+            return NumericValue(self.value + other.value)
+        else:
+            return NumericValue(self.value + other)
+
+    def __sub__(self, other):
+        if isinstance(other, NumericValue):
+            return NumericValue(self.value - other.value)
+        else:
+            return NumericValue(self.value - other)
+
+    def __rsub__(self, other):
+        if isinstance(other, NumericValue):
+            return NumericValue(other.value - self.value)
+        else:
+            return NumericValue(other - self.value)
+
+    def __mul__(self, other):
+        if isinstance(other, NumericValue):
+            return NumericValue(self.value * other.value)
+        else:
+            return NumericValue(self.value * other)
+
+    def __truediv__(self, other):
+        if isinstance(other, NumericValue):
+            return NumericValue(self.value / other.value)
+        else:
+            return NumericValue(self.value / other)
+
+    def __floordiv__(self, other):
+        if isinstance(other, NumericValue):
+            return NumericValue(self.value // other.value)
+        else:
+            return NumericValue(self.value // other)
+
+    def __mod__(self, other):
+        """"""
+        if isinstance(other, NumericValue):
+            return NumericValue(self.value % other.value)
+        else:
+            return NumericValue(self.value % other)
+
+    def __pow__(self, other):
+        """"""
+        if isinstance(other, NumericValue):
+            return NumericValue(pow(self.value, other.value))
+        else:
+            return NumericValue(pow(self.value, other))
+
+    def __rtruediv__(self, other):
+        """"""
+        if isinstance(other, NumericValue):
+            return NumericValue(other.value / self.value)
+        else:
+            return NumericValue(other / self.value)
+
+    def __rfloordiv__(self, other):
+        """"""
+        if isinstance(other, NumericValue):
+            return NumericValue(other.value // self.value)
+        else:
+            return NumericValue(other // self.value)
+
+    def __rmod__(self, other):
+        """"""
+        if isinstance(other, NumericValue):
+            return NumericValue(other.value % self.value)
+        else:
+            return NumericValue(other % self.value)
+
+    def __rpow__(self, other):
+        """"""
+        if isinstance(other, NumericValue):
+            return NumericValue(pow(other.value, self.value))
+        else:
+            return NumericValue(pow(other, self.value))
+
+    def __lt__(self, other):
+        if isinstance(other, NumericValue):
+            return NumericValue(self.value < other.value)
+        else:
+            return NumericValue(self.value < other)
+
+    def __le__(self, other):
+        if isinstance(other, NumericValue):
+            return NumericValue(self.value <= other.value)
+        else:
+            return NumericValue(self.value <= other)
+
+    def __gt__(self, other):
+        if isinstance(other, NumericValue):
+            return NumericValue(self.value > other.value)
+        else:
+            return NumericValue(self.value > other)
+
+    def __ge__(self, other):
+        if isinstance(other, NumericValue):
+            return NumericValue(self.value >= other.value)
+        else:
+            return NumericValue(self.value >= other)
+
+    def __eq__(self, other):
+        if isinstance(other, NumericValue):
+            return NumericValue(self.value == other.value)
+        else:
+            return NumericValue(self.value == other)
+
+    def __ne__(self, other):
+        if isinstance(other, NumericValue):
+            return NumericValue(self.value != other.value)
+        else:
+            return NumericValue(self.value != other)
+
 
 class StringValue(Value):
     """!"""

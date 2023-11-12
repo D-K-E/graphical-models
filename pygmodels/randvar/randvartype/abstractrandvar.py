@@ -8,13 +8,78 @@ from pygmodels.graph.graphtype.abstractobj import (
     AbstractGraphObj,
     AbstractNode,
 )
-from pygmodels.value.codomain import Codomain, CodomainValue
+from pygmodels.value.codomain import OrderedCodomain, CodomainValue
 from pygmodels.value.codomain import Range
 from pygmodels.value.domain import Domain, DomainValue
 from pygmodels.value.value import NumericValue
 
-PossibleOutcomes = Codomain
-PossibleOutcome = CodomainValue
+
+class PossibleOutcome(CodomainValue):
+    """"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class PossibleOutcomes(OrderedCodomain):
+    """"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class AbstractRandomNumber(AbstractNode):
+    """"""
+
+    @abstractmethod
+    @property
+    def upper_bound(self) -> float:
+        "Biagini, Campanino, 2016, p. 3"
+        raise NotImplementedError
+
+    @abstractmethod
+    @property
+    def lower_bound(self) -> float:
+        "Biagini, Campanino, 2016, p. 3"
+        raise NotImplementedError
+
+    def is_upper_bounded(self) -> bool:
+        "Biagini, Campanino, 2016, p. 3"
+        return self.upper_bound != float("inf")
+
+    def is_lower_bounded(self) -> bool:
+        "Biagini, Campanino, 2016, p. 3"
+        return self.lower_bound != float("-inf")
+
+    def is_bounded(self) -> bool:
+        "Biagini, Campanino, 2016, p. 3"
+        return self.is_upper_bounded() and self.is_lower_bounded()
+
+    def is_independent(self, other) -> bool:
+        "Biagini, Campanino, 2016, p. 4"
+        raise NotImplementedError
+
+    @abstractmethod
+    def __and__(self, other):
+        "Biagini, Campanino, 2016, p. 4"
+        raise NotImplementedError
+
+    @abstractmethod
+    def __or__(self, other) -> float:
+        "Biagini, Campanino, 2016, p. 4"
+        raise NotImplementedError
+
+    @abstractmethod
+    def __invert__(self):
+        "Biagini, Campanino, 2016, p. 4"
+        raise NotImplementedError
+
+    @abstractmethod
+    def __call__(self, out: PossibleOutcome) -> float:
+        """!
+        Measure the probability of the given outcome
+        """
+        raise NotImplementedError
 
 
 class AbstractRandomVariableMember(AbstractGraphObj):

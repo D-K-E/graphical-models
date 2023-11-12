@@ -9,11 +9,22 @@ from pygmodels.graph.graphtype.abstractobj import AbstractGraphObj
 from pygmodels.randvar.randvartype.abstractrandvar import (
     AbstractRandomVariable,
 )
-from pygmodels.value.value import NumericValue, OrderedFiniteVSet
+from pygmodels.value.valuetype.value import OrderedFiniteVSet
+from pygmodels.value.valuetype.abstractvalue import TypedMutableSet
+from pygmodels.value.valuetype.abstractvalue import TypedOrderedSequence
+from pygmodels.value.valuetype.abstractvalue import FiniteTypedSet
+from pygmodels.value.valuetype.abstractvalue import OrderedFiniteTypedSequence
 
-FactorScope = Set[AbstractRandomVariable]
+
+class FactorScope(TypedMutableSet):
+    """"""
+
+    def __init__(self, iterable):
+        super().__init__(iterable, AbstractRandomVariable)
+
+
 OrderedSubset = OrderedFiniteVSet
-DomainSliceSet = FrozenSet[OrderedSubset]
+FactorDomainValue = FrozenSet[OrderedSubset]
 DomainSubset = DomainSliceSet
 FactorDomain = List[DomainSubset]
 FactorCartesianProduct = FactorDomain
