@@ -63,20 +63,16 @@ class BaseEvidence(AbstractEvidence, BaseRandomVariableMember):
         data: Optional[dict] = None,
     ):
         """"""
-        is_type(
-            value,
-            originType=CodomainValue,
-            shouldRaiseError=True,
-            val_name="value",
-        )
         super().__init__(
             member_id=evidence_id,
             randvar_id=randvar_id,
             data=data,
             description=description,
         )
+        is_type(value, "value", CodomainValue, True)
         self.val = value
 
+    @property
     def value(self) -> PossibleOutcome:
         "Value of the evidence"
         return self.val
@@ -218,30 +214,6 @@ class RandomVariableInitializer:
             return dist_fn
         else:
             return self.arg_dist
-
-
-class BaseRandomNumber(AbstractRandomNumber, Node):
-    """"""
-
-    def __init__(
-        self,
-        randvar_id: str,
-        randvar_name: Optional[str] = None,
-        graph_data: Optional[dict] = None,
-        evidence: Optional[BaseEvidence] = None,
-    ):
-        super().__init__(node_id=randvar_id, data=graph_data)
-        is_optional_type(evidence, "evidence", BaseEvidence, True)
-        self._evidence = evidence
-        is_optional_type(randvar_name, "randvar_name", str, True)
-        self._name = randvar_name
-
-    @property
-    def name(self) -> str:
-        """"""
-        if self._name is None:
-            raise ValueError("name is none")
-        return self._name
 
 
 class BaseRandomVariable(AbstractRandomVariable, GraphObject):

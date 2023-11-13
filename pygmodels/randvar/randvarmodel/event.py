@@ -2,7 +2,7 @@
 \brief event as defined in Biagini, Campanino, 2016, p. 5
 """
 
-from pygmodels.randvar.randvartype.discrete import DiscreteRandomNumber
+from pygmodels.randvar.randvarmodel.discrete import DiscreteRandomNumber
 from pygmodels.randvar.randvartype.abstractrandvar import PossibleOutcomes
 from pygmodels.value.valuetype.codomain import CodomainValue
 from pygmodels.value.valuetype.value import NumericValue
@@ -16,18 +16,20 @@ class Event(DiscreteRandomNumber):
         self,
         *args,
         outcomes: PossibleOutcomes = PossibleOutcomes(
-            [
-                CodomainValue(
-                    v=NumericValue(v=0.0),
-                    set_id=self.id(),
-                    mapping_name=self.name,
-                ),
-                CodomainValue(
-                    v=NumericValue(v=1.0),
-                    set_id=self.id(),
-                    mapping_name=self.name,
-                ),
-            ]
+            set(
+                [
+                    CodomainValue(
+                        v=NumericValue(v=0.0),
+                        set_id=self.id(),
+                        mapping_name=self.name,
+                    ),
+                    CodomainValue(
+                        v=NumericValue(v=1.0),
+                        set_id=self.id(),
+                        mapping_name=self.name,
+                    ),
+                ]
+            )
         ),
         **kwargs
     ):
@@ -41,28 +43,25 @@ class Event(DiscreteRandomNumber):
 
     def __or__(self, other) -> BaseRandomNumber:
         "Biagini, Campanino, 2016, p. 5"
-        if not isinstance(other, Event):
-            raise TypeError("other must be an event")
-        #
-        name = "(" + (", ".join([other.name, self.name])) + ")"
-        if self._evidence is not None:
-            outcomes = [self._evidence.value().fetch()]
-        else:
-            outcomes = [p.fetch() for p in self.outcomes]
 
-        result = []
-        for f in other.outcomes:
-            for e in outcomes:
-                e_prod_f = e * f.fetch()
-                e_plus_f = e + f.fetch()
-                rval = CodomainValue(
-                    v=e_plus_f - e_prod_f,
-                    set_id=self.id(),
-                    mapping_name="|",
-                    domain_name=name,
-                )
-                result.append(rval)
-        or_event = Event(
-            randvar_id=mk_id(), randvar_name=name, outcomes=PossibleOutcomes(result)
-        )
-        return or_event
+        def or_f(e, f):
+            e_prod_f = e * f
+            e_plus_f = e + f
+            return e_plus_f - e_prod_f
+
+        return self.__myop__(other=other, func=or_f, func_name="or")
+
+    def __sub__(self, other) -> BaseRandomNumber:
+        "Biagini, Campanino, 2016, p. 5"
+
+        def diff_f(e, f):
+            e_prod_f = e * f
+            return e - e_prod_f
+
+        return self.__myop__(other=other, func=diff_f, func_name="difference")
+
+    def __xor__(self, other) -> BaseRandomNumber:
+        "Biagini, Campanino, 2016, p. 5"
+        e_f = self - other
+        f_e = other - self
+        return e_f or f_e

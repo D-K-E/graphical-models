@@ -78,3 +78,7 @@ class BaseEvidenceTest(unittest.TestCase):
         "test hash function"
         f = "<BaseEvidence :: id: student_1 value: <CodomainValue: 1 of set student01 mapped by student_1_map from None> belongs to: student01>"
         self.assertEqual(hash(self.student_rvar), hash(f))
+
+
+if __name__ == "__main__":
+    unittest.main()

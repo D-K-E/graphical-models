@@ -8,10 +8,10 @@ from pygmodels.graph.graphtype.abstractobj import (
     AbstractGraphObj,
     AbstractNode,
 )
-from pygmodels.value.codomain import OrderedCodomain, CodomainValue
-from pygmodels.value.codomain import Range
-from pygmodels.value.domain import Domain, DomainValue
-from pygmodels.value.value import NumericValue
+from pygmodels.value.valuetype.codomain import Codomain, CodomainValue
+from pygmodels.value.valuetype.codomain import Range
+from pygmodels.value.valuetype.domain import Domain, DomainValue
+from pygmodels.value.valuetype.value import NumericValue
 
 
 class PossibleOutcome(CodomainValue):
@@ -21,24 +21,24 @@ class PossibleOutcome(CodomainValue):
         super().__init__(*args, **kwargs)
 
 
-class PossibleOutcomes(OrderedCodomain):
+class PossibleOutcomes(Codomain):
     """"""
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, iterable):
+        super().__init__(iterable)
 
 
 class AbstractRandomNumber(AbstractNode):
     """"""
 
-    @abstractmethod
     @property
+    @abstractmethod
     def upper_bound(self) -> float:
         "Biagini, Campanino, 2016, p. 3"
         raise NotImplementedError
 
-    @abstractmethod
     @property
+    @abstractmethod
     def lower_bound(self) -> float:
         "Biagini, Campanino, 2016, p. 3"
         raise NotImplementedError
@@ -72,13 +72,6 @@ class AbstractRandomNumber(AbstractNode):
     @abstractmethod
     def __invert__(self):
         "Biagini, Campanino, 2016, p. 4"
-        raise NotImplementedError
-
-    @abstractmethod
-    def __call__(self, out: PossibleOutcome) -> float:
-        """!
-        Measure the probability of the given outcome
-        """
         raise NotImplementedError
 
 
