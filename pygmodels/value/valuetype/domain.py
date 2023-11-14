@@ -25,42 +25,44 @@ class DomainValue(SetValue):
 class Domain(TypedMutableSet):
     """"""
 
-    def __init__(self, iterable):
-        super().__init__(iterable, DomainValue)
+    def __init__(self, name: str, iterable):
+        super().__init__(iterable, DomainValue, name=name)
 
 
 class DomainSample(Domain):
     """"""
 
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         """"""
-        super().__init__(*args)
+        super().__init__(*args, **kwargs)
 
 
 class Sample(DomainSample):
     """"""
 
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         """"""
-        super().__init__(*args)
+        super().__init__(*args, **kwargs)
 
 
 class OrderedDomain(TypedOrderedSequence):
     """"""
 
-    def __init__(self, iterable):
-        super().__init__(iterable, DomainValue)
+    def __init__(self, name: str, iterable):
+        super().__init__(iterable, DomainValue, name=name)
 
 
 class FiniteDomain(FiniteTypedSet):
     """"""
 
-    def __init__(self, iterable):
-        super().__init__(iterable, DomainValue)
+    def __init__(self, name: str, iterable):
+        """"""
+        super().__init__(iterable, DomainValue, name=name)
 
 
 class OrderedFiniteDomain(OrderedFiniteTypedSequence):
     """"""
 
-    def __init__(self, iterable):
-        super().__init__(iterable, DomainValue)
+    def __init__(self, name: str, iterable):
+        """"""
+        super().__init__(iterable, DomainValue, name=name)

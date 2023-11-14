@@ -23,36 +23,42 @@ class CodomainTest(unittest.TestCase):
             v=StringValue(v="foo"), set_id="bar", mapping_name="baz", domain_name="ban"
         )
         self.v2 = Codomain(
-            set(
+            name="v2",
+            iterable=set(
                 [
                     CodomainValue(
                         v=StringValue(v="foo"), set_id="bar", mapping_name="baz"
                     )
                 ]
-            )
+            ),
         )
-        self.v3 = Range({v for v in self.v2})
-        self.v4 = RangeSubset({v for v in self.v2})
+        self.v3 = Range(name="v3", iterable={v for v in self.v2})
+        self.v4 = RangeSubset(name="v4", iterable={v for v in self.v2})
         self.v5 = OrderedCodomain(
-            [CodomainValue(v=StringValue(v="foo"), set_id="bar", mapping_name="baz")]
+            name="v5",
+            iterable=[
+                CodomainValue(v=StringValue(v="foo"), set_id="bar", mapping_name="baz")
+            ],
         )
         self.v6 = FiniteCodomain(
-            frozenset(
+            name="v6",
+            iterable=frozenset(
                 [
                     CodomainValue(
                         v=StringValue(v="foo"), set_id="bar", mapping_name="baz"
                     )
                 ]
-            )
+            ),
         )
         self.v7 = OrderedFiniteCodomain(
-            tuple(
+            name="v7",
+            iterable=tuple(
                 [
                     CodomainValue(
                         v=StringValue(v="foo"), set_id="bar", mapping_name="baz"
                     )
                 ]
-            )
+            ),
         )
 
     def test_codomain_value(self):

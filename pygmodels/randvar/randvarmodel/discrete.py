@@ -1,5 +1,5 @@
 """
-\brief event as defined in Biagini, Campanino, 2016, p. 5
+\brief discrete random number as defined in Biagini, Campanino, 2016, p. 27
 """
 
 from pygmodels.randvar.randvartype.baserandvar2 import BaseRandomNumber
@@ -48,90 +48,31 @@ class DiscreteRandomNumber(BaseRandomNumber):
 
     def __and__(self, other) -> BaseRandomNumber:
         "Biagini, Campanino, 2016, p. 4"
-        if not isinstance(other, DiscreteRandomNumber):
-            raise TypeError("other must be an event")
-        #
-        name = "(" + (", ".join([self.name, other.name])) + ")"
-        if self._evidence is not None:
-            outcomes = [self._evidence.value().fetch()]
-        else:
-            outcomes = [p.fetch() for p in self.outcomes]
-
-        result = []
-        for f in other.outcomes:
-            for e in outcomes:
-                e_prod_f = min([e.fetch(), f])
-                rval = CodomainValue(
-                    v=e_prod_f,
-                    set_id=self.id(),
-                    mapping_name="&",
-                    domain_name=name,
-                )
-                result.append(rval)
-        and_event = DiscreteRandomNumber(
-            randvar_id=mk_id(), randvar_name=name, outcomes=result
-        )
-        return and_event
+        return self.__myop__(other=other, func=lambda e, f: min(e, f), func_name="and")
 
     def __or__(self, other) -> BaseRandomNumber:
         "Biagini, Campanino, 2016, p. 4"
-        if not isinstance(other, DiscreteRandomNumber):
-            raise TypeError("other must be an event")
-        #
-        name = "(" + (", ".join([other.name, self.name])) + ")"
-        if self._evidence is not None:
-            outcomes = [self._evidence.value().fetch()]
-        else:
-            outcomes = [p.fetch() for p in self.outcomes]
-
-        result = []
-        for f in other.outcomes:
-            for e in outcomes:
-                ef_max = max([e, f.fetch()])
-                rval = CodomainValue(
-                    v=ef_max,
-                    set_id=self.id(),
-                    mapping_name="|",
-                    domain_name=name,
-                )
-                result.append(rval)
-        or_event = DiscreteRandomNumber(
-            randvar_id=mk_id(), randvar_name=name, outcomes=PossibleOutcomes(result)
-        )
-        return or_event
+        return self.__myop__(other=other, func=lambda e, f: max(e, f), func_name="or")
 
     def __invert__(self) -> BaseRandomNumber:
         """
         Biagini, Campanino, 2016, p. 4
         """
         name = "~" + self.name
-        if self._evidence is not None:
-            c: CodomainValue = self._evidence.value()
-            comp1 = 1 - c.fetch()
-            new_outcomes = PossibleOutcomes(
-                [
-                    CodomainValue(
-                        v=comp1,
-                        set_id=self.id(),
-                        mapping_name="~",
-                        domain_name=self.name,
-                    ),
-                ]
-            )
-            return DiscreteRandomNumber(
-                randvar_id=mk_id(), randvar_name=name, outcomes=new_outcomes
-            )
-        outs = []
-        for out in self.outcomes:
-            comp = 1 - out.fetch()
-            cval = CodomainValue(
-                v=comp,
-                set_id=self.id(),
-                mapping_name="~",
-                domain_name=self.name,
-            )
-            outs.append(cval)
-        new_outcomes = PossibleOutcomes(outs)
+
+        def invert():
+            """"""
+            for out in self.outcomes:
+                comp = 1 - out.fetch()
+                cval = CodomainValue(
+                    v=comp,
+                    set_id=self.id(),
+                    mapping_name="~",
+                    domain_name=self.name,
+                )
+                yield cval
+
+        new_outcomes = PossibleOutcomes(iterable=invert())
         return DiscreteRandomNumber(
             randvar_id=mk_id(), randvar_name=name, outcomes=new_outcomes
         )
@@ -148,24 +89,26 @@ class DiscreteRandomNumber(BaseRandomNumber):
         is_type(func_name, "func_name", str, True)
         #
         name = "(" + (", ".join([other.name, self.name])) + ")"
-        outcomes: List[NumericValue] = [p.fetch() for p in self.outcomes]
-        other_outcomes: List[NumericValue] = [p.fetch() for p in other.outcomes]
 
-        result = []
-        for f in other_outcomes:
-            for e in outcomes:
-                ef_max = func(e, f)
-                rval = CodomainValue(
-                    v=ef_max,
-                    set_id=self.id(),
-                    mapping_name=func_name,
-                    domain_name=name,
-                )
-                result.append(rval)
+        def get_outcomes():
+            """"""
+            for f_val in other.outcomes:
+                f = f_val.fetch()
+                for e_val in self.outcomes:
+                    e: NumericValue = e_val.fetch()
+                    ef_max = func(e, f)
+                    rval = CodomainValue(
+                        v=ef_max,
+                        set_id=self.id(),
+                        mapping_name=func_name,
+                        domain_name=name,
+                    )
+                    yield rval
+
         op_result = DiscreteRandomNumber(
             randvar_id=mk_id(),
             randvar_name=name,
-            outcomes=PossibleOutcomes(set(result)),
+            outcomes=PossibleOutcomes(iterable=get_outcomes()),
         )
         return op_result
 

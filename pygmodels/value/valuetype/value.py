@@ -40,7 +40,7 @@ class NumericValue(Value):
         self._v = v
 
     @property
-    def value(self):
+    def value(self) -> Union[float, int, bool]:
         return self._v
 
     def __add__(self, other):

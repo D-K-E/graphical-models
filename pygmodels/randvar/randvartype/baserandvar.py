@@ -58,7 +58,7 @@ class BaseEvidence(AbstractEvidence, BaseRandomVariableMember):
     def __init__(
         self,
         evidence_id: str,
-        value: CodomainValue,
+        value: PossibleOutcome,
         randvar_id: str,
         data: Optional[dict] = None,
     ):

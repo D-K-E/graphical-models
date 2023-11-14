@@ -12,6 +12,7 @@ from pygmodels.value.valuetype.codomain import Codomain, CodomainValue
 from pygmodels.value.valuetype.codomain import Range
 from pygmodels.value.valuetype.domain import Domain, DomainValue
 from pygmodels.value.valuetype.value import NumericValue
+from pygmodels.value.valuetype.abstractvalue import Countable
 
 
 class PossibleOutcome(CodomainValue):
@@ -21,11 +22,11 @@ class PossibleOutcome(CodomainValue):
         super().__init__(*args, **kwargs)
 
 
-class PossibleOutcomes(Codomain):
+class PossibleOutcomes(Countable):
     """"""
 
     def __init__(self, iterable):
-        super().__init__(iterable)
+        super().__init__(iterable=iterable, member_type=CodomainValue)
 
 
 class AbstractRandomNumber(AbstractNode):

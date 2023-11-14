@@ -20,15 +20,21 @@ class DomainTest(unittest.TestCase):
     def setUp(self):
         """"""
         self.v1 = DomainValue(v=StringValue(v="foo"), set_id="bar")
-        self.v2 = Domain(set([DomainValue(v=StringValue(v="foo"), set_id="bar")]))
-        self.v3 = DomainSample({v for v in self.v2})
-        self.v4 = Sample({v for v in self.v2})
-        self.v5 = OrderedDomain([DomainValue(v=StringValue(v="foo"), set_id="bar")])
+        self.v2 = Domain(
+            name="v2", iterable=set([DomainValue(v=StringValue(v="foo"), set_id="bar")])
+        )
+        self.v3 = DomainSample(name="v3", iterable={v for v in self.v2})
+        self.v4 = Sample(name="v4", iterable={v for v in self.v2})
+        self.v5 = OrderedDomain(
+            name="v5", iterable=[DomainValue(v=StringValue(v="foo"), set_id="bar")]
+        )
         self.v6 = FiniteDomain(
-            frozenset([DomainValue(v=StringValue(v="foo"), set_id="bar")])
+            name="v6",
+            iterable=frozenset([DomainValue(v=StringValue(v="foo"), set_id="bar")]),
         )
         self.v7 = OrderedFiniteDomain(
-            tuple([DomainValue(v=StringValue(v="foo"), set_id="bar")])
+            name="v7",
+            iterable=tuple([DomainValue(v=StringValue(v="foo"), set_id="bar")]),
         )
 
     def test_domain_value(self):

@@ -9,10 +9,12 @@ from typing import Any, Callable, Dict, FrozenSet, List, Optional, Set, Tuple
 from pygmodels.utils import is_type, is_optional_type
 from pygmodels.value.valuetype.value import SetValue
 from pygmodels.value.valuetype.value import Value
+from pygmodels.value.valuetype.value import NumericValue
 from pygmodels.value.valuetype.abstractvalue import TypedMutableSet
 from pygmodels.value.valuetype.abstractvalue import TypedOrderedSequence
 from pygmodels.value.valuetype.abstractvalue import FiniteTypedSet
 from pygmodels.value.valuetype.abstractvalue import OrderedFiniteTypedSequence
+from pygmodels.value.valuetype.abstractvalue import NamedContainer
 
 
 class CodomainValue(SetValue):
@@ -54,45 +56,85 @@ class CodomainValue(SetValue):
         return m
 
 
+class Interval(NamedContainer):
+    """"""
+
+    def __init__(self, name: str, lower: CodomainValue, upper: CodomainValue):
+        """"""
+        super().__init__(name=name)
+        is_type(lower, "lower", CodomainValue, True)
+        is_type(lower.fetch(), "lower.fetch()", NumericValue, True)
+        self._lower = lower
+
+        is_type(upper, "upper", CodomainValue, True)
+        is_type(upper.fetch(), "upper.fetch()", NumericValue, True)
+        self._upper = upper
+
+    @property
+    def lower(self) -> NumericValue:
+        """"""
+        return self._lower.fetch()
+
+    @property
+    def upper(self) -> NumericValue:
+        """"""
+        return self._upper.fetch()
+
+    def __call__(
+        self, sampler: Callable[[NumericValue, NumericValue], NumericValue]
+    ) -> CodomainValue:
+        """
+        Sampler function for the interval
+        """
+        codom = CodomainValue(
+            v=sampler(self.lower, self.upper),
+            mapping_name=str(sampler),
+            set_id=self._name,
+        )
+        return codom
+
+
 class Codomain(TypedMutableSet):
     """"""
 
-    def __init__(self, iterable):
-        super().__init__(iterable, CodomainValue)
+    def __init__(self, name: str, iterable):
+        """"""
+        super().__init__(iterable, CodomainValue, name=name)
 
 
 class Range(Codomain):
     """"""
 
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         """"""
-        super().__init__(*args)
+        super().__init__(*args, **kwargs)
 
 
 class RangeSubset(Range):
     """"""
 
-    def __init__(self, *args):
+    def __init__(self, *args, **kwargs):
         """"""
-        super().__init__(*args)
+        super().__init__(*args, **kwargs)
 
 
 class OrderedCodomain(TypedOrderedSequence):
     """"""
 
-    def __init__(self, iterable):
-        super().__init__(iterable, CodomainValue)
+    def __init__(self, name: str, iterable):
+        """"""
+        super().__init__(iterable, CodomainValue, name=name)
 
 
 class FiniteCodomain(FiniteTypedSet):
     """"""
 
-    def __init__(self, iterable):
-        super().__init__(iterable, CodomainValue)
+    def __init__(self, name: str, iterable):
+        super().__init__(iterable, CodomainValue, name=name)
 
 
 class OrderedFiniteCodomain(OrderedFiniteTypedSequence):
     """"""
 
-    def __init__(self, iterable):
-        super().__init__(iterable, CodomainValue)
+    def __init__(self, name: str, iterable):
+        super().__init__(iterable, CodomainValue, name=name)
