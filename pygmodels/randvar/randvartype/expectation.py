@@ -6,6 +6,7 @@ from pygmodels.randvar.randvartype.baserandvar2 import BaseRandomNumber
 from pygmodels.graph.graphtype.graphobj import GraphObject
 from pygmodels.utils import is_type, is_optional_type
 from typing import Optional
+from abc import abstractmethod
 
 
 class Expectation(GraphObject):
@@ -33,6 +34,7 @@ class Expectation(GraphObject):
             raise ValueError("randvar is none")
         return self._randvar
 
+    @abstractmethod
     def __call__(self) -> float:
         """"""
         raise NotImplementedError

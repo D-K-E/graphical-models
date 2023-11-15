@@ -18,6 +18,7 @@ class NumericValueTest(unittest.TestCase):
         self.v1 = NumericValue(v=1)
         self.v2 = NumericValue(v=2.1)
         self.v3 = NumericValue(v=False)
+        self.v4 = NumericValue(v=2)
 
     def test_is_numeric(self):
         """"""
@@ -52,6 +53,91 @@ class NumericValueTest(unittest.TestCase):
             check = True
         #
         self.assertTrue(check)
+
+    def test_add(self):
+        """"""
+        v = self.v1 + self.v2
+        self.assertEqual(round(v.value, 2), 3.1)
+
+    def test_sub(self):
+        """"""
+        v = self.v2 - self.v1
+        self.assertEqual(round(v.value, 2), 1.1)
+
+    def test_rsub(self):
+        """"""
+        v = 1 - self.v1
+        self.assertEqual(v.value, 0)
+
+    def test_mul(self):
+        """"""
+        v = self.v2 * self.v1
+        self.assertEqual(v.value, 2.1)
+
+    def test_truediv(self):
+        """"""
+        v = self.v2 / self.v1
+        self.assertEqual(v.value, 2.1)
+
+    def test_floordiv(self):
+        """"""
+        v = self.v2 // self.v1
+        self.assertEqual(v.value, 2)
+
+    def test_mod(self):
+        """"""
+        v = self.v2 % 2
+        self.assertEqual(round(v.value, 3), 0.1)
+
+    def test_rtruediv(self):
+        """"""
+        v = 1 / self.v4
+        self.assertEqual(round(v.value, 3), 0.5)
+
+    def test_rfloordiv(self):
+        """"""
+        v = 1 / self.v1
+        self.assertEqual(v.value, 1)
+
+    def test_rmod(self):
+        """"""
+        v = 3 % self.v1
+        self.assertEqual(v.value, 0)
+
+    def test_rpow(self):
+        """"""
+        v = 3**self.v1
+        self.assertEqual(v.value, 3)
+
+    def test_lt(self):
+        """"""
+        v = self.v1 < self.v2
+        self.assertEqual(v.value, True)
+
+    def test_le(self):
+        """"""
+        v = self.v1 <= self.v2
+        self.assertEqual(v.value, True)
+
+    def test_gt(self):
+        """"""
+        v = self.v2 > self.v1
+        self.assertEqual(v.value, True)
+
+    def test_ge(self):
+        """"""
+        v = self.v2 >= self.v1
+        self.assertEqual(v.value, True)
+
+    def test_eq(self):
+        """"""
+        v = self.v2 == self.v1
+        self.assertEqual(v.value, False)
+
+    def test_ne(self):
+        """"""
+        v = self.v2 != self.v1
+        self.assertEqual(v.value, True)
 
 
 class StringValueTest(unittest.TestCase):

@@ -39,8 +39,7 @@ class ContinuousRandomNumber(BaseRandomNumber):
             raise ValueError("outcomes is none")
         if self._evidence is not None:
             possible_out: PossibleOutcome = self._evidence.value
-            numeric_value: NumericValue = possible_out.fetch()
-            return Interval(lower=numeric_value, upper=numeric_value)
+            return Interval(lower=possible_out, upper=possible_out)
         return self._outcomes
 
     def __and__(self, other) -> BaseRandomNumber:

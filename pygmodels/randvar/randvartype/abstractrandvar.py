@@ -56,7 +56,11 @@ class AbstractRandomNumber(AbstractNode):
         "Biagini, Campanino, 2016, p. 3"
         return self.is_upper_bounded() and self.is_lower_bounded()
 
-    def is_independent(self, other) -> bool:
+    def is_logically_independent(self, other) -> bool:
+        "Biagini, Campanino, 2016, p. 4"
+        raise NotImplementedError
+
+    def is_stochastically_independent(self, other) -> bool:
         "Biagini, Campanino, 2016, p. 4"
         raise NotImplementedError
 
