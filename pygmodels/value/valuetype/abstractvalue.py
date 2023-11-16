@@ -106,14 +106,48 @@ class Countable(NamedContainer, Iterator):
         self.member_type = member_type
         if isinstance(iterable, GeneratorType):
             self.elements = iterable
+            self.it = self.elements
         else:
             is_all_type(iterable, "iterable", self.member_type, True)
             self.elements = iterable
+            self.it = iter(self.elements)
         #
+        self._filter = set()
+
+    def __fetch__(self):
+        """"""
+        if isinstance(self.elements, GeneratorType):
+            val = next(self.it, None)
+            if val is None:
+                self._filter = set()
+                return None, True
+            else:
+                if val not in self._filter:
+                    self._filter.add(val)
+                    return val, False
+                return None, False
+        else:
+            val = next(self.it, None)
+            if val is None:
+                self.it = iter(self.elements)
+                return None, True
+            else:
+                return val, False
 
     def __next__(self):
         """"""
-        return next(self.elements)
+        val, is_end = self.__fetch__()
+        if is_end:
+            raise StopIteration
+        if val:
+            return val
+        # iterate until the next one
+        while (val is None) or (is_end == False):
+            val, is_end = self.__fetch__()
+            if is_end:
+                raise StopIteration
+            if val:
+                return val
 
 
 class TypedMutableSet(NamedContainer, MutableSet):

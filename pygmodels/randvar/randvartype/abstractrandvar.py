@@ -25,8 +25,16 @@ class PossibleOutcome(CodomainValue):
 class PossibleOutcomes(Countable):
     """"""
 
-    def __init__(self, iterable):
-        super().__init__(iterable=iterable, member_type=CodomainValue)
+    def __init__(self, iterable, name):
+        super().__init__(iterable=iterable, member_type=CodomainValue, name=name)
+
+    def __str__(self):
+        ""
+        m = "<PossibleOutcomes name='" + self._name + "'>\n"
+        for o in self:
+            m += "  " + str(o) + "\n"
+        m += "</PossibleOutcomes>"
+        return m
 
 
 class AbstractRandomNumber(AbstractNode):

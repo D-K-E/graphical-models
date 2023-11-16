@@ -48,10 +48,10 @@ class CodomainValue(SetValue):
 
     def __str__(self):
         """"""
-        m = "<CodomainValue: " + str(self.value)
-        m += " of set " + str(self.belongs_to)
-        m += " mapped by " + str(self.mapped_by)
-        m += " from " + str(self.mapped_from)
+        m = "<CodomainValue value='" + str(self.value) + "'"
+        m += " set='" + str(self.belongs_to) + "'"
+        m += " mapped_by='" + str(self.mapped_by) + "'"
+        m += " mapped_from='" + str(self.mapped_from) + "'"
         m += ">"
         return m
 

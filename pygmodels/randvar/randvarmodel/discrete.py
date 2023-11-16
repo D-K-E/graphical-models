@@ -6,8 +6,9 @@ from pygmodels.randvar.randvartype.baserandvar2 import BaseRandomNumber
 from pygmodels.randvar.randvartype.abstractrandvar import PossibleOutcomes
 from pygmodels.value.valuetype.codomain import CodomainValue
 from pygmodels.value.valuetype.value import NumericValue
-from pygmodels.utils import mk_id
+from pygmodels.utils import mk_id, is_type, is_optional_type
 from typing import Optional, Callable, List
+from types import FunctionType
 
 
 class DiscreteRandomNumber(BaseRandomNumber):
@@ -48,11 +49,19 @@ class DiscreteRandomNumber(BaseRandomNumber):
 
     def __and__(self, other) -> BaseRandomNumber:
         "Biagini, Campanino, 2016, p. 4"
-        return self.__myop__(other=other, func=lambda e, f: min(e, f), func_name="and")
+
+        def min_f(e, f):
+            return min(e, f)
+
+        return self.__myop__(other=other, func=min_f, func_name="&")
 
     def __or__(self, other) -> BaseRandomNumber:
         "Biagini, Campanino, 2016, p. 4"
-        return self.__myop__(other=other, func=lambda e, f: max(e, f), func_name="or")
+
+        def max_f(e, f):
+            return max(e, f)
+
+        return self.__myop__(other=other, func=max_f, func_name="|")
 
     def __invert__(self) -> BaseRandomNumber:
         """
@@ -88,7 +97,10 @@ class DiscreteRandomNumber(BaseRandomNumber):
         is_type(func, "func", FunctionType, True)
         is_type(func_name, "func_name", str, True)
         #
-        name = "(" + (", ".join([other.name, self.name])) + ")"
+        opname = func_name
+        name = "(" + opname + " " + " ".join(["#" + other.name, "#" + self.name])
+        name += ")"
+        set_name = "outcome"
 
         def get_outcomes():
             """"""
@@ -99,16 +111,17 @@ class DiscreteRandomNumber(BaseRandomNumber):
                     ef_max = func(e, f)
                     rval = CodomainValue(
                         v=ef_max,
-                        set_id=self.id(),
+                        set_id=set_name,
                         mapping_name=func_name,
                         domain_name=name,
                     )
                     yield rval
 
+        oname = "(" + set_name + " " + name + ")"
         op_result = DiscreteRandomNumber(
             randvar_id=mk_id(),
             randvar_name=name,
-            outcomes=PossibleOutcomes(iterable=get_outcomes()),
+            outcomes=PossibleOutcomes(iterable=get_outcomes(), name=oname),
         )
         return op_result
 
@@ -120,7 +133,7 @@ class DiscreteRandomNumber(BaseRandomNumber):
             ef = e + f
             return ef
 
-        return self.__myop__(other=other, func=add_f, func_name="addition")
+        return self.__myop__(other=other, func=add_f, func_name="+")
 
     def __sub__(self, other) -> BaseRandomNumber:
         "Biagini, Campanino, 2016, p. 4"
@@ -130,7 +143,7 @@ class DiscreteRandomNumber(BaseRandomNumber):
             ef = e - f
             return ef
 
-        return self.__myop__(other=other, func=sub_f, func_name="subtraction")
+        return self.__myop__(other=other, func=sub_f, func_name="-")
 
     def __mul__(self, other) -> BaseRandomNumber:
         "Biagini, Campanino, 2016, p. 4"
@@ -140,7 +153,7 @@ class DiscreteRandomNumber(BaseRandomNumber):
             ef = e * f
             return ef
 
-        return self.__myop__(other=other, func=mul_f, func_name="multiplication")
+        return self.__myop__(other=other, func=mul_f, func_name="*")
 
     def __truediv__(self, other) -> BaseRandomNumber:
         "Biagini, Campanino, 2016, p. 4"
@@ -150,4 +163,4 @@ class DiscreteRandomNumber(BaseRandomNumber):
             ef = e / f
             return ef
 
-        return self.__myop__(other=other, func=div_f, func_name="division")
+        return self.__myop__(other=other, func=div_f, func_name="/")
