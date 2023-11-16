@@ -51,7 +51,9 @@ class DiscreteRandomNumber(BaseRandomNumber):
         "Biagini, Campanino, 2016, p. 4"
 
         def min_f(e, f):
-            return min(e, f)
+            if (e < f).value:
+                return e
+            return f
 
         return self.__myop__(other=other, func=min_f, func_name="&")
 
@@ -59,7 +61,10 @@ class DiscreteRandomNumber(BaseRandomNumber):
         "Biagini, Campanino, 2016, p. 4"
 
         def max_f(e, f):
-            return max(e, f)
+            if (e > f).value:
+                return e
+            else:
+                return f
 
         return self.__myop__(other=other, func=max_f, func_name="|")
 
@@ -67,7 +72,8 @@ class DiscreteRandomNumber(BaseRandomNumber):
         """
         Biagini, Campanino, 2016, p. 4
         """
-        name = "~" + self.name
+        name = "(~ #" + self.name + ")"
+        set_name = "outcome"
 
         def invert():
             """"""
@@ -75,13 +81,14 @@ class DiscreteRandomNumber(BaseRandomNumber):
                 comp = 1 - out.fetch()
                 cval = CodomainValue(
                     v=comp,
-                    set_id=self.id(),
+                    set_id=set_name,
                     mapping_name="~",
                     domain_name=self.name,
                 )
                 yield cval
 
-        new_outcomes = PossibleOutcomes(iterable=invert())
+        oname = "(" + set_name + " " + name + ")"
+        new_outcomes = PossibleOutcomes(iterable=invert(), name=oname)
         return DiscreteRandomNumber(
             randvar_id=mk_id(), randvar_name=name, outcomes=new_outcomes
         )

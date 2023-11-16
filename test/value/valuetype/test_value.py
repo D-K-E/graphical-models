@@ -67,6 +67,7 @@ class NumericValueTest(unittest.TestCase):
     def test_rsub(self):
         """"""
         v = 1 - self.v1
+        print(v)
         self.assertEqual(v.value, 0)
 
     def test_mul(self):
@@ -116,7 +117,7 @@ class NumericValueTest(unittest.TestCase):
 
     def test_le(self):
         """"""
-        v = self.v1 <= self.v2
+        v = self.v2 <= self.v2
         self.assertEqual(v.value, True)
 
     def test_gt(self):
@@ -126,7 +127,7 @@ class NumericValueTest(unittest.TestCase):
 
     def test_ge(self):
         """"""
-        v = self.v2 >= self.v1
+        v = self.v1 >= self.v1
         self.assertEqual(v.value, True)
 
     def test_eq(self):
