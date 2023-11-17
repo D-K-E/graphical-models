@@ -4,6 +4,7 @@ expectation of a random number as described by Biagini, Campanino, 2016, p. 8
 
 from pygmodels.randvar.randvartype.baserandvar2 import BaseRandomNumber
 from pygmodels.graph.graphtype.graphobj import GraphObject
+from pygmodels.randvar.randvartype.abstractrandvar import PossibleOutcome
 from pygmodels.utils import is_type, is_optional_type
 from typing import Optional
 from abc import abstractmethod
@@ -35,6 +36,6 @@ class Expectation(GraphObject):
         return self._randvar
 
     @abstractmethod
-    def __call__(self) -> float:
+    def __call__(self, x: Optional[PossibleOutcome]) -> float:
         """"""
         raise NotImplementedError
