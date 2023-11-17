@@ -171,3 +171,6 @@ class DiscreteRandomNumber(BaseRandomNumber):
             return ef
 
         return self.__myop__(other=other, func=div_f, func_name="/")
+
+    def __iter__(self):
+        return iter(self.outcomes)

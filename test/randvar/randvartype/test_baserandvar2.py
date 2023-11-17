@@ -71,12 +71,17 @@ class BaseEvidenceTest(unittest.TestCase):
 
     def test_str(self):
         "test string representation"
-        f = "<BaseEvidence :: id: student_1 value: <CodomainValue: 1 of set student01 mapped by student_1_map from None> belongs to: student01>"
+        f = "<BaseEvidence id='student_1' belongs_to='student01'>\n"
+        f += "  <CodomainValue value='1' set='student01' mapped_by='student_1_map' mapped_from='None'>\n"
+        f += "</BaseEvidence>"
         self.assertEqual(str(self.student_rvar), f)
 
     def test_hash(self):
         "test hash function"
-        f = "<BaseEvidence :: id: student_1 value: <CodomainValue: 1 of set student01 mapped by student_1_map from None> belongs to: student01>"
+        f = "<BaseEvidence id='student_1' belongs_to='student01'>\n"
+        f += "  <CodomainValue value='1' set='student01' mapped_by='student_1_map' mapped_from='None'>\n"
+        f += "</BaseEvidence>"
+
         self.assertEqual(hash(self.student_rvar), hash(f))
 
 

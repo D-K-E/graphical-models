@@ -29,12 +29,33 @@ class PossibleOutcomes(Countable):
         super().__init__(iterable=iterable, member_type=CodomainValue, name=name)
 
     def __str__(self):
-        ""
+        """"""
         m = "<PossibleOutcomes name='" + self._name + "'>\n"
         for o in self:
             m += "  " + str(o) + "\n"
         m += "</PossibleOutcomes>"
         return m
+
+    def __eq__(self, other):
+        """"""
+        if not isinstance(other, PossibleOutcomes):
+            return False
+
+        return self._name == other._name
+
+    def deep_eq(self, other):
+        """
+        compares
+        """
+        shallow_eq = other == self
+        if not shallow_eq:
+            return False
+        #
+        olst = [o for o in other]
+        slst = [s for s in self]
+        s_in_o = all(o in slst for o in olst)
+        o_in_s = all(s in olst for s in slst)
+        return s_in_o and o_in_s
 
 
 class AbstractRandomNumber(AbstractNode):

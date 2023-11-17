@@ -50,6 +50,19 @@ class DiscreteRandomNumberTest(unittest.TestCase):
                 name="coin-sides",
             ),
         )
+        self.A = DiscreteRandomNumber(
+            randvar_id="A",
+            randvar_name="CoinToss_Variant",
+            outcomes=PossibleOutcomes(
+                iterable=set(
+                    [
+                        CodomainValue(v=NumericValue(1), set_id="H", mapping_name="A"),
+                        CodomainValue(v=NumericValue(2), set_id="T", mapping_name="A"),
+                    ]
+                ),
+                name="coin-sides",
+            ),
+        )
 
     def test_upper_bound(self):
         """"""
@@ -75,7 +88,7 @@ class DiscreteRandomNumberTest(unittest.TestCase):
         """"""
         Z = self.X & self.Y
         outs = set()
-        for z in Z.outcomes:
+        for z in Z:
             outs.add(z.value)
         self.assertEqual(outs, {0, 1})
 
@@ -83,17 +96,69 @@ class DiscreteRandomNumberTest(unittest.TestCase):
         """"""
         Z = self.X | self.Y
         fouts = set()
-        for z in Z.outcomes:
+        for z in Z:
             fouts.add(z.value)
         self.assertEqual(fouts, {0, 1, 2, 3, 4, 5})
 
     def test_invert(self):
         """"""
-        Z = ~self.Y 
+        Z = ~self.Y
         fouts = set()
-        for z in Z.outcomes:
+        for z in Z:
             fouts.add(z.value)
         self.assertEqual(fouts, {0, 1})
+
+    def test_add(self):
+        """"""
+        Z = self.X + self.Y
+        outs = set()
+        for z in Z:
+            outs.add(z.value)
+        self.assertEqual(outs, set([0, 1, 2, 3, 4, 5, 6]))
+
+    def test_sub(self):
+        """"""
+        Z = self.X - self.Y
+        outs = set()
+        for z in Z:
+            outs.add(z.value)
+        self.assertEqual(outs, set([-1, 0, 1, 2, 3, 4, 5]))
+
+    def test_mul(self):
+        """"""
+        Z = self.X * self.Y
+        outs = set()
+        for z in Z:
+            outs.add(z.value)
+        self.assertEqual(outs, set([0, 1, 2, 3, 4, 5]))
+
+    def test_truediv(self):
+        """"""
+        Z = self.Y / self.A
+        outs = set()
+        for z in Z:
+            outs.add(z.value)
+        self.assertEqual(outs, set([0, 0.5, 1]))
+
+    def test_outcomes(self):
+        """"""
+        comp = PossibleOutcomes(
+            iterable=(
+                i
+                for i in [
+                    CodomainValue(v=NumericValue(0), set_id="H", mapping_name="Y"),
+                    CodomainValue(v=NumericValue(1), set_id="T", mapping_name="Y"),
+                ]
+            ),
+            name="coin-sides",
+        )
+        yout = self.Y.outcomes
+        deep_comp = comp.deep_eq(yout)
+        # deep comparison
+        self.assertEqual(deep_comp, True)
+
+        # shallow comparison
+        self.assertEqual(yout, comp)
 
 
 if __name__ == "__main__":

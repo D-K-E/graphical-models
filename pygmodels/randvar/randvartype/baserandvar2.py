@@ -94,15 +94,16 @@ class BaseEvidence(AbstractEvidence, BaseRandomVariableMember):
         """!
         String representation of an evidence
         """
-        msg = "<BaseEvidence :: id: "
-        msg += self.id()
-        msg += " value: " + str(self.value)
-        msg += " belongs to: " + str(self.belongs_to)
+        msg = "<BaseEvidence id='"
+        msg += self.id() + "'"
+        msg += " belongs_to='" + str(self.belongs_to) + "'"
         # this would create hash problems
         # msg += " description: " + (
         #    self.description() if self.description() is not None else ""
         # )
-        msg += ">"
+        msg += ">\n"
+        msg += "  " + str(self.value)+ "\n"
+        msg += "</BaseEvidence>"
         return msg
 
     def __hash__(self):
