@@ -68,7 +68,7 @@ class TreeTest(unittest.TestCase):
         )
 
     def test_id(self):
-        self.assertEqual(self.gtree.id(), "t")
+        self.assertEqual(self.gtree.id, "t")
 
     def test_root(self):
         self.assertEqual(self.gtree.root, self.a)

@@ -31,20 +31,20 @@ class EdgeTest(unittest.TestCase):
 
     def test_id(self):
         """"""
-        self.assertEqual(self.uedge.id(), "uedge")
+        self.assertEqual(self.uedge.id, "uedge")
 
     def test_type(self):
         """"""
-        self.assertEqual(self.uedge.type(), EdgeType.UNDIRECTED)
+        self.assertEqual(self.uedge.type, EdgeType.UNDIRECTED)
 
     def test_start(self):
-        self.assertEqual(self.uedge.start(), Node("m1", {}))
+        self.assertEqual(self.uedge.start, Node("m1", {}))
 
     def test_end(self):
-        self.assertEqual(self.uedge.end(), Node("m2", {}))
+        self.assertEqual(self.uedge.end, Node("m2", {}))
 
     def test_node_ids(self):
-        self.assertEqual(self.uedge.node_ids(), set(["m1", "m2"]))
+        self.assertEqual(self.uedge.node_ids, set(["m1", "m2"]))
 
     def test_is_endvertice_true(self):
         """"""
@@ -55,6 +55,7 @@ class EdgeTest(unittest.TestCase):
         """"""
         negative = self.uedge.is_endvertice(Node("m3", {}))
         self.assertEqual(negative, False)
+
 
 if __name__ == "__main__":
     unittest.main()

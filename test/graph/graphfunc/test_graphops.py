@@ -356,9 +356,9 @@ class BaseGraphOpsTest(unittest.TestCase):
 
     def test_neighbours_of(self):
         ndes = set(
-            [n.id() for n in BaseGraphNodeOps.neighbours_of(self.graph_2, self.n2)]
+            [n.id for n in BaseGraphNodeOps.neighbours_of(self.graph_2, self.n2)]
         )
-        self.assertEqual(ndes, set([self.n1.id(), self.n3.id()]))
+        self.assertEqual(ndes, set([self.n1.id, self.n3.id]))
 
 
 class BaseGraphAlgSetOpsTest(unittest.TestCase):

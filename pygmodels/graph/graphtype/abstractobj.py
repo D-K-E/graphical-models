@@ -23,6 +23,7 @@ from pygmodels.utils import is_type
 class AbstractInfo(ABC):
     """"""
 
+    @property
     @abstractmethod
     def id(self) -> str:
         raise NotImplementedError
@@ -31,6 +32,7 @@ class AbstractInfo(ABC):
 class AbstractGraphObj(AbstractInfo):
     "Abstract graph object"
 
+    @property
     @abstractmethod
     def data(self) -> Dict:
         raise NotImplementedError
@@ -64,6 +66,7 @@ class AbstractNode(AbstractGraphObj):
 class AbstractEdge(AbstractGraphObj):
     "abstract edge object"
 
+    @property
     @abstractmethod
     def type(self) -> EdgeType:
         raise NotImplementedError
@@ -87,14 +90,17 @@ class AbstractEdge(AbstractGraphObj):
         """
         raise NotImplementedError
 
+    @property
     @abstractmethod
     def node_ids(self) -> FrozenSet[str]:
         raise NotImplementedError
 
+    @property
     @abstractmethod
     def start(self) -> AbstractNode:
         raise NotImplementedError
 
+    @property
     @abstractmethod
     def end(self) -> AbstractNode:
         raise NotImplementedError
@@ -154,7 +160,7 @@ class AbstractFixedEdgeGraph(AbstractGraph):
 
     def check_edge_type(self, etype: EdgeType) -> bool:
         """"""
-        return all(e.type() == etype for e in self.E)
+        return all(e.type == etype for e in self.E)
 
 
 class AbstractUndiGraph(AbstractFixedEdgeGraph):

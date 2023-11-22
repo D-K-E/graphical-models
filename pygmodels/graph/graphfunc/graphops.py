@@ -30,9 +30,9 @@ class BaseGraphBoolOps:
         """
         is_type(g, "AbstractGraph", AbstractGraph, True)
         if isinstance(ne, AbstractNode):
-            return ne.id() in {v.id() for v in g.V}
+            return ne.id in {v.id for v in g.V}
         elif isinstance(ne, AbstractEdge):
-            return ne.id() in {e.id() for e in g.E}
+            return ne.id in {e.id for e in g.E}
         else:
             raise TypeError("Given argument should be either edge or node")
 
@@ -77,8 +77,8 @@ class BaseGraphBoolOps:
         if not BaseGraphBoolOps.is_in(g, e2):
             raise ValueError("edge not in Graph")
 
-        n1_ids = e1.node_ids()
-        n2_ids = e2.node_ids()
+        n1_ids = e1.node_ids
+        n2_ids = e2.node_ids
         return len(n1_ids.intersection(n2_ids)) > 0
 
     @staticmethod
@@ -184,19 +184,19 @@ class BaseGraphBoolOps:
             """!
             \brief neighborhood condition
             """
-            estart = e.start()
-            eend = e.end()
+            estart = e.start
+            eend = e.end
             c1 = estart == n_1 and eend == n_2
             c2 = estart == n_2 and eend == n_1
             return c1 or c2
 
         gdata = BaseGraphOps.to_edgelist(g)
 
-        n1_edge_ids = set(gdata[n1.id()])
-        n2_edge_ids = set(gdata[n2.id()])
+        n1_edge_ids = set(gdata[n1.id])
+        n2_edge_ids = set(gdata[n2.id])
         edge_ids = n1_edge_ids.intersection(n2_edge_ids)
         # filter self loops
-        edges = set([e for e in g.E if e.id() in edge_ids])
+        edges = set([e for e in g.E if e.id in edge_ids])
         return BaseGraphBoolOps.is_related_to(g, n1=n1, n2=n2, condition=cond, es=edges)
 
 
@@ -245,8 +245,8 @@ class BaseGraphEdgeOps:
         if not BaseGraphBoolOps.is_in(g, n):
             raise ValueError("node not in Graph")
         gdata = BaseGraphOps.to_edgelist(g)
-        edge_ids = gdata[n.id()]
-        E = {e.id(): e for e in g.E}
+        edge_ids = gdata[n.id]
+        E = {e.id: e for e in g.E}
         return set([E[eid] for eid in edge_ids])
 
     @staticmethod
@@ -293,9 +293,9 @@ class BaseGraphEdgeOps:
             raise ValueError("node not in Graph")
 
         eset = set()
-        E = {e.id(): e for e in g.E}
+        E = {e.id: e for e in g.E}
         gdata = BaseGraphOps.to_edgelist(g)
-        for eid in gdata[n.id()]:
+        for eid in gdata[n.id]:
             e = E[eid]
             if e.is_start(n):
                 eset.add(e)
@@ -339,8 +339,8 @@ class BaseGraphEdgeOps:
 
         eset = set()
         gdata = BaseGraphOps.to_edgelist(g)
-        E = {e.id(): e for e in g.E}
-        for eid in gdata[n.id()]:
+        E = {e.id: e for e in g.E}
+        for eid in gdata[n.id]:
             e = E[eid]
             if e.is_end(n):
                 eset.add(e)
@@ -392,7 +392,7 @@ class BaseGraphEdgeOps:
         \throws ValueError if the edge id is not in graph
         """
         is_type(g, "g", AbstractGraph, True)
-        E = {e.id(): e for e in g.E}
+        E = {e.id: e for e in g.E}
         if edge_id not in E:
             raise ValueError("edge id not in graph")
         return E[edge_id]
@@ -412,15 +412,15 @@ class BaseGraphEdgeOps:
         is_type(g, "g", AbstractGraph, True)
         if not BaseGraphBoolOps.is_in(g, start) or not BaseGraphBoolOps.is_in(g, end):
             raise ValueError("one of the nodes is not present in graph")
-        n1id = start.id()
-        n2id = end.id()
+        n1id = start.id
+        n2id = end.id
         gdata = BaseGraphOps.to_edgelist(g)
         first_eset = set(gdata[n1id])
         second_eset = set(gdata[n2id])
         common_edge_ids = first_eset.intersection(second_eset)
         if len(common_edge_ids) == 0:
             raise ValueError("No common edges between given nodes")
-        return set([e for e in g.E if e.id() in common_edge_ids])
+        return set([e for e in g.E if e.id in common_edge_ids])
 
 
 class BaseGraphNodeOps:
@@ -451,8 +451,8 @@ class BaseGraphNodeOps:
             nodes.add(n)
         if es is not None:
             for e in es:
-                estart = e.start()
-                eend = e.end()
+                estart = e.start
+                eend = e.end
                 nodes.add(estart)
                 nodes.add(eend)
         #
@@ -537,7 +537,7 @@ class BaseGraphNodeOps:
         \throws ValueError if the node is not in graph
         """
         is_type(g, "g", AbstractGraph, True)
-        V = {v.id(): v for v in g.V}
+        V = {v.id: v for v in g.V}
         if node_id not in V:
             raise ValueError("node id not in graph")
         return V[node_id]
@@ -553,7 +553,7 @@ class BaseGraphNodeOps:
         """
         is_type(g, "g", AbstractGraph, True)
         if BaseGraphBoolOps.is_in(g, e):
-            return (e.start(), e.end())
+            return (e.start, e.end)
         else:
             raise ValueError("edge not in graph")
 
@@ -574,15 +574,15 @@ class BaseGraphOps:
         _nodes = BaseGraphNodeOps.get_nodes(ns=set(g.V), es=set(g.E))
         gdata = {}
         for vertex in _nodes:
-            gdata[vertex.id()] = []
+            gdata[vertex.id] = []
         #
         for edge in g.E:
-            for node_id in edge.node_ids():
+            for node_id in edge.node_ids:
                 elist = gdata.get(node_id, None)
                 if elist is None:
                     gdata[node_id] = []
                 else:
-                    gdata[node_id].append(edge.id())
+                    gdata[node_id].append(edge.id)
         return gdata
 
     @staticmethod
@@ -646,13 +646,13 @@ class BaseGraphOps:
         gmat = {}
         for v in g.V:
             for k in g.V:
-                gmat[(v.id(), k.id())] = vtype(0)
+                gmat[(v.id, k.id)] = vtype(0)
         for edge in g.E:
-            tpl1 = (edge.start().id(), edge.end().id())
-            tpl2 = (edge.end().id(), edge.start().id())
+            tpl1 = (edge.start.id, edge.end.id)
+            tpl2 = (edge.end.id, edge.start.id)
             if tpl1 in gmat:
                 gmat[tpl1] = vtype(1)
-            if edge.type() == EdgeType.UNDIRECTED:
+            if edge.type == EdgeType.UNDIRECTED:
                 if tpl2 in gmat:
                     gmat[tpl2] = vtype(1)
         return gmat
@@ -663,7 +663,7 @@ class BaseGraphOps:
         vs: Set[AbstractNode],
         edge_policy: Callable[
             [AbstractEdge, Set[AbstractNode]], bool
-        ] = lambda x, ys: set([x.start(), x.end()]).issubset(ys)
+        ] = lambda x, ys: set([x.start, x.end]).issubset(ys)
         is True,
     ) -> Tuple[Set[AbstractNode], Set[AbstractEdge]]:
         """!

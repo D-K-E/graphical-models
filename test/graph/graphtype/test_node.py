@@ -13,11 +13,11 @@ class NodeTest(unittest.TestCase):
 
     def test_id(self):
         """"""
-        self.assertEqual(self.node.id(), "mnode")
+        self.assertEqual(self.node.id, "mnode")
 
     def test_data(self):
         """"""
-        self.assertEqual(self.node.data(), {"my": "data"})
+        self.assertEqual(self.node.data, {"my": "data"})
 
     def test_equal(self):
         self.assertEqual(self.node, Node("mnode", {"my": "data"}))

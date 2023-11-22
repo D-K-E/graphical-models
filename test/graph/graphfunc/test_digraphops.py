@@ -212,7 +212,7 @@ class DiGraphOpsTest(unittest.TestCase):
         #  h<-+          +--+->g
 
     def test_id(self):
-        return self.assertEqual(self.dgraph1.id(), "dg1")
+        return self.assertEqual(self.dgraph1.id, "dg1")
 
     def test_in_degree_of(self):
         v = DiGraphNumericOps.in_degree_of(g=self.dgraph6, n=self.a)

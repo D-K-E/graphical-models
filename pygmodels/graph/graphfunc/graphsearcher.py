@@ -65,7 +65,7 @@ class BaseGraphSearcher:
         unode = V[u]
         for edge in edge_generator(unode):
             vnode = edge.get_other(unode)
-            v = vnode.id()
+            v = vnode.id
             if marked[v] is False:
                 pred[v] = u
                 T.add(v)
@@ -93,7 +93,7 @@ class BaseGraphSearcher:
             # unode = V[u]
             for edge in edge_generator(unode):
                 vnode = edge.get_other(unode)
-                vid = vnode.id()
+                vid = vnode.id
                 if pred[u] != vid:
                     first_visit = d.get(vid)
                     last_visit = f.get(vid)
@@ -124,13 +124,13 @@ class BaseGraphSearcher:
         \see dfs_forest() method for more information on parameters.
         """
         is_type(g, "g", AbstractGraph, True)
-        V: Dict[str, AbstractNode] = {n.id(): n for n in g.V}
+        V: Dict[str, AbstractNode] = {n.id: n for n in g.V}
         if start_node is not None:
             if not BaseGraphBoolOps.is_in(g, start_node):
                 raise ValueError("Specified start node not in graph")
             #
-            Vlst: List[str] = list(v for v in V.keys() if v != start_node.id())
-            Vlst.insert(0, start_node.id())
+            Vlst: List[str] = list(v for v in V.keys() if v != start_node.id)
+            Vlst.insert(0, start_node.id)
             Vlst.sort()
         else:
             Vlst = list(v for v in V.keys())
@@ -180,7 +180,7 @@ class BaseGraphSearcher:
         }
         return BaseGraphDFSResult(
             props=res,
-            result_id="dfs-result-of-" + g.id(),
+            result_id="dfs-result-of-" + g.id,
             search_name="depth_first_search",
             data={},
         )
@@ -194,7 +194,7 @@ class BaseGraphSearcher:
         """
         is_type(g, "g", AbstractGraph, True)
         esets: Dict[str, Set[AbstractEdge]] = {}
-        V = {v.id(): v for v in g.V}
+        V = {v.id: v for v in g.V}
         for u, forest in preds.copy().items():
             eset: Set[AbstractEdge] = set()
             for child, parent in forest.items():
@@ -223,9 +223,9 @@ class BaseGraphSearcher:
         is_type(g, "g", AbstractGraph, True)
         if not BaseGraphBoolOps.is_in(g, n1):
             raise ValueError("argument node is not in graph")
-        nid = n1.id()
+        nid = n1.id
         Q = [nid]
-        V: Dict[str, AbstractNode] = {v.id(): v for v in g.V}
+        V: Dict[str, AbstractNode] = {v.id: v for v in g.V}
         l_vs = {v: math.inf for v in V}
         l_vs[nid] = 0
         T = set([nid])
@@ -236,7 +236,7 @@ class BaseGraphSearcher:
             unode = V[u]
             for edge in edge_generator(unode):
                 vnode = edge.get_other(unode)
-                vid = vnode.id()
+                vid = vnode.id
                 if vid not in T:
                     T.add(vid)
                     l_vs[vid] = int(l_vs[u] + 1)
@@ -247,7 +247,7 @@ class BaseGraphSearcher:
         path_props = {"bfs-tree": P, "path-set": T, "top-sort": l_vs}
         return BaseGraphBFSResult(
             props=path_props,
-            result_id="bfs-result-of-" + g.id(),
+            result_id="bfs-result-of-" + g.id,
             search_name="breadth_first_search",
             data={},
         )
@@ -259,7 +259,7 @@ class BaseGraphSearcher:
         goal: AbstractNode,
         filter_fn: Callable[
             [Set[AbstractEdge], str], Set[AbstractEdge]
-        ] = lambda es, n: set([e for e in es if e.start().id() == n]),
+        ] = lambda es, n: set([e for e in es if e.start.id == n]),
         costfn: Callable[[AbstractEdge, float], float] = lambda x, y: y + 1.0,
         is_min=True,
         problem_set: Optional[Set[AbstractEdge]] = None,
@@ -274,24 +274,24 @@ class BaseGraphSearcher:
         if not BaseGraphBoolOps.is_in(g, start) or not BaseGraphBoolOps.is_in(g, goal):
             raise ValueError("Start node or goal node is not in graph")
         problem_set = g.E if problem_set is None else problem_set
-        pnode = {"cost": 0, "state": start.id(), "parent": None, "edge": None}
+        pnode = {"cost": 0, "state": start.id, "parent": None, "edge": None}
         frontier = PriorityQueue(is_min=is_min)
         frontier.insert(key=pnode["cost"], val=pnode)
         explored: Set[str] = set()
         while len(frontier) != 0:
             key, pn = frontier.pop()
-            if pn["state"] == goal.id():
+            if pn["state"] == goal.id:
                 return BaseGraphSearcher.from_ucs_result(pn), pn
             explored.add(pn["state"])
             for child_edge in filter_fn(problem_set, pn["state"]):
                 child: AbstractNode = child_edge.get_other(pn["state"])
                 cnode = {
                     "cost": costfn(child_edge, pn["cost"]),
-                    "state": child.id(),
+                    "state": child.id,
                     "parent": pn,
                     "edge": child_edge,
                 }
-                if (child.id() not in explored) or (
+                if (child.id not in explored) or (
                     frontier.is_in(child, cmp_f=lambda x: x["state"]) is False
                 ):
                     frontier.insert(cnode["cost"], cnode)

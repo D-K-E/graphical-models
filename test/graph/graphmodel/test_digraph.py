@@ -201,7 +201,7 @@ class DiGraphTest(unittest.TestCase):
         #  h<-+          +--+->g
 
     def test_id(self):
-        return self.assertEqual(self.dgraph1.id(), "dg1")
+        return self.assertEqual(self.dgraph1.id, "dg1")
 
     def test_find_shortest_path(self):
         """"""

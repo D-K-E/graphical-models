@@ -61,7 +61,7 @@ class Edge(GraphObject, AbstractEdge):
         \return True/False
         """
         if isinstance(n, Edge):
-            return self.id() == n.id()
+            return self.id == n.id
         return False
 
     def __str__(self) -> str:
@@ -78,13 +78,11 @@ class Edge(GraphObject, AbstractEdge):
         \return str
         """
         return (
-            self.id()
+            self.id
             + "--"
-            + str(self.type())
+            + str(self.type)
             + "--"
-            + "::".join(
-                [str(k) + "-" + str(v) for k, v in self.data().items()]
-            )
+            + "::".join([str(k) + "-" + str(v) for k, v in self.data.items()])
             + "--"
             + str(self.start_node)
             + "--"
@@ -119,9 +117,7 @@ class Edge(GraphObject, AbstractEdge):
         )
 
     @classmethod
-    def undirected(
-        cls, eid, start_node: Node, end_node: Node, data={}
-    ) -> AbstractEdge:
+    def undirected(cls, eid, start_node: Node, end_node: Node, data={}) -> AbstractEdge:
         """"""
         return Edge(
             eid,
@@ -131,6 +127,7 @@ class Edge(GraphObject, AbstractEdge):
             data=data,
         )
 
+    @property
     def start(self) -> Node:
         """!
         \brief Returns the Node from which the attribute starts.
@@ -145,32 +142,33 @@ class Edge(GraphObject, AbstractEdge):
 
     def is_start(self, n: Union[Node, str]) -> bool:
         """!"""
-        if self.type() == EdgeType.UNDIRECTED:
+        if self.type == EdgeType.UNDIRECTED:
             return self.is_endvertice(n)
         if isinstance(n, Node):
-            if n.id() == self.start().id():
+            if n.id == self.start.id:
                 return True
             return False
         if isinstance(n, str):
-            if n == self.start().id():
+            if n == self.start.id:
                 return True
             return False
         return False
 
     def is_end(self, n: Union[Node, str]) -> bool:
         """!"""
-        if self.type() == EdgeType.UNDIRECTED:
+        if self.type == EdgeType.UNDIRECTED:
             return self.is_endvertice(n)
         if isinstance(n, Node):
-            if n.id() == self.end().id():
+            if n.id == self.end.id:
                 return True
             return False
         if isinstance(n, str):
-            if n == self.end().id():
+            if n == self.end.id:
                 return True
             return False
         return False
 
+    @property
     def end(self) -> Node:
         """!
         \brief Returns the Node at which the attribute ends.
@@ -183,6 +181,7 @@ class Edge(GraphObject, AbstractEdge):
         """
         return self.end_node
 
+    @property
     def type(self) -> EdgeType:
         """!"""
         return self.etype
@@ -191,31 +190,32 @@ class Edge(GraphObject, AbstractEdge):
         """!"""
         self.etype = etype
 
+    @property
     def node_ids(self) -> FrozenSet[str]:
         """!
         \brief Spit out ids of nodes that belong to this edge
         """
         ids = set()
-        ids.add(self.start().id())
-        ids.add(self.end().id())
+        ids.add(self.start.id)
+        ids.add(self.end.id)
         return frozenset(ids)
 
     def is_endvertice(self, n: Union[Node, str]) -> bool:
         """!
         \brief Check if Node is contained by this edge
         """
-        ids = self.node_ids()
+        ids = self.node_ids
         if isinstance(n, str):
             return n in ids
         else:
-            return n.id() in ids
+            return n.id in ids
 
     def get_other(self, n: Union[Node, str]) -> Node:
         """!"""
         if not self.is_endvertice(n):
             raise ValueError("node is not an end vertex")
-        cmpv: str = n if isinstance(n, str) else n.id()
-        if self.start().id() == cmpv:
-            return self.end()
+        cmpv: str = n if isinstance(n, str) else n.id
+        if self.start.id == cmpv:
+            return self.end
         else:
-            return self.start()
+            return self.start

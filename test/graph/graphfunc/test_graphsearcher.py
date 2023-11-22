@@ -183,7 +183,7 @@ class BaseGraphSearcherTests(unittest.TestCase):
         # print("\n--------->>>")
 
     def test_id(self):
-        return self.assertEqual(self.ugraph.id(), "ugraph")
+        return self.assertEqual(self.ugraph.id, "ugraph")
 
     @unittest.skip("Implementation is not finished yet")
     def test_depth_first_search(self):

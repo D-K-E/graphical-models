@@ -45,7 +45,7 @@ class Node(AbstractNode, GraphObject):
         \return True/False
         """
         if isinstance(n, Node):
-            return self.id() == n.id()
+            return self.id == n.id
         return False
 
     def __str__(self) -> str:
@@ -60,11 +60,9 @@ class Node(AbstractNode, GraphObject):
         \return string
         """
         return (
-            self.id()
+            self.id
             + "--"
-            + "::".join(
-                [str(k) + "-" + str(v) for k, v in self.data().items()]
-            )
+            + "::".join([str(k) + "-" + str(v) for k, v in self.data.items()])
         )
 
     def __hash__(self):

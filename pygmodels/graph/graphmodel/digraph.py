@@ -54,15 +54,13 @@ class DiGraph(AbstractDiGraph, BaseGraph):
         \throws ValueError if there is any undirected edge among the argument
         edge set.
         """
-
-        if edges is not None:
-            for edge in edges:
-                if edge.type() == EdgeType.UNDIRECTED:
-                    raise ValueError(
-                        "Can not instantiate directed graph with" + " undirected edges"
-                    )
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
-        self.path_props = {v.id(): self.find_shortest_paths(v) for v in self.V}
+        if edges is not None:
+            if not self.check_edge_type(etype=EdgeType.DIRECTED):
+                raise ValueError(
+                    "Can not instantiate directed graph with" + " undirected edges"
+                )
+        self.path_props = {v.id: self.find_shortest_paths(v) for v in self.V}
         self.dprops = BaseGraphSearcher.depth_first_search(
             self,
             edge_generator=lambda x: BaseGraphEdgeOps.outgoing_edges_of(self, x),
@@ -111,7 +109,7 @@ class DiGraph(AbstractDiGraph, BaseGraph):
 
     def check_for_path(self, n1: Node, n2: Node) -> bool:
         "check if there is a path between nodes"
-        path_props = self.path_props[n1.id()]
+        path_props = self.path_props[n1.id]
         pset = path_props.path_set
         return n2 in pset
 

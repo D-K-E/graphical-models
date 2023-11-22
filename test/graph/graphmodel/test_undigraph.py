@@ -236,9 +236,7 @@ class UndiGraphTest(unittest.TestCase):
         self.ugraph5 = UndiGraph(
             "ug5",
             data={"my": "graph", "data": "is", "very": "awesome"},
-            nodes=set(
-                [self.a, self.b, self.c, self.d, self.e, self.f, self.g]
-            ),
+            nodes=set([self.a, self.b, self.c, self.d, self.e, self.f, self.g]),
             edges=set(
                 [
                     self.ab,
@@ -314,7 +312,7 @@ class UndiGraphTest(unittest.TestCase):
         #     c
 
     def test_id(self):
-        return self.assertEqual(self.ugraph1.id(), "ug1")
+        return self.assertEqual(self.ugraph1.id, "ug1")
 
     def test_find_shortest_path(self):
         """"""
@@ -332,21 +330,21 @@ class UndiGraphTest(unittest.TestCase):
     def test_minimum_spanning_tree(self):
         """"""
         tree, L = self.ugraph5.find_minimum_spanning_tree(
-            weight_fn=lambda e: e.data()["w"]
+            weight_fn=lambda e: e.data["w"]
         )
 
         self.assertEqual(
-            [li.id() for li in L],
+            [li.id for li in L],
             ["ab", "bc", "cd", "de", "ef", "bg", "gd", "df"],
         )
 
     def test_maximum_spanning_tree(self):
         """"""
         tree, L = self.ugraph5.find_maximum_spanning_tree(
-            weight_fn=lambda e: e.data()["w"]
+            weight_fn=lambda e: e.data["w"]
         )
         self.assertEqual(
-            [li.id() for li in L],
+            [li.id for li in L],
             ["df", "gd", "bg", "ef", "de", "cd", "bc", "ab"],
         )
 

@@ -124,7 +124,7 @@ class PathTest(unittest.TestCase):
         )
 
     def test_id(self):
-        return self.assertEqual(self.path.id(), "mpath")
+        return self.assertEqual(self.path.id, "mpath")
 
     def test_length(self):
         """"""

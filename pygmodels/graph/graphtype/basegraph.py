@@ -56,8 +56,8 @@ class BaseGraph(GraphObject, AbstractGraph):
             raise TypeError("Argument must implement AbstractGraph interface")
         nodes = set(g_.V)
         edges = set(g_.E)
-        data = g_.data()
-        gid = g_.id()
+        data = g_.data
+        gid = g_.id
         return BaseGraph(gid=gid, data=data, nodes=nodes, edges=edges)
 
     def __eq__(self, n):
@@ -99,7 +99,7 @@ class BaseGraph(GraphObject, AbstractGraph):
         \endcode
         """
         if isinstance(n, BaseGraph):
-            return self.id() == n.id()
+            return self.id == n.id
         return False
 
     def __str__(self) -> str:
@@ -107,13 +107,13 @@ class BaseGraph(GraphObject, AbstractGraph):
         \brief Obtain string representation of the graph.
         """
         return (
-            self.id()
+            self.id
             + "--"
             + "::".join([str(n) for n in self._nodes])
             + "--"
             + "!!".join([str(n) for n in self._edges])
             + "--"
-            + "::".join([str(k) + "-" + str(v) for k, v in self.data().items()])
+            + "::".join([str(k) + "-" + str(v) for k, v in self.data.items()])
         )
 
     def __hash__(self):
@@ -204,8 +204,8 @@ class BaseGraph(GraphObject, AbstractGraph):
         """
         nodes: Set[AbstractNode] = set()
         for e in edges:
-            nodes.add(e.start())
-            nodes.add(e.end())
+            nodes.add(e.start)
+            nodes.add(e.end)
         return BaseGraph(gid=str(uuid4()), nodes=nodes, edges=edges)
 
     @classmethod
@@ -222,14 +222,14 @@ class BaseGraph(GraphObject, AbstractGraph):
         """
         nodes = set(nodes)
         for e in edges:
-            nodes.add(e.start())
-            nodes.add(e.end())
+            nodes.add(e.start)
+            nodes.add(e.end)
         return BaseGraph(gid=str(uuid4()), nodes=nodes, edges=edges)
 
     @classmethod
     def based_on_node_set(cls, edges: Set[AbstractEdge], nodes: Set[AbstractNode]):
         """!"""
         eset: Set[AbstractEdge] = set(
-            [e for e in edges if set([e.start(), e.end()]).issubset(nodes)]
+            [e for e in edges if set([e.start, e.end]).issubset(nodes)]
         )
         return cls.from_edge_node_set(edges=eset, nodes=nodes)

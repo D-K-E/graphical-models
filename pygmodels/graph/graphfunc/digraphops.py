@@ -65,7 +65,7 @@ class DiGraphBoolOps:
 
         def cond(n_1: AbstractNode, n_2: AbstractNode, e: AbstractEdge):
             """"""
-            c = n_1 == e.start() and e.end() == n_2
+            c = n_1 == e.start and e.end == n_2
             return c
 
         return BaseGraphBoolOps.is_related_to(g, n1=parent, n2=child, condition=cond)
@@ -184,8 +184,8 @@ class DiGraphNodeOps:
         return DiGraphNodeOps.family_set_of(
             g=g,
             n=n,
-            fcond=lambda e, node: e.start().id() == node.id(),
-            enode_fn=lambda e: e.end(),
+            fcond=lambda e, node: e.start.id == node.id,
+            enode_fn=lambda e: e.end,
         )
 
     def parents_of(g: AbstractDiGraph, n: AbstractNode) -> Set[AbstractNode]:
@@ -199,6 +199,6 @@ class DiGraphNodeOps:
         return DiGraphNodeOps.family_set_of(
             g=g,
             n=n,
-            fcond=lambda e, node: e.end().id() == node.id(),
-            enode_fn=lambda e: e.start(),
+            fcond=lambda e, node: e.end.id == node.id,
+            enode_fn=lambda e: e.start,
         )

@@ -57,7 +57,7 @@ class UndiGraph(AbstractUndiGraph, BaseGraph):
         """
         if edges is not None:
             for edge in edges:
-                if edge.type() == EdgeType.DIRECTED:
+                if edge.type == EdgeType.DIRECTED:
                     raise ValueError(
                         "Can not instantiate undirected graph with" + " directed edges"
                     )
@@ -87,9 +87,9 @@ class UndiGraph(AbstractUndiGraph, BaseGraph):
         \param g source graph
         """
         for e in g.E:
-            if e.type() == EdgeType.DIRECTED:
+            if e.type == EdgeType.DIRECTED:
                 raise ValueError("Graph contains directed edges")
-        return UndiGraph(gid=str(uuid4()), data=g.data(), nodes=g.V, edges=g.E)
+        return UndiGraph(gid=str(uuid4()), data=g.data, nodes=g.V, edges=g.E)
 
     def find_shortest_paths(self, n1: Node) -> Dict[str, Union[dict, set]]:
         """!

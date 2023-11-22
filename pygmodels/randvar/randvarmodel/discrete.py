@@ -4,6 +4,7 @@
 
 from pygmodels.randvar.randvartype.baserandvar2 import BaseRandomNumber
 from pygmodels.randvar.randvartype.abstractrandvar import PossibleOutcomes
+from pygmodels.randvar.randvartype.abstractrandvar import PossibleOutcome
 from pygmodels.value.valuetype.codomain import CodomainValue
 from pygmodels.value.valuetype.value import NumericValue
 from pygmodels.utils import mk_id, is_type, is_optional_type
@@ -105,9 +106,10 @@ class DiscreteRandomNumber(BaseRandomNumber):
         is_type(func_name, "func_name", str, True)
         #
         opname = func_name
-        name = "(" + opname + " " + " ".join(["#" + other.name, "#" + self.name])
-        name += ")"
+        domain_name = " ".join(["#" + other.name, "#" + self.name])
+        name = "(" + opname + " " + domain_name + ")"
         set_name = "outcome"
+        randvar_id = mk_id()
 
         def get_outcomes():
             """"""
@@ -116,17 +118,16 @@ class DiscreteRandomNumber(BaseRandomNumber):
                 for e_val in self.outcomes:
                     e: NumericValue = e_val.fetch()
                     ef_max = func(e, f)
-                    rval = CodomainValue(
+                    rval = PossibleOutcome(
                         v=ef_max,
-                        set_id=set_name,
-                        mapping_name=func_name,
-                        domain_name=name,
+                        randvar_id=randvar_id,
+                        domain_name=domain_name,
                     )
                     yield rval
 
         oname = "(" + set_name + " " + name + ")"
         op_result = DiscreteRandomNumber(
-            randvar_id=mk_id(),
+            randvar_id=randvar_id,
             randvar_name=name,
             outcomes=PossibleOutcomes(iterable=get_outcomes(), name=oname),
         )
@@ -174,3 +175,7 @@ class DiscreteRandomNumber(BaseRandomNumber):
 
     def __iter__(self):
         return iter(self.outcomes)
+
+    def __contains__(self, x: PossibleOutcome) -> bool:
+        """"""
+        return x.mapped_by == self.id

@@ -16,12 +16,16 @@ class GraphObject(AbstractGraphObj):
         is_type(oid, "oid", str, True)
         self.object_id = oid
         is_optional_type(odata, "odata", dict, True)
-        self.object_data = odata if odata is not None else {}
+        self._object_data = odata
 
+    @property
     def data(self):
         """!"""
-        return self.object_data
+        if self._object_data is None:
+            raise ValueError("data is none")
+        return self._object_data
 
+    @property
     def id(self):
         """!"""
         return self.object_id
@@ -36,4 +40,7 @@ class GraphObject(AbstractGraphObj):
     def update_data(self, ndata: dict):
         """!"""
         is_type(ndata, "ndata", dict, True)
-        self.object_data.update(ndata)
+        if self._object_data is None:
+            self._object_data = ndata
+        else:
+            self._object_data.update(ndata)

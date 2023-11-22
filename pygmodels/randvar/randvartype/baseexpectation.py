@@ -10,7 +10,7 @@ from typing import Optional
 from abc import abstractmethod
 
 
-class Expectation(GraphObject):
+class BaseExpectation(GraphObject):
     """"""
 
     def __init__(

@@ -11,22 +11,24 @@ from pygmodels.graph.graphtype.abstractobj import (
 from pygmodels.value.valuetype.codomain import Codomain, CodomainValue
 from pygmodels.value.valuetype.codomain import Range
 from pygmodels.value.valuetype.domain import Domain, DomainValue
-from pygmodels.value.valuetype.value import NumericValue
+from pygmodels.value.valuetype.value import NumericValue, Value
 from pygmodels.value.valuetype.abstractvalue import Countable
 
 
 class PossibleOutcome(CodomainValue):
     """"""
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, v: Value, randvar_id: str, domain_name: Optional[str] = None):
+        super().__init__(
+            v=v, set_id=str(type(v)), mapping_name=randvar_id, domain_name=domain_name
+        )
 
 
 class PossibleOutcomes(Countable):
     """"""
 
     def __init__(self, iterable, name):
-        super().__init__(iterable=iterable, member_type=CodomainValue, name=name)
+        super().__init__(iterable=iterable, member_type=PossibleOutcome, name=name)
 
     def __str__(self):
         """"""

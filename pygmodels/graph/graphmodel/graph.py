@@ -113,8 +113,8 @@ class Graph(BaseGraph):
         "Obtain finite graph from base graph"
         nodes = set(bgraph.V)
         edges = set(bgraph.E)
-        data = bgraph.data()
-        gid = bgraph.id()
+        data = bgraph.data
+        gid = bgraph.id
         return Graph(gid=gid, nodes=nodes, edges=edges, data=data)
 
     @classmethod

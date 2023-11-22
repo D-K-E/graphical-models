@@ -265,7 +265,7 @@ class GraphTest(unittest.TestCase):
         # print("\n--------->>>")
 
     def test_id(self):
-        return self.assertEqual(self.graph.id(), "g1")
+        return self.assertEqual(self.graph.id, "g1")
 
     def test_from_edgeset(self):
         """"""

@@ -12,27 +12,7 @@ from pygmodels.utils import mk_id
 class Event(DiscreteRandomNumber):
     """"""
 
-    def __init__(
-        self,
-        *args,
-        outcomes: PossibleOutcomes = PossibleOutcomes(
-            set(
-                [
-                    CodomainValue(
-                        v=NumericValue(v=0.0),
-                        set_id=self.id(),
-                        mapping_name=self.name,
-                    ),
-                    CodomainValue(
-                        v=NumericValue(v=1.0),
-                        set_id=self.id(),
-                        mapping_name=self.name,
-                    ),
-                ]
-            )
-        ),
-        **kwargs
-    ):
+    def __init__(self, *args, outcomes: Optional[PossibleOutcomes] = None, **kwargs):
         """"""
         super().__init__(*args, outcomes, **kwargs)
         if self._outcomes is not None:

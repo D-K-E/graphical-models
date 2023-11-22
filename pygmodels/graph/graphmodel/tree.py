@@ -32,13 +32,13 @@ class Tree(BaseGraph, AbstractTree):
         if edges is not None:
             nodes = set()
             for e in edges:
-                estart = e.start()
-                eend = e.end()
+                estart = e.start
+                eend = e.end
                 nodes.add(estart)
                 nodes.add(eend)
         super().__init__(gid=gid, data=data, nodes=nodes, edges=edges)
         self.__root = None
-        es = [e.type() for e in self.E]
+        es = [e.type for e in self.E]
         if es[0] == EdgeType.DIRECTED:
 
             def egen(x):
@@ -55,7 +55,7 @@ class Tree(BaseGraph, AbstractTree):
             self, n1=self.root, edge_generator=egen
         )
         self.topsort = self.paths.top_sort
-        self.bfs_tree = self.paths.tree[self.root.id()]
+        self.bfs_tree = self.paths.tree[self.root.id]
 
     @classmethod
     def from_node_tuples(cls, ntpls: Set[Tuple[Node, Node, EdgeType]]):
@@ -81,10 +81,10 @@ class Tree(BaseGraph, AbstractTree):
 
     def node_table(self):
         """"""
-        node_table = {v.id(): {"child": False, "parent": False} for v in self.V}
+        node_table = {v.id: {"child": False, "parent": False} for v in self.V}
         for e in self.E:
-            estart_id = e.start().id()
-            eend_id = e.end().id()
+            estart_id = e.start.id
+            eend_id = e.end.id
             node_table[estart_id]["parent"] = True
             node_table[eend_id]["child"] = True
         #
@@ -98,7 +98,7 @@ class Tree(BaseGraph, AbstractTree):
             for k, v in node_table.items()
             if v["child"] is False and v["parent"] is True
         ]
-        V = {v.id(): v for v in self.V}
+        V = {v.id: v for v in self.V}
         return V[root_ids[0]]
 
     def leaves(self) -> Set[Node]:
@@ -110,7 +110,7 @@ class Tree(BaseGraph, AbstractTree):
             for k, v in node_table.items()
             if v["child"] is True and v["parent"] is False
         ]
-        return set([v for v in self.V if v.id() in leave_ids])
+        return set([v for v in self.V if v.id in leave_ids])
 
     @property
     def root(self) -> Node:
@@ -123,7 +123,7 @@ class Tree(BaseGraph, AbstractTree):
         """!"""
         if not BaseGraphBoolOps.is_in(self, n):
             raise ValueError("node not in tree")
-        nid = n.id()
+        nid = n.id
         return self.topsort[nid]
 
     def _is_closure_of(self, x: Node, y: Node, fn: Callable[[int, int], bool]) -> bool:
@@ -131,9 +131,6 @@ class Tree(BaseGraph, AbstractTree):
         xheight = self.height_of(x)
         yheight = self.height_of(y)
         f = fn(xheight, yheight)
-        print(f)
-        print(x)
-        print(y)
         return f
 
     def is_upclosure_of(self, x_src: Node, y_dst: Node) -> bool:
@@ -190,7 +187,7 @@ class Tree(BaseGraph, AbstractTree):
         start: Node,
         end: Node,
         filter_fn: Callable[[Set[Edge], str], Set[Edge]] = lambda es, n: set(
-            [e for e in es if e.start().id() == n]
+            [e for e in es if e.start.id == n]
         ),
         costfn: Callable[[Edge, float], float] = lambda x, y: y + 1.0,
         is_min=True,
@@ -285,7 +282,7 @@ class Tree(BaseGraph, AbstractTree):
         """
         queue = PriorityQueue(is_min=is_min)
         T: Set[Edge] = set()
-        clusters = {v.id(): set([v]) for v in g.V}
+        clusters = {v.id: set([v]) for v in g.V}
         L: List[Edge] = []
         for edge in g.E:
             queue.insert(weight_function(edge), edge)
@@ -297,8 +294,8 @@ class Tree(BaseGraph, AbstractTree):
             else:
                 k, edge = queue.max()
             #
-            u = edge.start().id()
-            v = edge.end().id()
+            u = edge.start.id
+            v = edge.end.id
             vset = clusters[v]
             uset = clusters[u]
             if vset != uset:

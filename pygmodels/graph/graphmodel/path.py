@@ -64,12 +64,12 @@ class Path(BaseGraph, AbstractPath):
         nodes = set()
         snodes = set()
         enodes = set()
-        ns = [edges[0].start()]
+        ns = [edges[0].start]
         for e in edges:
-            estart = e.start()
+            estart = e.start
             snodes.add(estart)
             #
-            eend = e.end()
+            eend = e.end
             enodes.add(eend)
             #
             nodes.add(estart)
@@ -163,7 +163,7 @@ class Path(BaseGraph, AbstractPath):
         start: AbstractNode,
         filter_fn: Callable[
             [Set[AbstractEdge], str], Set[AbstractEdge]
-        ] = lambda es, n: set([e for e in es if e.start().id() == n]),
+        ] = lambda es, n: set([e for e in es if e.start.id == n]),
         costfn: Callable[[AbstractEdge, float], float] = lambda x, y: y + 1,
         is_min=True,
         problem_set=None,

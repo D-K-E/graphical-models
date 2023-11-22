@@ -51,7 +51,7 @@ class BaseGraphBoolAnalyzer:
         \endcode
         """
         for edge in g.E:
-            if edge.start() == edge.end():
+            if edge.start == edge.end:
                 return True
         return False
 
@@ -206,7 +206,7 @@ class BaseGraphBoolAnalyzer:
             edge_node_id1 = edge_node_ids[0]
             edge_node_id2 = edge_node_ids[1]
             for g2_vertex in g2_vertices:
-                vertex_id = g2_vertex.id()
+                vertex_id = g2_vertex.id
                 if vertex_id == edge_node_id1:
                     has_node_id1 = True
                 if vertex_id == edge_node_id2:
@@ -297,7 +297,7 @@ class BaseGraphNumericAnalyzer:
         compare_v = comp_val
         gdata = BaseGraphOps.to_edgelist(g)
         for nid in g.V:
-            nb_edges = len(gdata[nid.id()])
+            nb_edges = len(gdata[nid.id])
             if fn(nb_edges, compare_v):
                 compare_v = nb_edges
         return compare_v
@@ -336,7 +336,7 @@ class BaseGraphNumericAnalyzer:
         It can be found in Diestel 2017, p. 5
         """
         gdata = BaseGraphOps.to_edgelist(g)
-        return sum([len(gdata[v.id()]) for v in g.V]) / len(g.V)
+        return sum([len(gdata[v.id]) for v in g.V]) / len(g.V)
 
     @staticmethod
     def edge_vertex_ratio(g: AbstractGraph) -> float:
@@ -490,7 +490,7 @@ class BaseGraphNodeAnalyzer:
         """
         md = BaseGraphNumericAnalyzer.max_degree(g)
         gdata = BaseGraphOps.to_edgelist(g)
-        nodes = set([v for v in g.V if len(gdata[v.id()]) == md])
+        nodes = set([v for v in g.V if len(gdata[v.id]) == md])
         return nodes
 
     @staticmethod
@@ -501,7 +501,7 @@ class BaseGraphNodeAnalyzer:
         """
         md = BaseGraphNumericAnalyzer.min_degree(g)
         gdata = BaseGraphOps.to_edgelist(g)
-        nodes = set([v for v in g.V if len(gdata[v.id()]) == md])
+        nodes = set([v for v in g.V if len(gdata[v.id]) == md])
         return nodes
 
     @staticmethod
@@ -521,11 +521,11 @@ class BaseGraphNodeAnalyzer:
             result = BaseGraphAnalyzer.dfs_props(
                 g, edge_generator=edge_generator, check_cycle=check_cycle
             )
-        V = {v.id(): v for v in g.V}
+        V = {v.id: v for v in g.V}
         v = V[root_node_id]
         Ts = result.components
         T = Ts[root_node_id]
-        T.add(v.id())
+        T.add(v.id)
         return set([V[v] for v in T])
 
     @staticmethod
@@ -657,8 +657,8 @@ class BaseGraphAnalyzer:
         )
 
         gdata = BaseGraphOps.to_edgelist(g)
-        edges = [gdata[v.id()] for v in vertices]
-        E = {e.id(): e for e in g.E}
+        edges = [gdata[v.id] for v in vertices]
+        E = {e.id: e for e in g.E}
         es: Set[AbstractEdge] = set()
         for elst in edges:
             for e in elst:
@@ -755,13 +755,13 @@ class BaseGraphAnalyzer:
         gmat = {}
         for v in g.V:
             for k in g.V:
-                gmat[(v.id(), k.id())] = vtype(0)
+                gmat[(v.id, k.id)] = vtype(0)
         for edge in g.E:
-            tpl1 = (edge.start().id(), edge.end().id())
-            tpl2 = (edge.end().id(), edge.start().id())
+            tpl1 = (edge.start.id, edge.end.id)
+            tpl2 = (edge.end.id, edge.start.id)
             if tpl1 in gmat:
                 gmat[tpl1] = vtype(1)
-            if edge.type() == EdgeType.UNDIRECTED:
+            if edge.type == EdgeType.UNDIRECTED:
                 if tpl2 in gmat:
                     gmat[tpl2] = vtype(1)
         return gmat
@@ -840,10 +840,10 @@ class BaseGraphAnalyzer:
         for k in n.copy():
             for i in n.copy():
                 for j in n.copy():
-                    t_ij = T[(i.id(), j.id())]
-                    t_ik = T[(i.id(), k.id())]
-                    t_ki = T[(i.id(), k.id())]
-                    T[(i.id(), j.id())] = t_ij or (t_ik and t_ki)
+                    t_ij = T[(i.id, j.id)]
+                    t_ik = T[(i.id, k.id)]
+                    t_ki = T[(i.id, k.id)]
+                    T[(i.id, j.id)] = t_ij or (t_ik and t_ki)
         T = {(k, i): v for (k, i), v in T.items() if k != i}
         return T
 

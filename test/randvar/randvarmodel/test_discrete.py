@@ -8,6 +8,7 @@ from pygmodels.randvar.randvarmodel.discrete import (
     DiscreteRandomNumber,
 )
 from pygmodels.randvar.randvartype.abstractrandvar import PossibleOutcomes
+from pygmodels.randvar.randvartype.abstractrandvar import PossibleOutcome
 from pygmodels.value.valuetype.codomain import CodomainValue
 from pygmodels.value.valuetype.domain import DomainValue
 from pygmodels.value.valuetype.value import NumericValue
@@ -25,12 +26,12 @@ class DiscreteRandomNumberTest(unittest.TestCase):
             outcomes=PossibleOutcomes(
                 iterable=set(
                     [
-                        CodomainValue(v=NumericValue(0), set_id="0", mapping_name="X"),
-                        CodomainValue(v=NumericValue(1), set_id="1", mapping_name="X"),
-                        CodomainValue(v=NumericValue(2), set_id="2", mapping_name="X"),
-                        CodomainValue(v=NumericValue(3), set_id="3", mapping_name="X"),
-                        CodomainValue(v=NumericValue(4), set_id="4", mapping_name="X"),
-                        CodomainValue(v=NumericValue(5), set_id="5", mapping_name="X"),
+                        PossibleOutcome(v=NumericValue(0), randvar_id="X"),
+                        PossibleOutcome(v=NumericValue(1), randvar_id="X"),
+                        PossibleOutcome(v=NumericValue(2), randvar_id="X"),
+                        PossibleOutcome(v=NumericValue(3), randvar_id="X"),
+                        PossibleOutcome(v=NumericValue(4), randvar_id="X"),
+                        PossibleOutcome(v=NumericValue(5), randvar_id="X"),
                     ]
                 ),
                 name="dice-sides",
@@ -43,8 +44,8 @@ class DiscreteRandomNumberTest(unittest.TestCase):
             outcomes=PossibleOutcomes(
                 iterable=set(
                     [
-                        CodomainValue(v=NumericValue(0), set_id="H", mapping_name="Y"),
-                        CodomainValue(v=NumericValue(1), set_id="T", mapping_name="Y"),
+                        PossibleOutcome(v=NumericValue(0), randvar_id="Y"),
+                        PossibleOutcome(v=NumericValue(1), randvar_id="Y"),
                     ]
                 ),
                 name="coin-sides",
@@ -56,8 +57,8 @@ class DiscreteRandomNumberTest(unittest.TestCase):
             outcomes=PossibleOutcomes(
                 iterable=set(
                     [
-                        CodomainValue(v=NumericValue(1), set_id="H", mapping_name="A"),
-                        CodomainValue(v=NumericValue(2), set_id="T", mapping_name="A"),
+                        PossibleOutcome(v=NumericValue(1), randvar_id="A"),
+                        PossibleOutcome(v=NumericValue(2), randvar_id="A"),
                     ]
                 ),
                 name="coin-sides",
@@ -146,8 +147,8 @@ class DiscreteRandomNumberTest(unittest.TestCase):
             iterable=(
                 i
                 for i in [
-                    CodomainValue(v=NumericValue(0), set_id="H", mapping_name="Y"),
-                    CodomainValue(v=NumericValue(1), set_id="T", mapping_name="Y"),
+                    PossibleOutcome(v=NumericValue(0), randvar_id="Y"),
+                    PossibleOutcome(v=NumericValue(1), randvar_id="Y"),
                 ]
             ),
             name="coin-sides",
