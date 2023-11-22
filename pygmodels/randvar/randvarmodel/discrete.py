@@ -176,6 +176,22 @@ class DiscreteRandomNumber(BaseRandomNumber):
     def __iter__(self):
         return iter(self.outcomes)
 
-    def __contains__(self, x: PossibleOutcome) -> bool:
+    def __contains__(self, other: PossibleOutcome) -> bool:
         """"""
+        is_type(other, "other", PossibleOutcome, True)
         return x.mapped_by == self.id
+
+    def __le__(self, other) -> bool:
+        "Biagini, Campanino, 2016, p. 5"
+        is_type(other, "other", DiscreteRandomNumber, True)
+        #
+        def compare():
+            """"""
+            for f_val in other.outcomes:
+                f = f_val.fetch()
+                for e_val in self.outcomes:
+                    e: NumericValue = e_val.fetch()
+                    rval = e <= f
+                    yield rval
+
+        return all(c for c in compare())

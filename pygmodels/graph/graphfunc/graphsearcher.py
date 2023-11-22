@@ -21,6 +21,7 @@ from pygmodels.graph.graphtype.searchresult import (
 )
 from pygmodels.graph.graphtype.queue import PriorityQueue
 from pygmodels.utils import is_type
+from collections import defaultdict
 
 
 class BaseGraphSearcher:
@@ -231,12 +232,14 @@ class BaseGraphSearcher:
         T = set([nid])
         P: Dict[str, Dict[str, str]] = {}
         P[nid] = {}
+        all_parents: Dict[str, set] = defaultdict(set)
         while Q:
             u = Q.pop(0)
             unode = V[u]
             for edge in edge_generator(unode):
                 vnode = edge.get_other(unode)
                 vid = vnode.id
+                all_parents[vid].add(u)
                 if vid not in T:
                     T.add(vid)
                     l_vs[vid] = int(l_vs[u] + 1)
@@ -244,7 +247,12 @@ class BaseGraphSearcher:
                     Q.append(vid)
         #
         T = set([V[t] for t in T])
-        path_props = {"bfs-tree": P, "path-set": T, "top-sort": l_vs}
+        path_props = {
+            "bfs-tree": P,
+            "path-set": T,
+            "top-sort": l_vs,
+            "all-parents": all_parents,
+        }
         return BaseGraphBFSResult(
             props=path_props,
             result_id="bfs-result-of-" + g.id,

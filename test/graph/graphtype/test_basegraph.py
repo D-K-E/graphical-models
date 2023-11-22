@@ -20,10 +20,10 @@ class BaseGraphTest(unittest.TestCase):
         self.n3 = Node("n3", {})
         self.n4 = Node("n4", {})
         self.n5 = Node("n5", {})
-        self.e1 = Edge.undirected("e1", start_node=self.n1, end_node=self.n2)
-        self.e2 = Edge.undirected("e2", start_node=self.n2, end_node=self.n3)
-        self.e3 = Edge.undirected("e3", start_node=self.n3, end_node=self.n4)
-        self.e4 = Edge.undirected("e4", start_node=self.n1, end_node=self.n4)
+        self.e1 = Edge.undirected(eid="e1", start_node=self.n1, end_node=self.n2)
+        self.e2 = Edge.undirected(eid="e2", start_node=self.n2, end_node=self.n3)
+        self.e3 = Edge.undirected(eid="e3", start_node=self.n3, end_node=self.n4)
+        self.e4 = Edge.undirected(eid="e4", start_node=self.n1, end_node=self.n4)
 
         self.graph = BaseGraph(
             "g1",

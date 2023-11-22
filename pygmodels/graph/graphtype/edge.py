@@ -5,11 +5,12 @@
 \see \link graphgroup Graph Object \endlink edgegroup nodegroup
 
 """
-from typing import FrozenSet, Set, Union
+from typing import FrozenSet, Set, Union, Optional
 
 from pygmodels.graph.graphtype.abstractobj import AbstractEdge, EdgeType
 from pygmodels.graph.graphtype.graphobj import GraphObject
 from pygmodels.graph.graphtype.node import Node
+from pygmodels.utils import mk_id
 
 
 class Edge(GraphObject, AbstractEdge):
@@ -105,11 +106,11 @@ class Edge(GraphObject, AbstractEdge):
 
     @classmethod
     def directed(
-        cls, eid: str, start_node: Node, end_node: Node, data={}
+        cls, start_node: Node, end_node: Node, eid: Optional[str] = None, data={}
     ) -> AbstractEdge:
         """"""
         return Edge(
-            eid,
+            eid if eid is not None else mk_id(),
             start_node=start_node,
             end_node=end_node,
             edge_type=EdgeType.DIRECTED,
@@ -117,10 +118,12 @@ class Edge(GraphObject, AbstractEdge):
         )
 
     @classmethod
-    def undirected(cls, eid, start_node: Node, end_node: Node, data={}) -> AbstractEdge:
+    def undirected(
+        cls, start_node: Node, end_node: Node, eid: Optional[str] = None, data={}
+    ) -> AbstractEdge:
         """"""
         return Edge(
-            eid,
+            eid if eid is not None else mk_id(),
             start_node=start_node,
             end_node=end_node,
             edge_type=EdgeType.UNDIRECTED,

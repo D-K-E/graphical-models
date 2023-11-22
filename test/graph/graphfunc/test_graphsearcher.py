@@ -40,40 +40,40 @@ class BaseGraphSearcherTests(unittest.TestCase):
 
         # edges
         self.e1u = Edge.undirected(
-            "n1n4", start_node=self.n1, end_node=self.n4, data={}
+            eid="n1n4", start_node=self.n1, end_node=self.n4, data={}
         )
         self.e2u = Edge.undirected(
-            "n1n3", start_node=self.n1, end_node=self.n3, data={}
+            eid="n1n3", start_node=self.n1, end_node=self.n3, data={}
         )
         self.e3u = Edge.undirected(
-            "n1n2", start_node=self.n1, end_node=self.n2, data={}
+            eid="n1n2", start_node=self.n1, end_node=self.n2, data={}
         )
         self.e4u = Edge.undirected(
-            "n1n5", start_node=self.n1, end_node=self.n5, data={}
+            eid="n1n5", start_node=self.n1, end_node=self.n5, data={}
         )
         self.e5u = Edge.undirected(
-            "n1n6", start_node=self.n1, end_node=self.n6, data={}
+            eid="n1n6", start_node=self.n1, end_node=self.n6, data={}
         )
         self.e6u = Edge.undirected(
-            "n1n7", start_node=self.n1, end_node=self.n7, data={}
+            eid="n1n7", start_node=self.n1, end_node=self.n7, data={}
         )
         self.e7u = Edge.undirected(
-            "n1n8", start_node=self.n1, end_node=self.n8, data={}
+            eid="n1n8", start_node=self.n1, end_node=self.n8, data={}
         )
         self.e8u = Edge.undirected(
-            "n8n2", start_node=self.n8, end_node=self.n2, data={}
+            eid="n8n2", start_node=self.n8, end_node=self.n2, data={}
         )
         self.e9u = Edge.undirected(
-            "n9n10", start_node=self.n9, end_node=self.n10, data={}
+            eid="n9n10", start_node=self.n9, end_node=self.n10, data={}
         )
         self.e10u = Edge.undirected(
-            "n9n13", start_node=self.n9, end_node=self.n13, data={}
+            eid="n9n13", start_node=self.n9, end_node=self.n13, data={}
         )
         self.e11u = Edge.undirected(
-            "n10n11", start_node=self.n10, end_node=self.n11, data={}
+            eid="n10n11", start_node=self.n10, end_node=self.n11, data={}
         )
         self.e12u = Edge.undirected(
-            "n10n12", start_node=self.n10, end_node=self.n12, data={}
+            eid="n10n12", start_node=self.n10, end_node=self.n12, data={}
         )
         self.ugraph = BaseGraph(
             "ugraph",

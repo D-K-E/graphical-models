@@ -20,28 +20,3 @@ class Event(DiscreteRandomNumber):
                 v = out.value
                 if (v != 0) or (v != 1):
                     raise ValueError("an event may have 0 or 1 as possible outcome")
-
-    def __or__(self, other) -> BaseRandomNumber:
-        "Biagini, Campanino, 2016, p. 5"
-
-        def or_f(e, f):
-            e_prod_f = e * f
-            e_plus_f = e + f
-            return e_plus_f - e_prod_f
-
-        return self.__myop__(other=other, func=or_f, func_name="or")
-
-    def __sub__(self, other) -> BaseRandomNumber:
-        "Biagini, Campanino, 2016, p. 5"
-
-        def diff_f(e, f):
-            e_prod_f = e * f
-            return e - e_prod_f
-
-        return self.__myop__(other=other, func=diff_f, func_name="difference")
-
-    def __xor__(self, other) -> BaseRandomNumber:
-        "Biagini, Campanino, 2016, p. 5"
-        e_f = self - other
-        f_e = other - self
-        return e_f or f_e

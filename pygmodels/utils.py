@@ -41,6 +41,8 @@ def is_all_type(field_value, field_name: str, field_type, raise_error: bool = Tr
         field_value, field_name, (list, set, frozenset, tuple), raise_error=raise_error
     ):
         return False
+    if len(field_value) == 0:
+        raise ValueError(f"{field_name} is empty")
     is_all = all(
         is_type(i, "member", field_type, raise_error=raise_error) for i in field_value
     )
