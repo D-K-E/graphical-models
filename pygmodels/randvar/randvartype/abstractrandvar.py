@@ -14,13 +14,18 @@ from pygmodels.value.valuetype.domain import Domain, DomainValue
 from pygmodels.value.valuetype.value import NumericValue, Value
 from pygmodels.value.valuetype.abstractvalue import Countable
 
+from xml.etree import ElementTree as ET
+
 
 class PossibleOutcome(CodomainValue):
     """"""
 
     def __init__(self, v: Value, randvar_id: str, domain_name: Optional[str] = None):
         super().__init__(
-            v=v, set_id=str(type(v)), mapping_name=randvar_id, domain_name=domain_name
+            v=v,
+            set_id=type(v).__name__,
+            mapping_name=randvar_id,
+            domain_name=domain_name,
         )
 
 
@@ -32,11 +37,11 @@ class PossibleOutcomes(Countable):
 
     def __str__(self):
         """"""
-        m = "<PossibleOutcomes name='" + self._name + "'>\n"
+        m = ET.Element("PossibleOutcomes")
+        m.set("name", self._name)
         for o in self:
-            m += "  " + str(o) + "\n"
-        m += "</PossibleOutcomes>"
-        return m
+            m.append(ET.fromstring(str(o)))
+        return ET.tostring(m, encoding="unicode")
 
     def __eq__(self, other):
         """"""

@@ -16,6 +16,8 @@ from pygmodels.value.valuetype.abstractvalue import FiniteTypedSet
 from pygmodels.value.valuetype.abstractvalue import OrderedFiniteTypedSequence
 from pygmodels.value.valuetype.abstractvalue import NamedContainer
 
+from xml.etree import ElementTree as ET
+
 
 class CodomainValue(SetValue):
     """"""
@@ -48,12 +50,13 @@ class CodomainValue(SetValue):
 
     def __str__(self):
         """"""
-        m = "<CodomainValue value='" + str(self.value) + "'"
-        m += " set='" + str(self.belongs_to) + "'"
-        m += " mapped_by='" + str(self.mapped_by) + "'"
-        m += " mapped_from='" + str(self.mapped_from) + "'"
-        m += ">"
-        return m
+        m = ET.Element("CodomainValue")
+        m.text = str(self.value)
+        m.set("set", self.belongs_to)
+        m.set("mapped_by", self.mapped_by)
+        if self.mapped_from:
+            m.set("mapped_from", self.mapped_from)
+        return ET.tostring(m, encoding="unicode")
 
 
 class Interval(NamedContainer):

@@ -118,8 +118,8 @@ class EventEventOps:
         "Biagini, Campanino, 2016, p. 5"
         is_type(f, "f", Event, True)
         is_type(e, "e", Event, True)
-        e_prod_f = e * f
-        return e_prod_f
+        t = e * f
+        return t
 
     @staticmethod
     def difference(e: Event, f: Event) -> Event:
@@ -127,8 +127,8 @@ class EventEventOps:
         is_type(e, "e", Event, True)
         is_type(f, "f", Event, True)
         e_prod_f = e * f
-        d = e - e_prod_f
-        return d
+        t = e - e_prod_f
+        return t
 
     @staticmethod
     def symmetric_difference(e: Event, f: Event) -> Event:
@@ -137,8 +137,8 @@ class EventEventOps:
         is_type(f, "f", Event, True)
         e_d_f = EventEventOps.difference(e, f)
         f_d_e = EventEventOps.difference(f, e)
-        d = EventEventOps.logical_sum(e_d_f, f_d_e)
-        return d
+        t = EventEventOps.logical_sum(e_d_f, f_d_e)
+        return t
 
 
 class EventEventSetOps:

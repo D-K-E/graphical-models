@@ -635,13 +635,5 @@ class BaseGraphAlgSetOpsTest(unittest.TestCase):
         self.assertEqual(set(g.E), set([e, self.e1, self.e2]))
 
 
-def suite():
-    suite = unittest.TestSuite()
-    suite.addTest(BaseGraphOpsTest("base_graph_ops_test"))
-    suite.addTest(BaseGraphAlgSetOpsTest("base_graph_alg_set_ops"))
-    return suite
-
-
 if __name__ == "__main__":
-    runner = unittest.TextTestRunner()
-    runner.run(suite())
+    unittest.main()

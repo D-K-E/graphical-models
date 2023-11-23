@@ -9,6 +9,7 @@ from pygmodels.value.valuetype.abstractvalue import AbstractValue
 from pygmodels.utils import is_type, is_optional_type
 from pygmodels.utils import is_all_type
 from types import FunctionType
+from xml.etree import ElementTree as ET
 
 
 class Value(AbstractValue):
@@ -221,3 +222,10 @@ class SetValue(Value, AbstractSetValue):
         if self._v is None:
             raise ValueError("Value is not associated to any data")
         return self._v
+
+    def __str__(self) -> str:
+        """"""
+        m = ET.Element("SetValue")
+        m.set("set", self.belongs_to)
+        m.text = str(self.value)
+        return ET.tostring(m, encoding="unicode")

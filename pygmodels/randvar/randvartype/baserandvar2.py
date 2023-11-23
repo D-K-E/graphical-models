@@ -16,6 +16,7 @@ from pygmodels.value.valuetype.codomain import CodomainValue
 from pygmodels.randvar.randvartype.abstractrandvar import PossibleOutcomes
 from pygmodels.randvar.randvartype.abstractrandvar import PossibleOutcome
 from types import FunctionType
+from xml.etree import ElementTree as ET
 
 
 class BaseRandomVariableMember(AbstractRandomVariableMember, GraphObject):
@@ -31,19 +32,21 @@ class BaseRandomVariableMember(AbstractRandomVariableMember, GraphObject):
         """"""
         super().__init__(oid=member_id, odata=data)
         is_type(randvar_id, "randvar_id", str, True)
-        self.rand_id = randvar_id
+        self._rand_id = randvar_id
         is_optional_type(description, "description", str, True)
-        self.descr = description
+        self._descr = description
 
     @property
     def belongs_to(self) -> str:
         "Identifier of the random variable associated to evidence"
-        return self.rand_id
+        return self._rand_id
 
     @property
-    def description(self) -> Optional[str]:
+    def description(self) -> str:
         "description of observation conditions of the evidence"
-        return self.descr
+        if self._descr is None:
+            raise ValueError("descr is none")
+        return self._descr
 
 
 class BaseEvidence(AbstractEvidence, BaseRandomVariableMember):
@@ -54,7 +57,7 @@ class BaseEvidence(AbstractEvidence, BaseRandomVariableMember):
     def __init__(
         self,
         evidence_id: str,
-        value: CodomainValue,
+        value: PossibleOutcome,
         randvar_id: str,
         data: Optional[dict] = None,
         description: Optional[str] = None,
@@ -66,13 +69,13 @@ class BaseEvidence(AbstractEvidence, BaseRandomVariableMember):
             data=data,
             description=description,
         )
-        is_type(value, "value", CodomainValue, True)
-        self.val = value
+        is_type(value, "value", PossibleOutcome, True)
+        self._val = value
 
     @property
     def value(self) -> PossibleOutcome:
         "Value of the evidence"
-        return self.val
+        return self._val
 
     def __eq__(self, other: AbstractEvidence) -> bool:
         """!
@@ -94,17 +97,13 @@ class BaseEvidence(AbstractEvidence, BaseRandomVariableMember):
         """!
         String representation of an evidence
         """
-        msg = "<BaseEvidence id='"
-        msg += self.id() + "'"
-        msg += " belongs_to='" + str(self.belongs_to) + "'"
-        # this would create hash problems
-        # msg += " description: " + (
-        #    self.description() if self.description() is not None else ""
-        # )
-        msg += ">\n"
-        msg += "  " + str(self.value)+ "\n"
-        msg += "</BaseEvidence>"
-        return msg
+        m = ET.Element("BaseEvidence")
+        m.set("id", self.id)
+        m.set("belongs_to", self.belongs_to)
+        if self._descr is not None:
+            m.set("description", self._descr)
+        m.append(ET.fromstring(str(self.value)))
+        return ET.tostring(m, encoding="unicode")
 
     def __hash__(self):
         """!
@@ -135,3 +134,18 @@ class BaseRandomNumber(AbstractRandomNumber, Node):
         if self._name is None:
             raise ValueError("name is none")
         return self._name
+
+    def __str__(self) -> str:
+        """"""
+        s = ET.Element("RandomNumber")
+        s.set("id", self.id)
+        if self._name is not None:
+            s.set("name", self._name)
+        if self._data is not None:
+            d = ET.SubElement(s, "Data")
+            for k, v in self.data.items():
+                kd = ET.SubElement(d, str(k))
+                kd.text = str(v)
+        if self._evidence is not None:
+            s.append(ET.fromstring(str(self.evidence)))
+        return ET.tostring(s, encoding="unicode")

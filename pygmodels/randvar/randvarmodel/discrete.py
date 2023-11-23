@@ -10,6 +10,7 @@ from pygmodels.value.valuetype.value import NumericValue
 from pygmodels.utils import mk_id, is_type, is_optional_type
 from typing import Optional, Callable, List
 from types import FunctionType
+from xml.etree import ElementTree as ET
 
 
 class DiscreteRandomNumber(BaseRandomNumber):
@@ -45,7 +46,9 @@ class DiscreteRandomNumber(BaseRandomNumber):
         if self._outcomes is None:
             raise ValueError("outcomes is none")
         if self._evidence is not None:
-            return PossibleOutcomes(set([self._evidence.value]))
+            return PossibleOutcomes(
+                iterable=set([self._evidence.value]), name=f"{self.id}_outcome"
+            )
         return self._outcomes
 
     def __and__(self, other) -> BaseRandomNumber:
@@ -195,3 +198,24 @@ class DiscreteRandomNumber(BaseRandomNumber):
                     yield rval
 
         return all(c for c in compare())
+
+    def __eq__(self, other) -> bool:
+        """"""
+        e_f = self <= other
+        f_e = other <= self
+        return e_f and f_e
+
+    def __str__(self):
+        """"""
+        s = ET.Element("DiscreteRandomNumber")
+        s.set("id", self.id)
+        if self._name is not None:
+            s.set("name", self._name)
+        if self._data is not None:
+            d = ET.SubElement(s, "Data")
+            for k, v in self.data.items():
+                kd = ET.SubElement(d, str(k))
+                kd.text = str(v)
+        for o in self.outcomes:
+            s.append(ET.fromstring(str(o)))
+        return ET.tostring(s, encoding="unicode")

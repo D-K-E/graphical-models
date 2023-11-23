@@ -59,11 +59,17 @@ class Node(AbstractNode, GraphObject):
 
         \return string
         """
-        return (
-            self.id
-            + "--"
-            + "::".join([str(k) + "-" + str(v) for k, v in self.data.items()])
-        )
+        n = "<Node id='" + self.id + "'"
+        if self._data is None:
+            n += "/>"
+            return n
+        n += ">\n"
+        for k, v in self.data.items():
+            n += "  <" + str(k) + ">"
+            n += "    " + str(v)
+            n += "  </" + str(k) + ">"
+        n += "</Node>"
+        return n
 
     def __hash__(self):
         """!

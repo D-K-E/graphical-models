@@ -76,13 +76,6 @@ class AbstractSetValue(AbstractValue):
             return c1 and c2
         return False
 
-    def __str__(self):
-        """"""
-        m = "Value[ " + str(self.value)
-        m += " belongs to set " + str(self.belongs_to)
-        m += " ]"
-        return m
-
     def __hash__(self):
         """"""
         return hash(str(self))
