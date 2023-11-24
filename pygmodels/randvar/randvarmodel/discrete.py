@@ -76,22 +76,24 @@ class DiscreteRandomNumber(BaseRandomNumber):
         """
         Biagini, Campanino, 2016, p. 4
         """
-        name = "(~ #" + self.name + ")"
-        set_name = "outcome"
+        domain_name = "#" + self.name
+        opname = "~"
+        name = "(" + opname + " " + domain_name + ")"
+        randvar_id = mk_id()
 
         def invert():
             """"""
             for out in self.outcomes:
                 comp = 1 - out.fetch()
-                cval = CodomainValue(
+                cval = PossibleOutcome(
                     v=comp,
-                    set_id=set_name,
-                    mapping_name="~",
-                    domain_name=self.name,
+                    randvar_id=randvar_id,
+                    domain_name=domain_name,
                 )
                 yield cval
 
-        oname = "(" + set_name + " " + name + ")"
+        set_name = "outcome"
+        oname = "(" + set_name + " #" + name + ")"
         new_outcomes = PossibleOutcomes(iterable=invert(), name=oname)
         return DiscreteRandomNumber(
             randvar_id=mk_id(), randvar_name=name, outcomes=new_outcomes
@@ -128,7 +130,7 @@ class DiscreteRandomNumber(BaseRandomNumber):
                     )
                     yield rval
 
-        oname = "(" + set_name + " " + name + ")"
+        oname = "(" + set_name + " #" + name + ")"
         op_result = DiscreteRandomNumber(
             randvar_id=randvar_id,
             randvar_name=name,
@@ -218,4 +220,5 @@ class DiscreteRandomNumber(BaseRandomNumber):
                 kd.text = str(v)
         for o in self.outcomes:
             s.append(ET.fromstring(str(o)))
+        ET.indent(s)
         return ET.tostring(s, encoding="unicode")

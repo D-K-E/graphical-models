@@ -56,6 +56,7 @@ class CodomainValue(SetValue):
         m.set("mapped_by", self.mapped_by)
         if self.mapped_from:
             m.set("mapped_from", self.mapped_from)
+        ET.indent(m)
         return ET.tostring(m, encoding="unicode")
 
 

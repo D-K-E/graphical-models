@@ -228,4 +228,5 @@ class SetValue(Value, AbstractSetValue):
         m = ET.Element("SetValue")
         m.set("set", self.belongs_to)
         m.text = str(self.value)
+        ET.indent(m)
         return ET.tostring(m, encoding="unicode")

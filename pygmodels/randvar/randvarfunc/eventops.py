@@ -22,7 +22,6 @@ class EventBoolOps:
         "Biagini, Campanino, 2016, p. 6"
         is_type(e, "e", Event, True)
         is_type(f, "f", Event, True)
-        #
         ef = e * f
         return all(outcome.value == 0 for outcome in ef.outcomes)
 
@@ -30,18 +29,25 @@ class EventBoolOps:
     def is_exhaustive(es: Set[Event]) -> bool:
         "Biagini, Campanino, 2016, p. 6"
         is_all_type(es, "es", Event, True)
-        result = es.pop(0)
-        for e in es:
-            resut = result + e
-        return all(outcome.value >= 1 for outcome in result.outcomes)
+        es_c = [e.to_discrete_random_number() for e in es]
+        e = es_c.pop(0)
+        for f in es_c:
+            e += f
+        outs = [outcome.value for outcome in e.outcomes]
+        is_ex = all(o >= 1 for o in outs)
+        if not is_ex:
+            breakpoint()
+
+        return is_ex
 
     @staticmethod
     def is_partition(es: Set[Event]) -> bool:
         "Biagini, Campanino, 2016, p. 6"
         exhaustive = EventBoolOps.is_exhaustive(es=es)
-        return exhaustive and all(
+        is_incompatible = all(
             EventBoolOps.is_incompatible(e=ef[0], f=ef[1]) for ef in combinations(es, 2)
         )
+        return exhaustive and is_incompatible
 
     @staticmethod
     def is_subset_of(e: Event, f: Event) -> bool:
@@ -102,24 +108,6 @@ class EventEventOps:
         is_type(e, "e", Event, True)
         e_inv = ~e
         return (e, e_inv)
-
-    @staticmethod
-    def logical_sum(e: Event, f: Event) -> Event:
-        "Biagini, Campanino, 2016, p. 5"
-        is_type(e, "e", Event, True)
-        is_type(f, "f", Event, True)
-        e_prod_f = e * f
-        e_plus_f = e + f
-        t = e_plus_f - e_prod_f
-        return t
-
-    @staticmethod
-    def logical_product(e: Event, f: Event) -> Event:
-        "Biagini, Campanino, 2016, p. 5"
-        is_type(f, "f", Event, True)
-        is_type(e, "e", Event, True)
-        t = e * f
-        return t
 
     @staticmethod
     def difference(e: Event, f: Event) -> Event:

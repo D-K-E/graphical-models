@@ -103,6 +103,7 @@ class BaseEvidence(AbstractEvidence, BaseRandomVariableMember):
         if self._descr is not None:
             m.set("description", self._descr)
         m.append(ET.fromstring(str(self.value)))
+        ET.indent(m)
         return ET.tostring(m, encoding="unicode")
 
     def __hash__(self):
@@ -148,4 +149,5 @@ class BaseRandomNumber(AbstractRandomNumber, Node):
                 kd.text = str(v)
         if self._evidence is not None:
             s.append(ET.fromstring(str(self.evidence)))
+        ET.indent(s)
         return ET.tostring(s, encoding="unicode")

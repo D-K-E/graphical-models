@@ -41,6 +41,7 @@ class PossibleOutcomes(Countable):
         m.set("name", self._name)
         for o in self:
             m.append(ET.fromstring(str(o)))
+        ET.indent(m)
         return ET.tostring(m, encoding="unicode")
 
     def __eq__(self, other):
