@@ -29,12 +29,11 @@ class EventBoolOps:
     def is_exhaustive(es: Set[Event]) -> bool:
         "Biagini, Campanino, 2016, p. 6"
         is_all_type(es, "es", Event, True)
-        es_c = [e.to_discrete_random_number() for e in es]
+        es_c = [d.to_discrete_random_number() for d in es]
         e = es_c.pop(0)
         for f in es_c:
             e += f
-        outs = [outcome.value for outcome in e.outcomes]
-        is_ex = all(o >= 1 for o in outs)
+        is_ex = all(o.value >= 1 for o in e)
         if not is_ex:
             breakpoint()
 

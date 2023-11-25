@@ -11,6 +11,7 @@ from pygmodels.utils import mk_id, is_type, is_optional_type
 from typing import Optional, Callable, List
 from types import FunctionType
 from xml.etree import ElementTree as ET
+from itertools import product
 
 
 class DiscreteRandomNumber(BaseRandomNumber):
@@ -76,14 +77,14 @@ class DiscreteRandomNumber(BaseRandomNumber):
         """
         Biagini, Campanino, 2016, p. 4
         """
-        domain_name = "#" + self.name
+        domain_name = self.__mk_domain_name__()
         opname = "~"
         name = "(" + opname + " " + domain_name + ")"
         randvar_id = mk_id()
 
         def invert():
             """"""
-            for out in self.outcomes:
+            for out in self:
                 comp = 1 - out.fetch()
                 cval = PossibleOutcome(
                     v=comp,
@@ -99,6 +100,14 @@ class DiscreteRandomNumber(BaseRandomNumber):
             randvar_id=mk_id(), randvar_name=name, outcomes=new_outcomes
         )
 
+    def __mk_domain_name__(self):
+        """"""
+        if self._name is None:
+            dom_o = "#(id " + self.id + ")"
+        else:
+            dom_o = "#(" + self.name + " (id " + self.id + ")" + ")"
+        return dom_o
+
     def __myop__(
         self,
         other,
@@ -111,24 +120,24 @@ class DiscreteRandomNumber(BaseRandomNumber):
         is_type(func_name, "func_name", str, True)
         #
         opname = func_name
-        domain_name = " ".join(["#" + other.name, "#" + self.name])
+
+        domain_name = " ".join([self.__mk_domain_name__(), other.__mk_domain_name__()])
         name = "(" + opname + " " + domain_name + ")"
         set_name = "outcome"
         randvar_id = mk_id()
 
         def get_outcomes():
             """"""
-            for f_val in other.outcomes:
+            for (e_val, f_val) in product(self, other):
                 f = f_val.fetch()
-                for e_val in self.outcomes:
-                    e: NumericValue = e_val.fetch()
-                    ef_max = func(e, f)
-                    rval = PossibleOutcome(
-                        v=ef_max,
-                        randvar_id=randvar_id,
-                        domain_name=domain_name,
-                    )
-                    yield rval
+                e: NumericValue = e_val.fetch()
+                ef_max = func(e, f)
+                rval = PossibleOutcome(
+                    v=ef_max,
+                    randvar_id=randvar_id,
+                    domain_name=domain_name,
+                )
+                yield rval
 
         oname = "(" + set_name + " #" + name + ")"
         op_result = DiscreteRandomNumber(
