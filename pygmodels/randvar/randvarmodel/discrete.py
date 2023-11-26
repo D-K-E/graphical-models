@@ -195,27 +195,6 @@ class DiscreteRandomNumber(BaseRandomNumber):
         is_type(other, "other", PossibleOutcome, True)
         return x.mapped_by == self.id
 
-    def __le__(self, other) -> bool:
-        "Biagini, Campanino, 2016, p. 5"
-        is_type(other, "other", DiscreteRandomNumber, True)
-        #
-        def compare():
-            """"""
-            for f_val in other.outcomes:
-                f = f_val.fetch()
-                for e_val in self.outcomes:
-                    e: NumericValue = e_val.fetch()
-                    rval = e <= f
-                    yield rval
-
-        return all(c for c in compare())
-
-    def __eq__(self, other) -> bool:
-        """"""
-        e_f = self <= other
-        f_e = other <= self
-        return e_f and f_e
-
     def __str__(self):
         """"""
         s = ET.Element("DiscreteRandomNumber")

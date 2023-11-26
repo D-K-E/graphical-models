@@ -2,6 +2,7 @@
 \brief operations defined on event
 """
 from pygmodels.randvar.randvarmodel.event import Event
+from pygmodels.randvar.randvartype.baserandvar2 import BaseObserver
 from pygmodels.utils import is_type, is_all_type
 from pygmodels.graph.graphtype.basegraph import BaseGraph
 from pygmodels.graph.graphmodel.graph import Graph
@@ -10,7 +11,7 @@ from pygmodels.graph.graphfunc.graphsearcher import BaseGraphSearcher
 from pygmodels.graph.graphfunc.graphops import BaseGraphEdgeOps
 from pygmodels.graph.graphtype.edge import Edge
 from typing import List, Tuple, Set, Dict
-from itertools import combinations
+from itertools import combinations, product
 from collections.abc import Generator
 
 
@@ -18,44 +19,92 @@ class EventBoolOps:
     """"""
 
     @staticmethod
-    def is_incompatible(e: Event, f: Event) -> bool:
+    def is_incompatible(observer: BaseObserver, e: Event, f: Event) -> bool:
         "Biagini, Campanino, 2016, p. 6"
         is_type(e, "e", Event, True)
         is_type(f, "f", Event, True)
-        ef = e * f
+        is_type(observer, "observer", BaseObserver, True)
+        e_o = observer(e)
+        f_o = observer(f)
+        ef = e_o * f_o
         return all(outcome.value == 0 for outcome in ef.outcomes)
 
     @staticmethod
-    def is_exhaustive(es: Set[Event]) -> bool:
-        "Biagini, Campanino, 2016, p. 6"
+    def is_exhaustive(observer: BaseObserver, es: Set[Event]) -> bool:
+        """
+        From Biagini, Campanino, 2016, p. 6
+        see also the explanation in DeFinetti, 2017, p. 36.
+        Exhaustively implies
+        """
         is_all_type(es, "es", Event, True)
-        es_c = [d.to_discrete_random_number() for d in es]
+        is_type(observer, "observer", BaseObserver, True)
+        es_c = [observer(d.to_discrete_random_number()) for d in es]
         e = es_c.pop(0)
         for f in es_c:
             e += f
         is_ex = all(o.value >= 1 for o in e)
-        if not is_ex:
-            breakpoint()
-
         return is_ex
 
     @staticmethod
-    def is_partition(es: Set[Event]) -> bool:
+    def is_partition(observer: BaseObserver, es: Set[Event]) -> bool:
         "Biagini, Campanino, 2016, p. 6"
-        exhaustive = EventBoolOps.is_exhaustive(es=es)
+        exhaustive = EventBoolOps.is_exhaustive(observer=observer, es=es)
         is_incompatible = all(
-            EventBoolOps.is_incompatible(e=ef[0], f=ef[1]) for ef in combinations(es, 2)
+            EventBoolOps.is_incompatible(observer=observer, e=ef[0], f=ef[1])
+            for ef in combinations(es, 2)
         )
         return exhaustive and is_incompatible
 
     @staticmethod
-    def is_subset_of(e: Event, f: Event) -> bool:
+    def is_subset_of(observer: BaseObserver, e: Event, f: Event) -> bool:
         """
         See Biagini, Campanino, 2016, p. 6
         E ⊂ F = E ≤ F where E <= F is I(E, F)⊂{(x, y)| x <= y}
         So basically in any combination of outputs e is smaller than f
         """
-        return e <= f
+        is_type(observer, "observer", BaseObserver, True)
+        is_type(e, "e", Event, True)
+        is_type(f, "f", Event, True)
+        e_o = observer(e)
+        f_o = observer(f)
+        return e_o <= f_o
+
+    @staticmethod
+    def is_equal(observer: BaseObserver, e: Event, f: Event) -> bool:
+        """
+        See Biagini, Campanino, 2016, p. 6
+        |- E = F for E ≡ F that is equivalent to E ⊂ F and F ⊂ E.
+        """
+        e_of_f = EventBoolOps.is_subset_of(observer=observer, e=e, f=f)
+        f_of_e = EventBoolOps.is_subset_of(observer=observer, e=f, f=e)
+        return e_of_f and f_of_e
+
+    @staticmethod
+    def is_logically_independent_v3(e: Event, f: Event) -> bool:
+        """
+        Biagini, Campanino, 2016, p. 4
+        """
+        return EventBoolOps.is_logically_independent_v2(es=set([e, f]))
+
+    @staticmethod
+    def is_logically_independent_v2(es: Set[Event]) -> bool:
+        """
+        Biagini, Campanino, 2016, p. 4
+        """
+        is_all_type(es, "es", Event, True)
+        events = list(es)
+        check_p = set()
+        checks = [set() for _ in events]
+        for event_tpl in product(*events):
+            for i in range(len(event_tpl)):
+                if event_tpl[i] not in checks[i]:
+                    checks[i].add(event_tpl[i])
+            if event_tpl not in check_p:
+                check_p.add(event_tpl)
+        nb_cartesian_p = 1
+        for c in checks:
+            nb_cartesian_p *= len(c)
+        return len(check_p) == nb_cartesian_p
 
     @staticmethod
     def is_logically_dependent(e: Event, es: Set[Event]) -> bool:

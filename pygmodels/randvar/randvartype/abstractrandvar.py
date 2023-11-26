@@ -93,14 +93,6 @@ class AbstractRandomNumber(AbstractNode):
         "Biagini, Campanino, 2016, p. 3"
         return self.is_upper_bounded() and self.is_lower_bounded()
 
-    def is_logically_independent(self, other) -> bool:
-        "Biagini, Campanino, 2016, p. 4"
-        raise NotImplementedError
-
-    def is_stochastically_independent(self, other) -> bool:
-        "Biagini, Campanino, 2016, p. 4"
-        raise NotImplementedError
-
     @abstractmethod
     def __and__(self, other):
         "Biagini, Campanino, 2016, p. 4"
@@ -115,6 +107,25 @@ class AbstractRandomNumber(AbstractNode):
     def __invert__(self):
         "Biagini, Campanino, 2016, p. 4"
         raise NotImplementedError
+
+
+class AbstractObserver(AbstractNode):
+    """"""
+
+    @abstractmethod
+    def assert_observation(self, rvar: AbstractRandomNumber) -> AbstractRandomNumber:
+        """"""
+        raise NotImplementedError
+
+    def __call__(self, rvar: AbstractRandomNumber) -> AbstractRandomNumber:
+        """
+        The assertions are the mechanism which permits us to assign evidences
+        to random numbers. See the discussion in
+        De Finetti, B. (2017). Theory of probability: A critical introductory
+        treatment, p. 33-35
+        They are necessary for introducing a lot of the relations that govern
+        """
+        return self.assert_observation(rvar=rvar)
 
 
 class AbstractRandomVariableMember(AbstractGraphObj):

@@ -10,11 +10,13 @@ from pygmodels.randvar.randvartype.abstractrandvar import (
     AbstractRandomNumber,
     AbstractRandomVariableMember,
 )
-from pygmodels.utils import is_type, is_optional_type
+from pygmodels.utils import is_type, is_optional_type, is_dict_type
+from pygmodels.utils import mk_id
 from pygmodels.value.valuetype.value import NumericValue
 from pygmodels.value.valuetype.codomain import CodomainValue
 from pygmodels.randvar.randvartype.abstractrandvar import PossibleOutcomes
 from pygmodels.randvar.randvartype.abstractrandvar import PossibleOutcome
+from pygmodels.randvar.randvartype.abstractrandvar import AbstractObserver
 from types import FunctionType
 from xml.etree import ElementTree as ET
 
@@ -121,11 +123,9 @@ class BaseRandomNumber(AbstractRandomNumber, Node):
         randvar_id: str,
         randvar_name: Optional[str] = None,
         data: Optional[dict] = None,
-        evidence: Optional[BaseEvidence] = None,
     ):
         super().__init__(node_id=randvar_id, data=data)
-        is_optional_type(evidence, "evidence", BaseEvidence, True)
-        self._evidence = evidence
+        self._evidence = None
         is_optional_type(randvar_name, "randvar_name", str, True)
         self._name = randvar_name
 
@@ -151,3 +151,74 @@ class BaseRandomNumber(AbstractRandomNumber, Node):
             s.append(ET.fromstring(str(self.evidence)))
         ET.indent(s)
         return ET.tostring(s, encoding="unicode")
+
+
+class BaseObserver(AbstractObserver, Node):
+    """"""
+
+    def __init__(
+        self,
+        observer_id: str,
+        observations: Dict[str, BaseEvidence],
+        data: Optional[dict] = None,
+        strict: bool = False,
+    ):
+        """
+        \brief base observer for asserting evidence to random numbers
+
+        \param observations a dictionary whose keys are random number
+        identifiers and evidences attach to it.
+
+        \param strict strict evaluation mode, meaning that observer would raise
+        an error when it can not assert an evidence with regards to a random
+        variable
+        """
+        super().__init__(node_id=observer_id, data=data)
+        is_type(strict, "strict", bool, True)
+        self._strict = strict
+
+        is_dict_type(observations, "observations", str, BaseEvidence, True)
+        self._observations = observations
+
+    @classmethod
+    def from_observations(
+        cls,
+        observations: Dict[str, BaseEvidence],
+        observer_id: Optional[str] = None,
+        data: Optional[dict] = None,
+        strict=False,
+    ):
+        """"""
+        observer = BaseObserver(
+            observer_id=mk_id() if observer_id is None else observer_id,
+            observations=observations,
+            data=data,
+            strict=strict,
+        )
+        return observer
+
+    def strict(self, condition: Optional[bool]):
+        """"""
+        if condition is False:
+            self._strict = False
+        else:
+            self._strict = True
+
+    def assert_observation(self, rvar: AbstractRandomNumber):
+        """"""
+        is_type(rvar, "rvar", AbstractRandomNumber, True)
+        rvar_id = rvar.id
+        if rvar_id not in self._observations:
+            if self._strict:
+                raise ValueError(
+                    f"This observer {self.id} does not contain "
+                    + f"any observation with regard to {rvar.id}."
+                    + " Under strict mode this constitutes an error."
+                    + " Consider relaxing the assertion condition with"
+                    + " observer.strict(False)"
+                )
+            return rvar
+        else:
+            evidence = self._observations[rvar_id]
+            rvar._evidence = evidence
+            return rvar

@@ -44,119 +44,97 @@ class NumericValue(Value):
     def value(self) -> Union[float, int, bool]:
         return self._v
 
+    def __myop__(self, func, other) -> Union[NumericValue, bool]:
+        """"""
+        is_type(other, "other", (NumericValue, float, int, bool))
+        if not isinstance(other, NumericValue):
+            other = NumericValue(v=other)
+        #
+        return func(self, other)
+
     def __add__(self, other):
-        if isinstance(other, NumericValue):
-            return NumericValue(self.value + other.value)
-        else:
-            return NumericValue(self.value + other)
+        return self.__myop__(
+            func=lambda s, o: NumericValue(s.value + o.value), other=other
+        )
 
     def __sub__(self, other):
-        if isinstance(other, NumericValue):
-            return NumericValue(self.value - other.value)
-        else:
-            return NumericValue(self.value - other)
+        return self.__myop__(
+            func=lambda s, o: NumericValue(s.value - o.value), other=other
+        )
 
     def __rsub__(self, other):
-        if isinstance(other, NumericValue):
-            return NumericValue(other.value - self.value)
-        else:
-            return NumericValue(other - self.value)
+        return self.__myop__(
+            func=lambda s, o: NumericValue(o.value - s.value), other=other
+        )
 
     def __mul__(self, other):
-        if isinstance(other, NumericValue):
-            return NumericValue(self.value * other.value)
-        else:
-            return NumericValue(self.value * other)
+        return self.__myop__(
+            func=lambda s, o: NumericValue(s.value * o.value), other=other
+        )
 
     def __truediv__(self, other):
-        if isinstance(other, NumericValue):
-            return NumericValue(self.value / other.value)
-        else:
-            return NumericValue(self.value / other)
+        return self.__myop__(
+            func=lambda s, o: NumericValue(s.value / o.value), other=other
+        )
 
     def __floordiv__(self, other):
-        if isinstance(other, NumericValue):
-            return NumericValue(self.value // other.value)
-        else:
-            return NumericValue(self.value // other)
+        return self.__myop__(
+            func=lambda s, o: NumericValue(s.value // o.value), other=other
+        )
 
     def __mod__(self, other):
         """"""
-        if isinstance(other, NumericValue):
-            return NumericValue(self.value % other.value)
-        else:
-            return NumericValue(self.value % other)
+        return self.__myop__(
+            func=lambda s, o: NumericValue(s.value % o.value), other=other
+        )
 
     def __pow__(self, other):
         """"""
-        if isinstance(other, NumericValue):
-            return NumericValue(pow(self.value, other.value))
-        else:
-            return NumericValue(pow(self.value, other))
+        return self.__myop__(
+            func=lambda s, o: NumericValue(pow(s.value, o.value)), other=other
+        )
 
     def __rtruediv__(self, other):
         """"""
-        if isinstance(other, NumericValue):
-            return NumericValue(other.value / self.value)
-        else:
-            return NumericValue(other / self.value)
+        return self.__myop__(
+            func=lambda s, o: NumericValue(o.value / s.value), other=other
+        )
 
     def __rfloordiv__(self, other):
         """"""
-        if isinstance(other, NumericValue):
-            return NumericValue(other.value // self.value)
-        else:
-            return NumericValue(other // self.value)
+        return self.__myop__(
+            func=lambda s, o: NumericValue(o.value // s.value), other=other
+        )
 
     def __rmod__(self, other):
         """"""
-        if isinstance(other, NumericValue):
-            return NumericValue(other.value % self.value)
-        else:
-            return NumericValue(other % self.value)
+        return self.__myop__(
+            func=lambda s, o: NumericValue(o.value % s.value), other=other
+        )
 
     def __rpow__(self, other):
         """"""
-        if isinstance(other, NumericValue):
-            return NumericValue(pow(other.value, self.value))
-        else:
-            return NumericValue(pow(other, self.value))
+        return self.__myop__(
+            func=lambda s, o: NumericValue(pow(o.value, s.value)), other=other
+        )
 
     def __lt__(self, other):
-        if isinstance(other, NumericValue):
-            return NumericValue(self.value < other.value)
-        else:
-            return NumericValue(self.value < other)
+        return self.__myop__(func=lambda s, o: s.value < o.value, other=other)
 
     def __le__(self, other):
-        if isinstance(other, NumericValue):
-            return NumericValue(self.value <= other.value)
-        else:
-            return NumericValue(self.value <= other)
+        return self.__myop__(func=lambda s, o: s.value <= o.value, other=other)
 
     def __gt__(self, other):
-        if isinstance(other, NumericValue):
-            return NumericValue(self.value > other.value)
-        else:
-            return NumericValue(self.value > other)
+        return self.__myop__(func=lambda s, o: s.value > o.value, other=other)
 
     def __ge__(self, other):
-        if isinstance(other, NumericValue):
-            return NumericValue(self.value >= other.value)
-        else:
-            return NumericValue(self.value >= other)
+        return self.__myop__(func=lambda s, o: s.value >= o.value, other=other)
 
     def __eq__(self, other):
-        if isinstance(other, NumericValue):
-            return NumericValue(self.value == other.value)
-        else:
-            return NumericValue(self.value == other)
+        return self.__myop__(func=lambda s, o: s.value == o.value, other=other)
 
     def __ne__(self, other):
-        if isinstance(other, NumericValue):
-            return NumericValue(self.value != other.value)
-        else:
-            return NumericValue(self.value != other)
+        return self.__myop__(func=lambda s, o: s.value != o.value, other=other)
 
 
 class StringValue(Value):
@@ -183,6 +161,73 @@ class ContainerValue(Value):
     @property
     def value(self):
         return self._v
+
+    def __contains__(self, c: Value):
+        """"""
+        return c in self.value
+
+    def __getitem__(self, index: int):
+        return self.value[index]
+
+
+class NTuple(ContainerValue):
+    """"""
+
+    def __init__(self, v: tuple):
+        is_type(v, "v", tuple, True)
+        is_all_type(v, "v", NumericValue, True)
+        self._v = v
+
+    def __len__(self):
+        "number of dimensions of the n-tuple"
+        return len(self.value)
+
+    def is_numeric(self) -> bool:
+        return True
+
+    def __myop__(self, func: FunctionType, other: Union[NTuple, int, float]):
+        """"""
+        is_type(other, "other", (NTuple, int, float), True)
+        if isinstance(other, NTuple):
+            if (len(other) != len(self)) or (len(other) != 1):
+                raise ValueError(
+                    f"dimension mismatch between {len(self)}" + f" and {len(other)}"
+                )
+        else:
+            other = [other]
+        dims = list(range(len(self)))
+        if len(other) == 1:
+            # broadcast
+            other = [other.value[0] for _ in dims]
+        vs = [func(self[i], other[i]) for i in dims]
+        return NTuple(tuple(vs))
+
+    def __add__(self, other):
+        """"""
+        return self.__myop__(func=lambda s, o: s + o, other=other)
+
+    def __sub__(self, other):
+        return self.__myop__(func=lambda s, o: s - o, other=other)
+
+    def __rsub__(self, other):
+        return self.__myop__(func=lambda s, o: o - s, other=other)
+
+    def __mul__(self, other):
+        return self.__myop__(func=lambda s, o: s * o, other=other)
+
+    def __truediv__(self, other):
+        return self.__myop__(func=lambda s, o: s / o, other=other)
+
+    def __floordiv__(self, other):
+        return self.__myop__(func=lambda s, o: s // o, other=other)
+
+    def __rtruediv__(self, other):
+        """"""
+        return self.__myop__(func=lambda s, o: o / s, other=other)
+
+    def __rfloordiv__(self, other):
+        """"""
+        return self.__myop__(func=lambda s, o: o // s, other=other)
 
 
 class CallableValue(Value):

@@ -15,6 +15,7 @@ from pygmodels.value.valuetype.abstractvalue import TypedOrderedSequence
 from pygmodels.value.valuetype.abstractvalue import FiniteTypedSet
 from pygmodels.value.valuetype.abstractvalue import OrderedFiniteTypedSequence
 from pygmodels.value.valuetype.abstractvalue import NamedContainer
+from pygmodels.value.valuetype.abstractvalue import Interval as AbsInterval
 
 from xml.etree import ElementTree as ET
 
@@ -60,29 +61,12 @@ class CodomainValue(SetValue):
         return ET.tostring(m, encoding="unicode")
 
 
-class Interval(NamedContainer):
+class Interval(AbsInterval):
     """"""
 
     def __init__(self, name: str, lower: CodomainValue, upper: CodomainValue):
         """"""
-        super().__init__(name=name)
-        is_type(lower, "lower", CodomainValue, True)
-        is_type(lower.fetch(), "lower.fetch()", NumericValue, True)
-        self._lower = lower
-
-        is_type(upper, "upper", CodomainValue, True)
-        is_type(upper.fetch(), "upper.fetch()", NumericValue, True)
-        self._upper = upper
-
-    @property
-    def lower(self) -> NumericValue:
-        """"""
-        return self._lower.fetch()
-
-    @property
-    def upper(self) -> NumericValue:
-        """"""
-        return self._upper.fetch()
+        super().__init__(name=name, lower=lower, upper=upper, open_on=None)
 
     def __call__(
         self, sampler: Callable[[NumericValue, NumericValue], NumericValue]

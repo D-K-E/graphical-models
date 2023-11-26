@@ -3,12 +3,13 @@
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Union, Callable, NewType
+from typing import Any, Union, Callable, NewType, Optional
 from collections.abc import MutableSet, MutableSequence, Sequence
 from collections.abc import Iterator
 from pygmodels.utils import is_all_type, is_type
 from collections.abc import Set as CSet
 from types import GeneratorType
+from enum import Enum, auto
 
 
 BinaryValue = bool
@@ -141,6 +142,61 @@ class Countable(NamedContainer, Iterator):
                 raise StopIteration
             if val:
                 return val
+
+
+class IntervalConf(Enum):
+    Lower = auto()
+    Upper = auto()
+    Both = auto()
+
+
+class Interval(NamedContainer):
+    """"""
+
+    def __init__(
+        self,
+        name: str,
+        lower: AbstractValue,
+        upper: AbstractValue,
+        open_on: Optional[IntervalConf] = None,
+    ):
+        """"""
+        super().__init__(name=name)
+        is_type(lower, "lower", AbstractValue, True)
+        if not lower.is_numeric():
+            raise TypeError("lower bound of interval must be a numeric value")
+        self._lower = lower
+
+        is_type(upper, "upper", AbstractValue, True)
+
+        if not upper.is_numeric():
+            raise TypeError("upper bound of interval must be a numeric value")
+        self._upper = upper
+
+        is_optional_type(open_on, "open_on", IntervalConf, True)
+        self._open_on = open_on
+
+    @property
+    def lower(self) -> AbstractValue:
+        """"""
+        return self._lower.fetch()
+
+    @property
+    def upper(self) -> AbstractValue:
+        """"""
+        return self._upper.fetch()
+
+    def is_closed(self) -> bool:
+        "check if interval is closed"
+        return self._open_on is None
+
+    def is_half_closed(self) -> bool:
+        "check if interval is closed from one end"
+        if self._open_on is None:
+            return False
+        if self._open_on == IntervalConf.Both:
+            return False
+        return True
 
 
 class TypedMutableSet(NamedContainer, MutableSet):
