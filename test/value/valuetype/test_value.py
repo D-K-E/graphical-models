@@ -3,6 +3,7 @@
 """
 import unittest
 from pygmodels.value.valuetype.value import NumericValue
+from pygmodels.value.valuetype.value import NTupleValue
 from pygmodels.value.valuetype.value import StringValue
 from pygmodels.value.valuetype.value import ContainerValue
 from pygmodels.value.valuetype.value import CallableValue
@@ -67,7 +68,6 @@ class NumericValueTest(unittest.TestCase):
     def test_rsub(self):
         """"""
         v = 1 - self.v1
-        print(v)
         self.assertEqual(v.value, 0)
 
     def test_mul(self):
@@ -113,32 +113,32 @@ class NumericValueTest(unittest.TestCase):
     def test_lt(self):
         """"""
         v = self.v1 < self.v2
-        self.assertEqual(v.value, True)
+        self.assertEqual(v, True)
 
     def test_le(self):
         """"""
         v = self.v2 <= self.v2
-        self.assertEqual(v.value, True)
+        self.assertEqual(v, True)
 
     def test_gt(self):
         """"""
         v = self.v2 > self.v1
-        self.assertEqual(v.value, True)
+        self.assertEqual(v, True)
 
     def test_ge(self):
         """"""
         v = self.v1 >= self.v1
-        self.assertEqual(v.value, True)
+        self.assertEqual(v, True)
 
     def test_eq(self):
         """"""
         v = self.v2 == self.v1
-        self.assertEqual(v.value, False)
+        self.assertEqual(v, False)
 
     def test_ne(self):
         """"""
         v = self.v2 != self.v1
-        self.assertEqual(v.value, True)
+        self.assertEqual(v, True)
 
 
 class StringValueTest(unittest.TestCase):
@@ -207,6 +207,84 @@ class ContainerValueTest(unittest.TestCase):
         """"""
         try:
             v = ContainerValue(v=[1, 3])
+            check = False
+        except:
+            check = True
+        #
+        self.assertTrue(check)
+
+
+class NTupleValueTest(unittest.TestCase):
+    """"""
+
+    def setUp(self):
+        """"""
+        self.v1 = NTupleValue(v=tuple([NumericValue(1), NumericValue(2)]))
+        self.v2 = NTupleValue(v=tuple([NumericValue(1), NumericValue(3)]))
+
+    def test__len__(self):
+        self.assertEqual(len(self.v1), 2)
+
+    def test__add__(self):
+        v3 = self.v1 + self.v2
+        self.assertEqual(v3[0].value, 2)
+        self.assertEqual(v3[1].value, 5)
+
+    def test__sub__(self):
+        v3 = self.v1 - self.v2
+        self.assertEqual(v3[0].value, 0)
+        self.assertEqual(v3[1].value, -1)
+
+    def test__rsub__(self):
+        v3 = 0 - self.v2
+        self.assertEqual(v3[0].value, -1)
+        self.assertEqual(v3[1].value, -3)
+
+    def test__mul__(self):
+        v3 = self.v1 * self.v2
+        self.assertEqual(v3[0].value, 1)
+        self.assertEqual(v3[1].value, 6)
+
+    def test__truediv__(self):
+        v3 = self.v2 / self.v1
+        self.assertEqual(v3[0].value, 1)
+        self.assertEqual(v3[1].value, 1.5)
+
+    def test__floordiv__(self):
+        v3 = self.v2 // self.v1
+        self.assertEqual(v3[0].value, 1)
+        self.assertEqual(v3[1].value, 1)
+
+    def test__rtruediv__(self):
+        v3 = 1 / self.v1
+        self.assertEqual(v3[0].value, 1)
+        self.assertEqual(v3[1].value, 0.5)
+
+    def test__rfloordiv__(self):
+        v3 = 1 // self.v1
+        self.assertEqual(v3[0].value, 1)
+        self.assertEqual(v3[1].value, 0)
+
+    def test_is_numeric(self):
+        """"""
+        self.assertTrue(self.v1.is_numeric())
+
+    def test_is_string(self):
+        """"""
+        self.assertFalse(self.v1.is_string())
+
+    def test_is_container(self):
+        """"""
+        self.assertTrue(self.v1.is_container())
+
+    def test_is_callable(self):
+        """"""
+        self.assertFalse(self.v1.is_callable())
+
+    def test_instantiate(self):
+        """"""
+        try:
+            v = NTupleValue(v=[StringValue("1"), StringValue("3")])
             check = False
         except:
             check = True

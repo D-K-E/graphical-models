@@ -44,7 +44,7 @@ class NumericValue(Value):
     def value(self) -> Union[float, int, bool]:
         return self._v
 
-    def __myop__(self, func, other) -> Union[NumericValue, bool]:
+    def __myop__(self, func, other) -> Union[Value, bool]:
         """"""
         is_type(other, "other", (NumericValue, float, int, bool))
         if not isinstance(other, NumericValue):
@@ -170,7 +170,7 @@ class ContainerValue(Value):
         return self.value[index]
 
 
-class NTuple(ContainerValue):
+class NTupleValue(ContainerValue):
     """"""
 
     def __init__(self, v: tuple):
@@ -185,22 +185,25 @@ class NTuple(ContainerValue):
     def is_numeric(self) -> bool:
         return True
 
-    def __myop__(self, func: FunctionType, other: Union[NTuple, int, float]):
+    def __myop__(self, func: FunctionType, other: Union[ContainerValue, int, float]):
         """"""
-        is_type(other, "other", (NTuple, int, float), True)
-        if isinstance(other, NTuple):
-            if (len(other) != len(self)) or (len(other) != 1):
+        is_type(other, "other", (NTupleValue, int, float), True)
+        if isinstance(other, NTupleValue):
+            cond1 = len(other) == len(self)
+            cond2 = len(other) == 1
+            cond3 = cond1 or cond2
+            if not cond3:
                 raise ValueError(
                     f"dimension mismatch between {len(self)}" + f" and {len(other)}"
                 )
         else:
-            other = [other]
+            other = NTupleValue(tuple([NumericValue(other)]))
         dims = list(range(len(self)))
         if len(other) == 1:
             # broadcast
-            other = [other.value[0] for _ in dims]
+            other = NTupleValue(tuple([other[0] for _ in dims]))
         vs = [func(self[i], other[i]) for i in dims]
-        return NTuple(tuple(vs))
+        return NTupleValue(tuple(vs))
 
     def __add__(self, other):
         """"""

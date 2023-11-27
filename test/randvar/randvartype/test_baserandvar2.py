@@ -8,6 +8,7 @@ from pygmodels.randvar.randvartype.baserandvar2 import (
     BaseEvidence,
     BaseRandomNumber,
 )
+from pygmodels.randvar.randvartype.abstractrandvar import PossibleOutcome
 from pygmodels.value.valuetype.codomain import CodomainValue
 from pygmodels.value.valuetype.domain import DomainValue
 from pygmodels.value.valuetype.value import NumericValue
@@ -20,50 +21,46 @@ class BaseEvidenceTest(unittest.TestCase):
         """"""
         # dice random variable
         svar_dname = "student"
-        svar_id = "student01"
+        self.svar_id = "student01"
 
-        self.student_rvar = BaseEvidence(
+        self.student_evidence = BaseEvidence(
             evidence_id="student_1",
-            randvar_id="student01",
+            randvar_id=self.svar_id,
             data=None,
-            value=CodomainValue(
-                set_id="student01",
-                mapping_name="student_1_map",
+            value=PossibleOutcome(
+                randvar_id=self.svar_id,
                 v=NumericValue(v=1),
             ),
         )
 
     def test_evidence_id(self):
         """"""
-        self.assertEqual(self.student_rvar.id(), "student_1")
+        self.assertEqual(self.student_evidence.id, "student_1")
 
     def test_evidence_value(self):
         """"""
         self.assertEqual(
-            self.student_rvar.value,
-            CodomainValue(
-                set_id="student01", mapping_name="student_1_map", v=NumericValue(v=1)
+            self.student_evidence.value,
+            PossibleOutcome(
+                randvar_id=self.svar_id,
+                v=NumericValue(v=1),
             ),
         )
 
     def test_evidence_belongs_to(self):
         """"""
-        self.assertEqual(
-            self.student_rvar.belongs_to,
-            self.student_rvar.value.belongs_to,
-        )
+        self.assertEqual(self.student_evidence.belongs_to, self.svar_id)
 
     def test_evidence_eq(self):
         """"""
         self.assertEqual(
-            self.student_rvar,
+            self.student_evidence,
             BaseEvidence(
                 evidence_id="student_1",
-                randvar_id="student01",
+                randvar_id=self.svar_id,
                 data=None,
-                value=CodomainValue(
-                    set_id="student01",
-                    mapping_name="student_1_map",
+                value=PossibleOutcome(
+                    randvar_id=self.svar_id,
                     v=NumericValue(v=1),
                 ),
             ),
@@ -71,18 +68,17 @@ class BaseEvidenceTest(unittest.TestCase):
 
     def test_str(self):
         "test string representation"
-        f = "<BaseEvidence id='student_1' belongs_to='student01'>\n"
-        f += "  <CodomainValue value='1' set='student01' mapped_by='student_1_map' mapped_from='None'>\n"
+        f = '<BaseEvidence id="student_1" belongs_to="student01">\n'
+        f += '  <CodomainValue set="NumericValue" mapped_by="student01">1</CodomainValue>\n'
         f += "</BaseEvidence>"
-        self.assertEqual(str(self.student_rvar), f)
+        self.assertEqual(str(self.student_evidence), f)
 
     def test_hash(self):
         "test hash function"
-        f = "<BaseEvidence id='student_1' belongs_to='student01'>\n"
-        f += "  <CodomainValue value='1' set='student01' mapped_by='student_1_map' mapped_from='None'>\n"
+        f = '<BaseEvidence id="student_1" belongs_to="student01">\n'
+        f += '  <CodomainValue set="NumericValue" mapped_by="student01">1</CodomainValue>\n'
         f += "</BaseEvidence>"
-
-        self.assertEqual(hash(self.student_rvar), hash(f))
+        self.assertEqual(hash(self.student_evidence), hash(f))
 
 
 if __name__ == "__main__":
