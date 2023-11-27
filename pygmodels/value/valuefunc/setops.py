@@ -48,6 +48,26 @@ class SetSetOps:
         return {set(), E}
 
     @staticmethod
+    def mk_sigma_field_with_set(E: Set[SetValue], A: Set[SetValue]):
+        """
+        From Venkatesh, 2013, p. 15
+        """
+        a_c = E - A
+        return {set(), E, A, a_c}
+
+    @staticmethod
+    def mk_sigma_field_with_sets(E: Set[SetValue], A: Set[SetValue], B: Set[SetValue]):
+        """
+        From Venkatesh, 2013, p. 16
+        """
+        t = SetSetOps.mk_trivial_sigma_field(E)
+        t.add(SetSetOps.mk_sigma_field_with_set(E, A))
+        t.add(SetSetOps.mk_sigma_field_with_set(E, B))
+        t.add(A + B)
+        t.add((E - A).intersection(E - B))
+        return t
+
+    @staticmethod
     def mk_powerset(E: Set[SetValue]) -> Generator[Set[SetValue]]:
         """
         Constructs the power set sigma field from a given set E according to
