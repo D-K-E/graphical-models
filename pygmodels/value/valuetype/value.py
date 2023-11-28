@@ -6,6 +6,10 @@ from typing import Callable, FrozenSet, List, Optional, Set, Tuple, Union
 
 from pygmodels.value.valuetype.abstractvalue import AbstractSetValue
 from pygmodels.value.valuetype.abstractvalue import AbstractValue
+from pygmodels.value.valuetype.abstractvalue import Countable
+from pygmodels.value.valuetype.abstractvalue import TypedSequence
+from pygmodels.value.valuetype.abstractvalue import Interval
+from pygmodels.value.valuetype.abstractvalue import IntervalConf
 from pygmodels.utils import is_type, is_optional_type
 from pygmodels.utils import is_all_type
 from types import FunctionType
@@ -149,25 +153,37 @@ class StringValue(Value):
         return self._v
 
 
-class ContainerValue(Value):
+class ContainerValue(Value, TypedSequence):
     """"""
 
-    def __init__(self, v: Union[tuple, frozenset]):
+    def __init__(self, v: Union[tuple, frozenset], name="container", member_type=Value):
+        """"""
         types = (tuple, frozenset)
         is_type(v, "v", types, True)
-        is_all_type(v, "v", Value, True)
-        self._v = v
+        super().__init__(iterable=v, name=name, member_type=member_type)
 
     @property
-    def value(self):
-        return self._v
+    def value(self) -> Union[tuple, frozenset]:
+        return self._iter
 
-    def __contains__(self, c: Value):
+    def __str__(self) -> str:
         """"""
-        return c in self.value
+        m = ET.Element(self.__name__)
+        m.set("name", self._name)
+        for v in self.value:
+            vv = ET.SubElement(m, "value")
+            vv.set("type", self._member_type.__name__)
+            vv.text = str(v)
+        ET.indent(m)
+        return ET.tostring(m, encoding="unicode")
 
-    def __getitem__(self, index: int):
-        return self.value[index]
+    def count(self):
+        """"""
+        return len(self)
+
+    def length(self):
+        """"""
+        return len(self)
 
 
 class NTupleValue(ContainerValue):
@@ -175,12 +191,7 @@ class NTupleValue(ContainerValue):
 
     def __init__(self, v: tuple):
         is_type(v, "v", tuple, True)
-        is_all_type(v, "v", NumericValue, True)
-        self._v = v
-
-    def __len__(self):
-        "number of dimensions of the n-tuple"
-        return len(self.value)
+        super().__init__(v=v, name="ntuple", member_type=NumericValue)
 
     def is_numeric(self) -> bool:
         return True
@@ -278,3 +289,193 @@ class SetValue(Value, AbstractSetValue):
         m.text = str(self.value)
         ET.indent(m)
         return ET.tostring(m, encoding="unicode")
+
+
+class SubsetValue(ContainerValue):
+    """ """
+
+    def __init__(self, v: FrozenSet[SetValue], name: str = "subset"):
+        """"""
+        is_type(v, "v", frozenset, True)
+        is_all_type([a.fetch() for a in v], "v member", NumericValue, True)
+        super().__init__(v=v, name=name, member_type=SetValue)
+
+    def __myop__(self, func, other, is_set=False) -> Union[bool, ContainerValue]:
+        """"""
+        vset = self.value
+        if isinstance(other, SubsetValue):
+            oset = other.value
+        else:
+            oset = other
+        if not is_set:
+            return func(vset, oset)
+        else:
+            return SubsetValue(func(vset, oset))
+
+    def __le__(self, other) -> bool:
+        """"""
+        self.__myop__(other=other, func=lambda s, o: s <= o, is_set=False)
+
+    def __lt__(self, other) -> bool:
+        """"""
+        self.__myop__(other=other, func=lambda s, o: s < o, is_set=False)
+
+    def __gt__(self, other) -> bool:
+        """"""
+        self.__myop__(other=other, func=lambda s, o: s > o, is_set=False)
+
+    def __ge__(self, other) -> bool:
+        """"""
+        self.__myop__(other=other, func=lambda s, o: s >= o, is_set=False)
+
+    def __eq__(self, other) -> bool:
+        return self.__myop__(func=lambda s, o: s == o, other=other, is_set=False)
+
+    def __ne__(self, other) -> bool:
+        return self.__myop__(func=lambda s, o: s != o, other=other, is_set=False)
+
+    def __and__(self, other) -> ContainerValue:
+        return self.__myop__(func=lambda s, o: s & o, other=other, is_set=True)
+
+    def __or__(self, other) -> ContainerValue:
+        return self.__myop__(func=lambda s, o: s | o, other=other, is_set=True)
+
+    def __xor__(self, other) -> ContainerValue:
+        return self.__myop__(func=lambda s, o: s ^ o, other=other, is_set=True)
+
+    def __sub__(self, other) -> ContainerValue:
+        return self.__myop__(func=lambda s, o: s - o, other=other, is_set=True)
+
+    def __hash__(self):
+        """"""
+        return hash(self.value)
+
+
+class IntervalR(Interval):
+    """
+    An interval defined on real line
+    """
+
+    def __init__(
+        self,
+        lower: AbstractValue,
+        upper: AbstractValue,
+        open_on: Optional[IntervalConf] = None,
+        name: Optional[str] = None,
+    ):
+        up_fn = None
+        low_fn = None
+        s = ""
+        if open_on is None:
+            s += "[" + str(lower) + ", " + str(upper) + "]"
+            up_fn = lambda x: x <= self.upper
+            low_fn = lambda x: x >= self.lower
+        elif open_on == IntervalConf.Lower:
+            s += "(" + str(lower) + ", " + str(upper) + "]"
+            up_fn = lambda x: x <= self.upper
+            low_fn = lambda x: x > self.lower
+
+        elif open_on == IntervalConf.Upper:
+            s += "[" + str(lower) + ", " + str(upper) + ")"
+            up_fn = lambda x: x < self.upper
+            low_fn = lambda x: x >= self.lower
+        elif open_on == IntervalConf.Both:
+            s += "(" + str(lower) + ", " + str(upper) + ")"
+            up_fn = lambda x: x < self.upper
+            low_fn = lambda x: x > self.lower
+        if name:
+            s = name
+        is_type(lower, "lower", NumericValue, True)
+        is_type(upper, "upper", NumericValue, True)
+        super().__init__(name=s, lower=lower, upper=upper, open_on=open_on)
+        self._compare_lower = low_fn
+        self._compare_upper = up_fn
+
+    def __contains__(self, i: NumericValue):
+        """"""
+        return self._compare_lower(i) and self._compare_upper(i)
+
+    def length(self):
+        """
+        Lebesque measure as per: Epps, 2014, p. 19
+        Originally defined for (a, b] type intervals but the derivation in
+        p. 19-20 show that results are equivalent for (a, b) as well.
+        """
+        return self.upper - self.lower
+
+    def count(self):
+        """"""
+        return float("inf")
+
+    def __decide_conf__(self, other, min_l, max_l):
+        """"""
+        if min_l == other.lower:
+            lower_open = (
+                True
+                if (
+                    (other._open_on == IntervalConf.Lower)
+                    or (other.is_closed() == False)
+                )
+                else False
+            )
+        else:
+            lower_open = (
+                True
+                if (
+                    (self._open_on == IntervalConf.Lower) or (self.is_closed() == False)
+                )
+                else False
+            )
+        if max_l == other.upper:
+            upper_open = (
+                True
+                if (
+                    (other._open_on == IntervalConf.Upper)
+                    or (other.is_closed() == False)
+                )
+                else False
+            )
+        else:
+            upper_open = (
+                True
+                if (
+                    (self._open_on == IntervalConf.Upper) or (self.is_closed() == False)
+                )
+                else False
+            )
+        #
+        if lower_open and upper_open:
+            conf = IntervalConf.Both
+        elif lower_open:
+            conf = IntervalConf.Lower
+        elif upper_open:
+            conf = IntervalConf.Upper
+        else:
+            conf = None
+        return conf
+
+    def __or__(self, other):
+        """"""
+        if isinstance(other, IntervalR):
+            raise TypeError("other must have type IntervalR")
+        #
+        if (other.lower > self.upper) or (other.upper < self.lower):
+            raise ValueError("there is no overlap between intervals can't apply union")
+        min_l = min(other.lower, self.lower)
+        max_l = max(other.upper, self.upper)
+        conf = self.__decide_conf__(other=other, min_l=min_l, max_l=max_l)
+        return IntervalR(lower=min_l, upper=max_l, name=None, open_on=conf)
+
+    def __and__(self, other):
+        """"""
+        if isinstance(other, IntervalR):
+            raise TypeError("other must have type IntervalR")
+        #
+        if (other.lower > self.upper) or (other.upper < self.lower):
+            raise ValueError(
+                "there is no overlap between intervals can't apply intersection"
+            )
+        min_l = max(other.lower, self.lower)
+        max_l = min(other.upper, self.upper)
+        conf = self.__decide_conf__(other=other, min_l=min_l, max_l=max_l)
+        return IntervalR(lower=min_l, upper=max_l, name=None, open_on=conf)

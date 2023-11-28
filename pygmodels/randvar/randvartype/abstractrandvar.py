@@ -12,6 +12,7 @@ from pygmodels.value.valuetype.codomain import Codomain, CodomainValue
 from pygmodels.value.valuetype.codomain import Range
 from pygmodels.value.valuetype.domain import Domain, DomainValue
 from pygmodels.value.valuetype.value import NumericValue, Value
+from pygmodels.value.valuetype.value import SubsetValue
 from pygmodels.value.valuetype.abstractvalue import Countable
 
 from xml.etree import ElementTree as ET
@@ -64,6 +65,14 @@ class PossibleOutcomes(Countable):
         s_in_o = all(o in slst for o in olst)
         o_in_s = all(s in olst for s in slst)
         return s_in_o and o_in_s
+
+
+class Event(SubsetValue):
+    """"""
+
+    def __init__(self, iterable, name):
+        is_all_type(iterable, "iterable", PossibleOutcome, True)
+        super().__init__(v=iterable, name=name)
 
 
 class AbstractRandomNumber(AbstractNode):

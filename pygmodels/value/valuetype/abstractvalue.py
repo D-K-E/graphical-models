@@ -144,6 +144,25 @@ class Countable(NamedContainer, Iterator):
                 return val
 
 
+class TypedSequence(Sequence, NamedContainer):
+    """"""
+
+    def __init__(self, iterable, member_type, name: str):
+        """"""
+        super().__init__(name=name)
+        self._member_type = member_type
+        is_all_type(iterable, "iterable", self._member_type, True)
+        self._iter = iterable
+
+    def __len__(self) -> int:
+        """"""
+        return len(self._iter)
+
+    def __getitem__(self, index: int):
+        """"""
+        return self._iter[index]
+
+
 class IntervalConf(Enum):
     Lower = auto()
     Upper = auto()

@@ -125,6 +125,7 @@ class DiscreteRandomNumber(BaseRandomNumber):
         name = "(" + opname + " " + domain_name + ")"
         set_name = "outcome"
         randvar_id = mk_id()
+        oname = "(" + set_name + " #" + name + ")"
 
         def get_outcomes():
             """"""
@@ -139,7 +140,6 @@ class DiscreteRandomNumber(BaseRandomNumber):
                 )
                 yield rval
 
-        oname = "(" + set_name + " #" + name + ")"
         op_result = DiscreteRandomNumber(
             randvar_id=randvar_id,
             randvar_name=name,
