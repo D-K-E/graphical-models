@@ -87,7 +87,7 @@ class NumericValue(Value):
         if s_inf and o_minf:
             return (NumericValue(math.inf), True)
         if s_minf and o_inf:
-            return (NumericValue(math.inf), True)
+            return (NumericValue(-math.inf), True)
         if s_inf and o_inf:
             raise ValueError(f"{s.value} - {o.value} is undefined")
         if s_minf and o_minf:
@@ -176,6 +176,18 @@ class NumericValue(Value):
         """
         return self.__myop__(func=NumericValue.__add_op__, other=other)
 
+    def __radd__(self, other):
+        """"""
+
+        def radd_op(s, o):
+            """"""
+            val, is_cond = NumericValue.__add_op__(s=o, o=s)
+            if is_cond:
+                return val
+            return NumericValue(o.value + s.value)
+
+        return self.__myop__(func=radd_op, other=other)
+
     def __sub__(self, other):
         """
         infinity aware summation from: Shao 2010, p. 3
@@ -187,7 +199,7 @@ class NumericValue(Value):
 
         def rsub_op(s, o):
             """"""
-            val, is_cond = NumericValue.__sub_cond__(s=s, o=o)
+            val, is_cond = NumericValue.__sub_cond__(s=o, o=s)
             if is_cond:
                 return val
             return NumericValue(o.value - s.value)
@@ -195,6 +207,9 @@ class NumericValue(Value):
         return self.__myop__(func=rsub_op, other=other)
 
     def __mul__(self, other):
+        """
+        infinity aware multiplication
+        """
         return self.__myop__(func=NumericValue.__mul_op__, other=other)
 
     def __truediv__(self, other):

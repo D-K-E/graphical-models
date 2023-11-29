@@ -20,6 +20,8 @@ class NumericValueTest(unittest.TestCase):
         self.v2 = NumericValue(v=2.1)
         self.v3 = NumericValue(v=False)
         self.v4 = NumericValue(v=2)
+        self.v5 = NumericValue(v=float("inf"))
+        self.v6 = NumericValue(v=float("-inf"))
 
     def test_is_numeric(self):
         """"""
@@ -60,15 +62,135 @@ class NumericValueTest(unittest.TestCase):
         v = self.v1 + self.v2
         self.assertEqual(round(v.value, 2), 3.1)
 
+    def test_add_v2(self):
+        """"""
+        v = self.v5 + self.v2
+        v2 = self.v6 + self.v2
+        self.assertEqual(v.value, float("inf"))
+        self.assertEqual(v2.value, float("-inf"))
+
+    def test_add_v3(self):
+        """"""
+        try:
+            v = self.v6 + self.v5
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
+    def test_add_v4(self):
+        """"""
+        try:
+            v = self.v5 + self.v6
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
+    def test_radd_v2(self):
+        """"""
+        v = self.v5 + 1
+        v2 = self.v6 + 12
+        self.assertEqual(v.value, float("inf"))
+        self.assertEqual(v2.value, float("-inf"))
+
+    def test_radd_v3(self):
+        """"""
+        try:
+            v = float("-inf") + self.v5
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
+    def test_radd_v4(self):
+        """"""
+        try:
+            v = float("inf") + self.v6
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
     def test_sub(self):
         """"""
         v = self.v2 - self.v1
         self.assertEqual(round(v.value, 2), 1.1)
 
+    def test_sub_v2(self):
+        """"""
+        v = self.v5 - self.v2
+        v2 = self.v6 - self.v2
+        self.assertEqual(v.value, float("inf"))
+        self.assertEqual(v2.value, float("-inf"))
+
+    def test_sub_v3(self):
+        """"""
+        v = self.v5 - self.v6
+        self.assertEqual(v, float("inf"))
+
+    def test_sub_v4(self):
+        """"""
+        v = self.v6 - self.v5
+        self.assertEqual(v, float("-inf"))
+
+    def test_sub_v5(self):
+        """"""
+        try:
+            v = self.v5 - self.v5
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
+    def test_sub_v6(self):
+        """"""
+        try:
+            v = self.v6 - self.v6
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
     def test_rsub(self):
         """"""
         v = 1 - self.v1
         self.assertEqual(v.value, 0)
+
+    def test_rsub_v2(self):
+        """"""
+        v = 2 - self.v5
+        v2 = 2 - self.v6
+        self.assertEqual(v.value, float("-inf"))
+        self.assertEqual(v2.value, float("inf"))
+
+    def test_rsub_v3(self):
+        """"""
+        v = float("inf") - self.v6
+        self.assertEqual(v, float("inf"))
+
+    def test_rsub_v4(self):
+        """"""
+        v = float("-inf") - self.v5
+        self.assertEqual(v, float("-inf"))
+
+    def test_rsub_v5(self):
+        """"""
+        try:
+            v = float("inf") - self.v5
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
+    def test_rsub_v6(self):
+        """"""
+        try:
+            v = float("-inf") - self.v6
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
 
     def test_mul(self):
         """"""
