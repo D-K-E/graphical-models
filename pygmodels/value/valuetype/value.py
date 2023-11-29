@@ -14,6 +14,7 @@ from pygmodels.utils import is_type, is_optional_type
 from pygmodels.utils import is_all_type
 from types import FunctionType
 from xml.etree import ElementTree as ET
+import math
 
 
 class Value(AbstractValue):
@@ -56,71 +57,239 @@ class NumericValue(Value):
         #
         return func(self, other)
 
+    @staticmethod
+    def __cond_check__(s, o):
+        """"""
+        cond1 = s.value == math.inf
+        cond2 = s.value == (-math.inf)
+        cond3 = o.value == (math.inf)
+        cond4 = o.value == (-math.inf)
+        return cond1, cond2, cond3, cond4
+
+    @staticmethod
+    def __add_cond__(s, o):
+        """"""
+        s_inf, s_minf, o_inf, o_minf = NumericValue.__cond_check__(s=s, o=o)
+        if s_inf and o_minf:
+            raise ValueError(f"{s.value} + {o.value} is undefined")
+        if s_minf and o_inf:
+            raise ValueError(f"{s.value} + {o.value} is undefined")
+        if s_inf and o_inf:
+            return (NumericValue(math.inf), True)
+        if s_minf and o_minf:
+            return (NumericValue(-math.inf), True)
+        return (None, False)
+
+    @staticmethod
+    def __sub_cond__(s, o):
+        """"""
+        s_inf, s_minf, o_inf, o_minf = NumericValue.__cond_check__(s=s, o=o)
+        if s_inf and o_minf:
+            return (NumericValue(math.inf), True)
+        if s_minf and o_inf:
+            return (NumericValue(math.inf), True)
+        if s_inf and o_inf:
+            raise ValueError(f"{s.value} - {o.value} is undefined")
+        if s_minf and o_minf:
+            raise ValueError(f"{s.value} - {o.value} is undefined")
+        return (None, False)
+
+    @staticmethod
+    def __mul_cond__(s, o):
+        """"""
+        s_inf, s_minf, o_inf, o_minf = NumericValue.__cond_check__(s=s, o=o)
+        if s_inf and o_minf:
+            return (NumericValue(-math.inf), True)
+        if s_minf and o_inf:
+            return (NumericValue(-math.inf), True)
+        if s_inf and o_inf:
+            return (NumericValue(math.inf), True)
+        if s_minf and o_minf:
+            return (NumericValue(math.inf), True)
+        if s.value == 0 and (o_inf or o_minf):
+            return (NumericValue(0), True)
+        if o.value == 0 and (s_minf or s_inf):
+            return (NumericValue(0), True)
+        return (None, False)
+
+    @staticmethod
+    def __truediv_cond__(s, o):
+        """"""
+        s_inf, s_minf, o_inf, o_minf = NumericValue.__cond_check__(s=s, o=o)
+        if s_inf and o_minf:
+            raise ValueError(f"{s.value} / {o.value} is undefined")
+        if s_minf and o_inf:
+            raise ValueError(f"{s.value} / {o.value} is undefined")
+        if s_inf and o_inf:
+            raise ValueError(f"{s.value} / {o.value} is undefined")
+        if s_minf and o_minf:
+            raise ValueError(f"{s.value} / {o.value} is undefined")
+        return (None, False)
+
+    @staticmethod
+    def __pow_cond__(s, o):
+        """"""
+        s_inf, s_minf, o_inf, o_minf = NumericValue.__cond_check__(s=s, o=o)
+        if s_inf and o_inf:
+            return (NumericValue(math.inf), True)
+        if s_inf and o_minf:
+            raise ValueError(f"{s.value} ** {o.value} is undefined")
+        if s_minf and o_inf:
+            raise ValueError(f"{s.value} ** {o.value} is undefined")
+        if s_minf and o_minf:
+            raise ValueError(f"{s.value} ** {o.value} is undefined")
+        return (None, False)
+
+    @staticmethod
+    def __add_op__(s, o):
+        """
+        infinity aware summation from: Shao 2010, p. 3
+        """
+        val, is_cond = NumericValue.__add_cond__(s=s, o=o)
+        if is_cond:
+            return val
+        return NumericValue(s.value + o.value)
+
+    @staticmethod
+    def __sub_op__(s, o):
+        """
+        infinity aware subtraction from: Shao 2010, p. 3
+        """
+        val, is_cond = NumericValue.__sub_cond__(s=s, o=o)
+        if is_cond:
+            return val
+        return NumericValue(s.value - o.value)
+
+    @staticmethod
+    def __mul_op__(s, o):
+        """
+        infinity aware subtraction from: Shao 2010, p. 3
+        """
+        val, is_cond = NumericValue.__mul_cond__(s=s, o=o)
+        if is_cond:
+            return val
+        return NumericValue(s.value * o.value)
+
     def __add__(self, other):
-        return self.__myop__(
-            func=lambda s, o: NumericValue(s.value + o.value), other=other
-        )
+        """
+        infinity aware summation from: Shao 2010, p. 3
+        """
+        return self.__myop__(func=NumericValue.__add_op__, other=other)
 
     def __sub__(self, other):
-        return self.__myop__(
-            func=lambda s, o: NumericValue(s.value - o.value), other=other
-        )
+        """
+        infinity aware summation from: Shao 2010, p. 3
+        """
+        return self.__myop__(func=NumericValue.__sub_op__, other=other)
 
     def __rsub__(self, other):
-        return self.__myop__(
-            func=lambda s, o: NumericValue(o.value - s.value), other=other
-        )
+        """"""
+
+        def rsub_op(s, o):
+            """"""
+            val, is_cond = NumericValue.__sub_cond__(s=s, o=o)
+            if is_cond:
+                return val
+            return NumericValue(o.value - s.value)
+
+        return self.__myop__(func=rsub_op, other=other)
 
     def __mul__(self, other):
-        return self.__myop__(
-            func=lambda s, o: NumericValue(s.value * o.value), other=other
-        )
+        return self.__myop__(func=NumericValue.__mul_op__, other=other)
 
     def __truediv__(self, other):
-        return self.__myop__(
-            func=lambda s, o: NumericValue(s.value / o.value), other=other
-        )
+        """"""
+
+        def truediv_op(s, o):
+            """"""
+            val, is_cond = NumericValue.__truediv_cond__(s=s, o=o)
+            return NumericValue(s.value / o.value)
+
+        return self.__myop__(func=truediv_op, other=other)
 
     def __floordiv__(self, other):
-        return self.__myop__(
-            func=lambda s, o: NumericValue(s.value // o.value), other=other
-        )
+        """"""
+
+        def floordiv_op(s, o):
+            """"""
+            val, is_cond = NumericValue.__truediv_cond__(s=s, o=o)
+            return NumericValue(s.value // o.value)
+
+        return self.__myop__(func=floordiv_op, other=other)
 
     def __mod__(self, other):
         """"""
-        return self.__myop__(
-            func=lambda s, o: NumericValue(s.value % o.value), other=other
-        )
+
+        def mod_op(s, o):
+            """"""
+            s_inf, s_minf, o_inf, o_minf = NumericValue.__cond_check__(s=s, o=o)
+            if s_inf or s_minf or o_inf or o_minf:
+                raise ValueError(
+                    f"% operation is not supported with infinities {s.value}"
+                    + f" and {o.value}"
+                )
+            return NumericValue(s.value % o.value)
+
+        return self.__myop__(func=mod_op, other=other)
 
     def __pow__(self, other):
         """"""
-        return self.__myop__(
-            func=lambda s, o: NumericValue(pow(s.value, o.value)), other=other
-        )
+
+        def pow_op(s, o):
+            """"""
+            val, is_cond = NumericValue.__pow_cond__(s=s, o=o)
+            if is_cond:
+                return val
+            return NumericValue(pow(s.value, o.value))
+
+        return self.__myop__(func=pow_op, other=other)
 
     def __rtruediv__(self, other):
         """"""
-        return self.__myop__(
-            func=lambda s, o: NumericValue(o.value / s.value), other=other
-        )
+
+        def rtruediv_op(s, o):
+            """"""
+            val, is_cond = NumericValue.__truediv_cond__(s=o, o=s)
+            return NumericValue(o.value / s.value)
+
+        return self.__myop__(func=rtruediv_op, other=other)
 
     def __rfloordiv__(self, other):
         """"""
-        return self.__myop__(
-            func=lambda s, o: NumericValue(o.value // s.value), other=other
-        )
+
+        def rfloordiv_op(s, o):
+            """"""
+            val, is_cond = NumericValue.__truediv_cond__(s=o, o=s)
+            return NumericValue(o.value // s.value)
+
+        return self.__myop__(func=rfloordiv_op, other=other)
 
     def __rmod__(self, other):
         """"""
-        return self.__myop__(
-            func=lambda s, o: NumericValue(o.value % s.value), other=other
-        )
+
+        def rmod_op(s, o):
+            """"""
+            s_inf, s_minf, o_inf, o_minf = NumericValue.__cond_check__(s=s, o=o)
+            if s_inf or s_minf or o_inf or o_minf:
+                raise ValueError(
+                    f"% operation is not supported with infinities {s.value}"
+                    + f" and {o.value}"
+                )
+            return NumericValue(o.value % s.value)
+
+        return self.__myop__(func=rmod_op, other=other)
 
     def __rpow__(self, other):
         """"""
-        return self.__myop__(
-            func=lambda s, o: NumericValue(pow(o.value, s.value)), other=other
-        )
+
+        def rpow_op(s, o):
+            """"""
+            val, is_cond = NumericValue.__pow_cond__(s=o, o=s)
+            if is_cond:
+                return val
+            return NumericValue(pow(o.value, s.value))
+
+        return self.__myop__(func=rpow_op, other=other)
 
     def __lt__(self, other):
         return self.__myop__(func=lambda s, o: s.value < o.value, other=other)
