@@ -555,8 +555,8 @@ class IntervalR(Interval):
 
     def __init__(
         self,
-        lower: AbstractValue,
-        upper: AbstractValue,
+        lower: NumericValue,
+        upper: NumericValue,
         open_on: Optional[IntervalConf] = None,
         name: Optional[str] = None,
     ):
@@ -651,28 +651,118 @@ class IntervalR(Interval):
             conf = None
         return conf
 
-    def __or__(self, other):
-        """"""
-        if isinstance(other, IntervalR):
-            raise TypeError("other must have type IntervalR")
-        #
-        if (other.lower > self.upper) or (other.upper < self.lower):
-            raise ValueError("there is no overlap between intervals can't apply union")
-        min_l = min(other.lower, self.lower)
-        max_l = max(other.upper, self.upper)
-        conf = self.__decide_conf__(other=other, min_l=min_l, max_l=max_l)
-        return IntervalR(lower=min_l, upper=max_l, name=None, open_on=conf)
+    def __closed_add(self, other):
+        """
+        From Jaulin, 2001, p. 21
+        """
+        low = self.lower + other.lower
+        upper = self.upper + other.upper
+        name = "(+ " + "#" + self._name + " #" + other._name + ")"
+        return IntervalR(lower=low, upper=upper, name=name, open_on=None)
 
-    def __and__(self, other):
-        """"""
+    def __closed_union(self, other):
+        """
+        From Jaulin, 2001, p. 21
+        """
+        low = min(self.lower, other.lower)
+        upper = max(self.upper, other.upper)
+        name = "(| " + "#" + self._name + " #" + other._name + ")"
+        return IntervalR(lower=low, upper=upper, name=name, open_on=None)
+
+    def __closed_sub(self, other):
+        """
+        From Jaulin, 2001, p. 21
+        """
+        low = self.lower - other.upper
+        upper = self.upper - other.lower
+        name = "(- " + "#" + self._name + " #" + other._name + ")"
+        return IntervalR(lower=low, upper=upper, name=name, open_on=None)
+
+    def __closed_mul(self, other):
+        """
+        From Jaulin, 2001, p. 21
+        """
+        a = self.lower * other.lower
+        b = self.upper * other.lower
+        c = self.lower * other.upper
+        d = self.upper * other.upper
+        lower = min([a, b, c, d])
+        upper = max([a, b, c, d])
+        name = "(* " + "#" + self._name + " #" + other._name + ")"
+        return IntervalR(lower=low, upper=upper, name=name, open_on=None)
+
+    def __or__(self, other) -> Union[FrozenSet[Interval], Interval]:
+        """
+        From Jaulin, 2001, p. 21
+        """
         if isinstance(other, IntervalR):
-            raise TypeError("other must have type IntervalR")
-        #
-        if (other.lower > self.upper) or (other.upper < self.lower):
-            raise ValueError(
-                "there is no overlap between intervals can't apply intersection"
+            if (other.lower > self.upper) or (other.upper < self.lower):
+                return frozenset([self, other])
+            min_l = min(other.lower, self.lower)
+            max_l = max(other.upper, self.upper)
+            conf = self.__decide_conf__(other=other, min_l=min_l, max_l=max_l)
+            return IntervalR(lower=min_l, upper=max_l, name=None, open_on=conf)
+        elif isinstance(other, (set, frozenset)):
+            oset = set(other)
+            if oset:
+                is_all_type(oset, "oset", IntervalR, True)
+                return frozenset([self | o for o in oset])
+        else:
+            raise TypeError(
+                "other must have type IntervalR or Set[IntervalR]"
+                + f" but it has {type(other).__name__}"
             )
-        min_l = max(other.lower, self.lower)
-        max_l = min(other.upper, self.upper)
-        conf = self.__decide_conf__(other=other, min_l=min_l, max_l=max_l)
-        return IntervalR(lower=min_l, upper=max_l, name=None, open_on=conf)
+
+    def __and__(self, other) -> Union[FrozenSet[Interval], Interval]:
+        """
+        From Jaulin, 2001, p. 21
+        """
+        if isinstance(other, IntervalR):
+            lower = max(sef.lower, other.lower)
+            upper = min(self.upper, other.upper)
+            if lower <= upper:
+                return IntervalR(
+                    lower=lower,
+                    upper=upper,
+                    name=None,
+                    open_on=self.__decide_conf__(other=other, min_l=lower, max_l=upper),
+                )
+            return frozenset()
+
+        elif isinstance(other, (set, frozenset)):
+            oset = set(other)
+            if oset:
+                is_all_type(oset, "oset", IntervalR, True)
+                return frozenset([self & o for o in oset])
+        else:
+            raise TypeError(
+                "other must have type IntervalR or Set[IntervalR]"
+                + f" but it has {type(other).__name__}"
+            )
+
+    def __invert__(self) -> FrozenSet[Interval]:
+        """
+        From Jaulin, 2001, p. 20
+        """
+        left_low = NumericValue(float("-inf"))
+        right_up = NumericValue(float("inf"))
+
+        def ret_set(i, j):
+            return frozenset(
+                [
+                    IntervalR(
+                        lower=left_low,
+                        upper=self.lower,
+                        name=None,
+                        open_on=i,
+                    ),
+                    IntervalR(lower=self.upper, upper=right_up, name=None, open_on=j),
+                ]
+            )
+
+        if self._open_on == IntervalConf.Lower:
+            return ret_set(i=IntervalConf.Lower, j=IntervalConf.Both)
+        elif self._open_on == IntervalConf.Upper:
+            return ret_set(i=IntervalConf.Both, j=IntervalConf.Lower)
+        else:
+            return ret_set(i=IntervalConf.Both, j=IntervalConf.Both)
