@@ -212,6 +212,19 @@ class NumericValue(Value):
         """
         return self.__myop__(func=NumericValue.__mul_op__, other=other)
 
+    def __rmul__(self, other):
+        """
+        infinity aware multiplication
+        """
+
+        def mul_op(s, o):
+            val, is_cond = NumericValue.__mul_cond__(s=o, o=s)
+            if is_cond:
+                return val
+            return NumericValue(o.value * s.value)
+
+        return self.__myop__(func=mul_op, other=other)
+
     def __truediv__(self, other):
         """"""
 

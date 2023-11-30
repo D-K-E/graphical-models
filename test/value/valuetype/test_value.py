@@ -197,15 +197,166 @@ class NumericValueTest(unittest.TestCase):
         v = self.v2 * self.v1
         self.assertEqual(v.value, 2.1)
 
+    def test_mul_v2(self):
+        """"""
+        v = self.v5 * self.v2
+        v2 = self.v6 * self.v2
+        self.assertEqual(v.value, float("inf"))
+        self.assertEqual(v2.value, float("-inf"))
+
+    def test_mul_v3(self):
+        """"""
+        v = self.v5 * self.v6
+        self.assertEqual(v, float("-inf"))
+
+    def test_mul_v4(self):
+        """"""
+        v = self.v6 * self.v5
+        self.assertEqual(v, float("-inf"))
+
+    def test_mul_v5(self):
+        """"""
+        v = self.v5 * self.v5
+        self.assertEqual(v, float("inf"))
+
+    def test_mul_v6(self):
+        """"""
+        v = self.v6 * self.v6
+        self.assertEqual(v, float("inf"))
+
+    def test_mul_v7(self):
+        """"""
+        v = NumericValue(0) * self.v5
+        self.assertEqual(v.value, 0)
+
+    def test_mul_v8(self):
+        """"""
+        v = NumericValue(0) * self.v6
+        self.assertEqual(v.value, 0)
+
+    def test_rmul(self):
+        """"""
+        v = 2.1 * self.v1
+        self.assertEqual(v.value, 2.1)
+
+    def test_rmul_v2(self):
+        """"""
+        v = float("inf") * self.v2
+        v2 = float("-inf") * self.v2
+        self.assertEqual(v.value, float("inf"))
+        self.assertEqual(v2.value, float("-inf"))
+
+    def test_rmul_v3(self):
+        """"""
+        v = float("inf") * self.v6
+        self.assertEqual(v, float("-inf"))
+
+    def test_rmul_v4(self):
+        """"""
+        v = float("-inf") * self.v5
+        self.assertEqual(v, float("-inf"))
+
+    def test_rmul_v5(self):
+        """"""
+        v = float("inf") * self.v5
+        self.assertEqual(v, float("inf"))
+
+    def test_rmul_v6(self):
+        """"""
+        v = float("-inf") * self.v6
+        self.assertEqual(v, float("inf"))
+
+    def test_rmul_v7(self):
+        """"""
+        v = 0 * self.v5
+        self.assertEqual(v.value, 0)
+
+    def test_rmul_v8(self):
+        """"""
+        v = 0 * self.v6
+        self.assertEqual(v.value, 0)
+
     def test_truediv(self):
         """"""
         v = self.v2 / self.v1
         self.assertEqual(v.value, 2.1)
 
+    def test_truediv_v2(self):
+        """"""
+        try:
+            v = self.v5 / self.v6
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
+    def test_truediv_v3(self):
+        """"""
+        try:
+            v = self.v6 / self.v5
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
+    def test_truediv_v4(self):
+        """"""
+        try:
+            v = self.v5 / self.v5
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
+    def test_truediv_v5(self):
+        """"""
+        try:
+            v = self.v6 / self.v6
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
     def test_floordiv(self):
         """"""
         v = self.v2 // self.v1
         self.assertEqual(v.value, 2)
+
+    def test_floordiv_v2(self):
+        """"""
+        try:
+            v = self.v5 // self.v6
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
+    def test_floordiv_v3(self):
+        """"""
+        try:
+            v = self.v6 // self.v5
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
+    def test_floordiv_v4(self):
+        """"""
+        try:
+            v = self.v5 // self.v5
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
+    def test_floordiv_v5(self):
+        """"""
+        try:
+            v = self.v6 // self.v6
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
 
     def test_mod(self):
         """"""
@@ -217,50 +368,213 @@ class NumericValueTest(unittest.TestCase):
         v = 1 / self.v4
         self.assertEqual(round(v.value, 3), 0.5)
 
+    def test_rtruediv_v2(self):
+        """"""
+        try:
+            v = float("inf") / self.v6
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
+    def test_rtruediv_v3(self):
+        """"""
+        try:
+            v = float("-inf") / self.v5
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
+    def test_rtruediv_v4(self):
+        """"""
+        try:
+            v = float("inf") / self.v5
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
+    def test_rtruediv_v5(self):
+        """"""
+        try:
+            v = float("-inf") / self.v6
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
     def test_rfloordiv(self):
         """"""
         v = 1 / self.v1
         self.assertEqual(v.value, 1)
+
+    def test_rfloordiv_v2(self):
+        """"""
+        try:
+            v = float("inf") // self.v6
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
+    def test_rfloordiv_v3(self):
+        """"""
+        try:
+            v = float("-inf") // self.v5
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
+    def test_rfloordiv_v4(self):
+        """"""
+        try:
+            v = float("inf") // self.v5
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
+    def test_rfloordiv_v5(self):
+        """"""
+        try:
+            v = float("-inf") // self.v6
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
 
     def test_rmod(self):
         """"""
         v = 3 % self.v1
         self.assertEqual(v.value, 0)
 
+    def test_pow(self):
+        """"""
+        v = self.v1 ** NumericValue(3)
+        self.assertEqual(v.value, 1)
+
+    def test_pow_v2(self):
+        """"""
+        v = self.v5 ** NumericValue(3)
+        self.assertEqual(v.value, float("inf"))
+
+    def test_pow_v3(self):
+        """"""
+        v = self.v5**self.v5
+        self.assertEqual(v.value, float("inf"))
+
+    def test_pow_v4(self):
+        """"""
+        try:
+            v = self.v5**self.v6
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
+    def test_pow_v5(self):
+        """"""
+        try:
+            v = self.v6**self.v5
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
+    def test_pow_v6(self):
+        """"""
+        try:
+            v = self.v6**self.v6
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
     def test_rpow(self):
         """"""
         v = 3**self.v1
         self.assertEqual(v.value, 3)
 
+    def test_rpow_v2(self):
+        """"""
+        v = float("inf") ** NumericValue(3)
+        self.assertEqual(v.value, float("inf"))
+
+    def test_rpow_v3(self):
+        """"""
+        v = float("inf") ** self.v5
+        self.assertEqual(v.value, float("inf"))
+
+    def test_rpow_v4(self):
+        """"""
+        try:
+            v = float("inf") ** self.v6
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
+    def test_rpow_v5(self):
+        """"""
+        try:
+            v = float("-inf") ** self.v5
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
+    def test_rpow_v6(self):
+        """"""
+        try:
+            v = float("-inf") ** self.v6
+            check = False
+        except ValueError:
+            check = True
+        self.assertTrue(check)
+
     def test_lt(self):
         """"""
         v = self.v1 < self.v2
-        self.assertEqual(v, True)
+        v2 = self.v1 > self.v2
+        self.assertTrue(v)
+        self.assertFalse(v2)
 
     def test_le(self):
         """"""
         v = self.v2 <= self.v2
-        self.assertEqual(v, True)
+        v2 = self.v2 > self.v2
+        self.assertTrue(v)
+        self.assertFalse(v2)
 
     def test_gt(self):
         """"""
         v = self.v2 > self.v1
-        self.assertEqual(v, True)
+        v2 = self.v2 < self.v1
+        self.assertTrue(v)
+        self.assertFalse(v2)
 
     def test_ge(self):
         """"""
         v = self.v1 >= self.v1
-        self.assertEqual(v, True)
+        v2 = self.v1 < self.v1
+        self.assertTrue(v)
+        self.assertFalse(v2)
 
     def test_eq(self):
         """"""
-        v = self.v2 == self.v1
-        self.assertEqual(v, False)
+        v = self.v1 == self.v1
+        v2 = self.v2 == self.v1
+        self.assertTrue(v)
+        self.assertFalse(v2)
 
     def test_ne(self):
         """"""
         v = self.v2 != self.v1
-        self.assertEqual(v, True)
+        v2 = self.v2 == self.v1
+        self.assertTrue(v)
+        self.assertFalse(v2)
 
 
 class StringValueTest(unittest.TestCase):
