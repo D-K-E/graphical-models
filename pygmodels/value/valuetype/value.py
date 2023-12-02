@@ -584,11 +584,13 @@ class IntervalR(Interval):
             s = name
         is_type(lower, "lower", NumericValue, True)
         is_type(upper, "upper", NumericValue, True)
+        lower = min(lower, upper)
+        upper = max(lower, upper)
         super().__init__(name=s, lower=lower, upper=upper, open_on=open_on)
         self._compare_lower = low_fn
         self._compare_upper = up_fn
 
-    def __contains__(self, i: NumericValue):
+    def __contains__(self, other: NumericValue):
         """"""
         return self._compare_lower(i) and self._compare_upper(i)
 
@@ -604,103 +606,34 @@ class IntervalR(Interval):
         """"""
         return float("inf")
 
-    def __decide_conf__(self, other, min_l, max_l):
+    def __decide_conf__(self, other, l_minmax_fn, u_minmax_fn):
         """"""
-        if min_l == other.lower:
-            lower_open = (
-                True
-                if (
-                    (other._open_on == IntervalConf.Lower)
-                    or (other.is_closed() == False)
-                )
-                else False
-            )
-        else:
-            lower_open = (
-                True
-                if (
-                    (self._open_on == IntervalConf.Lower) or (self.is_closed() == False)
-                )
-                else False
-            )
-        if max_l == other.upper:
-            upper_open = (
-                True
-                if (
-                    (other._open_on == IntervalConf.Upper)
-                    or (other.is_closed() == False)
-                )
-                else False
-            )
-        else:
-            upper_open = (
-                True
-                if (
-                    (self._open_on == IntervalConf.Upper) or (self.is_closed() == False)
-                )
-                else False
-            )
-        #
-        if lower_open and upper_open:
-            conf = IntervalConf.Both
-        elif lower_open:
-            conf = IntervalConf.Lower
-        elif upper_open:
-            conf = IntervalConf.Upper
-        else:
+        is_l_closed = l_minmax_fn()
+        is_u_closed = u_minmax_fn()
+        if is_u_closed and is_l_closed:
             conf = None
+        elif is_u_closed and not is_l_closed:
+            conf = IntervalConf.Lower
+        elif not is_u_closed and is_l_closed:
+            conf = IntervalConf.Upper
+        elif not is_u_closed and not is_l_closed:
+            conf = IntervalConf.Both
         return conf
-
-    def __closed_add(self, other):
-        """
-        From Jaulin, 2001, p. 21
-        """
-        low = self.lower + other.lower
-        upper = self.upper + other.upper
-        name = "(+ " + "#" + self._name + " #" + other._name + ")"
-        return IntervalR(lower=low, upper=upper, name=name, open_on=None)
-
-    def __closed_union(self, other):
-        """
-        From Jaulin, 2001, p. 21
-        """
-        low = min(self.lower, other.lower)
-        upper = max(self.upper, other.upper)
-        name = "(| " + "#" + self._name + " #" + other._name + ")"
-        return IntervalR(lower=low, upper=upper, name=name, open_on=None)
-
-    def __closed_sub(self, other):
-        """
-        From Jaulin, 2001, p. 21
-        """
-        low = self.lower - other.upper
-        upper = self.upper - other.lower
-        name = "(- " + "#" + self._name + " #" + other._name + ")"
-        return IntervalR(lower=low, upper=upper, name=name, open_on=None)
-
-    def __closed_mul(self, other):
-        """
-        From Jaulin, 2001, p. 21
-        """
-        a = self.lower * other.lower
-        b = self.upper * other.lower
-        c = self.lower * other.upper
-        d = self.upper * other.upper
-        lower = min([a, b, c, d])
-        upper = max([a, b, c, d])
-        name = "(* " + "#" + self._name + " #" + other._name + ")"
-        return IntervalR(lower=low, upper=upper, name=name, open_on=None)
 
     def __or__(self, other) -> Union[FrozenSet[Interval], Interval]:
         """
-        From Jaulin, 2001, p. 21
+        From Jaulin, 2001, p. 18
         """
         if isinstance(other, IntervalR):
-            if (other.lower > self.upper) or (other.upper < self.lower):
+            if (self < other) or (other < self):
                 return frozenset([self, other])
             min_l = min(other.lower, self.lower)
             max_l = max(other.upper, self.upper)
-            conf = self.__decide_conf__(other=other, min_l=min_l, max_l=max_l)
+            is_l_closed_fn = lambda: (min_l in self) or (min_l in other)
+            is_u_closed_fn = lambda: (max_l in self) or (max_l in other)
+            conf = self.__decide_conf__(
+                other=other, l_minmax_fn=is_l_closed_fn, u_minmax_fn=is_u_closed_fn
+            )
             return IntervalR(lower=min_l, upper=max_l, name=None, open_on=conf)
         elif isinstance(other, (set, frozenset)):
             oset = set(other)
@@ -715,25 +648,33 @@ class IntervalR(Interval):
 
     def __and__(self, other) -> Union[FrozenSet[Interval], Interval]:
         """
-        From Jaulin, 2001, p. 21
+        From Jaulin, 2001, p. 18
         """
         if isinstance(other, IntervalR):
-            lower = max(sef.lower, other.lower)
+            if (self < other) or (other < self):
+                return frozenset()
+            lower = max(self.lower, other.lower)
             upper = min(self.upper, other.upper)
+            is_l_closed_fn = (
+                lambda: lower in self if lower == self.lower else lower in other
+            )
+            is_u_closed_fn = (
+                lambda: upper in self if upper == self.upper else upper in other
+            )
+            conf = self.__decide_conf__(
+                other=other, l_minmax_fn=is_l_closed_fn, u_minmax_fn=is_u_closed_fn
+            )
             if lower <= upper:
-                return IntervalR(
-                    lower=lower,
-                    upper=upper,
-                    name=None,
-                    open_on=self.__decide_conf__(other=other, min_l=lower, max_l=upper),
-                )
-            return frozenset()
+                return IntervalR(lower=lower, upper=upper, name=None, open_on=conf)
+            else:
+                raise ValueError(f"Unexpected interval error {self} and {other}")
 
         elif isinstance(other, (set, frozenset)):
             oset = set(other)
             if oset:
                 is_all_type(oset, "oset", IntervalR, True)
-                return frozenset([self & o for o in oset])
+                r = frozenset([self & o for o in oset])
+                return frozenset([a for a in r if a])
         else:
             raise TypeError(
                 "other must have type IntervalR or Set[IntervalR]"
@@ -766,3 +707,51 @@ class IntervalR(Interval):
             return ret_set(i=IntervalConf.Both, j=IntervalConf.Lower)
         else:
             return ret_set(i=IntervalConf.Both, j=IntervalConf.Both)
+
+    def __contains2__(self, other: NumericValue):
+        """"""
+        if self.is_closed():
+            c1 = self.lower <= other
+            c2 = other <= self.upper
+            return c1 and c2
+        if self.is_lower_bounded():
+            c1 = self.lower < other
+            c2 = other <= self.upper
+            return c1 and c2
+        if self.is_upper_bounded():
+            c1 = self.lower <= other
+            c2 = other < self.upper
+            return c1 and c2
+        if self.is_open():
+            c1 = self.lower < other
+            c2 = other < self.upper
+            return c1 and c2
+
+    def __lt__(self, other) -> bool:
+        """
+        From Dawood, 2011, p. 9
+        """
+        if isinstance(other, IntervalR):
+            s_up = self.upper
+            o_low = other.lower
+            if o_low == s_up:
+                if self.is_upper_bounded() and other.is_lower_bounded():
+                    return False
+                return True
+            else:
+                return s_up < o_low
+        return False
+
+    def __neq__(self, other) -> bool:
+        """"""
+        return (self < other) or (other < self)
+
+    def __eq__(self, other) -> bool:
+        """
+        Equality for intervals
+        """
+        if isinstance(other, IntervalR):
+            if other._open_on != self._open_on:
+                return False
+            return (other.lower == self.lower) and (other.upper == self.upper)
+        return False

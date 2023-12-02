@@ -205,17 +205,39 @@ class Interval(NamedContainer):
         """"""
         return self._upper.fetch()
 
+    def inf(self):
+        return self.lower
+
+    def sup(self):
+        return self.upper
+
     def is_closed(self) -> bool:
         "check if interval is closed"
         return self._open_on is None
 
+    def is_open(self) -> bool:
+        "check if interval is open on both ends"
+        return self._open_on == IntervalConf.Both
+
     def is_half_closed(self) -> bool:
         "check if interval is closed from one end"
-        if self._open_on is None:
+        if self.is_closed():
             return False
-        if self._open_on == IntervalConf.Both:
+        if self.is_open():
             return False
         return True
+
+    def is_lower_bounded(self) -> bool:
+        """"""
+        c1 = self.is_closed()
+        c2 = self._open_on == IntervalConf.Upper
+        return c1 or c2
+
+    def is_upper_bounded(self) -> bool:
+        """"""
+        c1 = self.is_closed()
+        c2 = self._open_on == IntervalConf.Lower
+        return c1 or c2
 
 
 class TypedMutableSet(NamedContainer, MutableSet):
