@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Union, Callable, NewType, Optional
 from collections.abc import MutableSet, MutableSequence, Sequence
 from collections.abc import Iterator
-from pygmodels.utils import is_all_type, is_type
+from pygmodels.utils import is_all_type, is_type, is_optional_type
 from collections.abc import Set as CSet
 from types import GeneratorType
 from enum import Enum, auto
@@ -198,12 +198,12 @@ class Interval(NamedContainer):
     @property
     def lower(self) -> AbstractValue:
         """"""
-        return self._lower.fetch()
+        return self._lower
 
     @property
     def upper(self) -> AbstractValue:
         """"""
-        return self._upper.fetch()
+        return self._upper
 
     def inf(self):
         return self.lower

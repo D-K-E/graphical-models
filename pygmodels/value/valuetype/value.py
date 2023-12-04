@@ -540,7 +540,7 @@ class SubsetValue(ContainerValue):
         return hash(self.value)
 
 
-class IntervalR(Interval):
+class NumericIntervalValue(Interval):
     """
     An interval defined on real line
     """
@@ -594,9 +594,6 @@ class IntervalR(Interval):
         """
         return self.upper - self.lower
 
-    def __len__(self):
-        return math.inf
-
     def __decide_conf__(self, other, l_minmax_fn, u_minmax_fn):
         """"""
         is_l_closed = l_minmax_fn()
@@ -617,7 +614,7 @@ class IntervalR(Interval):
         """
         From Jaulin, 2001, p. 18
         """
-        if isinstance(other, IntervalR):
+        if isinstance(other, NumericIntervalValue):
             if (self < other) or (other < self):
                 return frozenset([self, other])
             min_l = min(other.lower, self.lower)
@@ -627,11 +624,13 @@ class IntervalR(Interval):
             conf = self.__decide_conf__(
                 other=other, l_minmax_fn=is_l_closed_fn, u_minmax_fn=is_u_closed_fn
             )
-            return IntervalR(lower=min_l, upper=max_l, name=None, open_on=conf)
+            return NumericIntervalValue(
+                lower=min_l, upper=max_l, name=None, open_on=conf
+            )
         elif isinstance(other, (set, frozenset)):
             oset = set(other)
             if oset:
-                is_all_type(oset, "oset", IntervalR, True)
+                is_all_type(oset, "oset", NumericIntervalValue, True)
                 nset = set()
                 for o in oset:
                     nval = self | o
@@ -644,7 +643,7 @@ class IntervalR(Interval):
                 return ps
         else:
             raise TypeError(
-                "other must have type IntervalR or Set[IntervalR]"
+                "other must have type NumericIntervalValue or Set[NumericIntervalValue]"
                 + f" but it has {type(other).__name__}"
             )
 
@@ -654,7 +653,7 @@ class IntervalR(Interval):
         """
         From Jaulin, 2001, p. 18
         """
-        if isinstance(other, IntervalR):
+        if isinstance(other, NumericIntervalValue):
             if (self < other) or (other < self):
                 return frozenset()
             lower = max(self.lower, other.lower)
@@ -669,14 +668,16 @@ class IntervalR(Interval):
                 other=other, l_minmax_fn=is_l_closed_fn, u_minmax_fn=is_u_closed_fn
             )
             if lower <= upper:
-                return IntervalR(lower=lower, upper=upper, name=None, open_on=conf)
+                return NumericIntervalValue(
+                    lower=lower, upper=upper, name=None, open_on=conf
+                )
             else:
                 raise ValueError(f"Unexpected interval error {self} and {other}")
 
         elif isinstance(other, (set, frozenset)):
             oset = set(other)
             if oset:
-                is_all_type(oset, "oset", IntervalR, True)
+                is_all_type(oset, "oset", NumericIntervalValue, True)
                 rs = frozenset([self & o for o in oset])
                 result = frozenset([r for r in rs if r])
                 if len(result) == 1:
@@ -684,7 +685,7 @@ class IntervalR(Interval):
                 return result
         else:
             raise TypeError(
-                "other must have type IntervalR or Set[IntervalR]"
+                "other must have type NumericIntervalValue or Set[NumericIntervalValue]"
                 + f" but it has {type(other).__name__}"
             )
 
@@ -696,7 +697,7 @@ class IntervalR(Interval):
         It is interpreted as \f$A \ B = A \intersect B^c\f$
         where \f$B^c$\f is the compliment of the set B.
         """
-        if isinstance(other, IntervalR):
+        if isinstance(other, NumericIntervalValue):
             other_c = ~other
             return self & other_c
         elif isinstance(other, (frozenset, set)):
@@ -705,7 +706,7 @@ class IntervalR(Interval):
             for o in oset:
                 o_c = ~o
                 inters = self & o_c
-                if isinstance(inters, IntervalR):
+                if isinstance(inters, NumericIntervalValue):
                     nset.add(inters)
                 elif isinstance(inters, frozenset):
                     if inters:
@@ -723,13 +724,15 @@ class IntervalR(Interval):
         def ret_set(i, j):
             return frozenset(
                 [
-                    IntervalR(
+                    NumericIntervalValue(
                         lower=left_low,
                         upper=self.lower,
                         name=None,
                         open_on=i,
                     ),
-                    IntervalR(lower=self.upper, upper=right_up, name=None, open_on=j),
+                    NumericIntervalValue(
+                        lower=self.upper, upper=right_up, name=None, open_on=j
+                    ),
                 ]
             )
 
@@ -740,30 +743,12 @@ class IntervalR(Interval):
         else:
             return ret_set(i=IntervalConf.Both, j=IntervalConf.Both)
 
-    def __contains2__(self, other: NumericValue):
-        """"""
-        if self.is_closed():
-            c1 = self.lower <= other
-            c2 = other <= self.upper
-            return c1 and c2
-        if self.is_lower_bounded():
-            c1 = self.lower < other
-            c2 = other <= self.upper
-            return c1 and c2
-        if self.is_upper_bounded():
-            c1 = self.lower <= other
-            c2 = other < self.upper
-            return c1 and c2
-        if self.is_open():
-            c1 = self.lower < other
-            c2 = other < self.upper
-            return c1 and c2
 
     def __lt__(self, other) -> bool:
         """
         From Dawood, 2011, p. 9
         """
-        if isinstance(other, IntervalR):
+        if isinstance(other, NumericIntervalValue):
             s_up = self.upper
             o_low = other.lower
             if o_low == s_up:
@@ -777,14 +762,20 @@ class IntervalR(Interval):
 
     def __neq__(self, other: Interval) -> bool:
         """"""
-        return (self < other) or (other < self)
+        if isinstance(other, NumericIntervalValue):
+            return (self < other) or (other < self)
+        return False
 
     def __eq__(self, other: Interval) -> bool:
         """
         Equality for intervals
         """
-        if isinstance(other, IntervalR):
+        if isinstance(other, NumericIntervalValue):
             if other._open_on != self._open_on:
                 return False
             return (other.lower == self.lower) and (other.upper == self.upper)
         return False
+
+    def __hash__(self):
+        """"""
+        return hash((str(self.lower), str(self.upper), self._open_on, self._name))

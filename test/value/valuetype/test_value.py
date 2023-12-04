@@ -8,7 +8,7 @@ from pygmodels.value.valuetype.value import StringValue
 from pygmodels.value.valuetype.value import ContainerValue
 from pygmodels.value.valuetype.value import CallableValue
 from pygmodels.value.valuetype.value import SetValue
-from pygmodels.value.valuetype.value import IntervalR
+from pygmodels.value.valuetype.value import NumericIntervalValue
 from pygmodels.value.valuetype.abstractvalue import IntervalConf
 from pygmodels.utils import is_all_type
 
@@ -821,15 +821,94 @@ class SetValueTest(unittest.TestCase):
         self.assertTrue(check)
 
 
-class IntervalRTest(unittest.TestCase):
+class NumericIntervalValueTest(unittest.TestCase):
     def setUp(self):
         """"""
-        self.v1 = IntervalR(
+        self.v1 = NumericIntervalValue(
             lower=NumericValue(1), upper=NumericValue(2.2), open_on=IntervalConf.Lower
         )
-        self.v2 = IntervalR(lower=NumericValue(0), upper=NumericValue(2), open_on=None)
+        self.v2 = NumericIntervalValue(
+            lower=NumericValue(0), upper=NumericValue(2), open_on=None
+        )
+        self.v3 = NumericIntervalValue(
+            lower=NumericValue(2.3), upper=NumericValue(2.4), open_on=None
+        )
+        self.v4 = NumericIntervalValue(
+            lower=NumericValue(2.2), upper=NumericValue(2.4), open_on=None
+        )
+        self.v5 = NumericIntervalValue(
+            lower=NumericValue(2.2), upper=NumericValue(2.4), open_on=IntervalConf.Lower
+        )
+        self.v6 = NumericIntervalValue(
+            lower=NumericValue(2.2), upper=NumericValue(2.4), open_on=IntervalConf.Upper
+        )
+        self.v7 = NumericIntervalValue(
+            lower=NumericValue(2.2), upper=NumericValue(2.4), open_on=IntervalConf.Both
+        )
 
-    def test_
+    def test_lt_v1(self):
+        """"""
+        self.assertTrue(self.v2 < self.v3)
+
+    def test_lt_v2(self):
+        """"""
+        self.assertFalse(self.v1 < self.v4)
+
+    def test_lt_v3(self):
+        """"""
+        self.assertTrue(self.v1 < self.v5)
+
+    def test_lt_v4(self):
+        """"""
+        try:
+            fs = self.v1 < frozenset([self.v5])
+            check = False
+        except TypeError:
+            check = True
+        self.assertTrue(check)
+
+    def test_neq_v1(self):
+        """"""
+        f = self.v2 != self.v3
+        self.assertTrue(f)
+
+    def test_neq_v2(self):
+        """"""
+        f = self.v1 != self.v5
+        self.assertTrue(f)
+
+    def test_neq_v3(self):
+        """"""
+        fs = self.v1 != frozenset([self.v5])
+        self.assertTrue(fs)
+
+    def test_contains_v1(self):
+        """"""
+        self.assertFalse(NumericValue(2.2) in self.v5)
+
+    def test_contains_v2(self):
+        """"""
+        self.assertTrue(NumericValue(2.2) in self.v4)
+
+    def test_contains_v3(self):
+        """"""
+        self.assertFalse(NumericValue(2.4) in self.v6)
+
+    def test_contains_v4(self):
+        """"""
+        self.assertFalse(NumericValue(2.4) in self.v7)
+
+    def test_contains_v5(self):
+        """"""
+        self.assertTrue(NumericValue(2.3) in self.v7)
+
+    def test_contains_v6(self):
+        """"""
+        self.assertTrue(NumericValue(2.3) in self.v6)
+
+    def test_contains_v7(self):
+        """"""
+        self.assertTrue(NumericValue(2.3) in self.v5)
 
 
 if __name__ == "__main__":
