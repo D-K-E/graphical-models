@@ -8,6 +8,8 @@ from pygmodels.value.valuetype.value import StringValue
 from pygmodels.value.valuetype.value import ContainerValue
 from pygmodels.value.valuetype.value import CallableValue
 from pygmodels.value.valuetype.value import SetValue
+from pygmodels.value.valuetype.value import IntervalR
+from pygmodels.value.valuetype.abstractvalue import IntervalConf
 from pygmodels.utils import is_all_type
 
 
@@ -817,6 +819,17 @@ class SetValueTest(unittest.TestCase):
             check = True
         #
         self.assertTrue(check)
+
+
+class IntervalRTest(unittest.TestCase):
+    def setUp(self):
+        """"""
+        self.v1 = IntervalR(
+            lower=NumericValue(1), upper=NumericValue(2.2), open_on=IntervalConf.Lower
+        )
+        self.v2 = IntervalR(lower=NumericValue(0), upper=NumericValue(2), open_on=None)
+
+    def test_
 
 
 if __name__ == "__main__":

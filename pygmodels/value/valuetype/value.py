@@ -374,14 +374,6 @@ class ContainerValue(Value, TypedSequence):
         ET.indent(m)
         return ET.tostring(m, encoding="unicode")
 
-    def count(self):
-        """"""
-        return len(self)
-
-    def length(self):
-        """"""
-        return len(self)
-
 
 class NTupleValue(ContainerValue):
     """"""
@@ -592,7 +584,7 @@ class IntervalR(Interval):
 
     def __contains__(self, other: NumericValue):
         """"""
-        return self._compare_lower(i) and self._compare_upper(i)
+        return self._compare_lower(other) and self._compare_upper(other)
 
     def length(self):
         """
@@ -602,9 +594,8 @@ class IntervalR(Interval):
         """
         return self.upper - self.lower
 
-    def count(self):
-        """"""
-        return float("inf")
+    def __len__(self):
+        return math.inf
 
     def __decide_conf__(self, other, l_minmax_fn, u_minmax_fn):
         """"""
@@ -620,7 +611,9 @@ class IntervalR(Interval):
             conf = IntervalConf.Both
         return conf
 
-    def __or__(self, other) -> Union[FrozenSet[Interval], Interval]:
+    def __or__(
+        self, other: Union[FrozenSet[Interval], Interval]
+    ) -> Union[FrozenSet[Interval], Interval]:
         """
         From Jaulin, 2001, p. 18
         """
@@ -639,14 +632,25 @@ class IntervalR(Interval):
             oset = set(other)
             if oset:
                 is_all_type(oset, "oset", IntervalR, True)
-                return frozenset([self | o for o in oset])
+                nset = set()
+                for o in oset:
+                    nval = self | o
+                    if isinstance(nval, frozenset):
+                        for n in nval:
+                            nset.add(n)
+                    else:
+                        nset.add(nval)
+                ps = frozenset(nset)
+                return ps
         else:
             raise TypeError(
                 "other must have type IntervalR or Set[IntervalR]"
                 + f" but it has {type(other).__name__}"
             )
 
-    def __and__(self, other) -> Union[FrozenSet[Interval], Interval]:
+    def __and__(
+        self, other: Union[FrozenSet[Interval], Interval]
+    ) -> Union[FrozenSet[Interval], Interval]:
         """
         From Jaulin, 2001, p. 18
         """
@@ -673,20 +677,48 @@ class IntervalR(Interval):
             oset = set(other)
             if oset:
                 is_all_type(oset, "oset", IntervalR, True)
-                r = frozenset([self & o for o in oset])
-                return frozenset([a for a in r if a])
+                rs = frozenset([self & o for o in oset])
+                result = frozenset([r for r in rs if r])
+                if len(result) == 1:
+                    return result.pop()
+                return result
         else:
             raise TypeError(
                 "other must have type IntervalR or Set[IntervalR]"
                 + f" but it has {type(other).__name__}"
             )
 
+    def __sub__(
+        self, other: Union[FrozenSet[Interval], Interval]
+    ) -> Union[FrozenSet[Interval], Interval]:
+        """
+        Set difference between intervals:
+        It is interpreted as \f$A \ B = A \intersect B^c\f$
+        where \f$B^c$\f is the compliment of the set B.
+        """
+        if isinstance(other, IntervalR):
+            other_c = ~other
+            return self & other_c
+        elif isinstance(other, (frozenset, set)):
+            oset = set(other)
+            nset = set()
+            for o in oset:
+                o_c = ~o
+                inters = self & o_c
+                if isinstance(inters, IntervalR):
+                    nset.add(inters)
+                elif isinstance(inters, frozenset):
+                    if inters:
+                        for i in inters:
+                            nset.add(i)
+            return frozenset(nset)
+
     def __invert__(self) -> FrozenSet[Interval]:
         """
         From Jaulin, 2001, p. 20
         """
-        left_low = NumericValue(float("-inf"))
-        right_up = NumericValue(float("inf"))
+        left_low = NumericValue(-math.inf)
+        right_up = NumericValue(math.inf)
 
         def ret_set(i, j):
             return frozenset(
@@ -740,13 +772,14 @@ class IntervalR(Interval):
                 return True
             else:
                 return s_up < o_low
-        return False
+        else:
+            raise TypeError(f"can't compare 'other' of type {type(other).__name__}")
 
-    def __neq__(self, other) -> bool:
+    def __neq__(self, other: Interval) -> bool:
         """"""
         return (self < other) or (other < self)
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Interval) -> bool:
         """
         Equality for intervals
         """
