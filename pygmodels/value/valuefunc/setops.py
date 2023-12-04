@@ -4,10 +4,12 @@ set operations based on types on value.py
 
 from pygmodels.value.valuetype.value import SetValue
 from pygmodels.value.valuetype.value import SubsetValue
+from pygmodels.value.valuetype.value import NumericIntervalValue
+from pygmodels.value.valuetype.value import R
 
 from pygmodels.utils import is_type, is_all_type
 
-from typing import Set, Generator, Iterator
+from typing import Set, Generator, Iterator, Union
 
 from itertools import chain, combinations
 
@@ -16,28 +18,40 @@ class SetBoolOps:
     """"""
 
     @staticmethod
-    def is_sigma_field(iterable: Set[SubsetValue], sample_space: Set[SetValue]) -> bool:
+    def is_sigma_field(
+        iterable: Set[Union[SubsetValue, NumericIntervalValue]],
+        sample_space: Union[Set[SetValue], R],
+    ) -> bool:
         """
         \brief Check if iterable is sigma field on Space.
 
         see, LeGall, 2022, p. 4
         """
-        is_all_type(iterable, "iterable", SubsetValue, True)
-        is_all_type(sample_space, "sample_space", SetValue, True)
+        is_all_type(iterable, "iterable", (SubsetValue, NumericIntervalValue), True)
+        if not any(
+            [
+                is_all_type(
+                    sample_space,
+                    "sample_space",
+                    (SetValue, NumericIntervalValue),
+                    False,
+                ),
+                is_type(sample_space, "sample_space", NumericIntervalValue, False),
+            ]
+        ):
+            raise TypeError(
+                "sample_space must either be a numeric interval or a Set[SetValue]"
+            )
         c1 = any(sample_space == a for a in iterable)
         c2 = all((sample_space - a) in iterable for a in iterable)
-        N = len(iterable)
-        fs = list(iterable)
         c3 = True
-        for n in range(N):
-            subs = fs[:n]
+        for subs in SetSetOps.mk_powerset(sample_space=iterable):
             if subs:
-                r = subs.pop(0)
-                for s in subs:
-                    r += s
-                #
-                c3 = c3 and (r in iterable)
-        #
+                s = subs.pop()
+                for sub in subs:
+                    s |= sub
+                c3 = c3 and any(s == i for i in iterable)
+
         return c1 and c2 and c3
 
 
@@ -99,7 +113,7 @@ class SetSetOps:
         return field
 
     @staticmethod
-    def mk_powerset(sample_space: Set[SetValue]) -> Iterator[Set[SetValue]]:
+    def mk_powerset(sample_space: Set) -> Iterator[Set]:
         """
         Constructs the power set sigma field from a given set 'sample_space' according to
         LeGall, 2022, p. 4

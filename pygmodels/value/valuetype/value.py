@@ -743,7 +743,6 @@ class NumericIntervalValue(Interval):
         else:
             return ret_set(i=IntervalConf.Both, j=IntervalConf.Both)
 
-
     def __lt__(self, other) -> bool:
         """
         From Dawood, 2011, p. 9
@@ -779,3 +778,8 @@ class NumericIntervalValue(Interval):
     def __hash__(self):
         """"""
         return hash((str(self.lower), str(self.upper), self._open_on, self._name))
+
+
+R = NumericIntervalValue(
+    lower=-math.inf, upper=math.inf, open_on=IntervalConf.Both, name="R"
+)
