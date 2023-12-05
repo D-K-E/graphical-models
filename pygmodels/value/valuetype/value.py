@@ -480,69 +480,6 @@ class SetValue(Value, AbstractSetValue):
         return ET.tostring(m, encoding="unicode")
 
 
-class SubsetValue(ContainerValue):
-    """ """
-
-    def __init__(self, v: Optional[FrozenSet[SetValue]] = None, name: str = "subset"):
-        """
-        \brief subset value. It can be either an empty set, which is signaled
-        by None, or a non empty set
-        """
-        is_type(v, "v", frozenset, True)
-        # is_all_type([a.fetch() for a in v], "v member", NumericValue, True)
-        super().__init__(v=v, name=name, member_type=SetValue)
-
-    def __myop__(self, func, other, is_set=False) -> Union[bool, ContainerValue]:
-        """"""
-        vset = self.value
-        if isinstance(other, SubsetValue):
-            oset = other.value
-        else:
-            oset = other
-        if not is_set:
-            return func(vset, oset)
-        else:
-            return SubsetValue(func(vset, oset))
-
-    def __le__(self, other) -> bool:
-        """"""
-        self.__myop__(other=other, func=lambda s, o: s <= o, is_set=False)
-
-    def __lt__(self, other) -> bool:
-        """"""
-        self.__myop__(other=other, func=lambda s, o: s < o, is_set=False)
-
-    def __gt__(self, other) -> bool:
-        """"""
-        self.__myop__(other=other, func=lambda s, o: s > o, is_set=False)
-
-    def __ge__(self, other) -> bool:
-        """"""
-        self.__myop__(other=other, func=lambda s, o: s >= o, is_set=False)
-
-    def __eq__(self, other) -> bool:
-        return self.__myop__(func=lambda s, o: s == o, other=other, is_set=False)
-
-    def __ne__(self, other) -> bool:
-        return self.__myop__(func=lambda s, o: s != o, other=other, is_set=False)
-
-    def __and__(self, other) -> ContainerValue:
-        return self.__myop__(func=lambda s, o: s & o, other=other, is_set=True)
-
-    def __or__(self, other) -> ContainerValue:
-        return self.__myop__(func=lambda s, o: s | o, other=other, is_set=True)
-
-    def __xor__(self, other) -> ContainerValue:
-        return self.__myop__(func=lambda s, o: s ^ o, other=other, is_set=True)
-
-    def __sub__(self, other) -> ContainerValue:
-        return self.__myop__(func=lambda s, o: s - o, other=other, is_set=True)
-
-    def __hash__(self):
-        """"""
-        return hash(self.value)
-
-
 class NumericIntervalValue(Interval):
     """
     An interval defined on real line

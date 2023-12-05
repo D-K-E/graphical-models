@@ -3,7 +3,6 @@ set operations based on types on value.py
 """
 
 from pygmodels.value.valuetype.value import SetValue
-from pygmodels.value.valuetype.value import SubsetValue
 from pygmodels.value.valuetype.value import NumericIntervalValue
 from pygmodels.value.valuetype.value import R
 
@@ -19,7 +18,7 @@ class SetBoolOps:
 
     @staticmethod
     def is_sigma_field(
-        iterable: FrozenSet[Union[SubsetValue, NumericIntervalValue]],
+        iterable: FrozenSet[Union[FrozenSet[SetValue], NumericIntervalValue]],
         sample_space: Union[FrozenSet[SetValue], R],
     ) -> bool:
         """
@@ -27,7 +26,7 @@ class SetBoolOps:
 
         see, LeGall, 2022, p. 4
         """
-        is_all_type(iterable, "iterable", (SubsetValue, NumericIntervalValue), True)
+        is_all_type(iterable, "iterable", (frozenset, NumericIntervalValue), True)
         if not any(
             [
                 is_all_type(
@@ -47,8 +46,9 @@ class SetBoolOps:
         c3 = True
         for subs in SetSetOps.mk_powerset(sample_space=iterable):
             if subs:
-                s = subs.pop()
-                for sub in subs:
+                ss = set(subs)
+                s = ss.pop()
+                for sub in ss:
                     s |= sub
                 c3 = c3 and any(s == i for i in iterable)
 
@@ -68,12 +68,14 @@ class SetSetOps:
         return {frozenset(), frozenset(sample_space)}
 
     @staticmethod
-    def mk_sigma_field_from_subset(sample_space: Set[SetValue], subset: SubsetValue):
+    def mk_sigma_field_from_subset(
+        sample_space: FrozenSet[SetValue], subset: FrozenSet[SetValue]
+    ):
         """
         From Venkatesh, 2013, p. 15
         """
         is_all_type(sample_space, "sample_space", SetValue, True)
-        is_type(subset, "subset", SubsetValue, True)
+        is_type(subset, "subset", frozenset, True)
         if not (subset <= sample_space):
             raise ValueError("given subset is not a subset of sample_space")
         sub_c = sample_space - subset
@@ -81,11 +83,13 @@ class SetSetOps:
 
     @staticmethod
     def add_subset_to_sigma_field(
-        sample_space: Set[SetValue], subset: SubsetValue, field: Set[SubsetValue]
+        sample_space: Set[SetValue],
+        subset: FrozenSet[SetValue],
+        field: FrozenSet[FrozenSet[SetValue]],
     ):
         """ """
         is_all_type(sample_space, "sample_space", SetValue, True)
-        is_type(subset, "subset", SubsetValue, True)
+        is_type(subset, "subset", frozenset, True)
         if not (subset <= sample_space):
             raise ValueError("given subset is not a subset of sample_space")
         sub_c = sample_space - subset
@@ -95,7 +99,7 @@ class SetSetOps:
 
     @staticmethod
     def mk_sigma_field_from_subsets(
-        sample_space: Set[SetValue], subsets: Set[SubsetValue]
+        sample_space: FrozenSet[SetValue], subsets: FrozenSet[FrozenSet[SetValue]]
     ):
         """
         From Shao, 2010, p. 2
