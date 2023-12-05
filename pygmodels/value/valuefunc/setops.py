@@ -9,7 +9,7 @@ from pygmodels.value.valuetype.value import R
 
 from pygmodels.utils import is_type, is_all_type
 
-from typing import Set, Generator, Iterator, Union
+from typing import Set, Generator, Iterator, Union, FrozenSet
 
 from itertools import chain, combinations
 
@@ -19,8 +19,8 @@ class SetBoolOps:
 
     @staticmethod
     def is_sigma_field(
-        iterable: Set[Union[SubsetValue, NumericIntervalValue]],
-        sample_space: Union[Set[SetValue], R],
+        iterable: FrozenSet[Union[SubsetValue, NumericIntervalValue]],
+        sample_space: Union[FrozenSet[SetValue], R],
     ) -> bool:
         """
         \brief Check if iterable is sigma field on Space.
@@ -40,7 +40,7 @@ class SetBoolOps:
             ]
         ):
             raise TypeError(
-                "sample_space must either be a numeric interval or a Set[SetValue]"
+                "sample_space must either be a numeric interval or a FrozenSet[SetValue]"
             )
         c1 = any(sample_space == a for a in iterable)
         c2 = all((sample_space - a) in iterable for a in iterable)

@@ -483,10 +483,13 @@ class SetValue(Value, AbstractSetValue):
 class SubsetValue(ContainerValue):
     """ """
 
-    def __init__(self, v: FrozenSet[SetValue], name: str = "subset"):
-        """"""
+    def __init__(self, v: Optional[FrozenSet[SetValue]] = None, name: str = "subset"):
+        """
+        \brief subset value. It can be either an empty set, which is signaled
+        by None, or a non empty set
+        """
         is_type(v, "v", frozenset, True)
-        is_all_type([a.fetch() for a in v], "v member", NumericValue, True)
+        # is_all_type([a.fetch() for a in v], "v member", NumericValue, True)
         super().__init__(v=v, name=name, member_type=SetValue)
 
     def __myop__(self, func, other, is_set=False) -> Union[bool, ContainerValue]:
@@ -810,9 +813,11 @@ class NumericIntervalValue(Interval):
         return ET.tostring(m, encoding="unicode")
 
 
-R = NumericIntervalValue(
-    lower=NumericValue(-math.inf),
-    upper=NumericValue(math.inf),
-    open_on=IntervalConf.Both,
-    name="R",
-)
+class R(NumericIntervalValue):
+    def __init__(self):
+        super().__init__(
+            lower=NumericValue(-math.inf),
+            upper=NumericValue(math.inf),
+            open_on=IntervalConf.Both,
+            name="R",
+        )
