@@ -822,6 +822,8 @@ class SetValueTest(unittest.TestCase):
 
 
 class NumericIntervalValueTest(unittest.TestCase):
+    """"""
+
     def setUp(self):
         """"""
         self.v1 = NumericIntervalValue(
@@ -909,6 +911,135 @@ class NumericIntervalValueTest(unittest.TestCase):
     def test_contains_v7(self):
         """"""
         self.assertTrue(NumericValue(2.3) in self.v5)
+
+    def test_and_v1(self):
+        """"""
+        v_inter = self.v1 & self.v2
+        self.assertEqual(
+            v_inter,
+            NumericIntervalValue(
+                lower=NumericValue(1), upper=NumericValue(2), open_on=IntervalConf.Lower
+            ),
+        )
+
+    def test_and_v2(self):
+        """"""
+        v_i = self.v3 & self.v2
+        self.assertEqual(v_i, frozenset())
+
+    def test_and_v3(self):
+        """"""
+        v_i = self.v7 & self.v3
+        self.assertEqual(
+            v_i,
+            NumericIntervalValue(
+                lower=NumericValue(2.3),
+                upper=NumericValue(2.4),
+                open_on=IntervalConf.Upper,
+            ),
+        )
+
+    def test_and_v4(self):
+        """"""
+        v_i = self.v7 & self.v4
+        self.assertEqual(
+            v_i,
+            self.v7,
+        )
+
+    def test_or_v1(self):
+        """"""
+        v_or = self.v1 | self.v2
+        self.assertEqual(
+            v_or,
+            NumericIntervalValue(
+                lower=NumericValue(0), upper=NumericValue(2.2), open_on=None
+            ),
+        )
+
+    def test_or_v2(self):
+        """"""
+        v_i = self.v3 | self.v2
+        self.assertEqual(v_i, frozenset([self.v3, self.v2]))
+
+    def test_or_v3(self):
+        """"""
+        v_i = self.v7 | self.v3
+        self.assertEqual(
+            v_i,
+            NumericIntervalValue(
+                lower=NumericValue(2.2),
+                upper=NumericValue(2.4),
+                open_on=IntervalConf.Lower,
+            ),
+        )
+
+    def test_or_v4(self):
+        """"""
+        v_i = self.v7 | self.v4
+        self.assertEqual(
+            v_i,
+            self.v4,
+        )
+
+    def test_or_v5(self):
+        """"""
+        v_i = self.v7 | frozenset([self.v5, self.v6])
+        self.assertEqual(v_i, frozenset([self.v5, self.v6]))
+
+    def test_sub_v1(self):
+        """"""
+        v_i = self.v4 - self.v5
+        self.assertEqual(
+            v_i,
+            NumericIntervalValue(
+                lower=NumericValue(2.2), upper=NumericValue(2.2), open_on=None
+            ),
+        )
+
+    def test_sub_v2(self):
+        """"""
+        v_i = self.v2 - self.v3
+        self.assertEqual(
+            v_i,
+            self.v2,
+        )
+
+    def test_sub_v3(self):
+        """"""
+        v_i = self.v5 - self.v3
+        self.assertEqual(
+            v_i,
+            NumericIntervalValue(
+                lower=NumericValue(2.2),
+                upper=NumericValue(2.3),
+                open_on=IntervalConf.Both,
+            ),
+        )
+
+    def test_sub_v4(self):
+        """"""
+        v_i = self.v4 - self.v3
+        self.assertEqual(
+            v_i,
+            NumericIntervalValue(
+                lower=NumericValue(2.2),
+                upper=NumericValue(2.3),
+                open_on=IntervalConf.Upper,
+            ),
+        )
+
+    def test_sub_v5(self):
+        """"""
+        v_i = self.v1 - self.v2
+        self.assertEqual(
+            v_i,
+            NumericIntervalValue(
+                lower=NumericValue(2),
+                upper=NumericValue(2.2),
+                open_on=IntervalConf.Lower,
+            ),
+        )
 
 
 if __name__ == "__main__":

@@ -679,10 +679,10 @@ class NumericIntervalValue(Interval):
             if oset:
                 is_all_type(oset, "oset", NumericIntervalValue, True)
                 rs = frozenset([self & o for o in oset])
-                result = frozenset([r for r in rs if r])
+                result = set([r for r in rs if r])
                 if len(result) == 1:
                     return result.pop()
-                return result
+                return frozenset(result)
         else:
             raise TypeError(
                 "other must have type NumericIntervalValue or Set[NumericIntervalValue]"
@@ -779,7 +779,40 @@ class NumericIntervalValue(Interval):
         """"""
         return hash((str(self.lower), str(self.upper), self._open_on, self._name))
 
+    def __str__(self) -> str:
+        """ """
+        m = ET.Element(type(self).__name__)
+        if self._name is not None:
+            m.set("name", self._name)
+        if self._open_on == IntervalConf.Lower:
+            m.set("open_on", "lower")
+        elif self._open_on == IntervalConf.Upper:
+            m.set("open_on", "upper")
+        elif self._open_on == IntervalConf.Both:
+            m.set("open_on", "both")
+        #
+        lower = ET.SubElement(m, "value")
+
+        def add_txt(el, val):
+            """"""
+            el.set("type", type(val).__name__)
+            if val == (-math.inf):
+                el.text = "-inf"
+            elif val == (math.inf):
+                el.text = "inf"
+            else:
+                el.text = str(val)
+
+        add_txt(lower, self.lower)
+        upper = ET.SubElement(m, "value")
+        add_txt(upper, self.upper)
+        ET.indent(m)
+        return ET.tostring(m, encoding="unicode")
+
 
 R = NumericIntervalValue(
-    lower=-math.inf, upper=math.inf, open_on=IntervalConf.Both, name="R"
+    lower=NumericValue(-math.inf),
+    upper=NumericValue(math.inf),
+    open_on=IntervalConf.Both,
+    name="R",
 )
