@@ -581,11 +581,17 @@ class NumericIntervalValue(Interval):
                         nset.add(nval)
                 ps = frozenset(nset)
                 return ps
+            else:
+                # empty set
+                return self
         else:
             raise TypeError(
                 "other must have type NumericIntervalValue or Set[NumericIntervalValue]"
                 + f" but it has {type(other).__name__}"
             )
+
+    def __ror__(self, other):
+        return self | other
 
     def __and__(
         self, other: Union[FrozenSet[Interval], Interval]
@@ -628,6 +634,9 @@ class NumericIntervalValue(Interval):
                 "other must have type NumericIntervalValue or Set[NumericIntervalValue]"
                 + f" but it has {type(other).__name__}"
             )
+
+    def __rand__(self, other):
+        return self & other
 
     def __sub__(
         self, other: Union[FrozenSet[Interval], Interval]

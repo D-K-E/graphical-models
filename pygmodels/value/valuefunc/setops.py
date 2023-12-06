@@ -49,7 +49,7 @@ class SetBoolOps:
                 ss = set(subs)
                 s = ss.pop()
                 for sub in ss:
-                    s |= sub
+                    s = s | sub
                 c3 = c3 and any(s == i for i in iterable)
 
         return c1 and c2 and c3
@@ -59,33 +59,58 @@ class SetSetOps:
     """"""
 
     @staticmethod
-    def mk_trivial_sigma_field(sample_space: Set[SetValue]) -> Set[Set[SetValue]]:
+    def mk_trivial_sigma_field(
+        sample_space: Union[Set[Union[SetValue]], R]
+    ) -> FrozenSet[Union[FrozenSet[SetValue], R]]:
         """
         Constructs a trivial sigma field from a given set E according to
         LeGall, 2022, p. 4
         """
-        is_all_type(sample_space, "sample_space", SetValue, True)
-        return {frozenset(), frozenset(sample_space)}
+        if isinstance(sample_space, (set, frozenset)):
+            is_all_type(sample_space, "sample_space", SetValue, True)
+            return frozenset([frozenset(), frozenset(sample_space)])
+        elif isinstance(sample_space, R):
+            return frozenset([frozenset(), sample_space])
+        else:
+            msg = "Only finite sets and R are supported as sigma fields"
+            msg += f" argument has type {type(sample_space).__name__}"
+            raise TypeError(msg)
 
     @staticmethod
     def mk_sigma_field_from_subset(
-        sample_space: FrozenSet[SetValue], subset: FrozenSet[SetValue]
+        sample_space: Union[FrozenSet[SetValue], R],
+        subset: Union[
+            FrozenSet[Union[SetValue, NumericIntervalValue]], NumericIntervalValue
+        ],
     ):
         """
         From Venkatesh, 2013, p. 15
         """
-        is_all_type(sample_space, "sample_space", SetValue, True)
-        is_type(subset, "subset", frozenset, True)
+        is_set = isinstance(sample_space, (set, frozenset))
+        if is_set:
+            is_all_type(sample_space, "sample_space", SetValue, True)
+            is_all_type(subset, "subset", SetValue, True)
+        else:
+            is_type(sample_space, "sample_space", R, True)
+            if isinstance(subset, (set, frozenset)):
+                is_all_type(subset, "subset", NumericIntervalValue, True)
+            else:
+                is_type(subset, "subset", NumericIntervalValue, True)
         if not (subset <= sample_space):
             raise ValueError("given subset is not a subset of sample_space")
         sub_c = sample_space - subset
-        return {frozenset(), frozenset(sample_space), subset, sub_c}
+        return {
+            frozenset(),
+            frozenset(sample_space) if is_set else sample_space,
+            subset,
+            sub_c,
+        }
 
     @staticmethod
     def add_subset_to_sigma_field(
-        sample_space: Set[SetValue],
-        subset: FrozenSet[SetValue],
-        field: FrozenSet[FrozenSet[SetValue]],
+        sample_space: Union[FrozenSet[SetValue], R],
+        subset: FrozenSet[Union[SetValue, NumericIntervalValue]],
+        field: FrozenSet[FrozenSet[Union[SetValue, NumericIntervalValue]]],
     ):
         """ """
         is_all_type(sample_space, "sample_space", SetValue, True)
@@ -99,7 +124,8 @@ class SetSetOps:
 
     @staticmethod
     def mk_sigma_field_from_subsets(
-        sample_space: FrozenSet[SetValue], subsets: FrozenSet[FrozenSet[SetValue]]
+        sample_space: Union[FrozenSet[SetValue], R],
+        subsets: FrozenSet[FrozenSet[SetValue]],
     ):
         """
         From Shao, 2010, p. 2
