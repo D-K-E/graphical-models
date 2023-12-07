@@ -8,7 +8,8 @@ from pygmodels.value.valuetype.value import StringValue
 from pygmodels.value.valuetype.value import ContainerValue
 from pygmodels.value.valuetype.value import CallableValue
 from pygmodels.value.valuetype.value import SetValue
-from pygmodels.value.valuetype.value import NumericIntervalValue
+from pygmodels.value.valuetype.value import NumericInterval
+from pygmodels.value.valuetype.value import IntervalPair
 from pygmodels.value.valuetype.abstractvalue import IntervalConf
 from pygmodels.utils import is_all_type
 
@@ -821,30 +822,60 @@ class SetValueTest(unittest.TestCase):
         self.assertTrue(check)
 
 
-class NumericIntervalValueTest(unittest.TestCase):
+class IntervalPairTest(unittest.TestCase):
     """"""
 
     def setUp(self):
         """"""
-        self.v1 = NumericIntervalValue(
-            lower=NumericValue(1), upper=NumericValue(2.2), open_on=IntervalConf.Lower
+        self.v1 = NumericInterval(
+            lower=NumericValue(1), upper=NumericValue(2.3), open_on=IntervalConf.Upper
         )
-        self.v2 = NumericIntervalValue(
-            lower=NumericValue(0), upper=NumericValue(2), open_on=None
-        )
-        self.v3 = NumericIntervalValue(
+        self.v2 = NumericInterval(
             lower=NumericValue(2.3), upper=NumericValue(2.4), open_on=None
         )
-        self.v4 = NumericIntervalValue(
+        self.p_1 = IntervalPair(lower=self.v1, upper=self.v2)
+
+        self.v3 = NumericInterval(
+            lower=NumericValue(2.4), upper=NumericValue(2.5), open_on=IntervalConf.Lower
+        )
+        self.v4 = NumericInterval(
+            lower=NumericValue(2.5), upper=NumericValue(2.6), open_on=IntervalConf.Lower
+        )
+        self.p_2 = IntervalPair(lower=self.v3, upper=self.v4)
+
+    def test_constructor(self):
+        ""
+        val = IntervalPair(lower=self.v2, upper=self.v1)
+        self.assertEqual(val._lower, self.v1)
+
+    def test_or_v1(self):
+        ""
+
+
+class NumericIntervalTest(unittest.TestCase):
+    """"""
+
+    def setUp(self):
+        """"""
+        self.v1 = NumericInterval(
+            lower=NumericValue(1), upper=NumericValue(2.2), open_on=IntervalConf.Lower
+        )
+        self.v2 = NumericInterval(
+            lower=NumericValue(0), upper=NumericValue(2), open_on=None
+        )
+        self.v3 = NumericInterval(
+            lower=NumericValue(2.3), upper=NumericValue(2.4), open_on=None
+        )
+        self.v4 = NumericInterval(
             lower=NumericValue(2.2), upper=NumericValue(2.4), open_on=None
         )
-        self.v5 = NumericIntervalValue(
+        self.v5 = NumericInterval(
             lower=NumericValue(2.2), upper=NumericValue(2.4), open_on=IntervalConf.Lower
         )
-        self.v6 = NumericIntervalValue(
+        self.v6 = NumericInterval(
             lower=NumericValue(2.2), upper=NumericValue(2.4), open_on=IntervalConf.Upper
         )
-        self.v7 = NumericIntervalValue(
+        self.v7 = NumericInterval(
             lower=NumericValue(2.2), upper=NumericValue(2.4), open_on=IntervalConf.Both
         )
 
@@ -862,12 +893,13 @@ class NumericIntervalValueTest(unittest.TestCase):
 
     def test_lt_v4(self):
         """"""
-        try:
-            fs = self.v1 < frozenset([self.v5])
-            check = False
-        except TypeError:
-            check = True
-        self.assertTrue(check)
+        fs = self.v1 < frozenset([self.v5])
+        self.assertTrue(fs)
+
+    def test_lt_v5(self):
+        """"""
+        fs = self.v1 < frozenset([self.v5, self.v3])
+        self.assertTrue(fs)
 
     def test_neq_v1(self):
         """"""
@@ -917,7 +949,7 @@ class NumericIntervalValueTest(unittest.TestCase):
         v_inter = self.v1 & self.v2
         self.assertEqual(
             v_inter,
-            NumericIntervalValue(
+            NumericInterval(
                 lower=NumericValue(1), upper=NumericValue(2), open_on=IntervalConf.Lower
             ),
         )
@@ -932,7 +964,7 @@ class NumericIntervalValueTest(unittest.TestCase):
         v_i = self.v7 & self.v3
         self.assertEqual(
             v_i,
-            NumericIntervalValue(
+            NumericInterval(
                 lower=NumericValue(2.3),
                 upper=NumericValue(2.4),
                 open_on=IntervalConf.Upper,
@@ -952,7 +984,7 @@ class NumericIntervalValueTest(unittest.TestCase):
         v_or = self.v1 | self.v2
         self.assertEqual(
             v_or,
-            NumericIntervalValue(
+            NumericInterval(
                 lower=NumericValue(0), upper=NumericValue(2.2), open_on=None
             ),
         )
@@ -967,7 +999,7 @@ class NumericIntervalValueTest(unittest.TestCase):
         v_i = self.v7 | self.v3
         self.assertEqual(
             v_i,
-            NumericIntervalValue(
+            NumericInterval(
                 lower=NumericValue(2.2),
                 upper=NumericValue(2.4),
                 open_on=IntervalConf.Lower,
@@ -992,7 +1024,7 @@ class NumericIntervalValueTest(unittest.TestCase):
         v_i = self.v4 - self.v5
         self.assertEqual(
             v_i,
-            NumericIntervalValue(
+            NumericInterval(
                 lower=NumericValue(2.2), upper=NumericValue(2.2), open_on=None
             ),
         )
@@ -1010,7 +1042,7 @@ class NumericIntervalValueTest(unittest.TestCase):
         v_i = self.v5 - self.v3
         self.assertEqual(
             v_i,
-            NumericIntervalValue(
+            NumericInterval(
                 lower=NumericValue(2.2),
                 upper=NumericValue(2.3),
                 open_on=IntervalConf.Both,
@@ -1022,7 +1054,7 @@ class NumericIntervalValueTest(unittest.TestCase):
         v_i = self.v4 - self.v3
         self.assertEqual(
             v_i,
-            NumericIntervalValue(
+            NumericInterval(
                 lower=NumericValue(2.2),
                 upper=NumericValue(2.3),
                 open_on=IntervalConf.Upper,
@@ -1034,12 +1066,21 @@ class NumericIntervalValueTest(unittest.TestCase):
         v_i = self.v1 - self.v2
         self.assertEqual(
             v_i,
-            NumericIntervalValue(
+            NumericInterval(
                 lower=NumericValue(2),
                 upper=NumericValue(2.2),
                 open_on=IntervalConf.Lower,
             ),
         )
+
+    def test_invert_v1(self):
+        """"""
+        v_i = ~self.v1
+        v_imin = min(v_i)
+        v_imax = max(v_i)
+
+        v_imin_inv = ~v_imin
+        v_imax_inv = ~v_imax
 
 
 if __name__ == "__main__":

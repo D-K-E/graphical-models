@@ -3,7 +3,7 @@ set operations based on types on value.py
 """
 
 from pygmodels.value.valuetype.value import SetValue
-from pygmodels.value.valuetype.value import NumericIntervalValue
+from pygmodels.value.valuetype.value import NumericInterval
 from pygmodels.value.valuetype.value import R
 
 from pygmodels.utils import is_type, is_all_type
@@ -18,7 +18,7 @@ class SetBoolOps:
 
     @staticmethod
     def is_sigma_field(
-        iterable: FrozenSet[Union[FrozenSet[SetValue], NumericIntervalValue]],
+        iterable: FrozenSet[Union[FrozenSet[SetValue], NumericInterval]],
         sample_space: Union[FrozenSet[SetValue], R],
     ) -> bool:
         """
@@ -26,23 +26,30 @@ class SetBoolOps:
 
         see, LeGall, 2022, p. 4
         """
-        is_all_type(iterable, "iterable", (frozenset, NumericIntervalValue), True)
+        is_all_type(iterable, "iterable", (frozenset, NumericInterval), True)
         if not any(
             [
                 is_all_type(
                     sample_space,
                     "sample_space",
-                    (SetValue, NumericIntervalValue),
+                    (SetValue, NumericInterval),
                     False,
                 ),
-                is_type(sample_space, "sample_space", NumericIntervalValue, False),
+                is_type(sample_space, "sample_space", NumericInterval, False),
             ]
         ):
             raise TypeError(
                 "sample_space must either be a numeric interval or a FrozenSet[SetValue]"
             )
         c1 = any(sample_space == a for a in iterable)
-        c2 = all((sample_space - a) in iterable for a in iterable)
+        c2 = True
+        for a in iterable.copy():
+            diff = sample_space - a
+            cond = diff in iterable
+            if not cond:
+                print("not in")
+                [print(str(d)) for d in diff]
+            c2 = c2 and cond
         c3 = True
         for subs in SetSetOps.mk_powerset(sample_space=iterable):
             if subs:
@@ -80,7 +87,7 @@ class SetSetOps:
     def mk_sigma_field_from_subset(
         sample_space: Union[FrozenSet[SetValue], R],
         subset: Union[
-            FrozenSet[Union[SetValue, NumericIntervalValue]], NumericIntervalValue
+            FrozenSet[Union[SetValue, NumericInterval]], NumericInterval
         ],
     ):
         """
@@ -90,27 +97,30 @@ class SetSetOps:
         if is_set:
             is_all_type(sample_space, "sample_space", SetValue, True)
             is_all_type(subset, "subset", SetValue, True)
+            is_subset = subset <= sample_space
         else:
             is_type(sample_space, "sample_space", R, True)
             if isinstance(subset, (set, frozenset)):
-                is_all_type(subset, "subset", NumericIntervalValue, True)
+                is_all_type(subset, "subset", NumericInterval, True)
             else:
-                is_type(subset, "subset", NumericIntervalValue, True)
-        if not (subset <= sample_space):
+                is_type(subset, "subset", NumericInterval, True)
+            is_subset = sample_space.is_superset_of(subset)
+        if not is_subset:
             raise ValueError("given subset is not a subset of sample_space")
         sub_c = sample_space - subset
-        return {
+        results = {
             frozenset(),
             frozenset(sample_space) if is_set else sample_space,
             subset,
             sub_c,
         }
+        return frozenset(results)
 
     @staticmethod
     def add_subset_to_sigma_field(
         sample_space: Union[FrozenSet[SetValue], R],
-        subset: FrozenSet[Union[SetValue, NumericIntervalValue]],
-        field: FrozenSet[FrozenSet[Union[SetValue, NumericIntervalValue]]],
+        subset: FrozenSet[Union[SetValue, NumericInterval]],
+        field: FrozenSet[FrozenSet[Union[SetValue, NumericInterval]]],
     ):
         """ """
         is_all_type(sample_space, "sample_space", SetValue, True)

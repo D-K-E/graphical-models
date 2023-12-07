@@ -7,7 +7,7 @@ from pygmodels.value.valuefunc.setops import SetBoolOps
 from pygmodels.value.valuefunc.setops import SetSetOps
 from pygmodels.value.valuetype.value import SetValue
 from pygmodels.value.valuetype.value import StringValue
-from pygmodels.value.valuetype.value import NumericIntervalValue
+from pygmodels.value.valuetype.value import NumericInterval
 from pygmodels.value.valuetype.value import R
 from pygmodels.value.valuetype.value import NumericValue
 from pygmodels.value.valuetype.abstractvalue import IntervalConf
@@ -95,20 +95,20 @@ class SetSetOpsTest(unittest.TestCase):
             ]
         )
         self.R = R()
-        self.v2 = NumericIntervalValue(
+        self.v2 = NumericInterval(
             lower=NumericValue(0), upper=NumericValue(2), open_on=None
         )
 
-        self.v4 = NumericIntervalValue(
+        self.v4 = NumericInterval(
             lower=NumericValue(2.2), upper=NumericValue(2.4), open_on=None
         )
-        self.v5 = NumericIntervalValue(
+        self.v5 = NumericInterval(
             lower=NumericValue(2.2), upper=NumericValue(2.4), open_on=IntervalConf.Lower
         )
-        self.v6 = NumericIntervalValue(
+        self.v6 = NumericInterval(
             lower=NumericValue(2.2), upper=NumericValue(2.4), open_on=IntervalConf.Upper
         )
-        self.v7 = NumericIntervalValue(
+        self.v7 = NumericInterval(
             lower=NumericValue(2.2), upper=NumericValue(2.4), open_on=IntervalConf.Both
         )
 
@@ -129,6 +129,17 @@ class SetSetOpsTest(unittest.TestCase):
         field = SetSetOps.mk_sigma_field_from_subset(
             sample_space=self.R, subset=self.v4
         )
+        print("v1")
+        for f in field:
+            if isinstance(f, (frozenset, set)):
+                print("f subset")
+                print("#" * 20)
+                for ff in f:
+                    print(ff)
+                print("#" * 20)
+            else:
+                print(f)
+            print("-" * 20)
         is_field = SetBoolOps.is_sigma_field(field, sample_space=self.R)
         self.assertTrue(is_field)
 
@@ -137,6 +148,7 @@ class SetSetOpsTest(unittest.TestCase):
         field = SetSetOps.mk_sigma_field_from_subset(
             sample_space=self.R, subset=frozenset([self.v4, self.v2])
         )
+
         is_field = SetBoolOps.is_sigma_field(field, sample_space=self.R)
         self.assertTrue(is_field)
 
