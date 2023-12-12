@@ -603,7 +603,45 @@ class IntervalPair(NamedContainer):
     def __invert__(self) -> Interval:
         l_i = ~self._lower
         u_i = ~self._upper
-        return l_i | u_i
+        return l_i & u_i
+
+    def __lt__(self, other) -> bool:
+        """"""
+        if isinstance(other, Interval):
+            c1 = self._lower < other
+            c2 = self._upper < other
+            return c1 and c2
+        elif isinstance(other, IntervalPair):
+            c1 = self._lower < other._lower
+            c2 = self._upper < other._lower
+            return c1 and c2
+        else:
+            raise TypeError(f"unsupported argument type {type(other).__name__}")
+
+    def __eq__(self, other) -> bool:
+        """"""
+        if not isinstance(other, IntervalPair):
+            return False
+        c1 = self._lower == other._lower
+        c2 = self._upper == other._upper
+        return c1 and c2
+
+    def __le__(self, other) -> bool:
+        """"""
+        c1 = self < other
+        c2 = self == other
+        return c1 or c2
+
+    def __gt__(self, other) -> bool:
+        """"""
+        c1 = self <= other
+        return not c1
+
+    def __ge__(self, other) -> bool:
+        """"""
+        c1 = self > other
+        c2 = self == other
+        return c1 or c2
 
     def __str__(self) -> str:
         """"""
@@ -617,6 +655,11 @@ class IntervalPair(NamedContainer):
         m.append(ustr)
         ET.indent(m)
         return ET.tostring(m, encoding="unicode")
+
+    def __hash__(self):
+        """"""
+        s = str(self)
+        return hash(s)
 
 
 class NumericInterval(Interval):
@@ -673,7 +716,7 @@ class NumericInterval(Interval):
         """
         return self.upper - self.lower
 
-    def __decide_conf__(self, other, l_minmax_fn, u_minmax_fn):
+    def __decide_conf(self, other, l_minmax_fn, u_minmax_fn):
         """"""
         is_l_closed = l_minmax_fn()
         is_u_closed = u_minmax_fn()
@@ -705,7 +748,7 @@ class NumericInterval(Interval):
             max_l = max(other.upper, self.upper)
             is_l_closed_fn = lambda: (min_l in self) or (min_l in other)
             is_u_closed_fn = lambda: (max_l in self) or (max_l in other)
-            conf = self.__decide_conf__(
+            conf = self.__decide_conf(
                 other=other, l_minmax_fn=is_l_closed_fn, u_minmax_fn=is_u_closed_fn
             )
             return NumericInterval(lower=min_l, upper=max_l, name=None, open_on=conf)
@@ -741,7 +784,7 @@ class NumericInterval(Interval):
             is_u_closed_fn = (
                 lambda: upper in self if upper == self.upper else upper in other
             )
-            conf = self.__decide_conf__(
+            conf = self.__decide_conf(
                 other=other, l_minmax_fn=is_l_closed_fn, u_minmax_fn=is_u_closed_fn
             )
             if lower <= upper:

@@ -844,12 +844,26 @@ class IntervalPairTest(unittest.TestCase):
         self.p_2 = IntervalPair(lower=self.v3, upper=self.v4)
 
     def test_constructor(self):
-        ""
+        """"""
         val = IntervalPair(lower=self.v2, upper=self.v1)
         self.assertEqual(val._lower, self.v1)
 
     def test_or_v1(self):
-        ""
+        """"""
+        pv = self.p_1 | NumericInterval(
+            lower=NumericValue(2.4),
+            upper=NumericValue(2.42),
+            open_on=IntervalConf.Upper,
+        )
+        self.assertEqual(self.p_1._lower, pv._lower)
+        self.assertEqual(
+            NumericInterval(
+                lower=NumericValue(2.3),
+                upper=NumericValue(2.42),
+                open_on=IntervalConf.Upper,
+            ),
+            pv._upper,
+        )
 
 
 class NumericIntervalTest(unittest.TestCase):
@@ -1076,11 +1090,12 @@ class NumericIntervalTest(unittest.TestCase):
     def test_invert_v1(self):
         """"""
         v_i = ~self.v1
-        v_imin = min(v_i)
-        v_imax = max(v_i)
-
-        v_imin_inv = ~v_imin
-        v_imax_inv = ~v_imax
+        v_1 = ~v_i
+        print("invert")
+        print(str(v_i))
+        print(str(v_1))
+        print(str(self.v1))
+        self.assertEqual(v_1, self.v1)
 
 
 if __name__ == "__main__":
