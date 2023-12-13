@@ -848,8 +848,10 @@ class IntervalPairTest(unittest.TestCase):
         val = IntervalPair(lower=self.v2, upper=self.v1)
         self.assertEqual(val._lower, self.v1)
 
-    def test_or_v1(self):
-        """"""
+    def test_or_v1_non_overlapping_result(self):
+        """
+        non overlapping interval case
+        """
         pv = self.p_1 | NumericInterval(
             lower=NumericValue(2.4),
             upper=NumericValue(2.42),
@@ -863,6 +865,50 @@ class IntervalPairTest(unittest.TestCase):
                 open_on=IntervalConf.Upper,
             ),
             pv._upper,
+        )
+
+    def test_or_v2_overlapping_result(self):
+        """"""
+        pv = self.p_1 | NumericInterval(
+            lower=NumericValue(1.4),
+            upper=NumericValue(2.42),
+            open_on=IntervalConf.Upper,
+        )
+        self.assertEqual(
+            NumericInterval(
+                lower=NumericValue(1),
+                upper=NumericValue(2.42),
+                open_on=IntervalConf.Upper,
+            ),
+            pv,
+        )
+
+    def test_or_v3_interval_pair_with_interval_result(self):
+        """"""
+        a = NumericInterval(
+            lower=NumericValue(2.3),
+            upper=NumericValue(2.42),
+            open_on=IntervalConf.Lower,
+        )
+        pv = self.p_1 | a
+        self.assertEqual(pv._lower, self.v1)
+        self.assertEqual(
+            pv._upper, NumericInterval(lower=a.lower, upper=a.upper, open_on=None)
+        )
+
+    def test_or_v4_2_interval_pair_result(self):
+        """"""
+        a = NumericInterval(
+            lower=NumericValue(0.3),
+            upper=NumericValue(1),
+            open_on=IntervalConf.Upper,
+        )
+        pv = self.p_1 | a
+        lower_pair = IntervalPair(lower=a, upper=self.p_1._lower)
+        upper_pair = IntervalPair(lower=a, upper=self.p_1._upper)
+        self.assertEqual(pv._lower, self.v1)
+        self.assertEqual(
+            pv._upper, NumericInterval(lower=a.lower, upper=a.upper, open_on=None)
         )
 
 

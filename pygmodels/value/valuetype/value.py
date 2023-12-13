@@ -537,18 +537,25 @@ class IntervalPair(NamedContainer):
                 return IntervalPair(lower=lower, upper=upper)
 
         if isinstance(other, Interval):
-            lower = self._lower | other
-            upper = self._upper | other
-            return output(lower, upper)
+            is_smaller = self > other
+            if is_smaller:
+                lower = self._lower | other
+                return output(lower, self._upper)
+            is_between = self._lower <= other and self._upper > other
+            if is_between:
+                lower = self._lower | other
+                upper = self._upper | other
+                return output(lower, upper)
+            is_greater = self < other
+            if is_greater:
+                upper = self._upper | other
+                return output(self._lower, upper)
         #
         is_type(other, "other", IntervalPair, True)
-        lower_1 = self._lower | other._lower
-        lower_2 = self._lower | other._upper
-        lower = lower_1 | lower_2
-        upper_1 = self._upper | other._lower
-        upper_2 = self._upper | other._upper
-        upper = upper_1 | upper_2
-        return output(lower, upper)
+        lower = self | other._lower
+        upper = self | other._upper
+        common = lower & upper
+        return output(common._lower, common._upper)
 
     def __and__(self, other) -> FrozenSet[Interval]:
         """
@@ -580,24 +587,24 @@ class IntervalPair(NamedContainer):
                 is_overlapping = lower & upper
                 if is_overlapping:
                     # overlapping intervals
-                    return other
+                    return lower | upper
                 else:
                     # not overlapping intervals
                     return IntervalPair(lower=lower, upper=upper)
+
+            # lower empty set
             if upper and not lower:
                 return upper
+            # upper empty set
             if lower and not upper:
                 return lower
+            # both are empty set
             if not lower and not upper:
                 return frozenset()
         #
         is_type(other, "other", IntervalPair, True)
-        lower_1 = self._lower & other._lower
-        lower_2 = self._lower & other._upper
-        lower = lower_1 | lower_2
-        upper_1 = self._upper & other._lower
-        upper_2 = self._upper & other._upper
-        upper = upper_1 | upper_2
+        lower = self & other._lower
+        upper = self & other._upper
         return upper | lower
 
     def __invert__(self) -> Interval:
