@@ -744,13 +744,13 @@ class NumericInterval(Interval):
         From Jaulin, 2001, p. 18
         """
         if isinstance(other, NumericInterval):
-            is_small = self < other
-            os_small = other < self
-            if is_small or os_small:
-                if is_small:
+            has_overlap = (other.upper in self) or (other.lower in self)
+            if not has_overlap:
+                if self.upper < other.lower:
                     return IntervalPair(lower=self, upper=other)
-                if os_small:
+                else:
                     return IntervalPair(lower=other, upper=self)
+            #
             min_l = min(other.lower, self.lower)
             max_l = max(other.upper, self.upper)
             is_l_closed_fn = lambda: (min_l in self) or (min_l in other)
@@ -878,20 +878,20 @@ class NumericInterval(Interval):
         """
         From Dawood, 2011, p. 9
         """
+        if isinstance(other, NumericValue):
+            in_int = other in self
+            return (not in_int) and self.upper < other
         if isinstance(other, NumericInterval):
             s_up = self.upper
             o_low = other.lower
-            if o_low == s_up:
-                if self.is_upper_bounded() and other.is_lower_bounded():
-                    return False
-                return True
-            else:
-                return s_up < o_low
+            in_self = other.lower in self
+            is_big = s_up < o_low
+            return (not in_self) and is_big
         elif isinstance(other, (set, frozenset)):
             is_all_type(other, "other", NumericInterval, True)
             return all(self < o for o in other)
         elif isinstance(other, IntervalPair):
-            return (self < other._lower) and (self < other._upper)
+            return self < other._lower
         else:
             raise TypeError(
                 f"can't compare 'other' of type {type(other).__name__}"

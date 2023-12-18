@@ -852,12 +852,15 @@ class IntervalPairTest(unittest.TestCase):
         """
         non overlapping interval case
         """
+        breakpoint()
         pv = self.p_1 | NumericInterval(
             lower=NumericValue(2.4),
             upper=NumericValue(2.42),
             open_on=IntervalConf.Upper,
         )
         self.assertEqual(self.p_1._lower, pv._lower)
+
+        print("upper",pv._upper)
         self.assertEqual(
             NumericInterval(
                 lower=NumericValue(2.3),
